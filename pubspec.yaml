@@ -49,6 +49,9 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   dotted_border:
   carousel_slider:
+  get_storage: ^2.1.1
+  dio: ^5.7.0
+  http:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
