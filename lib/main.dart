@@ -5,12 +5,16 @@ import 'dart:async';
 import 'package:anything/CommonWidget.dart';
 import 'package:anything/common_color.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'Home_screen.dart';
+import 'MainScreen/register_screen.dart';
 
 
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -45,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     startTimer(Timer(
         const Duration(seconds: 3),
             () => Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) =>  HomeScreen())))
+            MaterialPageRoute(builder: (context) =>  RegisterScreen())))
 
     );
 

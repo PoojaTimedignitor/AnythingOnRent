@@ -1,10 +1,15 @@
+
 import 'package:anything/common_color.dart';
+import 'package:anything/model/dio_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 
 import '../CommonWidget.dart';
+import '../ConstantData/Constant_data.dart';
 import 'login_screen.dart';
+import 'package:get_storage/get_storage.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -30,9 +35,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController addressController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
 
+
+
+
+
   @override
   void initState() {
     super.initState();
+   // print("dddd   $RegisterLocalDataStore");
+   // RegisterLocalDataStore();
     focusNode = FocusNode();
     focusNode.addListener(() => setState(() {}));
     fullNameController = TextEditingController();
@@ -50,7 +61,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+
   final _formKey = GlobalKey<FormState>();
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,7 +219,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget Register(double parentHeight, double parentWidth) {
     return Padding(
       padding:
-          EdgeInsets.only(top: parentHeight * 0.08, left: parentWidth * 0.05),
+          EdgeInsets.only(top: parentHeight * 0.06, left: parentWidth * 0.05),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -265,7 +281,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ))),
           ),
           SizedBox(
-            height: parentHeight * 0.025,
+            height: parentHeight * 0.020,
           ),
           Text(
             "Email",
@@ -764,17 +780,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget RegisterButton(double parentWidth, double parentHeight) {
     return GestureDetector(
-      onTap: () {
-        // index == 1 ?
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => const TenderDrawerScreen())) :
-               Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const LoginScreen()));
-      },
+
+        onTap: () {
+          print("Full Name: ${fullNameController.text}");
+          print("email: ${emailController.text}");
+          print("email: ${emailController.text}");
+          ApiClients().registerDio(
+            fullNameController.text,
+
+              emailController.text,
+              passwordController.text,
+              addressController.text,
+              confirmPasswordController.text,
+              addressController.text,
+              mobileNumberController.text).then((value) {
+          //  if (value.isEmpty) return;
+            print("token...${value['token']}");
+            print(value['data']);
+            print("Response: $value");
+            if (mounted) {
+              setState(() {
+
+              });
+            }
+
+
+            if (value['success'] == true) {
+              GetStorage().write(ConstantData.Username, value['data']['name']);
+//GetStorage().write(ConstantData.UserAccessToken, value['token']);
+               GetStorage().write(ConstantData.UserAccessToken,value['token']);
+
+              // print("numVal ${value['data']}");
+
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
+              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
+
+
+              // index == 1 ?
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => const TenderDrawerScreen())) :
+
+
+
+
+            }});
+
+              },
       child: Padding(
         padding: EdgeInsets.only(
             top: parentHeight * 0.05,
