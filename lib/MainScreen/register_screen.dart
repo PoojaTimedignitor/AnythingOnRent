@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:anything/common_color.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +11,7 @@ import '../CommonWidget.dart';
 import '../ConstantData/Constant_data.dart';
 import 'login_screen.dart';
 import 'package:get_storage/get_storage.dart';
-
+import 'package:image_picker/image_picker.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -28,13 +30,174 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _mobileNumber = FocusNode();
   late FocusNode focusNode;
 
+
+  File? _image;
+  final _images = <XFile>[];
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await ImagePicker().pickImage(source: source);
+
+      if (pickedFile != null) {
+        if (mounted) {
+          setState(() {
+            _image = File(pickedFile.path);
+          });
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+    }
+  }
+
+
+
+  void _showGallaryDialogBox(BuildContext context) {
+    SizeConfig().init(context);
+    showDialog(
+      context: context,
+      builder: (BuildContext context,) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Column(
+            children: [
+              /*  Padding(
+                padding: EdgeInsets.only(top: 6),
+                child: Text(
+                  "Choose Option",
+                  style: TextStyle(
+                      height: 1,
+                      fontSize: SizeConfig.blockSizeHorizontal * 5.0,
+                      fontFamily: 'Roboto_Medium',
+                      fontWeight: FontWeight.w400,
+                      color: CommonColor.black),
+                ),
+              ),*/
+              Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.of(context).pop();
+                      _pickImage(ImageSource.camera);
+                    },
+                    child: Row(
+
+                      children: [
+                        Padding(
+                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.024),
+                          child: Icon(
+                            Icons.camera_alt_outlined,
+                            size: SizeConfig.screenHeight * 0.03,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Padding(
+                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.024,left: SizeConfig.screenHeight*0.024),
+                          child: Text(
+                            "Camera",
+                            style: TextStyle(
+                                height: 2.5,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Regular',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.of(context).pop();
+                      _pickImage(ImageSource.gallery);
+                    },
+                    child: Row(
+
+                      children: [
+                        Padding(
+                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.0),
+                          child: Icon(
+                            Icons.camera_alt_outlined,
+                            size: SizeConfig.screenHeight * 0.03,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Padding(
+                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.0,left: SizeConfig.screenHeight*0.024),
+                          child: Text(
+                            "Picture and Video Library",
+                            style: TextStyle(
+                                height: 2.5,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Regular',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                ],
+              ),
+
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  /* AppPreferences.clearAppPreference();
+                  Get.to(() => const  SignIn());*/
+                },
+                child: Padding(
+                  padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.02),
+                  child: Container(
+                    width: SizeConfig.screenWidth*0.3,
+                    decoration: BoxDecoration(
+
+                      borderRadius: BorderRadius.circular(10),
+                      // color: Colors.white,
+
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                       // stops: [0.8, 0.9],
+                        colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
+                      ),
+
+                      color: Color(0xffFF8B8B),
+
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                            height: 2,
+                            fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                            fontFamily: 'Roboto_Medium',
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
-
 
 
 
@@ -307,6 +470,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ]),
                 child: TextFormField(
                     keyboardType: TextInputType.text,
+                    controller: emailController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
@@ -364,6 +528,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
+                  controller: passwordController,
                     keyboardType: TextInputType.text,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -429,6 +594,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ]),
                 child: TextFormField(
                     keyboardType: TextInputType.text,
+                    controller: confirmPasswordController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
@@ -493,6 +659,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ]),
                 child: TextFormField(
                     keyboardType: TextInputType.text,
+                    controller: addressController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
@@ -552,6 +719,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: TextFormField(
                     keyboardType: TextInputType.text,
                     autocorrect: true,
+                    controller: mobileNumberController,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       prefixIcon: IconButton(
@@ -652,23 +820,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         color: Colors.black)),
                               ),
                               SizedBox(height: 10),
-                              Container(
-                                height: 28,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: CommonColor.Blue),
-                                  borderRadius: BorderRadius.circular(7),
-                                ),
-                                child: Center(
-                                  child: Text("Browser file",
-                                      style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal *
-                                                  2.5,
-                                          fontFamily: 'Roboto_Regular',
-                                          fontWeight: FontWeight.w400,
-                                          //overflow: TextOverflow.ellipsis,
-                                          color: CommonColor.Blue)),
+                              GestureDetector(
+                                onTap: (){
+                                  _showGallaryDialogBox(context);
+                                },
+                                child: Container(
+                                  height: 28,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: CommonColor.Blue),
+                                    borderRadius: BorderRadius.circular(7),
+                                  ),
+                                  child: Center(
+                                    child: Text("Browser file",
+                                        style: TextStyle(
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    2.5,
+                                            fontFamily: 'Roboto_Regular',
+                                            fontWeight: FontWeight.w400,
+                                            //overflow: TextOverflow.ellipsis,
+                                            color: CommonColor.Blue)),
+                                  ),
                                 ),
                               ),
                             ],
@@ -784,7 +957,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         onTap: () {
           print("Full Name: ${fullNameController.text}");
           print("email: ${emailController.text}");
-          print("email: ${emailController.text}");
+          print("password: ${passwordController.text}");
+          print("address: ${addressController.text}");
+          print("mobile: ${mobileNumberController.text}");
           ApiClients().registerDio(
             fullNameController.text,
 
@@ -807,26 +982,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             if (value['success'] == true) {
               GetStorage().write(ConstantData.Username, value['data']['name']);
-//GetStorage().write(ConstantData.UserAccessToken, value['token']);
-               GetStorage().write(ConstantData.UserAccessToken,value['token']);
+
+               GetStorage().write(ConstantData.Useremail,value['data']['email']);
+               GetStorage().write(ConstantData.Userpassword,value['data']['password']);
+               GetStorage().write(ConstantData.UserCpassword,value['data']['cpassword']);
+               GetStorage().write(ConstantData.UserParmanentAddress,value['data']['permanentAddress']);
+               GetStorage().write(ConstantData.UserCurrentAddress,value['data']['currentAddress']);
+               GetStorage().write(ConstantData.UserMobile,value['data']['PhoneNumber']);
+
+
+
+
 
               // print("numVal ${value['data']}");
 
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const LoginScreen()));
               // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
-
-
-              // index == 1 ?
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => const TenderDrawerScreen())) :
-
-
-
-
-            }});
+            }
+              }
+              );
 
               },
       child: Padding(

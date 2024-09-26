@@ -1,5 +1,4 @@
 
-import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
@@ -9,10 +8,6 @@ import '../ConstantData/Constant_data.dart';
 
 class ApiClients {
  final Dio _dio = Dio();
-
-
-
-
 
 
  Future<Map<String, dynamic>> registerDio(
@@ -42,7 +37,6 @@ class ApiClients {
  'phoneNumber': phoneNumber,
  'currentAddress': currentAddress,
  'permanentAddress': permanentAddress
-
  },
        options: Options(
          headers: {
@@ -78,12 +72,14 @@ class ApiClients {
    );
 
 
-*//* if (response.statusCode == 200) {
+*/
+/* if (response.statusCode == 200) {
  print(json.encode(response.data));
  }
  else {
  print(response.statusMessage);
- }*//*
+ }*/
+/*
 
 
    print("statusCode --> ${response.statusCode}");
