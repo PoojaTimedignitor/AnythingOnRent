@@ -1,4 +1,6 @@
+import 'package:anything/ApiConstant/api_constant.dart';
 import 'package:anything/MainScreen/register_screen.dart';
+import 'package:anything/model/dio_client.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -13,33 +15,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  final _fullNameFocus = FocusNode();
+  final _emailFocus = FocusNode();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: ListView(
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      children: [
-        Image(
-          image: AssetImage('assets/images/login.png'),
-        ),
-        ImagesWithText(SizeConfig.screenHeight, SizeConfig.screenWidth),
-        LoginContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
-        Stack(
-          children: [
-            Padding(
-              padding:
-                  EdgeInsets.only(left: SizeConfig.screenWidth * 0.6, top: 25),
-              child: Image(
-                image:  AssetImage('assets/images/loginsecound.png'),
-                height: SizeConfig.screenHeight * 0.267,
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(true);
+      },
+      child: Scaffold(
+          body: ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        children: [
+          Image(
+            image: AssetImage('assets/images/login.png'),
+          ),
+          ImagesWithText(SizeConfig.screenHeight, SizeConfig.screenWidth),
+          LoginContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
+          Stack(
+            children: [
+              Padding(
+                padding:
+                    EdgeInsets.only(left: SizeConfig.screenWidth * 0.6, top: 25),
+                child: Image(
+                  image:  AssetImage('assets/images/loginsecound.png'),
+                  height: SizeConfig.screenHeight * 0.267,
+                ),
               ),
-            ),
-            RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
-          ],
-        ),
-      ],
-    ));
+              RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
+            ],
+          ),
+        ],
+      )),
+    );
   }
 
   Widget ImagesWithText(double parentHeight, double parentWidth) {
@@ -101,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
+                  controller: emailController,
                     keyboardType: TextInputType.text,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -159,6 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
+                  controller: passwordController,
                     keyboardType: TextInputType.text,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -220,6 +236,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget RegisterButton(double parentWidth, double parentHeight) {
     return GestureDetector(
       onTap: () {
+
+        ApiClients().loginDio(
+emailController.text,
+          passwordController.text
+
+        ).then(onValue)
         // index == 1 ?
         // Navigator.push(
         //     context,

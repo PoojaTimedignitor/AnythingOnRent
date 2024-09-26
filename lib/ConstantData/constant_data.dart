@@ -1,6 +1,7 @@
 class ConstantData{
 
   static const String Username =  "name";
+  static const String UserId =  "userId";
   static const String UserAccessToken = "token";
   static const String Useremail = "email";
   static const String Userpassword = "password";

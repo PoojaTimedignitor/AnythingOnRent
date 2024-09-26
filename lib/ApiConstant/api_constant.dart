@@ -4,4 +4,5 @@ class ApiConstant {
   // Base url Anything on rent
 
   String registerss = "/register-user"; // User Register Api
+  String login = "/login"; // User Register Api
 }

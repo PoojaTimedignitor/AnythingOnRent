@@ -9,6 +9,7 @@ import 'package:dotted_border/dotted_border.dart';
 
 import '../CommonWidget.dart';
 import '../ConstantData/Constant_data.dart';
+
 import 'login_screen.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
   final _addressFocus = FocusNode();
+  final _permanentAddressFocus = FocusNode();
   final _mobileNumber = FocusNode();
   late FocusNode focusNode;
 
@@ -197,6 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController permanentAddressController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
 
 
@@ -205,6 +208,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
+
    // print("dddd   $RegisterLocalDataStore");
    // RegisterLocalDataStore();
     focusNode = FocusNode();
@@ -214,6 +218,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     passwordController = TextEditingController();
     confirmPasswordController = TextEditingController();
     addressController = TextEditingController();
+    permanentAddressController = TextEditingController();
     mobileNumberController = TextEditingController();
   }
 
@@ -695,6 +700,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
             height: parentHeight * 0.025,
           ),
           Text(
+            "Permanent Address",
+            style: TextStyle(
+              color: CommonColor.RegisterText,
+              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'Roboto-Regular',
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+                top: parentHeight * 0.01,
+                left: parentWidth * 0.0,
+                right: parentWidth * 0.04),
+            child: Container(
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      spreadRadius: 0,
+                      blurRadius: 7,
+                      offset: Offset(0, 2),
+                      color: Colors.black26)
+                ]),
+                child: TextFormField(
+                    keyboardType: TextInputType.text,
+                    controller: permanentAddressController,
+                    autocorrect: true,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      prefixIcon: IconButton(
+                          onPressed: () {},
+                          icon: Image(
+                            image: AssetImage('assets/images/user.png'),
+                            height: 20,
+                          )),
+                      hintText: 'Permanent Address',
+                      contentPadding: EdgeInsets.only(
+                        left: parentWidth * 0.04,
+                      ),
+                      hintStyle: TextStyle(
+                        fontFamily: "Roboto_Regular",
+                        color: Color(0xff7D7B7B),
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                        // color: CommonColor.DIVIDER_COLOR,
+                      ),
+                      fillColor: Color(0xffFFF0F0),
+                      hoverColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(10.0)),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black12, width: 1),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ))),
+          ),
+          SizedBox(
+            height: parentHeight * 0.025,
+          ),
+          Text(
             "Mobile Number",
             style: TextStyle(
               color: CommonColor.RegisterText,
@@ -955,20 +1019,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return GestureDetector(
 
         onTap: () {
+
+    /*  if (passwordController.text != confirmPasswordController.text) {
+        print("Error: Password and Confirm Password do not match");
+        // You can also show a UI error message here
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Passwords do not match'))
+        );
+        return;
+      }*/
           print("Full Name: ${fullNameController.text}");
           print("email: ${emailController.text}");
           print("password: ${passwordController.text}");
+          print("cpassword: ${confirmPasswordController.text}");
           print("address: ${addressController.text}");
           print("mobile: ${mobileNumberController.text}");
           ApiClients().registerDio(
-            fullNameController.text,
-
+              fullNameController.text,
               emailController.text,
               passwordController.text,
-              addressController.text,
               confirmPasswordController.text,
-              addressController.text,
-              mobileNumberController.text).then((value) {
+              mobileNumberController.text,
+            addressController.text,
+            permanentAddressController.text,
+
+          ).then((value) {
           //  if (value.isEmpty) return;
             print("token...${value['token']}");
             print(value['data']);
@@ -981,14 +1056,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 
             if (value['success'] == true) {
-              GetStorage().write(ConstantData.Username, value['data']['name']);
 
-               GetStorage().write(ConstantData.Useremail,value['data']['email']);
-               GetStorage().write(ConstantData.Userpassword,value['data']['password']);
-               GetStorage().write(ConstantData.UserCpassword,value['data']['cpassword']);
-               GetStorage().write(ConstantData.UserParmanentAddress,value['data']['permanentAddress']);
-               GetStorage().write(ConstantData.UserCurrentAddress,value['data']['currentAddress']);
-               GetStorage().write(ConstantData.UserMobile,value['data']['PhoneNumber']);
+              print("..aaaass ${ value['newUser']['name']}");
+
+
+               GetStorage().write(ConstantData.Username, value['newUser']['name']);
+               GetStorage().write(ConstantData.UserId,value['newUser']['userId']);
+               GetStorage().write(ConstantData.Useremail,value['newUser']['email']);
+               GetStorage().write(ConstantData.Userpassword,value['newUser']['password']);
+               GetStorage().write(ConstantData.UserCpassword,value['newUser']['cpassword']);
+               GetStorage().write(ConstantData.UserCurrentAddress,value['newUser']['currentAddress']);
+               GetStorage().write(ConstantData.UserParmanentAddress,value['newUser']['permanentAddress']);
+               GetStorage().write(ConstantData.UserMobile,value['newUser']['PhoneNumber']);
 
 
 

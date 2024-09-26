@@ -1,5 +1,7 @@
 
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -26,24 +28,27 @@ class ApiClients {
    String? sessionToken =
    GetStorage().read<String>(ConstantData.UserAccessToken);
    print("Session Token: $sessionToken");
+
+   var dataa = jsonEncode({ 'name': name,
+   'email': email,
+   'password': password,
+   'cpassword': cpassword,
+   'phoneNumber': phoneNumber,
+   'currentAddress': currentAddress,
+   'permanentAddress': permanentAddress,
+  });
+   print("data....> $dataa");
    try {
      Response response = await _dio.post<Map<String, dynamic>>(
        url,
-       data: {
- 'name': name,
- 'email': email,
- 'password': password,
- 'cpassword': cpassword,
- 'phoneNumber': phoneNumber,
- 'currentAddress': currentAddress,
- 'permanentAddress': permanentAddress
- },
+       data : dataa,
        options: Options(
          headers: {
            'Authorization': 'Bearer $sessionToken',
          },
        ),
      );
+    // print("data....>$dataa");
      print("statusCode --> ${response.statusCode}");
      print("dateeeee --> ${response.data}");
      return response.data;
@@ -53,48 +58,46 @@ class ApiClients {
  }
 
 
-/*Future<Map<String, dynamic>> registerDio(
+ Future<Map<String, dynamic>> loginDio(
+     String email,
+     String password,
 
-) async {
-  String url = ApiConstant().BaseUrl + ApiConstant().registerss;
+     ) async {
+   String url = ApiConstant().BaseUrl + ApiConstant().login;
 
-  String? sessionToken =
-  GetStorage().read<String>(ConstantData.UserAccessToken);
+   String? sessionToken =
+   GetStorage().read<String>(ConstantData.UserAccessToken);
+   print("Session Token: $sessionToken");
 
-
-  try {
-   Response response = await _dio.P(url,
-    options: Options(
-     headers: {
-      'Authorization': 'Bearer $sessionToken',
-     },
-    ),
-   );
-
-
-*/
-/* if (response.statusCode == 200) {
- print(json.encode(response.data));
+   var dataa = jsonEncode({
+     'email': email,
+     'password': password,
+   });
+   print("data....> $dataa");
+   try {
+     Response response = await _dio.post<Map<String, dynamic>>(
+       url,
+       data : dataa,
+       options: Options(
+         headers: {
+           'Authorization': 'Bearer $sessionToken',
+         },
+       ),
+     );
+     // print("data....>$dataa");
+     print("statusCode --> ${response.statusCode}");
+     print("dateeeee --> ${response.data}");
+     return response.data;
+   } on DioError catch (e) {
+     return e.response!.data;
+   }
  }
- else {
- print(response.statusMessage);
- }*/
-/*
-
-
-   print("statusCode --> ${response.statusCode}");
-   print("data --> ${response.data}");
-
-   return response.data;
-  } on DioError catch (e) {
-   return e.response!.data;
-  }
-}*/
 
 
 
 
- }
+
+}
 
 
 
