@@ -1,8 +1,10 @@
-import 'package:anything/ApiConstant/api_constant.dart';
+import 'package:anything/ConstantData/Constant_data.dart';
+import 'package:anything/Home_screen.dart';
 import 'package:anything/MainScreen/register_screen.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../CommonWidget.dart';
 import '../common_color.dart';
@@ -15,7 +17,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -41,10 +42,10 @@ class _LoginScreenState extends State<LoginScreen> {
           Stack(
             children: [
               Padding(
-                padding:
-                    EdgeInsets.only(left: SizeConfig.screenWidth * 0.6, top: 25),
+                padding: EdgeInsets.only(
+                    left: SizeConfig.screenWidth * 0.6, top: 25),
                 child: Image(
-                  image:  AssetImage('assets/images/loginsecound.png'),
+                  image: AssetImage('assets/images/loginsecound.png'),
                   height: SizeConfig.screenHeight * 0.267,
                 ),
               ),
@@ -115,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
-                  controller: emailController,
+                    controller: emailController,
                     keyboardType: TextInputType.text,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -174,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
-                  controller: passwordController,
+                    controller: passwordController,
                     keyboardType: TextInputType.text,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -237,18 +238,81 @@ class _LoginScreenState extends State<LoginScreen> {
     return GestureDetector(
       onTap: () {
 
-        ApiClients().loginDio(
-emailController.text,
-          passwordController.text
+      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(emailController.text)) {
+        print("Invalid email format");
+        return;
+      }
 
-        ).then(onValue)
-        // index == 1 ?
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => const TenderDrawerScreen())) :
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()));
+      // Password validation (ensure it's not empty and meets a minimum length requirement)
+      if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+        print("Password must be at least 6 characters long");
+        return;
+      }
+
+      // Call login API if validation passes
+      ApiClients().loginDio(emailController.text, passwordController.text).then((value) {
+        print(value['data']);
+        print("Response: $value");
+
+        if (mounted) {
+          setState(() {});
+        }
+
+        if (value['success'] == true) {
+          print("Logged-in User Email: ${value['Data']['email']}");
+
+          // Store credentials in GetStorage
+          GetStorage().write(ConstantData.Useremail, value['Data']['email']);
+          GetStorage().write(ConstantData.Userpassword, value['Data']['password']);
+
+          // Navigate to the home screen upon successful login
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        } else if(value['success'] == false) {
+          print("Email or password does not match");
+        }
+      }).catchError((error) {
+        print("An error occurred: $error");
+      });
+
+     /*   if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Please Enter a Email")));
+        }
+        else {
+          ApiClients()
+              .loginDio(emailController.text, passwordController.text)
+              .then((value) {
+            //  if (value.isEmpty) return;
+            if (value.isEmpty) return;
+            print(value['data']);
+            print("Response: $value");
+            if (mounted) {
+              setState(() {});
+            }
+
+            if (value['success'] == true) {
+              print("valueeeee--- ${value['Data']['email']}");
+              GetStorage()
+                  .write(ConstantData.Useremail, value['Data']['email']);
+              GetStorage()
+                  .write(ConstantData.Userpassword, value['Data']['password']);
+            }
+
+            // index == 1 ?
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => const TenderDrawerScreen())) :
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()));
+          }
+
+
+          );
+        }*/
       },
       child: Column(
         children: [
@@ -345,7 +409,7 @@ emailController.text,
               Padding(
                 padding: EdgeInsets.only(left: parentWidth * 0.03),
                 child: RichText(
-                    text:  TextSpan(
+                    text: TextSpan(
                         text: "Don’t have an account ?",
                         style: TextStyle(
                             color: Colors.black38,
@@ -354,22 +418,22 @@ emailController.text,
                             fontSize: 14),
                         children: [
                       TextSpan(
-                          text: " Sign Up",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                              decoration: TextDecoration.underline,
-                              fontFamily: 'Roboto-Regular',
-                              fontSize: 14),
-
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-    Navigator.push(context,
-    MaterialPageRoute(builder: (context) => const RegisterScreen()));
-
-                        },
-                    ),
-
+                        text: " Sign Up",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            decoration: TextDecoration.underline,
+                            fontFamily: 'Roboto-Regular',
+                            fontSize: 14),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const RegisterScreen()));
+                          },
+                      ),
                     ])),
               ),
             ],

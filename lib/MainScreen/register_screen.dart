@@ -1043,7 +1043,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             addressController.text,
             permanentAddressController.text,
 
-          ).then((value) {
+          ).then( (value) {
           //  if (value.isEmpty) return;
             print("token...${value['token']}");
             print(value['data']);
@@ -1057,7 +1057,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             if (value['success'] == true) {
 
-              print("..aaaass ${ value['newUser']['name']}");
+              print("..aaaass ${ value['newUser']['userId']}");
 
 
                GetStorage().write(ConstantData.Username, value['newUser']['name']);
