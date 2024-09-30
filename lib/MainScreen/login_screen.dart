@@ -22,39 +22,79 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _fullNameFocus = FocusNode();
   final _emailFocus = FocusNode();
+  bool passwordVisible=true;
+  bool isObscure = false;
+  var _formKey = GlobalKey<FormState>();
+  final GlobalKey _tooltipKey = GlobalKey();
+ bool showTooltip = true;
 
+/*  String? _errorMessage;
+
+  String? _validateText(String? value) {
+    if (value == null || value.isEmpty) {
+      setState(() {
+        _errorMessage = 'This field is required'; // Customize error message
+      });
+      return ''; // Return empty string so no error line is shown
+    }
+    setState(() {
+      _errorMessage = null; // Clear error message
+    });
+    return null; // No error
+  }*/
+
+  void _validateAndShowTooltip() {
+    if (emailController.text.isEmpty) {
+      final dynamic tooltip = _tooltipKey.currentState;
+      tooltip.ensureTooltipVisible(); // Show the tooltip if validation fails
+    } else    if (emailController.text.isEmpty) {
+      setState(() {
+        showTooltip = false;
+      });
+
+    }
+
+  }
+  @override
+
+  void initState(){
+    super.initState();
+    passwordVisible=true;
+  }
+/*  void _submit() {
+    final isValid = _formKey.currentState!.validate();
+    if (!isValid) {
+      return;
+    }
+    _formKey.currentState!.save();
+  }*/
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        return Future.value(true);
-      },
-      child: Scaffold(
-          body: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        children: [
-          Image(
-            image: AssetImage('assets/images/login.png'),
-          ),
-          ImagesWithText(SizeConfig.screenHeight, SizeConfig.screenWidth),
-          LoginContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
-          Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    left: SizeConfig.screenWidth * 0.6, top: 25),
-                child: Image(
-                  image: AssetImage('assets/images/loginsecound.png'),
-                  height: SizeConfig.screenHeight * 0.267,
-                ),
+    return Scaffold(
+        body: ListView(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      children: [
+        Image(
+          image: AssetImage('assets/images/login.png'),
+        ),
+        ImagesWithText(SizeConfig.screenHeight, SizeConfig.screenWidth),
+        LoginContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
+        Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                  left: SizeConfig.screenWidth * 0.6, top: 25),
+              child: Image(
+                image: AssetImage('assets/images/loginsecound.png'),
+                height: SizeConfig.screenHeight * 0.267,
               ),
-              RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
-            ],
-          ),
-        ],
-      )),
-    );
+            ),
+            RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
+          ],
+        ),
+      ],
+    ));
   }
 
   Widget ImagesWithText(double parentHeight, double parentWidth) {
@@ -102,53 +142,122 @@ class _LoginScreenState extends State<LoginScreen> {
               fontFamily: 'Roboto-Regular',
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: parentHeight * 0.01,
-                left: parentWidth * 0.0,
-                right: parentWidth * 0.04),
-            child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
-                child: TextFormField(
-                    controller: emailController,
-                    keyboardType: TextInputType.text,
-                    autocorrect: true,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      prefixIcon: IconButton(
-                          onPressed: () {},
-                          icon: Image(
-                            image: AssetImage('assets/images/email.png'),
-                            height: 20,
-                          )),
-                      hintText: 'Email',
-                      contentPadding: EdgeInsets.only(
-                        left: parentWidth * 0.04,
-                      ),
-                      hintStyle: TextStyle(
-                        fontFamily: "Roboto_Regular",
-                        color: Color(0xff7D7B7B),
-                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        // color: CommonColor.DIVIDER_COLOR,
-                      ),
-                      fillColor: Color(0xffFFF0F0),
-                      hoverColor: Colors.white,
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10.0)),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black12, width: 1),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ))),
+          Form(
+            key: _formKey,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: parentHeight * 0.01,
+                  left: parentWidth * 0.0,
+                  right: parentWidth * 0.04),
+              child: Container(
+                  decoration: BoxDecoration(boxShadow: [
+                    BoxShadow(
+                        spreadRadius: 0,
+                        blurRadius: 7,
+                        offset: Offset(0, 2),
+                        color: Colors.black26)
+                  ]),
+                  child: Tooltip(
+                    key: _tooltipKey,
+
+                    padding: EdgeInsets.only(
+                        top: parentHeight * 0.2,
+                       ),
+
+                    message: '                                This field cannot be empty*',
+                  //  triggerMode: TooltipTriggerMode.manual,
+
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                     // Background color
+                      borderRadius: BorderRadius.circular(8), // Rounded corners
+
+                     // Border color and width
+                    ),
+                    textStyle: TextStyle(
+                      color: Colors.red, // Tooltip text color
+                      fontWeight: FontWeight.bold, // Bold text
+                    ),
+                    child: TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.text,
+
+                       // validator: _validateText,
+                    /*
+                        validator: (value) {
+
+
+                            if (value!.isEmpty ||
+                                !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                    .hasMatch(value)) {
+                              return 'Enter a valid email!';
+                            }
+                            return null;
+
+                        },*/
+
+
+                        autocorrect: true,
+                        textInputAction: TextInputAction.next,
+                      /*  onChanged: (value) {
+                          setState(() {
+                            emailError = validatorss(value);
+                          });
+                        },*/
+
+
+
+
+                        decoration: InputDecoration(
+                          errorText: null,
+                          prefixIcon: IconButton(
+                              onPressed: () {},
+                              icon: Image(
+                                image: AssetImage('assets/images/email.png'),
+                                height: 20,
+                              )),
+                          hintText: 'Email',
+
+                          contentPadding: EdgeInsets.only(
+                            left: parentWidth * 0.04,
+                          ),
+
+
+
+
+                          hintStyle: TextStyle(
+                            fontFamily: "Roboto_Regular",
+                            color: Color(0xff7D7B7B),
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                            // color: CommonColor.DIVIDER_COLOR,
+                          ),
+                          fillColor: Color(0xffFFF0F0),
+                          hoverColor: Colors.white,
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(10.0)),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black12, width: 1),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+
+
+
+
+                        ),
+
+
+                    ),
+                  )),
+
+            ),
+
           ),
+
+
+
+
           SizedBox(
             height: parentHeight * 0.025,
           ),
@@ -168,6 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 right: parentWidth * 0.04),
             child: Container(
                 decoration: BoxDecoration(boxShadow: [
+
                   BoxShadow(
                       spreadRadius: 0,
                       blurRadius: 7,
@@ -175,6 +285,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
+                    obscureText: passwordVisible,
+
                     controller: passwordController,
                     keyboardType: TextInputType.text,
                     autocorrect: true,
@@ -186,13 +298,26 @@ class _LoginScreenState extends State<LoginScreen> {
                             image: AssetImage('assets/images/user.png'),
                             height: 20,
                           )),
-                      suffixIcon: IconButton(
+                   /*   suffixIcon: IconButton(
                           onPressed: () {},
                           icon: Image(
                             image: AssetImage('assets/images/eye.png'),
                             height: 30,
-                          )),
+                          )),*/
                       hintText: 'Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(passwordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        onPressed: () {
+                          setState(
+                                () {
+                                  isObscure = !isObscure;
+                              passwordVisible = !passwordVisible;
+                            },
+                          );
+                        },
+                      ),
                       contentPadding: EdgeInsets.only(
                         left: parentWidth * 0.04,
                       ),
@@ -238,12 +363,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return GestureDetector(
       onTap: () {
 
-      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(emailController.text)) {
-        print("Invalid email format");
-        return;
-      }
+        _validateAndShowTooltip();
 
-      // Password validation (ensure it's not empty and meets a minimum length requirement)
+        // Password validation (ensure it's not empty and meets a minimum length requirement)
       if (emailController.text.isEmpty || passwordController.text.isEmpty) {
         print("Password must be at least 6 characters long");
         return;
@@ -277,42 +399,7 @@ class _LoginScreenState extends State<LoginScreen> {
         print("An error occurred: $error");
       });
 
-     /*   if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Please Enter a Email")));
-        }
-        else {
-          ApiClients()
-              .loginDio(emailController.text, passwordController.text)
-              .then((value) {
-            //  if (value.isEmpty) return;
-            if (value.isEmpty) return;
-            print(value['data']);
-            print("Response: $value");
-            if (mounted) {
-              setState(() {});
-            }
 
-            if (value['success'] == true) {
-              print("valueeeee--- ${value['Data']['email']}");
-              GetStorage()
-                  .write(ConstantData.Useremail, value['Data']['email']);
-              GetStorage()
-                  .write(ConstantData.Userpassword, value['Data']['password']);
-            }
-
-            // index == 1 ?
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => const TenderDrawerScreen())) :
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()));
-          }
-
-
-          );
-        }*/
       },
       child: Column(
         children: [
@@ -354,7 +441,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.w700,
                       fontFamily: 'Roboto-Regular',
                       fontSize: SizeConfig.blockSizeHorizontal * 4.3),
-                ))),
+                ),
+
+
+
+                )),
           ),
           SizedBox(height: 20),
           Row(

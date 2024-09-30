@@ -1083,6 +1083,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
               );
 
               },
+
+
+       /* if (showCustomTooltip)
+    Positioned(
+      right: 0,
+      child: CustomTooltip(
+        message: 'This field cannot be empty',
+        onClose: () {
+          setState(() {
+            showCustomTooltip = false; // Hide the tooltip
+          });
+        },
+      ),
+    ),*/
+
+
       child: Padding(
         padding: EdgeInsets.only(
             top: parentHeight * 0.05,

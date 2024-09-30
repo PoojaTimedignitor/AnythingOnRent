@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:anything/CommonWidget.dart';
+import 'package:anything/MainScreen/login_screen.dart';
 import 'package:anything/common_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -49,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
     startTimer(Timer(
         const Duration(seconds: 3),
             () => Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) =>  RegisterScreen())))
+            MaterialPageRoute(builder: (context) =>  LoginScreen())))
 
     );
 
