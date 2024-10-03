@@ -9,10 +9,10 @@ import 'package:dotted_border/dotted_border.dart';
 
 import '../CommonWidget.dart';
 import '../ConstantData/Constant_data.dart';
-
 import 'login_screen.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -32,6 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _mobileNumber = FocusNode();
   late FocusNode focusNode;
 
+  bool isLoading = false;
 
   File? _image;
   final _images = <XFile>[];
@@ -209,6 +210,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
 
+    if(mounted){
+      setState(() {
+        isLoading = true;
+      });
+    }
+
+  /*  if(mounted){
+      setState(() {
+        isLoading = true;
+      });
+    }*/
    // print("dddd   $RegisterLocalDataStore");
    // RegisterLocalDataStore();
     focusNode = FocusNode();
@@ -258,7 +270,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               RegisterContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
               NameData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+              Visibility(
+
+                visible: isLoading,
+                child: Center(child:  Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: SizeConfig.screenHeight * .05,
+                      width: SizeConfig.screenWidth * .1,
+
+                      child: Image(
+                        image: const AssetImage(
+                            "assets/images/anything_loding.png"),
+
+                        width: SizeConfig.screenWidth * .1,
+                      ),
+                    ),
+                    Text("  Loading...",    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Roboto-Regular',
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.3),
+
+                    )
+                  ],
+                ),),
+              )
             ],
+
+
           ),
           /*    GestureDetector(
 
@@ -1028,60 +1069,78 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         return;
       }*/
-          print("Full Name: ${fullNameController.text}");
-          print("email: ${emailController.text}");
-          print("password: ${passwordController.text}");
-          print("cpassword: ${confirmPasswordController.text}");
-          print("address: ${addressController.text}");
-          print("mobile: ${mobileNumberController.text}");
-          ApiClients().registerDio(
+
+         /* if(mounted){
+            setState(() {
+              isLoading = true;
+            });
+          }*/
+
+/*else {*/
+            print("Full Name: ${fullNameController.text}");
+            print("email: ${emailController.text}");
+            print("password: ${passwordController.text}");
+            print("cpassword: ${confirmPasswordController.text}");
+            print("address: ${addressController.text}");
+            print("mobile: ${mobileNumberController.text}");
+            ApiClients().registerDio(
               fullNameController.text,
               emailController.text,
               passwordController.text,
               confirmPasswordController.text,
               mobileNumberController.text,
-            addressController.text,
-            permanentAddressController.text,
+              addressController.text,
+              permanentAddressController.text,
 
-          ).then( (value) {
-          //  if (value.isEmpty) return;
-            print("token...${value['token']}");
-            print(value['data']);
-            print("Response: $value");
-            if (mounted) {
-              setState(() {
-
-              });
-            }
-
-
-            if (value['success'] == true) {
-
-              print("..aaaass ${ value['newUser']['userId']}");
-
-
-               GetStorage().write(ConstantData.Username, value['newUser']['name']);
-               GetStorage().write(ConstantData.UserId,value['newUser']['userId']);
-               GetStorage().write(ConstantData.Useremail,value['newUser']['email']);
-               GetStorage().write(ConstantData.Userpassword,value['newUser']['password']);
-               GetStorage().write(ConstantData.UserCpassword,value['newUser']['cpassword']);
-               GetStorage().write(ConstantData.UserCurrentAddress,value['newUser']['currentAddress']);
-               GetStorage().write(ConstantData.UserParmanentAddress,value['newUser']['permanentAddress']);
-               GetStorage().write(ConstantData.UserMobile,value['newUser']['PhoneNumber']);
-
-
-
-
-
-              // print("numVal ${value['data']}");
-
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()));
-              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
-            }
+            ).then((value) {
+              //  if (value.isEmpty) return;
+              print("token...${value['token']}");
+              print(value['data']);
+              print("Loading: $isLoading");
+              if (mounted) {
+                setState(() {
+                  isLoading = true;
+                });
               }
-              );
 
+
+              if (value['success'] == true) {
+                print("..aaaass ${ value['newUser']['userId']}");
+
+
+                GetStorage().write(
+                    ConstantData.Username, value['newUser']['name']);
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']['userId']);
+                GetStorage().write(
+                    ConstantData.Useremail, value['newUser']['email']);
+                GetStorage().write(
+                    ConstantData.Userpassword, value['newUser']['password']);
+                GetStorage().write(
+                    ConstantData.UserCpassword, value['newUser']['cpassword']);
+                GetStorage().write(ConstantData.UserCurrentAddress,
+                    value['newUser']['currentAddress']);
+                GetStorage().write(ConstantData.UserParmanentAddress,
+                    value['newUser']['permanentAddress']);
+                GetStorage().write(
+                    ConstantData.UserMobile, value['newUser']['PhoneNumber']);
+
+
+                // print("numVal ${value['data']}");
+
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
+                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
+              }
+              if(mounted){
+                setState(() {
+                  isLoading = false;
+                });
+              }
+            }
+            );
+         // }
               },
 
 

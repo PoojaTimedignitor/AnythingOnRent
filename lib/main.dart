@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:anything/CommonWidget.dart';
+import 'package:anything/MainScreen/login_screen.dart';
 import 'package:anything/common_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,7 +11,6 @@ import 'package:get_storage/get_storage.dart';
 import 'ConstantData/Constant_data.dart';
 import 'Home_screen.dart';
 import 'MainScreen/onboardingScreen.dart';
-import 'MainScreen/register_screen.dart';
 
 
 
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
 
         routes: <String, WidgetBuilder>{
           '/frame': (BuildContext context) =>  onboardingScreen(),
-          '/registration': (BuildContext context) =>  RegisterScreen(),
+          '/registration': (BuildContext context) =>  LoginScreen(),
           '/homeScreen': (BuildContext context) =>  HomeScreen(),
          /* '/rec_dashboard': (BuildContext context) => const ReceiverDashboard(),*/
         }
@@ -163,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pushReplacementNamed('/frame');
   }
   void navigateRegistration() {
-    Navigator.of(context).pushReplacementNamed('/registrations');
+    Navigator.of(context).pushReplacementNamed('/registration');
   }
 
   void navigateHomePage() {
