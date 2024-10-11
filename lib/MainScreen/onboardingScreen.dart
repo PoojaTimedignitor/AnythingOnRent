@@ -1,7 +1,8 @@
+import 'package:anything/Home_screen.dart';
 import 'package:anything/MainScreen/register_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../CommonWidget.dart';
+import '../Common_File/SizeConfig.dart';
 import 'onBoardingContent.dart';
 class onboardingScreen extends StatefulWidget {
    onboardingScreen({super.key});
@@ -145,7 +146,7 @@ class _onboardingScreenState extends State<onboardingScreen> {
 
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => RegisterScreen()),
+                                  MaterialPageRoute(builder: (context) => HomeScreen()),
                                 );
                               },
                               child: Text("START"),

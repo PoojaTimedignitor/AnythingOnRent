@@ -1,6 +1,6 @@
 library bottom_navy_bar;
 
-import 'package:anything/CommonWidget.dart';
+import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:flutter/material.dart';
 
 /// A beautiful and animated bottom navigation that paints a rounded shape

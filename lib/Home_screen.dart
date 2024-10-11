@@ -1,9 +1,10 @@
-import 'package:anything/CommonWidget.dart';
+import 'package:anything/Common_File/SizeConfig.dart';
+import 'package:anything/Common_File/common_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import 'bottomNavigationBar.dart';
-import 'common_color.dart';
+import 'Common_File/common_color.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -50,25 +51,28 @@ class _HomeScreenState extends State<HomeScreen> {
           HomeSearchBar(SizeConfig.screenHeight, SizeConfig.screenWidth),
           sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
           AddPostButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
+          PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
+
+
           Stack(
             children: [
               Padding(
                 padding:
-                EdgeInsets.only(left: SizeConfig.screenWidth * 0.68, top: 216),
+                EdgeInsets.only(left: SizeConfig.screenWidth * 0.68, top: 289),
                 child: Image(
                   image: AssetImage('assets/images/home.png'),
                   height: SizeConfig.screenHeight * 0.220,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.53),
+                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.75),
                 child: Image(
                   image: AssetImage('assets/images/homecircle.png'),
                   height: SizeConfig.screenHeight * 0.150,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.69),
+                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.91),
                 child: Image(
                   image: AssetImage('assets/images/homecircle.png'),
                   height: SizeConfig.screenHeight * 0.150,
@@ -193,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.only(top: parentHeight * 0.04),
               child: Image(
                 image: AssetImage('assets/images/sidebar.png'),
-                height: parentHeight * 0.05,
+                height: parentHeight * 0.045,
               ),
             ),
           ),
@@ -202,17 +206,17 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: parentHeight * 0.06),
+              padding: EdgeInsets.only(top: parentHeight * 0.05),
               child: Text(
                 "    Hi,Aaysha",
                 style: TextStyle(
-                    fontSize: SizeConfig.blockSizeHorizontal * 4.0,
+                    fontSize: SizeConfig.blockSizeHorizontal * 3.8,
                     fontFamily: 'Roboto_Medium',
                     fontWeight: FontWeight.w400,
                     color: Colors.black),
               ),
             ),
-            SizedBox(height: 5),
+            SizedBox(height: 4),
             Padding(
               padding: EdgeInsets.only(left: parentWidth * 0.03),
               child: Row(
@@ -255,9 +259,9 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: EdgeInsets.only(
               left: SizeConfig.screenWidth * .05,
-              top: SizeConfig.screenHeight * 0.03),
+              top: SizeConfig.screenHeight * 0.015),
           child: Container(
-            height: SizeConfig.screenHeight * .068,
+          //  height: SizeConfig.screenHeight * .065,
             width: parentWidth - (SizeConfig.screenWidth * .23),
             child: Row(
               children: [
@@ -265,16 +269,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(
-                        top: parentHeight * 0.0,
-                        left: parentWidth * 0.0,
+
                         right: parentWidth * 0.04),
                     child: Container(
                         decoration: BoxDecoration(boxShadow: [
                           BoxShadow(
                               spreadRadius: 0,
                               blurRadius: 6,
-                              offset: Offset(0, 2),
-                              color: Colors.black26)
+                              offset: Offset(0, 1),
+                              color: Colors.black12)
                         ]),
                         child: TextFormField(
                             keyboardType: TextInputType.text,
@@ -293,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               hintText: "Search Product/Service",
                               hintStyle: TextStyle(
                                 fontFamily: "Roboto_Regular",
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.6,
                                 color: CommonColor.SearchBar,
                                 fontWeight: FontWeight.w300,
                               ),
@@ -333,15 +336,15 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           child: Padding(
             padding: EdgeInsets.only(
-                top: parentHeight * 0.02, right: parentWidth * 0.02),
+                top: parentHeight * 0.01, right: parentWidth * 0.02),
             child: PhysicalShape(
               color: Color(0xff61A5A9),
               shadowColor: Colors.grey.shade300,
               elevation: 10,
               clipper: ShapeBorderClipper(shape: CircleBorder()),
               child: Container(
-                  height: 52,
-                  width: 52,
+                  height: 50,
+                  width: 50,
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -391,7 +394,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: MediaQuery
                   .of(context)
                   .size
-                  .height * .22,
+                  .height * .20,
               viewportFraction: 1.0,
               enableInfiniteScroll: false,
               autoPlay: true,
@@ -490,12 +493,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return Padding(
-      padding: EdgeInsets.only(left: parentWidth * 0.55,right: parentWidth*0.05,top: parentHeight*0.02),
+      padding: EdgeInsets.only(left: parentWidth * 0.67,right: parentWidth*0.05),
       child: Container(
 
         //alignment: Alignment.,
-        height: parentHeight * 0.05,
-width: parentWidth*0.2,
+        height: parentHeight * 0.04,
         decoration: BoxDecoration(
 
           border: Border.all(
@@ -505,13 +507,37 @@ width: parentWidth*0.2,
 
           ),
 
-        ), child: Center(child: Text("Post Add +", style: TextStyle(
+        ), child: Center(child: Text("Create Post +", style: TextStyle(
         fontFamily: "Roboto_Medium",
-        fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
         color: Color(0xff3684F0),
         fontWeight: FontWeight.w300,
       ),)),
       ),
     );
   }
+
+  Widget PopularCategories (double parentHeight,double parentWidth){
+    return Column(
+     crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("   Popular Categories",style: TextStyle(
+          fontFamily: "Montserrat-Medium",
+          fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+          color: CommonColor.TextBlack,
+          fontWeight: FontWeight.w600,
+
+        ),),
+        Padding(
+          padding:  EdgeInsets.only(top: parentHeight*0.01,left: parentWidth*0.04),
+          child: Column(
+            children: [
+             CommonWidget(text: "Electronics", texttwo: 'Mobiles & Tab',),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
 }

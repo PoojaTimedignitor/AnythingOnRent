@@ -6,8 +6,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../CommonWidget.dart';
-import '../common_color.dart';
+import '../Common_File/SizeConfig.dart';
+import '../Common_File/common_color.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

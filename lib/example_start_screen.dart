@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'CommonWidget.dart';
+import 'Common_File/SizeConfig.dart';
 import 'animation_screen.dart';
 
 void main() {

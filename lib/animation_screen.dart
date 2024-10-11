@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'CommonWidget.dart';
+import 'Common_File/SizeConfig.dart';
 import 'hole_painter.dart';
 import 'staggered_raindrop_animation.dart';
 
