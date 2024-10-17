@@ -10,4 +10,6 @@ class CommonColor {
   static const SearchBar = Color(0xFF999999);
   static const Black = Color(0xFF000000);
   static const TextBlack = Color(0xFF080808);
+  static const ViewAll = Color(0xFFFFE1E1);
+  static const gray = Color(0xFF606060);
 }

@@ -9,8 +9,10 @@ import 'package:get_storage/get_storage.dart';
 
 import 'ConstantData/Constant_data.dart';
 import 'Home_screen.dart';
+import 'Home_screens.dart';
 import 'MainScreen/onboardingScreen.dart';
 import 'MainScreen/register_screen.dart';
+import 'drop.dart';
 
 
 
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/frame': (BuildContext context) =>  onboardingScreen(),
         /*  '/registration': (BuildContext context) => RegisterScreen(),*/
-          '/homeScreen': (BuildContext context) =>  HomeScreen(),
+          '/homeScreen': (BuildContext context) =>  MyAppss(),
          /* '/rec_dashboard': (BuildContext context) => const ReceiverDashboard(),*/
         }
 

@@ -17,7 +17,7 @@ class BottomNavyBar extends StatelessWidget {
     this.backgroundColor,
     this.shadowColor = Colors.black12,
     this.itemCornerRadius = 50,
-    this.containerHeight = 56,
+    this.containerHeight = 50,
     this.blurRadius = 2,
     this.spreadRadius = 0,
     this.borderRadius,
@@ -108,11 +108,11 @@ class BottomNavyBar extends StatelessWidget {
               offset: shadowOffset,
             ),
         ],
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
-        width: 200,
-        height: SizeConfig.screenHeight*0.09,
+
+        height: SizeConfig.screenHeight*0.084,
         padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 13),
         child: Row(
           mainAxisAlignment: mainAxisAlignment,

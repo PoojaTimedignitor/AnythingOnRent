@@ -5,9 +5,11 @@ import 'SizeConfig.dart';
 class CommonWidget extends StatefulWidget {
   final String text;
   final String texttwo;
+  final String textthree;
+  final String textfour;
 
 
-  const CommonWidget({super.key, required this.text, required this.texttwo});
+  const CommonWidget({super.key, required this.text, required this.texttwo, required this.textthree, required this.textfour});
 
   @override
   State<CommonWidget> createState() => _CommonWidgetState();
@@ -15,6 +17,14 @@ class CommonWidget extends StatefulWidget {
 
 class _CommonWidgetState extends State<CommonWidget> {
 
+  late int tappedIndex;
+
+
+  @override
+  void initState() {
+    super.initState();
+    tappedIndex = 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +33,21 @@ class _CommonWidgetState extends State<CommonWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          height: 60,
-          width: 90,
+          height: 55,
+          width: 80,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black,width: 0.5),
-              borderRadius: BorderRadius.all(Radius.circular(13))
+              border: Border.all(color: Colors.black38,width: 0.5),
+              borderRadius: BorderRadius.all(Radius.circular(10))
 
           ),child: Stack(
 
             children: [
               Padding(
                 padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02),
-                child: Image(image: AssetImage('assets/images/catone.png'),height: 42,width: 78),
+                child: Image(image: AssetImage('assets/images/catone.png'),height: 38,width: 75),
               ),
                 Padding(
-                  padding:  EdgeInsets.only(top: 35),
+                  padding:  EdgeInsets.only(top: 30),
                   child: Center(
                     child: Text(
 
@@ -46,7 +56,7 @@ class _CommonWidgetState extends State<CommonWidget> {
                                     style: TextStyle(
                                       color: CommonColor.Black,
                                       fontFamily: "Roboto_Regular",
-                                      fontSize: SizeConfig.blockSizeHorizontal * 3.0,
+                                      fontSize: SizeConfig.blockSizeHorizontal * 2.7,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -56,28 +66,28 @@ class _CommonWidgetState extends State<CommonWidget> {
           ),
         ),
         Container(
-          height: 60,
-          width: 90,
+          height: 55,
+          width: 80,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black,width: 0.5),
-              borderRadius: BorderRadius.all(Radius.circular(13))
+              border: Border.all(color: Colors.black38,width: 0.5),
+              borderRadius: BorderRadius.all(Radius.circular(10))
 
           ),child: Stack(
 
           children: [
             Padding(
               padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02,bottom: 20),
-              child: Image(image: AssetImage('assets/images/cattwo.png'),height: 62,width: 88),
+              child: Image(image: AssetImage('assets/images/cattwo.png'),height: 72,width: 108),
             ),
             Padding(
-              padding:  EdgeInsets.only(top: 35),
+              padding:  EdgeInsets.only(top: 30),
               child: Center(
                 child: Text (
                   widget.texttwo,
                   style: TextStyle(
                     color: CommonColor.Black,
                     fontFamily: "Roboto_Regular",
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.0,
+                    fontSize: SizeConfig.blockSizeHorizontal * 2.7,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -87,30 +97,30 @@ class _CommonWidgetState extends State<CommonWidget> {
         ),
         ),
         Container(
-          height: 60,
-          width: 90,
+          height: 55,
+          width: 80,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black,width: 0.5),
-              borderRadius: BorderRadius.all(Radius.circular(13))
+              border: Border.all(color: Colors.black38,width: 0.5),
+              borderRadius: BorderRadius.all(Radius.circular(10))
 
           ),child: Stack(
 
           children: [
             Padding(
               padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02),
-              child: Image(image: AssetImage('assets/images/catthree.png'),height: 42,width: 78),
+              child: Image(image: AssetImage('assets/images/catthree.png'),height: 37,width: 75),
             ),
             Padding(
-              padding:  EdgeInsets.only(top: 35),
+              padding:  EdgeInsets.only(top: 30),
               child: Center(
                 child: Text(
 
-                  widget.text,
+                  widget.textthree,
 
                   style: TextStyle(
                     color: CommonColor.Black,
                     fontFamily: "Roboto_Regular",
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.0,
+                    fontSize: SizeConfig.blockSizeHorizontal * 2.7,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -120,30 +130,30 @@ class _CommonWidgetState extends State<CommonWidget> {
         ),
         ),
         Container(
-          height: 60,
-          width: 90,
+          height: 55,
+          width: 80,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black,width: 0.5),
-              borderRadius: BorderRadius.all(Radius.circular(13))
+              border: Border.all(color: Colors.black38,width: 0.5),
+              borderRadius: BorderRadius.all(Radius.circular(10))
 
           ),child: Stack(
 
           children: [
             Padding(
-              padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02),
-              child: const Image(image: AssetImage('assets/images/catfour.png'),height:35,width: 78),
+              padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02,top: SizeConfig.screenHeight*0.002),
+              child: const Image(image: AssetImage('assets/images/catfour.png'),height:30,width: 75),
             ),
             Padding(
-              padding:  EdgeInsets.only(top: 35),
+              padding:  EdgeInsets.only(top: 30),
               child: Center(
                 child: Text(
 
-                  widget.text,
+                  widget.textfour,
 
                   style: TextStyle(
                     color: CommonColor.Black,
                     fontFamily: "Roboto_Regular",
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.0,
+                    fontSize: SizeConfig.blockSizeHorizontal * 2.7,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -156,15 +166,3 @@ class _CommonWidgetState extends State<CommonWidget> {
     );
   }
 }
-
-/*  Text(
-
-                widget.text,
-
-                style: TextStyle(
-                  color: CommonColor.Black,
-                  fontFamily: "Montserrat-Medium",
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),*/

@@ -1,8 +1,10 @@
 import 'package:anything/Home_screen.dart';
+import 'package:anything/Home_screens.dart';
 import 'package:anything/MainScreen/register_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../Common_File/SizeConfig.dart';
+import '../drop.dart';
 import 'onBoardingContent.dart';
 class onboardingScreen extends StatefulWidget {
    onboardingScreen({super.key});
@@ -146,7 +148,7 @@ class _onboardingScreenState extends State<onboardingScreen> {
 
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                                  MaterialPageRoute(builder: (context) => RegisterScreen()),
                                 );
                               },
                               child: Text("START"),
@@ -171,28 +173,6 @@ class _onboardingScreenState extends State<onboardingScreen> {
                         ),
 
 
-                     /*   Container(
-                          height: SizeConfig.screenHeight*0.06,
-                          width: SizeConfig.screenWidth*0.5,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xff61A5A9), Color(0xff9BDADE)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent, // Set the button background to transparent
-                              shadowColor: Colors.transparent, // Remove the shadow for cleaner look
-                              padding: EdgeInsets.all(16.0),
-                            ),
-                            child: Text("START",style: TextStyle(color: Colors.white),),
-                          ),
-
-                      )*/
                       )
                           : Padding(
                         padding: const EdgeInsets.all(30),

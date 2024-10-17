@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:anything/Common_File/common_color.dart';
@@ -13,7 +12,6 @@ import 'login_screen.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -23,7 +21,8 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final fields = <String, dynamic>{};
-  final _fullNameFocus = FocusNode();
+  final _firstNameFocus = FocusNode();
+  final _lastNameFocus = FocusNode();
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
@@ -31,6 +30,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _permanentAddressFocus = FocusNode();
   final _mobileNumber = FocusNode();
   late FocusNode focusNode;
+  final formKey = GlobalKey<FormState>();
+  bool passwordVisible = true;
+  bool cPasswordVisible = true;
+  bool isObscure = false;
+  var chosenValue;
+  final GlobalKey _tooltipKey = GlobalKey();
+  bool showTooltip = true;
+  List<String> gameList = [
+    "Aadhaar Card",
+    "PAN Card",
+    "Driving License",
+    "Passport",
+    "Post Office ID card"
+  ];
+
+  void _validateAndShowTooltip() {
+    if (emailController.text.isEmpty) {
+      final dynamic tooltip = _tooltipKey.currentState;
+      tooltip.ensureTooltipVisible(); // Show the tooltip if validation fails
+    } else if (emailController.text.isEmpty) {
+      setState(() {
+        showTooltip = false;
+      });
+    }
+  }
 
   bool isLoading = false;
 
@@ -53,44 +77,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-
-
   void _showGallaryDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
       context: context,
-      builder: (BuildContext context,) {
+      builder: (
+        BuildContext context,
+      ) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           title: Column(
             children: [
-              /*  Padding(
-                padding: EdgeInsets.only(top: 6),
-                child: Text(
-                  "Choose Option",
-                  style: TextStyle(
-                      height: 1,
-                      fontSize: SizeConfig.blockSizeHorizontal * 5.0,
-                      fontFamily: 'Roboto_Medium',
-                      fontWeight: FontWeight.w400,
-                      color: CommonColor.black),
-                ),
-              ),*/
               Column(
                 //   crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Navigator.of(context).pop();
                       _pickImage(ImageSource.camera);
                     },
                     child: Row(
-
                       children: [
                         Padding(
-                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.024),
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.024),
                           child: Icon(
                             Icons.camera_alt_outlined,
                             size: SizeConfig.screenHeight * 0.03,
@@ -98,7 +110,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         Padding(
-                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.024,left: SizeConfig.screenHeight*0.024),
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.024,
+                              left: SizeConfig.screenHeight * 0.024),
                           child: Text(
                             "Camera",
                             style: TextStyle(
@@ -113,15 +127,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Navigator.of(context).pop();
                       _pickImage(ImageSource.gallery);
                     },
                     child: Row(
-
                       children: [
                         Padding(
-                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.0),
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.0),
                           child: Icon(
                             Icons.camera_alt_outlined,
                             size: SizeConfig.screenHeight * 0.03,
@@ -129,7 +143,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         Padding(
-                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.0,left: SizeConfig.screenHeight*0.024),
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.0,
+                              left: SizeConfig.screenHeight * 0.024),
                           child: Text(
                             "Picture and Video Library",
                             style: TextStyle(
@@ -143,10 +159,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ],
                     ),
                   ),
-
                 ],
               ),
-
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
@@ -154,23 +168,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Get.to(() => const  SignIn());*/
                 },
                 child: Padding(
-                  padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.02),
+                  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                   child: Container(
-                    width: SizeConfig.screenWidth*0.3,
+                    width: SizeConfig.screenWidth * 0.3,
                     decoration: BoxDecoration(
-
                       borderRadius: BorderRadius.circular(10),
                       // color: Colors.white,
 
                       gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
-                       // stops: [0.8, 0.9],
+                        // stops: [0.8, 0.9],
                         colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
                       ),
 
                       color: Color(0xffFF8B8B),
-
                     ),
                     child: Center(
                       child: Text(
@@ -193,9 +205,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-
-
-  TextEditingController fullNameController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
@@ -203,29 +214,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController permanentAddressController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
 
-
-
-
   @override
   void initState() {
     super.initState();
-
-    if(mounted){
+    passwordVisible = true;
+    cPasswordVisible = true;
+    if (mounted) {
       setState(() {
         isLoading = true;
       });
     }
 
-  /*  if(mounted){
+    /*  if(mounted){
       setState(() {
         isLoading = true;
       });
     }*/
-   // print("dddd   $RegisterLocalDataStore");
-   // RegisterLocalDataStore();
+    // print("dddd   $RegisterLocalDataStore");
+    // RegisterLocalDataStore();
     focusNode = FocusNode();
     focusNode.addListener(() => setState(() {}));
-    fullNameController = TextEditingController();
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+
     emailController = TextEditingController();
     passwordController = TextEditingController();
     confirmPasswordController = TextEditingController();
@@ -234,18 +245,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     mobileNumberController = TextEditingController();
   }
 
+
   @override
   void dispose() {
-    fullNameController.dispose();
+    _firstNameFocus.dispose();
+    _lastNameFocus.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    //fullNameController.dispose();
 
     super.dispose();
   }
 
-
   final _formKey = GlobalKey<FormState>();
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +282,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               RegisterContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
               NameData(SizeConfig.screenHeight, SizeConfig.screenWidth),
-              Visibility(
+              /*Visibility(
 
                 visible: isLoading,
                 child: Center(child:  Column(
@@ -296,10 +308,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     )
                   ],
                 ),),
-              )
+              )*/
             ],
-
-
           ),
           /*    GestureDetector(
 
@@ -316,23 +326,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           Padding(
             padding: EdgeInsets.only(
-                left: parentWidth * 0.49, top: parentHeight * 0.04),
+                left: parentWidth * 0.49, top: parentHeight * 0.03),
             child: PhysicalShape(
               color: Color(0xffd2ddf4),
               shadowColor: Colors.black.withOpacity(0.6),
               elevation: 10,
               clipper: ShapeBorderClipper(shape: CircleBorder()),
               child: Container(
-                height: 180,
-                width: 180,
+                height: 150,
+                width: 150,
               ),
             ),
           ),
           Align(
             alignment: Alignment.topRight,
             child: Container(
-              width: SizeConfig.screenWidth * 0.36,
-              height: SizeConfig.screenHeight * 0.15,
+              width: SizeConfig.screenWidth * 0.35,
+              height: SizeConfig.screenHeight * 0.12,
               decoration: BoxDecoration(
                   borderRadius:
                       BorderRadius.only(bottomLeft: Radius.circular(100)),
@@ -341,16 +351,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-                left: parentWidth * 0.7, top: parentHeight * 0.07),
+                left: parentWidth * 0.7, top: parentHeight * 0.03),
             child: Image(
               image: AssetImage('assets/images/register.png'),
-              height: parentHeight * 0.35,
-              width: parentWidth * 0.7,
+              height: parentHeight * 0.25,
             ),
           ),
           Padding(
             padding: EdgeInsets.only(
-                top: parentHeight * 0.08, left: parentHeight * 0.02),
+                top: parentHeight * 0.05, left: parentHeight * 0.02),
             child: Text(
               "Welcome Back",
               style: TextStyle(
@@ -363,7 +372,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-                top: parentHeight * 0.12, left: parentHeight * 0.02),
+                top: parentHeight * 0.09, left: parentHeight * 0.02),
             child: Text(
               "Create Account",
               style: TextStyle(
@@ -376,19 +385,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(
-                top: parentHeight * 0.28, left: parentWidth * 0.4),
+                top: parentHeight * 0.20, left: parentWidth * 0.4),
             child: CircleAvatar(
-              radius: 34,
+              radius: 32,
               backgroundImage: AssetImage("assets/images/profile.png"),
               child: Stack(children: [
                 Align(
                   alignment: Alignment.bottomRight,
                   child: CircleAvatar(
-                    radius: 9,
-                    backgroundColor: Colors.white,
+                    radius: 11,
+                    backgroundColor: Colors.transparent,
                     child: Icon(
                       CupertinoIcons.camera,
-                      size: 18,
+
+                      size: 20,
                     ),
                   ),
                 ),
@@ -402,9 +412,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget RegisterContent(double parentHeight, double parentWidth) {
     return Padding(
-        padding: EdgeInsets.only(top: parentHeight * 0.35),
+        padding: EdgeInsets.only(top: parentHeight * 0.28),
         child: Container(
-          height: parentHeight * 0.65,
+          //height: parentHeight * 0.82,
           width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -427,71 +437,132 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget Register(double parentHeight, double parentWidth) {
     return Padding(
-      padding:
-          EdgeInsets.only(top: parentHeight * 0.06, left: parentWidth * 0.05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Full Name",
-            style: TextStyle(
-              color: CommonColor.RegisterText,
-              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-              fontWeight: FontWeight.normal,
-              fontFamily: 'Roboto-Regular',
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: parentHeight * 0.01,
-                left: parentWidth * 0.0,
-                right: parentWidth * 0.04),
-            child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
-                child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    controller: fullNameController,
-                    focusNode: _fullNameFocus,
-                    autocorrect: true,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      prefixIcon: IconButton(
-                          onPressed: () {},
-                          icon: Image(
-                            image: AssetImage('assets/images/user.png'),
-                            height: 20,
-                          )),
-                      hintText: 'Full Name',
-                      contentPadding: EdgeInsets.only(
-                        left: parentWidth * 0.04,
+        padding:
+            EdgeInsets.only(top: parentHeight * 0.04, left: parentWidth * 0.05),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "First Name",
+                      style: TextStyle(
+                        color: CommonColor.RegisterText,
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Roboto-Regular',
                       ),
-                      hintStyle: TextStyle(
-                        fontFamily: "Roboto_Regular",
-                        color: Color(0xff7D7B7B),
-                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        // color: CommonColor.DIVIDER_COLOR,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: parentHeight * 0.01,
+                          left: parentWidth * 0.0,
+                          right: parentWidth * 0.04),
+                      child: Container(
+                        decoration: BoxDecoration(boxShadow: [
+                          BoxShadow(
+                              spreadRadius: 0,
+                              blurRadius: 7,
+                              color: Colors.black26)
+                        ]),
+                        child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            controller: firstNameController,
+                            autocorrect: true,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              hintText: 'First Name',
+                              contentPadding: EdgeInsets.only(
+                                left: parentWidth * 0.04,
+                              ),
+                              hintStyle: TextStyle(
+                                fontFamily: "Roboto_Regular",
+                                color: Color(0xff7D7B7B),
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                // color: CommonColor.DIVIDER_COLOR,
+                              ),
+                              fillColor: Color(0xfffbf2f2),
+                              hoverColor: Colors.white,
+                              filled: true,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black12, width: 1),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            )),
                       ),
-                      fillColor: Color(0xffFFF0F0),
-                      hoverColor: Colors.white,
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10.0)),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black12, width: 1),
-                        borderRadius: BorderRadius.circular(10.0),
+                    )
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Last Name",
+                      style: TextStyle(
+                        color: CommonColor.RegisterText,
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Roboto-Regular',
                       ),
-                    ))),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: parentHeight * 0.01,
+                          left: parentWidth * 0.0,
+                          right: parentWidth * 0.04),
+                      child: Container(
+                          decoration: BoxDecoration(boxShadow: [
+                            BoxShadow(
+                                spreadRadius: 0,
+                                blurRadius: 7,
+                                color: Colors.black26)
+                          ]),
+                          child: TextFormField(
+                              keyboardType: TextInputType.text,
+                              controller: lastNameController,
+                              autocorrect: true,
+                              textInputAction: TextInputAction.next,
+                              decoration: InputDecoration(
+                                hintText: 'Last Name',
+                                contentPadding: EdgeInsets.only(
+                                  left: parentWidth * 0.04,
+                                ),
+                                hintStyle: TextStyle(
+                                  fontFamily: "Roboto_Regular",
+                                  color: Color(0xff7D7B7B),
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.5,
+                                  // color: CommonColor.DIVIDER_COLOR,
+                                ),
+                                fillColor: Color(0xffFFF0F0),
+                                hoverColor: Colors.white,
+                                filled: true,
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black12, width: 1),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ))),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          SizedBox(
-            height: parentHeight * 0.020,
-          ),
+          SizedBox(height: 15),
           Text(
             "Email",
             style: TextStyle(
@@ -515,11 +586,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
+                    focusNode: _emailFocus,
                     keyboardType: TextInputType.text,
                     controller: emailController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
+                      isDense: true,
                       prefixIcon: IconButton(
                           onPressed: () {},
                           icon: Image(
@@ -574,7 +647,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
-                  controller: passwordController,
+                    obscureText: passwordVisible,
+                    focusNode: _passwordFocus,
+                    controller: passwordController,
                     keyboardType: TextInputType.text,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -583,14 +658,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           onPressed: () {},
                           icon: Image(
                             image: AssetImage('assets/images/user.png'),
-                            height: 20,
+                            // height: 20,
                           )),
-                      suffixIcon: IconButton(
-                          onPressed: () {},
-                          icon: Image(
-                            image: AssetImage('assets/images/eye.png'),
-                            height: 30,
-                          )),
+                      suffixIcon: Container(
+                        height: 10,
+                        width: 10,
+                        child: IconButton(
+                          icon: Icon(passwordVisible
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: () {
+                            setState(
+                              () {
+                                isObscure = !isObscure;
+                                passwordVisible = !passwordVisible;
+                              },
+                            );
+                          },
+                        ),
+                      ),
                       hintText: 'Password',
                       contentPadding: EdgeInsets.only(
                         left: parentWidth * 0.04,
@@ -639,7 +725,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
+                   obscureText:  cPasswordVisible,
                     keyboardType: TextInputType.text,
+                    focusNode: _confirmPasswordFocus,
                     controller: confirmPasswordController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -651,11 +739,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 20,
                           )),
                       suffixIcon: IconButton(
-                          onPressed: () {},
-                          icon: Image(
-                            image: AssetImage('assets/images/hidden.png'),
-                            height: 30,
-                          )),
+                        icon: Icon(cPasswordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        onPressed: () {
+                          setState(
+                                () {
+                              isObscure = !isObscure;
+                              cPasswordVisible = !cPasswordVisible;
+                            },
+                          );
+                        },
+                      ),
                       hintText: 'Confirm password',
                       contentPadding: EdgeInsets.only(
                         left: parentWidth * 0.04,
@@ -705,6 +800,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ]),
                 child: TextFormField(
                     keyboardType: TextInputType.text,
+                    focusNode: _addressFocus,
                     controller: addressController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -764,6 +860,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ]),
                 child: TextFormField(
                     keyboardType: TextInputType.text,
+                    focusNode: _permanentAddressFocus,
                     controller: permanentAddressController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -822,8 +919,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.number,
                     autocorrect: true,
+                    focusNode: _mobileNumber,
                     controller: mobileNumberController,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
@@ -867,14 +965,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
               fontFamily: 'Roboto-Medium',
             ),
           ),
-          Padding(
+          /*  Padding(
             padding: EdgeInsets.only(
-                right: parentWidth * 0.05, top: parentHeight * 0.01),
+                right: parentWidth * 0.0, top: parentHeight * 0.01),
             child: Text(
-              "No need to pay for furniture assembly. We will install your furniture for free",
+              "Upload the following documents to get products/services",
               style: TextStyle(
                 color: Color(0xff454545),
-                fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                fontSize: SizeConfig.blockSizeHorizontal * 3.2,
+                // fontWeight: FontWeight.normal,
+
+                fontFamily: 'Roboto-Regular',
+              ),
+            ),
+          ),*/
+          Padding(
+            padding: EdgeInsets.only(
+                right: parentWidth * 0.0, top: parentHeight * 0.01),
+            child: Text(
+              "(Kindly Upload the documents either in JPEG, PNG format)",
+              style: TextStyle(
+                color: Color(0xff454545),
+                fontSize: SizeConfig.blockSizeHorizontal * 3.2,
                 // fontWeight: FontWeight.normal,
 
                 fontFamily: 'Roboto-Regular',
@@ -882,54 +994,244 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           SizedBox(height: 15),
-          Row(
+          Padding(
+            padding: EdgeInsets.only(left: parentWidth * 0.03),
+            child: Row(
+              children: [
+                Image(
+                  image: AssetImage('assets/images/payment.png'),
+                  height: parentHeight * 0.03,
+                  color: Colors.blueAccent,
+                ),
+                Text(
+                  "  ID Proof",
+                  style: TextStyle(
+                      fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                      fontFamily: 'Poppins_Medium',
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
+              Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Form(
+                  key: formKey,
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      contentPadding:
+                          const EdgeInsets.only(right: 10, left: 10),
+                      border: const OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.black45, width: 0.8),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.black45, width: 0.8),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.black45, width: 0.8),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(width: 0.8, color: Colors.red),
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    elevation: 1,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Select game';
+                      } else {
+                        return null;
+                      }
+                    },
+                    isExpanded: true,
+                    hint: Text(
+                      "Select anyone",
+                      style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                          fontFamily: 'Poppins_Medium',
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black45),
+                    ),
+                    iconSize: 30,
+                    iconEnabledColor: Colors.black87,
+                    icon: const Icon(
+                      Icons.arrow_drop_down_sharp,
+                      size: 15,
+                    ),
+                    value: chosenValue,
+                    items:
+                        gameList.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                              fontSize: SizeConfig.blockSizeHorizontal * 3.6,
+                              fontFamily: 'Poppins_Medium',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black87),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        chosenValue = value;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(height: 30),
+              Row(
                 children: [
-                  Container(
-                      width: parentWidth * 0.42,
-                      // padding: EdgeInsets.all(20), //padding of outer Container
-                      child: DottedBorder(
-                        borderType: BorderType.RRect,
-                        radius: Radius.circular(10),
+                  Column(
+                    children: [
+                      Container(
+                          width: parentWidth * 0.42,
+                          // padding: EdgeInsets.all(20), //padding of outer Container
+                          child: DottedBorder(
+                            borderType: BorderType.RRect,
+                            radius: Radius.circular(10),
 
-                        color: CommonColor.Blue, //color of dotted/dash line
-                        strokeWidth: 1, //thickness of dash/dots
-                        dashPattern: [4, 5],
-                        //dash patterns, 10 is dash width, 6 is space width
-                        child: Container(
-                          //inner container
-                          height: 120, //height of inner container
-                          width: double.infinity,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(top: parentHeight * 0.01),
-                                child: Image(
-                                    image:
-                                        AssetImage('assets/images/camera.png'),
-                                    height: parentHeight * 0.05),
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(top: parentHeight * 0.01),
-                                child: Text("Drag and Drop Files here or",
-                                    style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal *
-                                                2.5,
-                                        fontFamily: 'Roboto_Regular',
-                                        fontWeight: FontWeight.w400,
-                                        //overflow: TextOverflow.ellipsis,
-                                        color: Colors.black)),
-                              ),
-                              SizedBox(height: 10),
-                              GestureDetector(
-                                onTap: (){
-                                  _showGallaryDialogBox(context);
-                                },
-                                child: Container(
+                            color: CommonColor.Blue, //color of dotted/dash line
+                            strokeWidth: 1, //thickness of dash/dots
+                            dashPattern: [4, 5],
+                            //dash patterns, 10 is dash width, 6 is space width
+                            child: Container(
+                              //inner container
+                              height: 120, //height of inner container
+                              width: double.infinity,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: parentHeight * 0.01),
+                                    child: Image(
+                                        image: AssetImage(
+                                            'assets/images/camera.png'),
+                                        height: parentHeight * 0.05),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: parentHeight * 0.01),
+                                    child: Text("Drag and Drop Files here or",
+                                        style: TextStyle(
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    2.5,
+                                            fontFamily: 'Roboto_Regular',
+                                            fontWeight: FontWeight.w400,
+                                            //overflow: TextOverflow.ellipsis,
+                                            color: Colors.black)),
+                                  ),
+                                  SizedBox(height: 10),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _showGallaryDialogBox(context);
+                                    },
+                                    child: Container(
+                                      height: 28,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: CommonColor.Blue),
+                                        borderRadius: BorderRadius.circular(7),
+                                      ),
+                                      child: Center(
+                                        child: Text("Browser file",
+                                            style: TextStyle(
+                                                fontSize: SizeConfig
+                                                        .blockSizeHorizontal *
+                                                    2.5,
+                                                fontFamily: 'Roboto_Regular',
+                                                fontWeight: FontWeight.w400,
+                                                //overflow: TextOverflow.ellipsis,
+                                                color: CommonColor.Blue)),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ), //width to 100% match to parent container.
+                              // color:Colors.yellow //background color of inner container
+                            ),
+                          )),
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: EdgeInsets.only(left: parentHeight * 0.0),
+                        child: Text(
+                          "Front Side",
+                          style: TextStyle(
+                            color: Color(0xff242222),
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.2,
+                            // fontWeight: FontWeight.w500,
+                            fontFamily: 'Montserrat-Regular',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 20),
+                  Column(
+                    children: [
+                      Container(
+                        width: parentWidth *
+                            0.42, // padding: EdgeInsets.all(20), //padding of outer Container
+                        child: DottedBorder(
+                          borderType: BorderType.RRect,
+                          radius: Radius.circular(10),
+
+                          color: CommonColor.Blue, //color of dotted/dash line
+                          strokeWidth: 1, //thickness of dash/dots
+                          dashPattern: [4, 5],
+                          //dash patterns, 10 is dash width, 6 is space width
+                          child: Container(
+                            //inner container
+                            height: 120, //height of inner container
+                            width: double.infinity,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: parentHeight * 0.01),
+                                  child: Image(
+                                      image: AssetImage(
+                                          'assets/images/camera.png'),
+                                      height: parentHeight * 0.05),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: parentHeight * 0.01),
+                                  child: Text("Drag and Drop Files here or",
+                                      style: TextStyle(
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  2.5,
+                                          fontFamily: 'Roboto_Regular',
+                                          fontWeight: FontWeight.w400,
+                                          //overflow: TextOverflow.ellipsis,
+                                          color: Colors.black)),
+                                ),
+                                SizedBox(height: 10),
+                                Container(
                                   height: 28,
                                   width: 100,
                                   decoration: BoxDecoration(
@@ -948,120 +1250,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             color: CommonColor.Blue)),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ), //width to 100% match to parent container.
-                          // color:Colors.yellow //background color of inner container
+                              ],
+                            ), //width to 100% match to parent container.
+                            // color:Colors.yellow //background color of inner container
+                          ),
                         ),
-                      )),
-                  SizedBox(height: 10),
-                  Padding(
-                    padding: EdgeInsets.only(left: parentHeight * 0.0),
-                    child: Text(
-                      "Front Side",
-                      style: TextStyle(
-                        color: Color(0xff242222),
-                        fontSize: SizeConfig.blockSizeHorizontal * 3.2,
-                        // fontWeight: FontWeight.w500,
-                        fontFamily: 'Montserrat-Regular',
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 20),
-              Column(
-                children: [
-                  Container(
-                    width: parentWidth *
-                        0.42, // padding: EdgeInsets.all(20), //padding of outer Container
-                    child: DottedBorder(
-                      borderType: BorderType.RRect,
-                      radius: Radius.circular(10),
-
-                      color: CommonColor.Blue, //color of dotted/dash line
-                      strokeWidth: 1, //thickness of dash/dots
-                      dashPattern: [4, 5],
-                      //dash patterns, 10 is dash width, 6 is space width
-                      child: Container(
-                        //inner container
-                        height: 120, //height of inner container
-                        width: double.infinity,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(top: parentHeight * 0.01),
-                              child: Image(
-                                  image: AssetImage('assets/images/camera.png'),
-                                  height: parentHeight * 0.05),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(top: parentHeight * 0.01),
-                              child: Text("Drag and Drop Files here or",
-                                  style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 2.5,
-                                      fontFamily: 'Roboto_Regular',
-                                      fontWeight: FontWeight.w400,
-                                      //overflow: TextOverflow.ellipsis,
-                                      color: Colors.black)),
-                            ),
-                            SizedBox(height: 10),
-                            Container(
-                              height: 28,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: CommonColor.Blue),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              child: Center(
-                                child: Text("Browser file",
-                                    style: TextStyle(
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal *
-                                                2.5,
-                                        fontFamily: 'Roboto_Regular',
-                                        fontWeight: FontWeight.w400,
-                                        //overflow: TextOverflow.ellipsis,
-                                        color: CommonColor.Blue)),
-                              ),
-                            ),
-                          ],
-                        ), //width to 100% match to parent container.
-                        // color:Colors.yellow //background color of inner container
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: EdgeInsets.only(left: parentHeight * 0.0),
+                        child: Text(
+                          "Back Side",
+                          style: TextStyle(
+                            color: Color(0xff242222),
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.2,
+                            // fontWeight: FontWeight.w500,
+                            fontFamily: 'Montserrat-Regular',
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Padding(
-                    padding: EdgeInsets.only(left: parentHeight * 0.0),
-                    child: Text(
-                      "Back Side",
-                      style: TextStyle(
-                        color: Color(0xff242222),
-                        fontSize: SizeConfig.blockSizeHorizontal * 3.2,
-                        // fontWeight: FontWeight.w500,
-                        fontFamily: 'Montserrat-Regular',
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
             ],
-          ),
-        ],
-      ),
-    );
+          )
+        ]));
   }
 
   Widget RegisterButton(double parentWidth, double parentHeight) {
     return GestureDetector(
-
-        onTap: () {
-
-    /*  if (passwordController.text != confirmPasswordController.text) {
+      onTap: () {
+        /*  if (passwordController.text != confirmPasswordController.text) {
         print("Error: Password and Confirm Password do not match");
         // You can also show a UI error message here
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1070,81 +1290,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }*/
 
-         /* if(mounted){
+        /* if(mounted){
             setState(() {
               isLoading = true;
             });
           }*/
-
+        final isValid = formKey.currentState!.validate();
+        if (!isValid) return;
 /*else {*/
-            print("Full Name: ${fullNameController.text}");
-            print("email: ${emailController.text}");
-            print("password: ${passwordController.text}");
-            print("cpassword: ${confirmPasswordController.text}");
-            print("address: ${addressController.text}");
-            print("mobile: ${mobileNumberController.text}");
-            ApiClients().registerDio(
-              fullNameController.text,
-              emailController.text,
-              passwordController.text,
-              confirmPasswordController.text,
-              mobileNumberController.text,
-              addressController.text,
-              permanentAddressController.text,
+        // print("Full Name: ${fullNameController.text}");
+        print("email: ${emailController.text}");
+        print("password: ${passwordController.text}");
+        print("cpassword: ${confirmPasswordController.text}");
+        print("address: ${addressController.text}");
+        print("mobile: ${mobileNumberController.text}");
+        ApiClients()
+            .registerDio(
+          // fullNameController.text,
+          emailController.text,
+          passwordController.text,
+          confirmPasswordController.text,
+          mobileNumberController.text,
+          addressController.text,
+          permanentAddressController.text,
+        )
+            .then((value) {
+          //  if (value.isEmpty) return;
+          print("token...${value['token']}");
+          print(value['data']);
+          print("Loading: $isLoading");
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+            });
+          }
 
-            ).then((value) {
-              //  if (value.isEmpty) return;
-              print("token...${value['token']}");
-              print(value['data']);
-              print("Loading: $isLoading");
-              if (mounted) {
-                setState(() {
-                  isLoading = false;
-                });
-              }
+          if (value['success'] == true) {
+            print("..aaaass ${value['newUser']['userId']}");
 
+            GetStorage().write(ConstantData.Username, value['newUser']['name']);
+            GetStorage().write(ConstantData.UserId, value['newUser']['userId']);
+            GetStorage()
+                .write(ConstantData.Useremail, value['newUser']['email']);
+            GetStorage()
+                .write(ConstantData.Userpassword, value['newUser']['password']);
+            GetStorage().write(
+                ConstantData.UserCpassword, value['newUser']['cpassword']);
+            GetStorage().write(ConstantData.UserCurrentAddress,
+                value['newUser']['currentAddress']);
+            GetStorage().write(ConstantData.UserParmanentAddress,
+                value['newUser']['permanentAddress']);
+            GetStorage().write(
+                ConstantData.UserMobile, value['newUser']['PhoneNumber']);
 
-              if (value['success'] == true) {
-                print("..aaaass ${ value['newUser']['userId']}");
+            // print("numVal ${value['data']}");
 
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()));
+            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
+          }
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+            });
+          }
+        });
+        // }
+      },
 
-                GetStorage().write(
-                    ConstantData.Username, value['newUser']['name']);
-                GetStorage().write(
-                    ConstantData.UserId, value['newUser']['userId']);
-                GetStorage().write(
-                    ConstantData.Useremail, value['newUser']['email']);
-                GetStorage().write(
-                    ConstantData.Userpassword, value['newUser']['password']);
-                GetStorage().write(
-                    ConstantData.UserCpassword, value['newUser']['cpassword']);
-                GetStorage().write(ConstantData.UserCurrentAddress,
-                    value['newUser']['currentAddress']);
-                GetStorage().write(ConstantData.UserParmanentAddress,
-                    value['newUser']['permanentAddress']);
-                GetStorage().write(
-                    ConstantData.UserMobile, value['newUser']['PhoneNumber']);
-
-
-                // print("numVal ${value['data']}");
-
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
-                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
-              }
-              if(mounted){
-                setState(() {
-                  isLoading = false;
-                });
-              }
-            }
-            );
-         // }
-              },
-
-
-       /* if (showCustomTooltip)
+      /* if (showCustomTooltip)
     Positioned(
       right: 0,
       child: CustomTooltip(
@@ -1156,7 +1370,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         },
       ),
     ),*/
-
 
       child: Padding(
         padding: EdgeInsets.only(

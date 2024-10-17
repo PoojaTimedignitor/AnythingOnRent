@@ -390,7 +390,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Navigate to the home screen upon successful login
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(builder: (context) => const Zoom()),
           );
         } else if(value['success'] == false) {
           print("Email or password does not match");

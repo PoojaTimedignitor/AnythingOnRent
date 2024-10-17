@@ -6,25 +6,25 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'bottomNavigationBar.dart';
 import 'Common_File/common_color.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class Zoom extends StatefulWidget {
+  const Zoom({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<Zoom> createState() => _ZoomState();
 }
 
-
-class _HomeScreenState extends State<HomeScreen> {
+class _ZoomState extends State<Zoom> {
   final _searchFocus = FocusNode();
   final searchController = TextEditingController();
   int currentIndex = 0;
   int _currentIndex = 0;
   int _counter = 0;
 
-
   final List<String> images = [
-    "https://img.freepik.com/free-vector/gradient-car-rental-twitch-background_23-2149238538.jpg?w=1380&t=st=1724674607~exp=1724675207~hmac=0ab319f9d9411c32c9d26508151d51f62139e048ac598796c8463dac3ef0aad7"'https://img.freepik.com/free-vector/real-estate-landing-page_23-2148686374.jpg?w=1380&t=st=1724741972~exp=1724742572~hmac=e21195893cb55e204d9618c983abd7d4d1dc18402402af3dbe0420bd08d6ad33',
-    "https://img.freepik.com/free-vector/hand-drawn-real-estate-poster-template_23-2149845735.jpg?w=740&t=st=1724742124~exp=1724742724~hmac=3920ca483a7e7dc65a3006016da9687799d3d72e35d5a70af985ce681bbdfc49"'https://images.pexels.com/photos/3757226/pexels-photo-3757226.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    "https://img.freepik.com/free-vector/gradient-car-rental-twitch-background_23-2149238538.jpg?w=1380&t=st=1724674607~exp=1724675207~hmac=0ab319f9d9411c32c9d26508151d51f62139e048ac598796c8463dac3ef0aad7"
+        'https://img.freepik.com/free-vector/real-estate-landing-page_23-2148686374.jpg?w=1380&t=st=1724741972~exp=1724742572~hmac=e21195893cb55e204d9618c983abd7d4d1dc18402402af3dbe0420bd08d6ad33',
+    "https://img.freepik.com/free-vector/hand-drawn-real-estate-poster-template_23-2149845735.jpg?w=740&t=st=1724742124~exp=1724742724~hmac=3920ca483a7e7dc65a3006016da9687799d3d72e35d5a70af985ce681bbdfc49"
+        'https://images.pexels.com/photos/3757226/pexels-photo-3757226.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     'https://images.pexels.com/photos/13065690/pexels-photo-13065690.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     'https://images.pexels.com/photos/372810/pexels-photo-372810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     'https://images.pexels.com/photos/4489702/pexels-photo-4489702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
@@ -43,36 +43,33 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-
-
         padding: EdgeInsets.zero,
         children: [
-          getAddMainHeadingLayout(SizeConfig.screenHeight, SizeConfig.screenWidth),
+          getAddMainHeadingLayout(
+              SizeConfig.screenHeight, SizeConfig.screenWidth),
           HomeSearchBar(SizeConfig.screenHeight, SizeConfig.screenWidth),
           sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
           AddPostButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
           PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
-
-
           Stack(
             children: [
               Padding(
-                padding:
-                EdgeInsets.only(left: SizeConfig.screenWidth * 0.68, top: 289),
+                padding: EdgeInsets.only(
+                    left: SizeConfig.screenWidth * 0.68, top: 190),
                 child: Image(
                   image: AssetImage('assets/images/home.png'),
                   height: SizeConfig.screenHeight * 0.220,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.75),
+                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.55),
                 child: Image(
                   image: AssetImage('assets/images/homecircle.png'),
                   height: SizeConfig.screenHeight * 0.150,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.91),
+                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.71),
                 child: Image(
                   image: AssetImage('assets/images/homecircle.png'),
                   height: SizeConfig.screenHeight * 0.150,
@@ -85,14 +82,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 25),
+        child: Container(
+          height: 60,
 
-    floatingActionButton: Padding(
-      padding: const EdgeInsets.only(bottom: 25),
-      child: Container(
-
-
-          height: 63,
-          width: 63,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
@@ -102,77 +96,95 @@ class _HomeScreenState extends State<HomeScreen> {
               colors: [Color(0xffC291EE), Color(0xff8E55C1)],
             ),
           ),
-        child: FloatingActionButton(
-
-          shape: CircleBorder(),
-          heroTag: GestureDetector(
+          child: FloatingActionButton(
+            shape: CircleBorder(),
+            heroTag: GestureDetector(
               onTap: () {},
-             ),
-         /*Color(0xffC291EE)*/
-        onPressed: _incrementCounter,
+            ),
+            /*Color(0xffC291EE)*/
+            onPressed: _incrementCounter,
 
-
-          backgroundColor: Colors.transparent,
-               // tooltip: 'Increment',
-        child: Icon(Icons.add,color: Colors.white,size: 25,),
+            backgroundColor: Colors.transparent,
+            // tooltip: 'Increment',
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 25,
+            ),
+          ),
         ),
       ),
-    ),
       bottomNavigationBar: Padding(
-        padding:  EdgeInsets.only(left: 10,right: 10,bottom: 20),
+        padding: EdgeInsets.only(left: 10, right: 10, bottom: 20),
         child: BottomNavyBar(
           showInactiveTitle: true,
           selectedIndex: _currentIndex,
           showElevation: true,
-       itemPadding: EdgeInsets.symmetric(horizontal: 0),
-
+          itemPadding: EdgeInsets.symmetric(horizontal: 0),
           itemCornerRadius: 24,
           iconSize: 20,
           curve: Curves.easeIn,
           onItemSelected: (index) => setState(() => _currentIndex = index),
           items: <BottomNavyBarItem>[
             BottomNavyBarItem(
+
                 icon: Padding(
-                  padding:  EdgeInsets.all(6.0),
-                  child: Icon(Icons.home,color: Colors.black),
+                  padding: EdgeInsets.all(6.0),
+                  child: Icon(Icons.home, color: Colors.black,size: 17),
                 ),
-                title: Text('Home'),
+                title: Text('Home',style: TextStyle(
+                    fontSize: SizeConfig.blockSizeHorizontal * 3.4,
+                    fontFamily: 'Roboto_Medium',
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black
+                ),),
                 activeBackgroundColor: Colors.white,
-                activeTextColor:Colors.black87,
-                textAlign: TextAlign.center
-            ),
+                activeTextColor: Colors.black87,
+
+                textAlign: TextAlign.center),
             BottomNavyBarItem(
               icon: Padding(
-                padding:  EdgeInsets.all(6.0),
-                child: Icon(Icons.search,color: Colors.black),
+                padding: EdgeInsets.all(6.0),
+                child: Icon(Icons.search, color: Colors.black,size: 17,),
               ),
-              title: Text('Search'),
-              activeTextColor:Colors.black87,
+              title: Text('Search',style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal * 3.4,
+                  fontFamily: 'Roboto_Medium',
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black
+              ),),
+              activeTextColor: Colors.black87,
               activeBackgroundColor: Colors.white,
               textAlign: TextAlign.center,
             ),
-
             BottomNavyBarItem(
               icon: Padding(
-                padding:  EdgeInsets.all(6.0),
-                child:Image(
-                    image: AssetImage('assets/images/like.png'),color: Colors.black,height: 18,),
+                padding: EdgeInsets.all(6.0),
+                child: Image(
+                  image: AssetImage('assets/images/like.png'),
+                  color: Colors.black,
+                  height: 18,
+                ),
               ),
               title: Text(
-                'Favorite',
+                'Favorite',style: TextStyle(
+                  fontSize: SizeConfig.blockSizeHorizontal * 3.4,
+                  fontFamily: 'Roboto_Medium',
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black
               ),
-              activeTextColor:Colors.black,
+              ),
+              activeTextColor: Colors.black,
               textAlign: TextAlign.center,
               activeBackgroundColor: Colors.white,
             ),
             BottomNavyBarItem(
               icon: Padding(
-                padding:  EdgeInsets.all(6.0),
-                child: Icon(Icons.settings,color: Colors.black),
+                padding: EdgeInsets.all(6.0),
+                child: Icon(Icons.settings, color: Colors.black,size: 17),
               ),
-              title: Text('Settings'),
-
-              activeTextColor:Colors.black87,
+              title: Text('Settings',),
+              activeTextColor: Colors.black87,
               activeBackgroundColor: Colors.white,
               textAlign: TextAlign.center,
             ),
@@ -181,7 +193,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 
   Widget getAddMainHeadingLayout(double parentHeight, double parentWidth) {
     return Row(
@@ -261,16 +272,13 @@ class _HomeScreenState extends State<HomeScreen> {
               left: SizeConfig.screenWidth * .05,
               top: SizeConfig.screenHeight * 0.015),
           child: Container(
-          //  height: SizeConfig.screenHeight * .065,
+            //  height: SizeConfig.screenHeight * .065,
             width: parentWidth - (SizeConfig.screenWidth * .23),
             child: Row(
               children: [
-
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(
-
-                        right: parentWidth * 0.04),
+                    padding: EdgeInsets.only(right: parentWidth * 0.04),
                     child: Container(
                         decoration: BoxDecoration(boxShadow: [
                           BoxShadow(
@@ -290,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onPressed: () {},
                                   icon: Image(
                                     image:
-                                    AssetImage("assets/images/search.png"),
+                                        AssetImage("assets/images/search.png"),
                                     height: SizeConfig.screenWidth * 0.07,
                                   )),
                               hintText: "Search Product/Service",
@@ -316,13 +324,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   borderSide: BorderSide.none,
                                   borderRadius: BorderRadius.circular(10.0)),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black12, width: 1),
+                                borderSide:
+                                    BorderSide(color: Colors.black12, width: 1),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ))),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -391,10 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               initialPage: 1,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * .20,
+              height: MediaQuery.of(context).size.height * .20,
               viewportFraction: 1.0,
               enableInfiniteScroll: false,
               autoPlay: true,
@@ -407,10 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return Container(
                   margin: EdgeInsets.all(16),
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.17,
+                  height: MediaQuery.of(context).size.height * 0.17,
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(10),
@@ -450,41 +452,36 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             for (int i = 0; i < images.length; i++)
-
-              currentIndex == i ?
-              Container(
-                width: 25,
-                height: 7,
-                margin: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Color(0xff6a83da),
-                        Color(0xff665365B7),
-                      ]
-
-
-                  ),
-                ),) : Container(
-                width: 7,
-                height: 7,
-                margin: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                          Color(0xff7F9ED4),
-                          Color(0xff999999),
-                        ]
-
-
-                    ),
-                    shape: BoxShape.circle),)
+              currentIndex == i
+                  ? Container(
+                      width: 25,
+                      height: 7,
+                      margin: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xff6a83da),
+                              Color(0xff665365B7),
+                            ]),
+                      ),
+                    )
+                  : Container(
+                      width: 7,
+                      height: 7,
+                      margin: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                Color(0xff7F9ED4),
+                                Color(0xff999999),
+                              ]),
+                          shape: BoxShape.circle),
+                    )
           ],
         ),
       ],
@@ -493,51 +490,105 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return Padding(
-      padding: EdgeInsets.only(left: parentWidth * 0.67,right: parentWidth*0.05),
+      padding:
+          EdgeInsets.only(left: parentWidth * 0.67, right: parentWidth * 0.05),
       child: Container(
-
         //alignment: Alignment.,
-        height: parentHeight * 0.04,
+        height: parentHeight * 0.033,
         decoration: BoxDecoration(
-
-          border: Border.all(
-              width: 0.5, color: CommonColor.Blue),
+          border: Border.all(width: 0.5, color: CommonColor.Blue),
           borderRadius: BorderRadius.all(
-            Radius.circular(10),
-
+            Radius.circular(5),
           ),
-
-        ), child: Center(child: Text("Create Post +", style: TextStyle(
-        fontFamily: "Roboto_Medium",
-        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-        color: Color(0xff3684F0),
-        fontWeight: FontWeight.w300,
-      ),)),
+        ),
+        child: Center(
+            child: Text(
+          "Create Post +",
+          style: TextStyle(
+            fontFamily: "Roboto_Medium",
+            fontSize: SizeConfig.blockSizeHorizontal * 3.2,
+            color: Color(0xff3684F0),
+            fontWeight: FontWeight.w300,
+          ),
+        )),
       ),
     );
   }
 
-  Widget PopularCategories (double parentHeight,double parentWidth){
-    return Column(
-     crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("   Popular Categories",style: TextStyle(
-          fontFamily: "Montserrat-Medium",
-          fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-          color: CommonColor.TextBlack,
-          fontWeight: FontWeight.w600,
-
-        ),),
-        Padding(
-          padding:  EdgeInsets.only(top: parentHeight*0.01,left: parentWidth*0.04),
-          child: Column(
+  Widget PopularCategories(double parentHeight, double parentWidth) {
+    return Padding(
+      padding: EdgeInsets.only(top: parentHeight * 0.02),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-             CommonWidget(text: "Electronics", texttwo: 'Mobiles & Tab',),
+              Text(
+                "   Popular Categories",
+                style: TextStyle(
+                  fontFamily: "Montserrat-Medium",
+                  fontSize: SizeConfig.blockSizeHorizontal * 4.1,
+                  color: CommonColor.TextBlack,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: parentWidth * 0.3, top: parentWidth * 0.0),
+                child: Container(
+                  height: parentHeight * 0.025,
+                  width: parentWidth * 0.2,
+                  decoration: BoxDecoration(
+                      color: CommonColor.ViewAll,
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text("View All",
+                          style: TextStyle(
+                            fontFamily: "Montserrat-Regular",
+                            fontSize: SizeConfig.blockSizeHorizontal * 2.5,
+                            color: CommonColor.TextBlack,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      Image(
+                        image: AssetImage('assets/images/arrow.png'),
+                        height: 20,
+                        width: 15,
+                        color: Colors.black54,
+                      )
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
-        )
-      ],
+          Padding(
+            padding: EdgeInsets.only(
+                top: parentHeight * 0.009,
+                left: parentWidth * 0.04,
+                right: parentWidth * 0.04),
+            child: Column(
+              children: [
+                CommonWidget(
+                  text: "Electronics",
+                  texttwo: 'Mobiles & Tab',
+                  textthree: 'Furniture',
+                  textfour: 'Events',
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 13),
+          Center(
+            child: Container(
+              height: parentHeight * 0.0005,
+              width: parentWidth * 0.95,
+              color: CommonColor.SearchBar,
+            ),
+          )
+        ],
+      ),
     );
   }
-
 }

@@ -48,7 +48,9 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
   dotted_border:
+  flutter_zoom_drawer:
   carousel_slider:
+  dropdown_button2: ^2.3.9
   get_storage: ^2.1.1
   dio: ^5.7.0
   http:

@@ -13,7 +13,7 @@ class ApiClients {
 
 
  Future<Map<String, dynamic>> registerDio(
-     String name,
+
      String email,
      String password,
      String cpassword,
@@ -29,7 +29,7 @@ class ApiClients {
    GetStorage().read<String>(ConstantData.UserAccessToken);
    print("Session Token: $sessionToken");
 
-   var dataa = jsonEncode({ 'name': name,
+   var dataa = jsonEncode({
    'email': email,
    'password': password,
    'cpassword': cpassword,
