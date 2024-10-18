@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:anything/Common_File/common_color.dart';
+import 'package:anything/drop.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,17 +59,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool isLoading = false;
 
-  File? _image;
-  final _images = <XFile>[];
+  File? _imageFront;
+  File? _imageBack;
+  File? _imageProfile;
 
-  Future<void> _pickImage(ImageSource source) async {
+  Future<void> _pickImageFront(ImageSource source) async {
     try {
       final XFile? pickedFile = await ImagePicker().pickImage(source: source);
 
       if (pickedFile != null) {
         if (mounted) {
           setState(() {
-            _image = File(pickedFile.path);
+            _imageFront = File(pickedFile.path);
           });
         }
       }
@@ -77,7 +79,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  void _showGallaryDialogBox(BuildContext context) {
+  Future<void> _pickImageBack(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await ImagePicker().pickImage(source: source);
+
+      if (pickedFile != null) {
+        if (mounted) {
+          setState(() {
+            _imageBack = File(pickedFile.path);
+          });
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+    }
+  }
+
+  Future<void> _pickImageProfile(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await ImagePicker().pickImage(source: source);
+
+      if (pickedFile != null) {
+        if (mounted) {
+          setState(() {
+            _imageProfile = File(pickedFile.path);
+          });
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+    }
+  }
+
+
+
+
+  void _showFrontGallaryDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
       context: context,
@@ -96,18 +133,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
-                      _pickImage(ImageSource.camera);
+                      _pickImageFront(ImageSource.camera);
+
                     },
                     child: Row(
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
                               top: SizeConfig.screenHeight * 0.024),
-                          child: Icon(
-                            Icons.camera_alt_outlined,
-                            size: SizeConfig.screenHeight * 0.03,
-                            color: Colors.black,
-                          ),
+                          child:  Image(
+                            image: AssetImage('assets/images/camerapop.png'),
+                            height: 20,
+                          )
                         ),
                         Padding(
                           padding: EdgeInsets.only(
@@ -129,25 +166,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
-                      _pickImage(ImageSource.gallery);
+                      _pickImageFront(ImageSource.gallery);
                     },
                     child: Row(
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
                               top: SizeConfig.screenHeight * 0.0),
-                          child: Icon(
-                            Icons.camera_alt_outlined,
-                            size: SizeConfig.screenHeight * 0.03,
-                            color: Colors.black,
-                          ),
+                          child:  Image(
+                            image: AssetImage('assets/images/gallerypop.png'),
+                            height: 20,
+                          )
                         ),
                         Padding(
                           padding: EdgeInsets.only(
                               top: SizeConfig.screenHeight * 0.0,
                               left: SizeConfig.screenHeight * 0.024),
                           child: Text(
-                            "Picture and Video Library",
+                            "Photos And Gallery Library",
                             style: TextStyle(
                                 height: 2.5,
                                 fontSize: SizeConfig.blockSizeHorizontal * 4.3,
@@ -192,7 +228,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             fontSize: SizeConfig.blockSizeHorizontal * 4.3,
                             fontFamily: 'Roboto_Medium',
                             fontWeight: FontWeight.w400,
-                            color: Colors.black),
+                            color: Colors.white),
                       ),
                     ),
                   ),
@@ -204,6 +240,258 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
     );
   }
+  void _showBackGallaryDialogBox(BuildContext context) {
+    SizeConfig().init(context);
+    showDialog(
+      context: context,
+      builder: (
+          BuildContext context,
+          ) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Column(
+            children: [
+              Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _pickImageBack(ImageSource.camera);
+
+                    },
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.024),
+                          child:   Image(
+                            image: AssetImage('assets/images/camerapop.png'),
+                            height: 20,
+                          )
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.024,
+                              left: SizeConfig.screenHeight * 0.024),
+                          child: Text(
+                            "Camera",
+                            style: TextStyle(
+                                height: 2.5,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Regular',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _pickImageBack(ImageSource.gallery);
+                    },
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.0),
+                          child:  Image(
+                            image: AssetImage('assets/images/gallerypop.png'),
+                            height: 20,
+                          )
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.0,
+                              left: SizeConfig.screenHeight * 0.024),
+                          child: Text(
+                            "Photos And Gallery Library",
+                            style: TextStyle(
+                                height: 2.5,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Regular',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  /* AppPreferences.clearAppPreference();
+                  Get.to(() => const  SignIn());*/
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                  child: Container(
+                    width: SizeConfig.screenWidth * 0.3,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      // color: Colors.white,
+
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        // stops: [0.8, 0.9],
+                        colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
+                      ),
+
+                      color: Color(0xffFF8B8B),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                            height: 2,
+                            fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                            fontFamily: 'Roboto_Medium',
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showProfileGallaryDialogBox(BuildContext context) {
+    SizeConfig().init(context);
+    showDialog(
+      context: context,
+      builder: (
+          BuildContext context,
+          ) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImageProfile(ImageSource.camera);
+
+                },
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: SizeConfig.screenHeight * 0.024),
+                      child:
+                      Image(
+                        image: AssetImage('assets/images/camerapop.png'),
+                        height: 20,
+                      )
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: SizeConfig.screenHeight * 0.024,
+                          left: SizeConfig.screenHeight * 0.024),
+                      child: Text(
+                        "Camera",
+                        style: TextStyle(
+                            height: 2.5,
+                            fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                            fontFamily: 'Roboto_Regular',
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImageProfile(ImageSource.gallery);
+                },
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: SizeConfig.screenHeight * 0.0),
+                      child:   Image(
+                        image: AssetImage('assets/images/gallerypop.png'),
+                        height: 20,
+                      )
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: SizeConfig.screenHeight * 0.0,
+                          left: SizeConfig.screenHeight * 0.024),
+                      child: Text(
+                        "Photos And Gallery Library",
+                        style: TextStyle(
+                            height: 2.5,
+                            fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                            fontFamily: 'Roboto_Regular',
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  /* AppPreferences.clearAppPreference();
+              Get.to(() => const  SignIn());*/
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                  child: Container(
+                    width: SizeConfig.screenWidth * 0.3,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      // color: Colors.white,
+
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        // stops: [0.8, 0.9],
+                        colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
+                      ),
+
+                      color: Color(0xffFF8B8B),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                            height: 2,
+                            fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                            fontFamily: 'Roboto_Medium',
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -244,7 +532,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     permanentAddressController = TextEditingController();
     mobileNumberController = TextEditingController();
   }
-
 
   @override
   void dispose() {
@@ -383,25 +670,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: parentHeight * 0.20, left: parentWidth * 0.4),
-            child: CircleAvatar(
-              radius: 32,
-              backgroundImage: AssetImage("assets/images/profile.png"),
+          GestureDetector(
+            onTap: () {
+              _showProfileGallaryDialogBox(context);
+            },
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: parentHeight * 0.20, left: parentWidth * 0.0),
               child: Stack(children: [
                 Align(
-                  alignment: Alignment.bottomRight,
-                  child: CircleAvatar(
-                    radius: 11,
-                    backgroundColor: Colors.transparent,
-                    child: Icon(
-                      CupertinoIcons.camera,
+                    alignment: Alignment.topCenter,
+                    child: SizedBox(
+                        child: CircleAvatar(
+                            radius: 35.0,
+                            backgroundColor: Colors.white,
+                            child: CircleAvatar(
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 10.0,
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    size: 14.0,
+                                    color: Color(0xFF404040),
+                                  ),
+                                ),
+                              ),
+                              radius: 32.0,
+                              backgroundColor: Colors.transparent,
+                              backgroundImage: _imageProfile != null
+                                  ? FileImage(_imageProfile!)
+                                  : AssetImage('assets/images/profiless.png')
+                                      as ImageProvider,
+                            )
+                            /* Container(
+                                width: parentWidth*0.45,
 
-                      size: 20,
-                    ),
-                  ),
-                ),
+
+                                child:
+
+                                Image.file(_image!)),*/
+                            ))),
               ]),
             ),
           )
@@ -725,7 +1035,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.black26)
                 ]),
                 child: TextFormField(
-                   obscureText:  cPasswordVisible,
+                    obscureText: cPasswordVisible,
                     keyboardType: TextInputType.text,
                     focusNode: _confirmPasswordFocus,
                     controller: confirmPasswordController,
@@ -744,7 +1054,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             : Icons.visibility),
                         onPressed: () {
                           setState(
-                                () {
+                            () {
                               isObscure = !isObscure;
                               cPasswordVisible = !cPasswordVisible;
                             },
@@ -896,13 +1206,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SizedBox(
             height: parentHeight * 0.025,
           ),
-          Text(
-            "Mobile Number",
-            style: TextStyle(
-              color: CommonColor.RegisterText,
-              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-              fontWeight: FontWeight.normal,
-              fontFamily: 'Roboto-Regular',
+          GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const documents()));
+            },
+            child: Text(
+              "Mobile Number",
+              style: TextStyle(
+                color: CommonColor.RegisterText,
+                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                fontWeight: FontWeight.normal,
+                fontFamily: 'Roboto-Regular',
+              ),
             ),
           ),
           Padding(
@@ -985,7 +1301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Text(
               "(Kindly Upload the documents either in JPEG, PNG format)",
               style: TextStyle(
-                color: Color(0xff454545),
+                color: CommonColor.grayText,
                 fontSize: SizeConfig.blockSizeHorizontal * 3.2,
                 // fontWeight: FontWeight.normal,
 
@@ -995,16 +1311,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           SizedBox(height: 15),
           Padding(
-            padding: EdgeInsets.only(left: parentWidth * 0.03),
+            padding: EdgeInsets.only(left: parentWidth * 0.0),
             child: Row(
               children: [
                 Image(
-                  image: AssetImage('assets/images/payment.png'),
+                  image: AssetImage('assets/images/id.png'),
                   height: parentHeight * 0.03,
-                  color: Colors.blueAccent,
+                  //color: Colors.blueAccent,
                 ),
                 Text(
-                  "  ID Proof",
+                  "    ID Proof",
                   style: TextStyle(
                       fontSize: SizeConfig.blockSizeHorizontal * 3.8,
                       fontFamily: 'Poppins_Medium',
@@ -1100,7 +1416,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 26),
               Row(
                 children: [
                   Column(
@@ -1116,62 +1432,101 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             strokeWidth: 1, //thickness of dash/dots
                             dashPattern: [4, 5],
                             //dash patterns, 10 is dash width, 6 is space width
-                            child: Container(
-                              //inner container
-                              height: 120, //height of inner container
-                              width: double.infinity,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: parentHeight * 0.01),
-                                    child: Image(
-                                        image: AssetImage(
-                                            'assets/images/camera.png'),
-                                        height: parentHeight * 0.05),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: parentHeight * 0.01),
-                                    child: Text("Drag and Drop Files here or",
-                                        style: TextStyle(
-                                            fontSize:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    2.5,
-                                            fontFamily: 'Roboto_Regular',
-                                            fontWeight: FontWeight.w400,
-                                            //overflow: TextOverflow.ellipsis,
-                                            color: Colors.black)),
-                                  ),
-                                  SizedBox(height: 10),
-                                  GestureDetector(
-                                    onTap: () {
-                                      _showGallaryDialogBox(context);
-                                    },
-                                    child: Container(
-                                      height: 28,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        border:
-                                            Border.all(color: CommonColor.Blue),
-                                        borderRadius: BorderRadius.circular(7),
-                                      ),
-                                      child: Center(
-                                        child: Text("Browser file",
-                                            style: TextStyle(
-                                                fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                    2.5,
-                                                fontFamily: 'Roboto_Regular',
-                                                fontWeight: FontWeight.w400,
-                                                //overflow: TextOverflow.ellipsis,
-                                                color: CommonColor.Blue)),
+                            child: GestureDetector(
+                              onTap: () {
+                                _showFrontGallaryDialogBox(context);
+                              },
+                              child: _imageFront == null
+                                  ? Container(
+                                      //inner container
+                                      height: parentHeight *
+                                          0.14, //height of inner container
+                                      width: double.infinity,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: parentHeight * 0.01),
+                                            child: Image(
+                                                image: AssetImage(
+                                                    'assets/images/uploadpic.png'),
+                                                height: parentHeight * 0.04),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Container(
+                                            height: 26,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: CommonColor.Blue),
+                                              borderRadius:
+                                                  BorderRadius.circular(7),
+                                            ),
+                                            child: Center(
+                                              child: Text("Browser file",
+                                                  style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          2.5,
+                                                      fontFamily:
+                                                          'Roboto_Regular',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      //overflow: TextOverflow.ellipsis,
+                                                      color: CommonColor.Blue)),
+                                            ),
+                                          ),
+                                        ],
+                                      ), //width to 100% match to parent container.
+                                      // color:Colors.yellow //background color of inner container
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          Padding(
+                                            padding:  EdgeInsets.only(top: 7,bottom: 5),
+                                            child: Center(
+                                              child: Container(
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  70))),
+                                                  height: parentWidth * 0.256,
+                                                  width: parentWidth * 0.256,
+                                                  child: Image.file(_imageFront!,
+                                                      fit: BoxFit.cover)),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              _imageFront;
+                                              setState(() {});
+                                            },
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentWidth * 0.03),
+                                                child: Align(
+                                                    alignment:
+                                                    Alignment.bottomRight,
+                                                    child: CircleAvatar(
+                                                      backgroundColor: Colors.white,
+                                                      radius: 13.0,
+                                                      child: Image(
+                                                          image: AssetImage(
+                                                              'assets/images/picremove.png'),
+                                                          height:
+                                                          parentHeight * 0.016),
+                                                    ))
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ), //width to 100% match to parent container.
-                              // color:Colors.yellow //background color of inner container
                             ),
                           )),
                       SizedBox(height: 10),
@@ -1203,57 +1558,94 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           strokeWidth: 1, //thickness of dash/dots
                           dashPattern: [4, 5],
                           //dash patterns, 10 is dash width, 6 is space width
-                          child: Container(
-                            //inner container
-                            height: 120, //height of inner container
-                            width: double.infinity,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(top: parentHeight * 0.01),
-                                  child: Image(
-                                      image: AssetImage(
-                                          'assets/images/camera.png'),
-                                      height: parentHeight * 0.05),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(top: parentHeight * 0.01),
-                                  child: Text("Drag and Drop Files here or",
-                                      style: TextStyle(
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal *
-                                                  2.5,
-                                          fontFamily: 'Roboto_Regular',
-                                          fontWeight: FontWeight.w400,
-                                          //overflow: TextOverflow.ellipsis,
-                                          color: Colors.black)),
-                                ),
-                                SizedBox(height: 10),
-                                Container(
-                                  height: 28,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: CommonColor.Blue),
-                                    borderRadius: BorderRadius.circular(7),
+                          child:  GestureDetector(
+                            onTap: (){
+                              _showBackGallaryDialogBox(context);
+                            },
+                                child: _imageBack == null
+    ? Container(
+                                    //inner container
+                                    height: parentHeight *
+                                        0.14, //height of inner container
+                                    width: double.infinity,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: parentHeight * 0.01),
+                                          child: Image(
+                                              image: AssetImage(
+                                                  'assets/images/uploadpic.png'),
+                                              height: parentHeight * 0.04),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Container(
+                                          height: 26,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: CommonColor.Blue),
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          child: Center(
+                                            child: Text("Browser file",
+                                                style: TextStyle(
+                                                    fontSize: SizeConfig
+                                                            .blockSizeHorizontal *
+                                                        2.5,
+                                                    fontFamily: 'Roboto_Regular',
+                                                    fontWeight: FontWeight.w400,
+                                                    //overflow: TextOverflow.ellipsis,
+                                                    color: CommonColor.Blue)),
+                                          ),
+                                        ),
+                                      ],
+                                    ), //width to 100% match to parent container.
+                                    // color:Colors.yellow //background color of inner container
+                                  ):  Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Stack(
+                                    alignment: Alignment.topRight,
+                                    children: [
+                                      Padding(
+                                        padding:  EdgeInsets.only(top: 7,bottom: 5),
+                                        child: Center(
+                                          child: Container(
+                                              height: parentWidth * 0.250,
+                                              width: parentWidth * 0.250,
+                                              child: Image.file(_imageBack!,
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          _imageBack;
+                                          setState(() {});
+                                        },
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                right: parentWidth * 0.03),
+                                            child: Align(
+                                                alignment:
+                                                Alignment.bottomRight,
+                                                child: CircleAvatar(
+                                                  backgroundColor: Colors.white,
+                                                  radius: 13.0,
+                                                  child: Image(
+                                                      image: AssetImage(
+                                                          'assets/images/picremove.png'),
+                                                      height:
+                                                      parentHeight * 0.016),
+                                                ))
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                  child: Center(
-                                    child: Text("Browser file",
-                                        style: TextStyle(
-                                            fontSize:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    2.5,
-                                            fontFamily: 'Roboto_Regular',
-                                            fontWeight: FontWeight.w400,
-                                            //overflow: TextOverflow.ellipsis,
-                                            color: CommonColor.Blue)),
-                                  ),
                                 ),
-                              ],
-                            ), //width to 100% match to parent container.
-                            // color:Colors.yellow //background color of inner container
-                          ),
+                              )
+
                         ),
                       ),
                       SizedBox(height: 10),
@@ -1299,9 +1691,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (!isValid) return;
 /*else {*/
         // print("Full Name: ${fullNameController.text}");
+        print("firstname: ${firstNameController.text}");
+        print("lastname: ${lastNameController.text}");
+        print("phoneNumber: ${mobileNumberController.text}");
         print("email: ${emailController.text}");
-        print("password: ${passwordController.text}");
-        print("cpassword: ${confirmPasswordController.text}");
+        print("password: ${confirmPasswordController.text}");
         print("address: ${addressController.text}");
         print("mobile: ${mobileNumberController.text}");
         ApiClients()
@@ -1328,7 +1722,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (value['success'] == true) {
             print("..aaaass ${value['newUser']['userId']}");
 
-            GetStorage().write(ConstantData.Username, value['newUser']['name']);
+
             GetStorage().write(ConstantData.UserId, value['newUser']['userId']);
             GetStorage()
                 .write(ConstantData.Useremail, value['newUser']['email']);
@@ -1336,8 +1730,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 .write(ConstantData.Userpassword, value['newUser']['password']);
             GetStorage().write(
                 ConstantData.UserCpassword, value['newUser']['cpassword']);
-            GetStorage().write(ConstantData.UserCurrentAddress,
-                value['newUser']['currentAddress']);
+
             GetStorage().write(ConstantData.UserParmanentAddress,
                 value['newUser']['permanentAddress']);
             GetStorage().write(
@@ -1358,18 +1751,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // }
       },
 
-      /* if (showCustomTooltip)
-    Positioned(
-      right: 0,
-      child: CustomTooltip(
-        message: 'This field cannot be empty',
-        onClose: () {
-          setState(() {
-            showCustomTooltip = false; // Hide the tooltip
-          });
-        },
-      ),
-    ),*/
+
 
       child: Padding(
         padding: EdgeInsets.only(

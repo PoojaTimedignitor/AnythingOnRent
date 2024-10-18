@@ -14,12 +14,14 @@ class ApiClients {
 
  Future<Map<String, dynamic>> registerDio(
 
+     String firstName,
+     String lastName,
+     String phoneNumber,
      String email,
      String password,
-     String cpassword,
-     String phoneNumber,
-     String currentAddress,
+     String profilePicture,
      String permanentAddress,
+     String currentLocation,
 
 
      ) async {
@@ -30,11 +32,12 @@ class ApiClients {
    print("Session Token: $sessionToken");
 
    var dataa = jsonEncode({
+   'firstName': firstName,
+   'lastName': lastName,
+   'phoneNumber': phoneNumber,
    'email': email,
    'password': password,
-   'cpassword': cpassword,
-   'phoneNumber': phoneNumber,
-   'currentAddress': currentAddress,
+   'profilePicture': profilePicture,
    'permanentAddress': permanentAddress,
   });
    print("data....> $dataa");

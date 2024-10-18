@@ -12,4 +12,5 @@ class CommonColor {
   static const TextBlack = Color(0xFF080808);
   static const ViewAll = Color(0xFFFFE1E1);
   static const gray = Color(0xFF606060);
+  static const grayText = Color(0xFF999999);
 }

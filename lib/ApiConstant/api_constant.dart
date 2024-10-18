@@ -1,8 +1,8 @@
 class ApiConstant {
-  String BaseUrl = "https://api-kxpq.onrender.com/api";
+  String BaseUrl = "https://rental-api-5vfa.onrender.com/user/api";
 
   // Base url Anything on rent
 
-  String registerss = "/register-user"; // User Register Api
+  String registerss = "/users/register"; // User Register Api
   String login = "/login"; // User Register Api
 }

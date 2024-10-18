@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/frame': (BuildContext context) =>  onboardingScreen(),
         /*  '/registration': (BuildContext context) => RegisterScreen(),*/
-          '/homeScreen': (BuildContext context) =>  MyAppss(),
+          '/homeScreen': (BuildContext context) =>  RegisterScreen(),
          /* '/rec_dashboard': (BuildContext context) => const ReceiverDashboard(),*/
         }
 
