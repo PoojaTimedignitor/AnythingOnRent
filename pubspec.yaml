@@ -50,6 +50,7 @@ dev_dependencies:
   dotted_border:
   flutter_zoom_drawer:
   carousel_slider:
+  pinput:
   dropdown_button2: ^2.3.9
   get_storage: ^2.1.1
   dio: ^5.7.0

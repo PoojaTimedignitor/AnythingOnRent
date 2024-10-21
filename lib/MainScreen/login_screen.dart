@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
+import 'forget_password.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -71,6 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
+
         body: ListView(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
@@ -342,15 +345,55 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(
             height: parentHeight * 0.025,
           ),
-          Padding(
-            padding: EdgeInsets.only(left: parentWidth * 0.58),
-            child: Text(
-              "Forget Password?",
-              style: TextStyle(
-                color: CommonColor.RegisterText,
-                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto-Regular',
+          GestureDetector(
+            onTap: (){
+
+             /* showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent, // Keeps the transparency, but handles background in Container
+                builder: (context) =>
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.38,
+                      decoration: BoxDecoration(
+                        color: Colors.red, // Set your custom color here
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25.0),
+                          topRight: Radius.circular(25.0),
+                        ),
+                      ),
+                      child: ForgetPassword(),
+                    ),
+              );*/
+
+
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(20)),
+                    ),
+                    context: context,
+                    backgroundColor: Colors.white,
+                    elevation: 10,
+                    isScrollControlled: true,
+                    isDismissible: true,
+                    builder: (BuildContext bc) {
+                      return ForgetPassword(
+                      );
+                    });
+              },
+
+
+            child: Padding(
+              padding: EdgeInsets.only(left: parentWidth * 0.58),
+              child: Text(
+                "Forget Password?",
+                style: TextStyle(
+                  color: CommonColor.RegisterText,
+                  fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto-Regular',
+                ),
               ),
             ),
           ),

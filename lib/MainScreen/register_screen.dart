@@ -1701,6 +1701,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ApiClients()
             .registerDio(
           // fullNameController.text,
+          firstNameController.text,
+          lastNameController.text,
           emailController.text,
           passwordController.text,
           confirmPasswordController.text,

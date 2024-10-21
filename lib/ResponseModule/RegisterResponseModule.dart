@@ -84,9 +84,9 @@ class Data {
     phoneVerified = json['phoneVerified'];
     userId = json['userId'];
     if (json['images'] != null) {
-      images = <Images>[];
-      json['images'].forEach((v) {
-        images!.add(new Images.fromJson(v));
+    images = <Images>[];
+    json['images'].forEach((v) {
+     images!.add(new Images.fromJson(v));
       });
     }
     currentAddress = json['currentAddress'];
