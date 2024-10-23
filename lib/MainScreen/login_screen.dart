@@ -565,7 +565,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const RegisterScreen()));
+                                        const RegisterScreen(address: '', lat: '', long: '',)));
                           },
                       ),
                     ])),

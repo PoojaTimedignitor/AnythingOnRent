@@ -15,4 +15,6 @@ class CommonColor {
   static const grayText = Color(0xFF999999);
   static const bottomsheet= Color(0xFF0A091A);
   static const showBottombar= Color(0xFF0A091A);
+  static const red= Color(0xFFEDA6C1);
+
 }

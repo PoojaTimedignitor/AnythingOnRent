@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:anything/Common_File/common_color.dart';
-import 'package:anything/drop.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +8,17 @@ import 'package:dotted_border/dotted_border.dart';
 
 import '../Common_File/SizeConfig.dart';
 import '../ConstantData/Constant_data.dart';
+import '../location_map.dart';
 import 'login_screen.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final String address;
+  final String lat;
+  final String long;
+
+  const RegisterScreen({super.key, required this.address, required this.lat, required this.long});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -1085,6 +1089,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           SizedBox(
             height: parentHeight * 0.025,
+
           ),
           Text(
             "Current Address",
@@ -1095,54 +1100,116 @@ class _RegisterScreenState extends State<RegisterScreen> {
               fontFamily: 'Roboto-Regular',
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: parentHeight * 0.01,
-                left: parentWidth * 0.0,
-                right: parentWidth * 0.04),
-            child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
-                child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    focusNode: _addressFocus,
-                    controller: addressController,
-                    autocorrect: true,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      prefixIcon: IconButton(
-                          onPressed: () {},
-                          icon: Image(
-                            image: AssetImage('assets/images/user.png'),
-                            height: 20,
-                          )),
-                      hintText: 'Current Address',
-                      contentPadding: EdgeInsets.only(
-                        left: parentWidth * 0.04,
-                      ),
-                      hintStyle: TextStyle(
-                        fontFamily: "Roboto_Regular",
-                        color: Color(0xff7D7B7B),
-                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        // color: CommonColor.DIVIDER_COLOR,
-                      ),
-                      fillColor: Color(0xffFFF0F0),
-                      hoverColor: Colors.white,
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10.0)),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black12, width: 1),
+
+          Stack(
+            children: [
+
+widget.address.isEmpty?
+              GestureDetector(
+                onTap: (){
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => LocationMapScreen(
+
+                      //  recLane: widget.recLane,
+                        )));
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      top: parentHeight * 0.01,
+                      left: parentWidth * 0.0,
+                      right: parentWidth * 0.04),
+                  child: Container(
+                    height: parentHeight*0.065,
+                    decoration: BoxDecoration(
+                      color: Color(0xffFFF0F0),
                         borderRadius: BorderRadius.circular(10.0),
+
+                        boxShadow: [
+                      BoxShadow(
+                          spreadRadius: 0,
+                          blurRadius: 7,
+                          offset: Offset(0, 2),
+                          color: Colors.black26)
+                    ]
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: Row(
+                        children: [
+                          Image(
+                            image: AssetImage('assets/images/location.png'),
+                            color: Colors.black45,
+                            height: 18,
+                          ),
+                          Text(
+                            "    Select Current Address",
+                            style: TextStyle(
+                              color: Color(0xff7D7B7B),
+                              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                              fontWeight: FontWeight.normal,
+                              fontFamily: 'Roboto-Regular',
+                            ),
+                          ),
+                        ],
                       ),
-                    ))),
+                    ),
+                  ),
+                ),
+              ):
+GestureDetector(
+  onTap: (){
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => LocationMapScreen(
+
+          //  recLane: widget.recLane,
+        )));
+  },
+  child: Padding(
+    padding: EdgeInsets.only(
+        top: parentHeight * 0.01,
+        left: parentWidth * 0.0,
+        right: parentWidth * 0.04),
+    child: Container(
+      height: parentHeight*0.065,
+      decoration: BoxDecoration(
+          color: Color(0xffFFF0F0),
+          borderRadius: BorderRadius.circular(10.0),
+
+          boxShadow: [
+            BoxShadow(
+                spreadRadius: 0,
+                blurRadius: 7,
+                offset: Offset(0, 2),
+                color: Colors.black26)
+          ]
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14.0),
+        child: Row(
+          children: [
+            Image(
+              image: AssetImage('assets/images/location.png'),
+              color: Colors.black45,
+              height: 18,
+            ),
+            Text(
+              widget.address,
+              style: TextStyle(
+                color: Color(0xff7D7B7B),
+                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                fontWeight: FontWeight.normal,
+                fontFamily: 'Roboto-Regular',
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
+)
+            ],
           ),
+
           SizedBox(
             height: parentHeight * 0.025,
           ),
@@ -1206,19 +1273,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SizedBox(
             height: parentHeight * 0.025,
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const documents()));
-            },
-            child: Text(
-              "Mobile Number",
-              style: TextStyle(
-                color: CommonColor.RegisterText,
-                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto-Regular',
-              ),
+          Text(
+            "Mobile Number",
+            style: TextStyle(
+              color: CommonColor.RegisterText,
+              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'Roboto-Regular',
             ),
           ),
           Padding(
@@ -1330,11 +1391,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ],
             ),
           ),
-          SizedBox(height: 12),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          SizedBox(height: 3),
+         Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
+                  padding: EdgeInsets.only(
+                      left: parentWidth * 0.02),
+                  child: Text(
+                    "(Aadhar Card)",
+                    style: TextStyle(
+                      color: CommonColor.bottomsheet,
+                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      // fontWeight: FontWeight.normal,
+
+                      fontFamily: 'Roboto-Regular',
+                    ),
+                  ),
+                ),
+     /*         Padding(
                 padding: EdgeInsets.only(right: 20),
                 child: Form(
                   key: formKey,
@@ -1416,7 +1491,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 26),
+              SizedBox(height: 26),*/
+              SizedBox(height: 13),
               Row(
                 children: [
                   Column(
@@ -1666,7 +1742,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
             ],
-          )
+         )
         ]));
   }
 
