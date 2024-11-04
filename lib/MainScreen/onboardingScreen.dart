@@ -144,7 +144,7 @@ class _onboardingScreenState extends State<onboardingScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => RegisterScreen(address: '', lat: '', long: '',)),
+                                        builder: (context) => HomeScreen(/*address: '', lat: '', long: '', ProfilePicture: '', FrontImage: '', BackImage: '',*/)),
                                   );
                                 },
                                 child: Text("START"),

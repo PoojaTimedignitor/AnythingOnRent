@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 
@@ -17,8 +18,11 @@ class RegisterScreen extends StatefulWidget {
   final String address;
   final String lat;
   final String long;
+  final String ProfilePicture;
+  final String FrontImage;
+  final String BackImage;
 
-  const RegisterScreen({super.key, required this.address, required this.lat, required this.long});
+  const RegisterScreen({super.key, required this.address, required this.lat, required this.long, required this.ProfilePicture, required this.FrontImage, required this.BackImage});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -121,129 +125,132 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _showFrontGallaryDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
-      context: context,
-      builder: (
-        BuildContext context,
-      ) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Column(
-            children: [
-              Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _pickImageFront(ImageSource.camera);
-
-                    },
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.024),
-                          child:  Image(
-                            image: AssetImage('assets/images/camerapop.png'),
-                            height: 20,
-                          )
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.024,
-                              left: SizeConfig.screenHeight * 0.024),
-                          child: Text(
-                            "Camera",
-                            style: TextStyle(
-                                height: 2.5,
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                fontFamily: 'Roboto_Regular',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
+        context: context,
+        builder: (BuildContext context,) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Column(
+              children: [
+                Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _pickImageFront(ImageSource.camera);
+                      },
+                      child: Row(
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  top: SizeConfig.screenHeight * 0.024),
+                              child: Image(
+                                image: AssetImage(
+                                    'assets/images/camerapop.png'),
+                                height: 20,
+                              )
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _pickImageFront(ImageSource.gallery);
-                    },
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.0),
-                          child:  Image(
-                            image: AssetImage('assets/images/gallerypop.png'),
-                            height: 20,
-                          )
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.0,
-                              left: SizeConfig.screenHeight * 0.024),
-                          child: Text(
-                            "Photos And Gallery Library",
-                            style: TextStyle(
-                                height: 2.5,
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                fontFamily: 'Roboto_Regular',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: SizeConfig.screenHeight * 0.024,
+                                left: SizeConfig.screenHeight * 0.024),
+                            child: Text(
+                              "Camera",
+                              style: TextStyle(
+                                  height: 2.5,
+                                  fontSize: SizeConfig.blockSizeHorizontal *
+                                      4.3,
+                                  fontFamily: 'Roboto_Regular',
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  /* AppPreferences.clearAppPreference();
-                  Get.to(() => const  SignIn());*/
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
-                  child: Container(
-                    width: SizeConfig.screenWidth * 0.3,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      // color: Colors.white,
-
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        // stops: [0.8, 0.9],
-                        colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
+                        ],
                       ),
-
-                      color: Color(0xffFF8B8B),
                     ),
-                    child: Center(
-                      child: Text(
-                        "Cancel",
-                        style: TextStyle(
-                            height: 2,
-                            fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                            fontFamily: 'Roboto_Medium',
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _pickImageFront(ImageSource.gallery);
+                      },
+                      child: Row(
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  top: SizeConfig.screenHeight * 0.0),
+                              child: Image(
+                                image: AssetImage(
+                                    'assets/images/gallerypop.png'),
+                                height: 20,
+                              )
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: SizeConfig.screenHeight * 0.0,
+                                left: SizeConfig.screenHeight * 0.024),
+                            child: Text(
+                              "Photos And Gallery Library",
+                              style: TextStyle(
+                                  height: 2.5,
+                                  fontSize: SizeConfig.blockSizeHorizontal *
+                                      4.3,
+                                  fontFamily: 'Roboto_Regular',
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    /* AppPreferences.clearAppPreference();
+                  Get.to(() => const  SignIn());*/
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: SizeConfig.screenHeight * 0.02),
+                    child: Container(
+                      width: SizeConfig.screenWidth * 0.3,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        // color: Colors.white,
+
+                        gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          // stops: [0.8, 0.9],
+                          colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
+                        ),
+
+                        color: Color(0xffFF8B8B),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                              height: 2,
+                              fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                              fontFamily: 'Roboto_Medium',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+              ],
+            ),
+          );
+        },
+      );
+
+      }
   void _showBackGallaryDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
@@ -1169,42 +1176,48 @@ GestureDetector(
         top: parentHeight * 0.01,
         left: parentWidth * 0.0,
         right: parentWidth * 0.04),
-    child: Container(
-      height: parentHeight*0.065,
+    child:Container(
       decoration: BoxDecoration(
-          color: Color(0xffFFF0F0),
-          borderRadius: BorderRadius.circular(10.0),
-
-          boxShadow: [
-            BoxShadow(
-                spreadRadius: 0,
-                blurRadius: 7,
-                offset: Offset(0, 2),
-                color: Colors.black26)
-          ]
+        color: Color(0xffFFF0F0),
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            spreadRadius: 0,
+            blurRadius: 7,
+            offset: Offset(0, 2),
+            color: Colors.black26,
+          )
+        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(14.0),
+        padding: const EdgeInsets.all(22.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start, // Align items at the top
           children: [
             Image(
               image: AssetImage('assets/images/location.png'),
               color: Colors.black45,
               height: 18,
             ),
-            Text(
-              widget.address,
-              style: TextStyle(
-                color: Color(0xff7D7B7B),
-                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto-Regular',
+            SizedBox(width: 10), // Add some space between the icon and text
+            Expanded(  // Allows the text to take up available space
+              child: Text(
+                widget.address,
+                style: TextStyle(
+                  color: Color(0xff7D7B7B),
+                  fontSize: 14, // Adjust font size accordingly
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto-Regular',
+                ),
+                maxLines: 3, // Maximum two lines
+                overflow: TextOverflow.ellipsis, // Show ellipsis for overflow
               ),
             ),
           ],
         ),
       ),
     ),
+
   ),
 )
             ],
@@ -1749,42 +1762,57 @@ GestureDetector(
   Widget RegisterButton(double parentWidth, double parentHeight) {
     return GestureDetector(
       onTap: () {
-        /*  if (passwordController.text != confirmPasswordController.text) {
+          if (passwordController.text != confirmPasswordController.text) {
         print("Error: Password and Confirm Password do not match");
         // You can also show a UI error message here
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Passwords do not match'))
         );
         return;
-      }*/
-
-        /* if(mounted){
+      }
+/*
+         if(mounted){
             setState(() {
               isLoading = true;
             });
           }*/
-        final isValid = formKey.currentState!.validate();
-        if (!isValid) return;
+        if (formKey.currentState != null) {
+          final isValid = formKey.currentState!.validate();
+          if (!isValid) return;
+          // proceed with form submission or other logic
+        } else {
+          print("Form state is null");
+        }
+
+
+
+
 /*else {*/
         // print("Full Name: ${fullNameController.text}");
         print("firstname: ${firstNameController.text}");
         print("lastname: ${lastNameController.text}");
         print("phoneNumber: ${mobileNumberController.text}");
         print("email: ${emailController.text}");
-        print("password: ${confirmPasswordController.text}");
-        print("address: ${addressController.text}");
+        print("password: ${passwordController.text}");
+        print("cpassword: ${confirmPasswordController.text}");
+        print("currentLocation: ${widget.lat}");
         print("mobile: ${mobileNumberController.text}");
         ApiClients()
             .registerDio(
           // fullNameController.text,
           firstNameController.text,
           lastNameController.text,
+          mobileNumberController.text,
           emailController.text,
           passwordController.text,
           confirmPasswordController.text,
-          mobileNumberController.text,
-          addressController.text,
+          widget.ProfilePicture,
+          widget.FrontImage,
+          widget.BackImage,
           permanentAddressController.text,
+          widget.lat,
+          widget.long,
+
         )
             .then((value) {
           //  if (value.isEmpty) return;

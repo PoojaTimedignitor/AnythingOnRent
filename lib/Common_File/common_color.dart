@@ -16,5 +16,6 @@ class CommonColor {
   static const bottomsheet= Color(0xFF0A091A);
   static const showBottombar= Color(0xFF0A091A);
   static const red= Color(0xFFEDA6C1);
+  static const Containerss= Color(0xFFE2F2FC);
 
 }

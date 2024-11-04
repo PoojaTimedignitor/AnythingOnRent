@@ -19,9 +19,13 @@ class ApiClients {
      String phoneNumber,
      String email,
      String password,
+     String cpassword,
      String profilePicture,
+     String frontImages,
+     String backImages,
      String permanentAddress,
-     String currentLocation,
+     String lat,
+     String long,
 
 
      ) async {
@@ -37,8 +41,14 @@ class ApiClients {
    'phoneNumber': phoneNumber,
    'email': email,
    'password': password,
+   'cpassword': cpassword,
+  // 'currentLocation': currentLocation,
+   'frontImages': frontImages,
+   'backImages': backImages,
    'profilePicture': profilePicture,
    'permanentAddress': permanentAddress,
+    'lat':lat,
+     'long':long
   });
    print("data....> $dataa");
    try {

@@ -1,5 +1,6 @@
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_widget.dart';
+import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 import 'bottomNavigationBar.dart';
 import 'Common_File/common_color.dart';
+import 'dummy.dart';
 
 final ZoomDrawerController z = ZoomDrawerController();
 
@@ -975,115 +977,60 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
         Padding(
           padding: EdgeInsets.only(
               left: SizeConfig.screenWidth * .05,
-              top: SizeConfig.screenHeight * 0.015),
-          child: Container(
+              top: SizeConfig.screenHeight * 0.014),
+          child: SizedBox(
 
-            //  height: SizeConfig.screenHeight * .065,
-            width: parentWidth - (SizeConfig.screenWidth * .23),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: parentWidth * 0.04),
-                    child: Container(
-                        decoration: BoxDecoration(boxShadow: [
-                          BoxShadow(
-                              spreadRadius: 0,
-                              blurRadius: 6,
-                              offset: Offset(0, 1),
-                              color: Colors.black12)
-                        ]),
-                        child: TextFormField(
-                            keyboardType: TextInputType.text,
-                            autocorrect: true,
-                            controller: searchController,
-                            focusNode: _searchFocus,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              prefixIcon: IconButton(
-                                  onPressed: () {},
-                                  icon: Image(
-                                    image:
-                                        AssetImage("assets/images/search.png"),
-                                    height: SizeConfig.screenWidth * 0.07,
-                                  )),
-                              hintText: "Search Product/Service",
-                              hintStyle: TextStyle(
-                                fontFamily: "Roboto_Regular",
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.6,
-                                color: CommonColor.SearchBar,
-                                fontWeight: FontWeight.w300,
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                left: parentWidth * 0.04,
-                              ),
+              height: SizeConfig.screenHeight * .055,
+            width: SizeConfig.screenWidth * .95,
+            child: Padding(
+              padding: EdgeInsets.only(right: parentWidth * 0.04),
+              child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black26),
+                      borderRadius: BorderRadius.circular(10),
 
-                              fillColor: Color(0xfffbf3f3),
-                              hoverColor: Colors.white,
-                              filled: true,
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.black12, width: 1),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ))),
                   ),
-                ),
-              ],
+                  child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      autocorrect: true,
+                      controller: searchController,
+                      focusNode: _searchFocus,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        prefixIcon: IconButton(
+                            onPressed: () {},
+                            icon: Image(
+                              image:
+                                  AssetImage("assets/images/search.png"),
+                              height: SizeConfig.screenWidth * 0.07,
+                            )),
+                        hintText: "Search product/service",
+                        hintStyle: TextStyle(
+                          fontFamily: "Roboto_Regular",
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                          color: CommonColor.SearchBar,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        contentPadding: EdgeInsets.only(
+                          top: parentWidth * 0.05,
+                        ),
+
+                        fillColor: Color(0xfffbf3f3),
+                        hoverColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(10.0)),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black12, width: 1),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ))),
             ),
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            /* _controller.nextPage(
-          duration:  Duration(milliseconds: 200),
-          curve: Curves.easeIn,
-        );*/
-          },
-          child: Padding(
-            padding: EdgeInsets.only(
-                top: parentHeight * 0.01, right: parentWidth * 0.02),
-            child: PhysicalShape(
-              color: Color(0xff61A5A9),
-              shadowColor: Colors.grey.shade300,
-              elevation: 10,
-              clipper: ShapeBorderClipper(shape: CircleBorder()),
-              child: Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 9,
-                          spreadRadius: 1,
-                          offset: Offset(4, 2)),
-                    ],
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      stops: [0.1, 0.9],
-                      colors: [
-                        Color(0xff31D1FC),
-                        Color(0xffA5E9FD),
-                      ],
-                    ),
-                    /*   border: Border.all(
-                        width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(30),
-                    ),
-                  ),
-                  child: Image(
-                    image: AssetImage('assets/images/filter.png'),
-                    height: parentHeight * 0.1,
-                  )),
-            ),
-          ),
-        )
+
       ],
     );
   }
@@ -1100,7 +1047,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                 });
               },
               initialPage: 1,
-              height: MediaQuery.of(context).size.height * .20,
+              height: MediaQuery.of(context).size.height * .19,
               viewportFraction: 1.0,
               enableInfiniteScroll: false,
               autoPlay: true,
@@ -1233,32 +1180,41 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: parentWidth * 0.3, top: parentWidth * 0.0),
-                child: Container(
-                  height: parentHeight * 0.025,
-                  width: parentWidth * 0.2,
-                  decoration: BoxDecoration(
-                      color: CommonColor.ViewAll,
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text("View All",
-                          style: TextStyle(
-                            fontFamily: "Montserrat-Regular",
-                            fontSize: SizeConfig.blockSizeHorizontal * 2.5,
-                            color: CommonColor.TextBlack,
-                            fontWeight: FontWeight.w400,
-                          )),
-                      Image(
-                        image: AssetImage('assets/images/arrow.png'),
-                        height: 20,
-                        width: 15,
-                        color: Colors.black54,
-                      )
-                    ],
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                      builder: (context) => PopularCatagoriesData(
+                  )));
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: parentWidth * 0.3, top: parentWidth * 0.0),
+                  child: Container(
+                    height: parentHeight * 0.025,
+                    width: parentWidth * 0.2,
+                    decoration: BoxDecoration(
+                        color: CommonColor.ViewAll,
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text("View All",
+                            style: TextStyle(
+                              fontFamily: "Montserrat-Regular",
+                              fontSize: SizeConfig.blockSizeHorizontal * 2.4,
+                              color: CommonColor.TextBlack,
+                              fontWeight: FontWeight.w400,
+                            )),
+                        Image(
+                          image: AssetImage('assets/images/arrow.png'),
+                          height: 20,
+                          width: 15,
+                          color: Colors.black54,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               )

@@ -1,4 +1,5 @@
 import 'package:anything/Common_File/common_color.dart';
+import 'package:anything/MainScreen/login_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'SizeConfig.dart';
@@ -17,13 +18,12 @@ class CommonWidget extends StatefulWidget {
 
 class _CommonWidgetState extends State<CommonWidget> {
 
-  late int tappedIndex;
-
+//Color TapColor = Colors.transparent;
 
   @override
   void initState() {
     super.initState();
-    tappedIndex = 0;
+
   }
 
   @override
@@ -65,36 +65,54 @@ class _CommonWidgetState extends State<CommonWidget> {
             ],
           ),
         ),
-        Container(
-          height: 55,
-          width: 80,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black38,width: 0.5),
-              borderRadius: BorderRadius.all(Radius.circular(10))
+        GestureDetector(
+          onTap: (){
+           /* setState(() {
 
-          ),child: Stack(
+              print("colorsss....$TapColor");
+              TapColor = TapColor == Colors.transparent ?
+                  Colors.blueAccent:
+                  Colors.transparent;
 
-          children: [
-            Padding(
-              padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02,bottom: 20),
-              child: Image(image: AssetImage('assets/images/cattwo.png'),height: 72,width: 108),
-            ),
-            Padding(
-              padding:  EdgeInsets.only(top: 30),
-              child: Center(
-                child: Text (
-                  widget.texttwo,
-                  style: TextStyle(
-                    color: CommonColor.Black,
-                    fontFamily: "Roboto_Regular",
-                    fontSize: SizeConfig.blockSizeHorizontal * 2.7,
-                    fontWeight: FontWeight.w400,
+            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LoginScreen(*//*address: '', lat: '', long: '', ProfilePicture: '', FrontImage: '', BackImage: '',*//*)),
+            );*/
+
+          },
+          child: Container(
+            height: 55,
+            width: 80,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.black38,width: 0.5),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              //color: TapColor,
+            ),child: Stack(
+
+            children: [
+              Padding(
+                padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02,bottom: 20),
+                child: Image(image: AssetImage('assets/images/cattwo.png'),height: 72,width: 108),
+              ),
+              Padding(
+                padding:  EdgeInsets.only(top: 30),
+                child: Center(
+                  child: Text (
+                    widget.texttwo,
+                    style: TextStyle(
+                      color: CommonColor.Black,
+                      fontFamily: "Roboto_Regular",
+                      fontSize: SizeConfig.blockSizeHorizontal * 2.7,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          ),
         ),
         Container(
           height: 55,

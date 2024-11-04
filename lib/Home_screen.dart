@@ -335,12 +335,12 @@ class _ZoomState extends State<Zoom> {
             ),
           ),
         ),
-        GestureDetector(
+       /* GestureDetector(
           onTap: () {
-            /* _controller.nextPage(
+            *//* _controller.nextPage(
           duration:  Duration(milliseconds: 200),
           curve: Curves.easeIn,
-        );*/
+        );*//*
           },
           child: Padding(
             padding: EdgeInsets.only(
@@ -370,8 +370,8 @@ class _ZoomState extends State<Zoom> {
                         Color(0xffA5E9FD),
                       ],
                     ),
-                    /*   border: Border.all(
-                        width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
+                    *//*   border: Border.all(
+                        width: 1, color: CommonColor.APP_BAR_COLOR),*//* //Border.
                     borderRadius: const BorderRadius.all(
                       Radius.circular(30),
                     ),
@@ -382,7 +382,7 @@ class _ZoomState extends State<Zoom> {
                   )),
             ),
           ),
-        )
+        )*/
       ],
     );
   }

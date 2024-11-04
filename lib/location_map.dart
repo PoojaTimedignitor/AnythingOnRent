@@ -528,7 +528,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                         MaterialPageRoute(builder: (context) =>  RegisterScreen(
                           address: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
                           lat: "$selectLat",
-                          long: "$selectLong",
+                          long: "$selectLong", ProfilePicture: '', FrontImage: '', BackImage: '',
 
                         )));
                   },
