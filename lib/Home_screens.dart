@@ -20,6 +20,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late TabController _tabController;
+
   @override
   Widget build(BuildContext context) {
     return ZoomDrawer(
@@ -1137,28 +1139,37 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   }
 
   Widget AddPostButton(double parentHeight, double parentWidth) {
-    return Padding(
-      padding:
-          EdgeInsets.only(left: parentWidth * 0.67, right: parentWidth * 0.05),
-      child: Container(
-        //alignment: Alignment.,
-        height: parentHeight * 0.033,
-        decoration: BoxDecoration(
-          border: Border.all(width: 0.5, color: CommonColor.Blue),
-          borderRadius: BorderRadius.all(
-            Radius.circular(5),
+    return GestureDetector(
+      onTap: (){
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => TabBarScreen(
+
+              //  recLane: widget.recLane,
+            )));
+      },
+      child: Padding(
+        padding:
+            EdgeInsets.only(left: parentWidth * 0.67, right: parentWidth * 0.05),
+        child: Container(
+          //alignment: Alignment.,
+          height: parentHeight * 0.030,
+          decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: CommonColor.Blue),
+            borderRadius: BorderRadius.all(
+              Radius.circular(5),
+            ),
           ),
+          child: Center(
+              child: Text(
+            "Create Post +",
+            style: TextStyle(
+              fontFamily: "Roboto_Medium",
+              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+              color: Color(0xff3684F0),
+              fontWeight: FontWeight.w300,
+            ),
+          )),
         ),
-        child: Center(
-            child: Text(
-          "Create Post +",
-          style: TextStyle(
-            fontFamily: "Roboto_Medium",
-            fontSize: SizeConfig.blockSizeHorizontal * 3.2,
-            color: Color(0xff3684F0),
-            fontWeight: FontWeight.w300,
-          ),
-        )),
       ),
     );
   }
@@ -1248,6 +1259,13 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
       ),
     );
   }
+
+  Widget TabBar(double parentHeight,double parentWidth){
+    return Container(
+
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'package:anything/Common_File/common_color.dart';
-import 'package:anything/MainScreen/login_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'SizeConfig.dart';

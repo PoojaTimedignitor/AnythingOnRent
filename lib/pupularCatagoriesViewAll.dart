@@ -11,7 +11,7 @@ class PopularCatagoriesData extends StatefulWidget {
 }
 
 class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
-  List<String> CatagriesItemList = [
+  List<String> catagriesItemList = [
     "Vehicle",
     "Fashion",
     "Home Appliances",
@@ -21,9 +21,13 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
     "Car",
     "Camera",
     "Bike",
-    "Clothing"
+    "Sports Equipment",
+    "Clothing",
+    "Electronics",
+    "Kitchenware",
+    "Office Equipment",
   ];
-  final List<String> CatagriesImage = [
+  final List<String> catagriesImage = [
     'assets/images/cattwo.png',
     'assets/images/catthree.png',
     'assets/images/catfour.png',
@@ -33,27 +37,89 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
     'assets/images/catone.png',
     'assets/images/cattwo.png',
     'assets/images/catthree.png',
-    'assets/images/catfour.png'
+    'assets/images/catthree.png',
+    'assets/images/catthree.png',
+    'assets/images/catfour.png',
+    'assets/images/catfour.png',
+    'assets/images/cattwo.png'
   ];
+  final Map<String, int> productCountList = {
+    "Vehicle": 12,
+    "Fashion": 8,
+    "Home Appliances": 15,
+    "Event": 5,
+    "Furniture": 20,
+    "Party Bus": 3,
+    "Camera": 6,
+    "Bike": 7,
+    "Sports Equipment": 11,
+    "Clothing": 9,
+    "Electronics": 14,
+    "Kitchenware": 13,
+    "Office Equipment": 8,
+  };
+
+  List<String> searchFilteredList = [];
+  bool isSearchingData = false;
+  String searchQuery = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    searchFilteredList = catagriesItemList;
+  }
+
+  void searchUpdateMethod(String query) {
+    setState(() {
+      searchQuery = query;
+      searchFilteredList = catagriesItemList
+          .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Center(
-          child: Text(
-            "Popular Categories",
-            style: TextStyle(
-              fontFamily: "Montserrat-Medium",
-              fontSize: SizeConfig.blockSizeHorizontal * 4.5,
-              color: CommonColor.TextBlack,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
+            child: !isSearchingData
+                ? Text(
+                    "Popular Categories",
+                    style: TextStyle(
+                      fontFamily: "Montserrat-Medium",
+                      fontSize: SizeConfig.blockSizeHorizontal * 4.5,
+                      color: CommonColor.TextBlack,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                : TextField(
+                    onChanged: searchUpdateMethod,
+                    decoration: InputDecoration(
+                      hintText: "Search...",
+                      border: InputBorder.none,
+                    ),
+                    autofocus: true,
+                  )),
         actions: [
           Padding(
             padding: EdgeInsets.all(13.0),
-            child: Icon(Icons.search_rounded),
+            child: GestureDetector(
+              onTap: () {
+                print("list...$searchUpdateMethod");
+                setState(() {
+                  isSearchingData = !isSearchingData;
+                  if (!isSearchingData) {
+                    searchFilteredList = catagriesItemList;
+                  }
+                });
+              },
+              child: Icon(
+                isSearchingData ? Icons.close : Icons.search_rounded,
+              ),
+            ),
           )
         ],
       ),
@@ -75,12 +141,15 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
                   childAspectRatio: 1,
                   // Aspect ratio of each grid item
                 ),
-                itemCount: CatagriesItemList.length, // Total number of items
+                itemCount: searchFilteredList.length,
+                // Total number of items
                 itemBuilder: (context, index) {
+                  String categoryName = searchFilteredList[index];
+                  int productCount = productCountList[categoryName] ?? 0;
                   return Container(
                     // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     margin: EdgeInsets.only(
-                        left: 5.0, right: 5.0, top: 10.0, bottom: 10.0),
+                        left: 0.0, right: 5.0, top: 10.0, bottom: 10.0),
                     //  height: SizeConfig.screenHeight * 0,
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.black38, width: 0.9),
@@ -90,47 +159,83 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
                         Expanded(
                           child: Stack(
                             alignment: Alignment
-                                .topLeft, // Center aligns items in the stack
+                                .center, // Center aligns items in the stack
                             children: [
                               // Container for the background
                               Container(
                                 margin: EdgeInsets.only(
-                                    left: 22.0, right: 8, top: 11.0,bottom: 8),
+                                    left: 10.0, right: 8, top: 11.0, bottom: 8),
                                 // Set a width for the container
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                  color: CommonColor.Containerss // Use a placeholder color for debugging
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                    color: CommonColor
+                                        .Containerss // Use a placeholder color for debugging
+                                    ),
+                              ),
+
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Container(
+                                    height: 23,
+                                    width: 23,
+                                    decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                              spreadRadius: 0,
+                                              blurRadius: 6,
+                                              offset: Offset(0, 1),
+                                              color: Colors.black12)
+                                        ],
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(100)),
+                                        color: Colors
+                                            .white // Use a placeholder color for debugging
+                                        ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Text(
+                                        "$productCount",
+                                        style: TextStyle(
+                                          color: CommonColor.Black,
+                                          fontFamily: "Roboto_Regular",
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  3.2,
+                                          fontWeight: FontWeight.w400,
+
+                                        ), textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                               // Image on top
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: 30), // Adjusted padding
-                                child: Image.asset(
-
-                                  CatagriesImage[index],
-                                  height: 98,
-                                  width: 55,
-                                ),
+                              Image.asset(
+                                catagriesImage[index],
+                                height: 98,
+                                width: 55,
                               ),
                               // Text below the image
-
                             ],
                           ),
-                        ), Container(
-                          width:120,
-                          margin: EdgeInsets.only(
-                              bottom: 5),
-                         // bottom: 10, // Position the text at the bottom
+                        ),
+                        Container(
+                          width: 120,
+                          margin: EdgeInsets.only(bottom: 5),
+                          // bottom: 10, // Position the text at the bottom
                           child: Text(
-                            CatagriesItemList[index],
+                            searchFilteredList[index],
                             style: TextStyle(
                               color: CommonColor.Black,
                               fontFamily: "Roboto_Regular",
                               fontSize: SizeConfig.blockSizeHorizontal * 3.2,
                               fontWeight: FontWeight.w400,
-                            ), overflow: TextOverflow.ellipsis,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,
                           ),
                         ),
