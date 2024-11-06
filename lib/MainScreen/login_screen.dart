@@ -431,10 +431,10 @@ class _LoginScreenState extends State<LoginScreen> {
           GetStorage().write(ConstantData.Userpassword, value['Data']['password']);
 
           // Navigate to the home screen upon successful login
-          Navigator.pushReplacement(
+         /* Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const Zoom()),
-          );
+          );*/
         } else if(value['success'] == false) {
           print("Email or password does not match");
         }

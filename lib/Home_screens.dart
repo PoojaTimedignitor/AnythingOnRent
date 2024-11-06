@@ -19,9 +19,8 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  late TabController _tabController;
-
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return ZoomDrawer(
@@ -710,6 +709,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   @override
   void dispose() {
     _controller.dispose();
+    _searchFocus.dispose();
     tabController.dispose();
     super.dispose();
   }
@@ -719,7 +719,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   int currentIndex = 0;
   int _currentIndex = 0;
   int _counter = 0;
-
+  late TabController _tabController;
   final List<String> images = [
     "https://img.freepik.com/free-vector/gradient-car-rental-twitch-background_23-2149238538.jpg?w=1380&t=st=1724674607~exp=1724675207~hmac=0ab319f9d9411c32c9d26508151d51f62139e048ac598796c8463dac3ef0aad7"
         'https://img.freepik.com/free-vector/real-estate-landing-page_23-2148686374.jpg?w=1380&t=st=1724741972~exp=1724742572~hmac=e21195893cb55e204d9618c983abd7d4d1dc18402402af3dbe0420bd08d6ad33',
@@ -736,12 +736,20 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
     });
   }
 
+  @override
+  void initState() {
+    _tabController = TabController(length: 2, vsync: this);
+    super.initState();
+  }
+
   Widget bothPanels(BuildContext context, BoxConstraints constraints) {
     final ThemeData theme = Theme.of(context);
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       extendBody: true,
       body: ListView(
-        //shrinkWrap: true,
+        shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         children: [
@@ -751,31 +759,35 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
           sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
           AddPostButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
           PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
-
           Stack(
             children: [
-              Padding(
+             /* Padding(
                 padding: EdgeInsets.only(
-                    left: SizeConfig.screenWidth * 0.68, top: 190),
+                    left: SizeConfig.screenWidth * 0.68, top: 210),
                 child: Image(
                   image: AssetImage('assets/images/home.png'),
-                  height: SizeConfig.screenHeight * 0.220,
+                  height: SizeConfig.screenHeight * 0.280,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.55),
+                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.65),
                 child: Image(
                   image: AssetImage('assets/images/homecircle.png'),
-                  height: SizeConfig.screenHeight * 0.150,
+                  height: SizeConfig.screenHeight * 0.120,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.71),
+                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.79),
                 child: Image(
                   image: AssetImage('assets/images/homecircle.png'),
-                  height: SizeConfig.screenHeight * 0.150,
+                  height: SizeConfig.screenHeight * 0.120,
                 ),
-              ),
+              ),*/
+              Container(
+                  height: SizeConfig.screenHeight * 0.50,
+                  // color: Colors.red,
+                  child: getAddGameTabLayout(
+                      SizeConfig.screenHeight, SizeConfig.screenWidth)),
 
               // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
             ],
@@ -801,11 +813,8 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
             heroTag: GestureDetector(
               onTap: () {},
             ),
-            /*Color(0xffC291EE)*/
             onPressed: _incrementCounter,
-
             backgroundColor: Colors.transparent,
-            // tooltip: 'Increment',
             child: Icon(
               Icons.add,
               color: Colors.white,
@@ -814,19 +823,26 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(left: 10, right: 10, bottom: 20),
-        child: BottomNavyBar(
-          showInactiveTitle: true,
-          selectedIndex: _currentIndex,
-          showElevation: true,
-          itemPadding: EdgeInsets.symmetric(horizontal: 0),
-          itemCornerRadius: 24,
-          iconSize: 20,
-          curve: Curves.easeIn,
-          onItemSelected: (index) => setState(() => _currentIndex = index),
-          items: <BottomNavyBarItem>[
-            BottomNavyBarItem(
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom +
+                20, // Adjust bottom padding when keyboard is open
+          ),
+          child: BottomNavyBar(
+            showInactiveTitle: true,
+            backgroundColor: Color(0xffBFCCFC),
+            selectedIndex: _currentIndex,
+            showElevation: true,
+            itemPadding: EdgeInsets.symmetric(horizontal: 0),
+            itemCornerRadius: 24,
+            iconSize: 20,
+            curve: Curves.easeIn,
+            onItemSelected: (index) => setState(() => _currentIndex = index),
+            items: <BottomNavyBarItem>[
+              BottomNavyBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(6.0),
                   child: Icon(Icons.home, color: Colors.black, size: 17),
@@ -834,69 +850,80 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                 title: Text(
                   'Home',
                   style: TextStyle(
-                      fontSize: SizeConfig.blockSizeHorizontal * 3.4,
-                      fontFamily: 'Roboto_Medium',
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black),
+                    fontSize: SizeConfig.blockSizeHorizontal * 3.4,
+                    fontFamily: 'Roboto_Medium',
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                  ),
                 ),
                 activeBackgroundColor: Colors.white,
                 activeTextColor: Colors.black87,
-                textAlign: TextAlign.center),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Icon(
-                  Icons.search,
-                  color: Colors.black,
-                  size: 17,
-                ),
+                textAlign: TextAlign.center,
               ),
-              title: Text(
-                'Search',
-                style: TextStyle(
+              BottomNavyBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.all(6.0),
+                  child: Icon(
+                    Icons.search,
+                    color: Colors.black,
+                    size: 17,
+                  ),
+                ),
+                title: Text(
+                  'Search',
+                  style: TextStyle(
                     fontSize: SizeConfig.blockSizeHorizontal * 3.4,
                     fontFamily: 'Roboto_Medium',
                     fontWeight: FontWeight.w400,
-                    color: Colors.black),
-              ),
-              activeTextColor: Colors.black87,
-              activeBackgroundColor: Colors.white,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Image(
-                  image: AssetImage('assets/images/like.png'),
-                  color: Colors.black,
-                  height: 18,
+                    color: Colors.black,
+                  ),
                 ),
+                activeTextColor: Colors.black87,
+                activeBackgroundColor: Colors.white,
+                textAlign: TextAlign.center,
               ),
-              title: Text(
-                'Favorite',
-                style: TextStyle(
+              BottomNavyBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.all(6.0),
+                  child: Image(
+                    image: AssetImage('assets/images/like.png'),
+                    color: Colors.black,
+                    height: 18,
+                  ),
+                ),
+                title: Text(
+                  'Favorite',
+                  style: TextStyle(
                     fontSize: SizeConfig.blockSizeHorizontal * 3.4,
                     fontFamily: 'Roboto_Medium',
                     fontWeight: FontWeight.w400,
-                    color: Colors.black),
+                    color: Colors.black,
+                  ),
+                ),
+                activeTextColor: Colors.black,
+                textAlign: TextAlign.center,
+                activeBackgroundColor: Colors.white,
               ),
-              activeTextColor: Colors.black,
-              textAlign: TextAlign.center,
-              activeBackgroundColor: Colors.white,
-            ),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Icon(Icons.settings, color: Colors.black, size: 17),
+              BottomNavyBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.all(6.0),
+                  child: Icon(Icons.settings, color: Colors.black, size: 17),
+                ),
+                title: Text(
+                  'Settings',
+                  style: TextStyle(
+                    fontSize: SizeConfig.blockSizeHorizontal * 3.4,
+                    fontFamily: 'Roboto_Medium',
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                  ),
+                ),
+                activeTextColor: Colors.black87,
+                activeBackgroundColor: Colors.white,
+                textAlign: TextAlign.center,
               ),
-              title: Text(
-                'Settings',
-              ),
-              activeTextColor: Colors.black87,
-              activeBackgroundColor: Colors.white,
-              textAlign: TextAlign.center,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -981,16 +1008,14 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
               left: SizeConfig.screenWidth * .05,
               top: SizeConfig.screenHeight * 0.014),
           child: SizedBox(
-
-              height: SizeConfig.screenHeight * .055,
+            height: SizeConfig.screenHeight * .055,
             width: SizeConfig.screenWidth * .95,
             child: Padding(
               padding: EdgeInsets.only(right: parentWidth * 0.04),
               child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black26),
-                      borderRadius: BorderRadius.circular(10),
-
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextFormField(
                       keyboardType: TextInputType.text,
@@ -1002,8 +1027,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                         prefixIcon: IconButton(
                             onPressed: () {},
                             icon: Image(
-                              image:
-                                  AssetImage("assets/images/search.png"),
+                              image: AssetImage("assets/images/search.png"),
                               height: SizeConfig.screenWidth * 0.07,
                             )),
                         hintText: "Search product/service",
@@ -1016,7 +1040,6 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                         contentPadding: EdgeInsets.only(
                           top: parentWidth * 0.05,
                         ),
-
                         fillColor: Color(0xfffbf3f3),
                         hoverColor: Colors.white,
                         filled: true,
@@ -1032,7 +1055,6 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
             ),
           ),
         ),
-
       ],
     );
   }
@@ -1140,16 +1162,18 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
 
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return GestureDetector(
-      onTap: (){
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => TabBarScreen(
+      onTap: () {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TabBarScreen(
 
-              //  recLane: widget.recLane,
-            )));
+                    //  recLane: widget.recLane,
+                    )));
       },
       child: Padding(
-        padding:
-            EdgeInsets.only(left: parentWidth * 0.67, right: parentWidth * 0.05),
+        padding: EdgeInsets.only(
+            left: parentWidth * 0.67, right: parentWidth * 0.05),
         child: Container(
           //alignment: Alignment.,
           height: parentHeight * 0.030,
@@ -1176,7 +1200,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
 
   Widget PopularCategories(double parentHeight, double parentWidth) {
     return Padding(
-      padding: EdgeInsets.only(top: parentHeight * 0.02),
+      padding: EdgeInsets.only(top: parentHeight * 0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1191,7 +1215,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              GestureDetector(
+              /*GestureDetector(
                 onTap: (){
                   Navigator.push(
                       context,
@@ -1228,7 +1252,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-              )
+              )*/
             ],
           ),
           Padding(
@@ -1236,15 +1260,19 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                 top: parentHeight * 0.009,
                 left: parentWidth * 0.04,
                 right: parentWidth * 0.04),
-            child: Column(
-              children: [
-                CommonWidget(
-                  text: "Electronics",
-                  texttwo: 'Mobiles & Tab',
-                  textthree: 'Furniture',
-                  textfour: 'Events',
-                ),
-              ],
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: ClampingScrollPhysics(),
+              // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+
+              child: CommonWidget(
+                text: "Electronics",
+                texttwo: 'Mobiles & Tab',
+                textthree: 'Furniture',
+                textfour: 'Events',
+                textfive: 'Events',
+                textsix: 'More',
+              ),
             ),
           ),
           SizedBox(height: 13),
@@ -1260,12 +1288,454 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
     );
   }
 
-  Widget TabBar(double parentHeight,double parentWidth){
-    return Container(
+  Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
+    return Padding(
+        padding: EdgeInsets.only(
+            top: parentHeight * 0.01,
+            right: parentWidth * 0.02,
+            left: parentWidth * 0.02),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          // give the tab bar a height [can change hheight to preferred height]
+          Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: Container(
+              height: 45,
+              decoration: BoxDecoration(
+                // color: Color(0xffDDE4FD),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: TabBar(
+                  controller: _tabController,
+                  dividerColor: Colors.transparent,
 
-    );
+                  //labelPadding: const EdgeInsets.symmetric(horizontal: 0),
+                  indicator: BoxDecoration(
+                      image: const DecorationImage(
+                        image: AssetImage("assets/images/tab.png"),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(10)),
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.green.shade800,
+                  tabs: [
+                    Tab(
+                      child: Container(
+                        width: 150,
+                        child: Center(
+                            child: Row(
+                          children: [
+                            Image(
+                                image: AssetImage('assets/images/pro.png'),
+                                height: 72,
+                                width: 50),
+                            Text(
+                              "Product",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Roboto_Regular",
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        )),
+                      ),
+                    ),
+                    Tab(
+                      child: Container(
+                        width: 150,
+                        child: Center(
+                            child: Row(
+                          children: [
+                            Image(
+                                image: AssetImage('assets/images/service.png'),
+                                height: 72,
+                                width: 50),
+                            Text(
+                              "Service",
+                            ),
+                          ],
+                        )),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // tab bar view here
+          Flexible(
+              fit: FlexFit.loose,
+              child: Padding(
+                padding: EdgeInsets.only(top: parentHeight * 0.01),
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+
+                    Container(
+                      height: 45,
+                      decoration: BoxDecoration(
+                        color: Color(0xffEBEFFF),
+                        borderRadius: BorderRadius.circular(10),
+                      //  border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
+                      ),
+                      child: ListView(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        children: [
+                          SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Text(
+                                "  Near by Location",
+                                style: TextStyle(
+                                  fontFamily: "Montserrat-Medium",
+                                  fontSize: SizeConfig.blockSizeHorizontal * 4.1,
+                                  color: CommonColor.TextBlack,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PopularCatagoriesData()));
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: parentWidth * 0.35 ,
+                                      top: parentWidth * 0.0),
+                                  child: Container(
+                                    height: parentHeight * 0.025,
+                                    width: parentWidth * 0.2,
+                                    decoration: BoxDecoration(
+                                        color: CommonColor.ViewAll,
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(5))),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text("View All",
+                                            style: TextStyle(
+                                              fontFamily: "Montserrat-Regular",
+                                              fontSize:
+                                                  SizeConfig.blockSizeHorizontal *
+                                                      2.4,
+                                              color: CommonColor.TextBlack,
+                                              fontWeight: FontWeight.w400,
+                                            )),
+                                        Image(
+                                          image: AssetImage(
+                                              'assets/images/arrow.png'),
+                                          height: 20,
+                                          width: 15,
+                                          color: Colors.black54,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "  Recently add products",
+                            style: TextStyle(
+                              fontFamily: "Roboto_Regular",
+                              fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                              color: CommonColor.gray,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // first tab bar view widget
+
+                    // second tab bar view widget
+                    Padding(
+                      padding: EdgeInsets.only(top: parentHeight * 0.0),
+                      child: SizedBox(
+                        height: parentHeight * 0.7,
+                        child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: 2,
+                            padding: const EdgeInsets.only(bottom: 20, top: 5),
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding:
+                                    EdgeInsets.only(top: parentHeight * 0.03),
+                                child: Container(
+                                  height: parentHeight * 0.23,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        spreadRadius: 1,
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 5),
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.grey.shade50,
+                                        offset: const Offset(-5, 0),
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.grey.shade50,
+                                        offset: const Offset(5, 0),
+                                      )
+                                    ],
+                                  ),
+                                  child: Row(
+                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: parentWidth * 0.01),
+                                        child: Container(
+                                            height: parentHeight * 0.17,
+                                            width: parentWidth * 0.30,
+                                            decoration: BoxDecoration(
+                                                image: const DecorationImage(
+                                                  image: AssetImage(
+                                                      "assets/images/logo.png"),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10))),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: parentHeight * 0.01),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: parentWidth * 0.05,
+                                                      top: parentHeight * 0.03),
+                                                  child: Text("Masjit Name",
+                                                      style: TextStyle(
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            4.3,
+                                                        fontFamily:
+                                                            'Roboto_Bold',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            CommonColor.Black,
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: parentHeight * 0.03,
+                                                      left: parentWidth * 0.04,
+                                                      right: parentWidth * 0.0),
+                                                  child: Container(
+                                                      height:
+                                                          parentHeight * 0.04,
+                                                      width:
+                                                          parentHeight * 0.12,
+                                                      decoration: BoxDecoration(
+                                                        gradient: LinearGradient(
+                                                            begin: Alignment
+                                                                .centerLeft,
+                                                            end: Alignment
+                                                                .centerRight,
+                                                            colors: [
+                                                              CommonColor.Black,
+                                                              CommonColor.Black
+                                                            ]),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          "JOIN",
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  "Roboto_Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              fontSize: SizeConfig
+                                                                      .blockSizeHorizontal *
+                                                                  4.3,
+                                                              color: CommonColor
+                                                                  .bottomsheet),
+                                                        ),
+                                                      )),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right:
+                                                          parentHeight * 0.02,
+                                                      top:
+                                                          parentHeight * 0.002),
+                                                  child: Text("Location :",
+                                                      style: TextStyle(
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            4.0,
+                                                        fontFamily:
+                                                            'Roboto_Bold',
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            CommonColor.Black,
+                                                      )),
+                                                ),
+                                                /* Padding(
+                                              padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
+                                              child: Text("05:30",style: TextStyle(
+                                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                                fontFamily: 'Roboto_Bold',
+                                                fontWeight: FontWeight.w600,
+                                                color: CommonColor.BLACK_COLOR,)),
+                                            )*/
+                                              ],
+                                            ),
+                                            Row(
+                                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right:
+                                                          parentHeight * 0.02,
+                                                      top: parentHeight * 0.01),
+                                                  child: Text("FAZAR",
+                                                      style: TextStyle(
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            4.0,
+                                                        fontFamily:
+                                                            'Roboto_Bold',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            CommonColor.Black,
+                                                      )),
+                                                ),
+                                                /* Padding(
+                                              padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
+                                              child: Text("05:30",style: TextStyle(
+                                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                                fontFamily: 'Roboto_Bold',
+                                                fontWeight: FontWeight.w600,
+                                                color: CommonColor.BLACK_COLOR,)),
+                                            )*/
+                                              ],
+                                            ),
+                                            Row(
+                                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: parentHeight * 0.0,
+                                                      top: parentHeight * 0.01),
+                                                  child: Text("AZAN :",
+                                                      style: TextStyle(
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            4.0,
+                                                        fontFamily:
+                                                            'Roboto_Bold',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            CommonColor.Black,
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: parentWidth * 0.02,
+                                                      top: parentHeight * 0.01),
+                                                  child: Text("05:30",
+                                                      style: TextStyle(
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            4.0,
+                                                        fontFamily:
+                                                            'Roboto_Bold',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            CommonColor.Black,
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right:
+                                                          parentHeight * 0.01,
+                                                      top: parentHeight * 0.01),
+                                                  child: Text("JAMA'AT :",
+                                                      style: TextStyle(
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            4.0,
+                                                        fontFamily:
+                                                            'Roboto_Bold',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            CommonColor.Black,
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: parentWidth * 0.0,
+                                                      top: parentHeight * 0.01),
+                                                  child: Text(
+                                                    "05:30",
+                                                    style: TextStyle(
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            4.0,
+                                                        fontFamily:
+                                                            'Roboto_Bold',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            CommonColor.Black),
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
+              ))
+        ]));
   }
-
 
   @override
   Widget build(BuildContext context) {

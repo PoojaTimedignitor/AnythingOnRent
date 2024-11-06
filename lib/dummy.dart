@@ -59,6 +59,7 @@ class _TabBarScreenState extends State<TabBarScreen>
                 child: TabBar(
                   controller: _tabController,
                   dividerColor: Colors.transparent,
+
                   //labelPadding: const EdgeInsets.symmetric(horizontal: 0),
                   indicator: BoxDecoration(
                       image: const DecorationImage(
@@ -189,7 +190,7 @@ class _TabBarScreenState extends State<TabBarScreen>
                                           CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Padding(
                                               padding: EdgeInsets.only(
@@ -219,7 +220,7 @@ class _TabBarScreenState extends State<TabBarScreen>
                                                   width:
                                                       parentHeight * 0.12,
                                                   decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
+                                                    gradient:  LinearGradient(
                                                         begin: Alignment
                                                             .centerLeft,
                                                         end: Alignment
@@ -340,11 +341,8 @@ class _TabBarScreenState extends State<TabBarScreen>
                                                   top: parentHeight * 0.01),
                                               child: Text("05:30",
                                                   style: TextStyle(
-                                                    fontSize: SizeConfig
-                                                            .blockSizeHorizontal *
-                                                        4.0,
-                                                    fontFamily:
-                                                        'Roboto_Bold',
+                                                    fontSize: SizeConfig.blockSizeHorizontal * 4.0,
+                                                    fontFamily: 'Roboto_Bold',
                                                     fontWeight:
                                                         FontWeight.w600,
                                                     color:
@@ -356,10 +354,9 @@ class _TabBarScreenState extends State<TabBarScreen>
                                                   right:
                                                       parentHeight * 0.01,
                                                   top: parentHeight * 0.01),
-                                              child: Text("JAMA’AT :",
+                                              child: Text("JAMA'AT :",
                                                   style: TextStyle(
-                                                    fontSize: SizeConfig
-                                                            .blockSizeHorizontal *
+                                                    fontSize: SizeConfig.blockSizeHorizontal *
                                                         4.0,
                                                     fontFamily:
                                                         'Roboto_Bold',
@@ -375,16 +372,14 @@ class _TabBarScreenState extends State<TabBarScreen>
                                                   top: parentHeight * 0.01),
                                               child: Text("05:30",
                                                   style: TextStyle(
-                                                    fontSize: SizeConfig
-                                                            .blockSizeHorizontal *
-                                                        4.0,
+                                                    fontSize: SizeConfig.blockSizeHorizontal * 4.0,
                                                     fontFamily:
-                                                        'Roboto_Bold',
-                                                    fontWeight:
+                                                        'Roboto_Bold', fontWeight:
                                                         FontWeight.w600,
                                                     color:
-                                                        CommonColor.Black,
-                                                  )),
+                                                        CommonColor.Black),
+
+                                              ),
                                             )
                                           ],
                                         )

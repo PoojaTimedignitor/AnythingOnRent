@@ -1,15 +1,18 @@
 import 'package:anything/Common_File/common_color.dart';
 import 'package:flutter/material.dart';
 
+import '../pupularCatagoriesViewAll.dart';
 import 'SizeConfig.dart';
 class CommonWidget extends StatefulWidget {
   final String text;
   final String texttwo;
   final String textthree;
   final String textfour;
+  final String textfive;
+  final String textsix;
 
 
-  const CommonWidget({super.key, required this.text, required this.texttwo, required this.textthree, required this.textfour});
+  const CommonWidget({super.key, required this.text, required this.texttwo, required this.textthree, required this.textfour, required this.textfive, required this.textsix});
 
   @override
   State<CommonWidget> createState() => _CommonWidgetState();
@@ -29,7 +32,7 @@ class _CommonWidgetState extends State<CommonWidget> {
   Widget build(BuildContext context) {
 
     return    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
           height: 55,
@@ -64,6 +67,7 @@ class _CommonWidgetState extends State<CommonWidget> {
             ],
           ),
         ),
+        SizedBox(width: 10),
         GestureDetector(
           onTap: (){
            /* setState(() {
@@ -113,6 +117,7 @@ class _CommonWidgetState extends State<CommonWidget> {
           ),
           ),
         ),
+        SizedBox(width: 10),
         Container(
           height: 55,
           width: 80,
@@ -146,6 +151,7 @@ class _CommonWidgetState extends State<CommonWidget> {
           ],
         ),
         ),
+        SizedBox(width: 10),
         Container(
           height: 55,
           width: 80,
@@ -179,6 +185,85 @@ class _CommonWidgetState extends State<CommonWidget> {
           ],
         ),
         ),
+        SizedBox(width: 10),
+        Container(
+          height: 55,
+          width: 80,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black38,width: 0.5),
+              borderRadius: BorderRadius.all(Radius.circular(10))
+
+          ),child: Stack(
+
+          children: [
+            Padding(
+              padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02,top: SizeConfig.screenHeight*0.002),
+              child: const Image(image: AssetImage('assets/images/catfour.png'),height:30,width: 75),
+            ),
+            Padding(
+              padding:  EdgeInsets.only(top: 30),
+              child: Center(
+                child: Text(
+
+                  widget.textfive,
+
+                  style: TextStyle(
+                    color: CommonColor.Black,
+                    fontFamily: "Roboto_Regular",
+                    fontSize: SizeConfig.blockSizeHorizontal * 2.7,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        ),
+        SizedBox(width: 10),
+        GestureDetector(
+          onTap: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PopularCatagoriesData(
+                    )));
+          },
+          child: Container(
+            height: 55,
+            width: 80,
+            decoration: BoxDecoration(
+                color: CommonColor.ViewAll,
+              /*  border: Border.all(color: Colors.black38,width: 0.5),*/
+                borderRadius: BorderRadius.all(Radius.circular(10))
+
+            ),child: Stack(
+
+            children: [
+              Padding(
+                padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.07,top: SizeConfig.screenHeight*0.004),
+                child: const Image(image: AssetImage('assets/images/add.png'),height:30,width: 22),
+              ),
+              Padding(
+                padding:  EdgeInsets.only(top: 30),
+                child: Center(
+                  child: Text(
+
+                    widget.textsix,
+
+                    style: TextStyle(
+                      color: CommonColor.Black,
+                      fontFamily: "Roboto_Regular",
+                      fontSize: SizeConfig.blockSizeHorizontal * 2.7,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          ),
+        ),
+
       ],
     );
   }

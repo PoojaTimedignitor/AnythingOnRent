@@ -129,8 +129,39 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
             height: SizeConfig.screenHeight * 0.0005,
             color: CommonColor.SearchBar,
           ),
-          SizedBox(height: 10),
-          Expanded(
+          SizedBox(height: 40),
+         searchFilteredList .isEmpty ?
+
+         Column(
+           children: [
+             Icon(Icons.search_sharp,  color: CommonColor.noResult,size: 50,),
+             Text("No results found",  style: TextStyle(
+               color: CommonColor.Black,
+               fontFamily: "Roboto_Regular",
+               fontSize:
+               SizeConfig.blockSizeHorizontal *
+                   4.0,
+               fontWeight: FontWeight.w600,
+
+             )),SizedBox(height: 10) ,Container(
+               width: SizeConfig.screenWidth*0.6,
+               child: Text("We couldn't find what you searched for try searching again",  style: TextStyle(
+                 color: CommonColor.gray,
+                 fontFamily: "Roboto_Regular",
+                 fontSize:
+                 SizeConfig.blockSizeHorizontal *
+                     3.3,
+                 fontWeight: FontWeight.w400,
+
+               ),
+               maxLines: 2,
+                 textAlign: TextAlign.center,
+               ),
+             )
+           ],
+         ):
+
+         Expanded(
             child: Padding(
               padding: const EdgeInsets.all(18.0),
               child: GridView.builder(
