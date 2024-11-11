@@ -56,6 +56,7 @@ dev_dependencies:
   carousel_slider:
   pinput:
   geolocator: ^12.0.0
+  another_carousel_pro:
   dropdown_button2: ^2.3.9
   get_storage: ^2.1.1
   dio: ^5.7.0

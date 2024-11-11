@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 
 import 'Common_File/SizeConfig.dart';
@@ -274,14 +275,16 @@ class _TabBarScreenState extends State<TabBarScreen>
                                                         CommonColor.Black,
                                                   )),
                                             ),
-                                            /* Padding(
+                                            */
+/* Padding(
                                               padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
                                               child: Text("05:30",style: TextStyle(
                                                 fontSize: SizeConfig.blockSizeHorizontal * 4.3,
                                                 fontFamily: 'Roboto_Bold',
                                                 fontWeight: FontWeight.w600,
                                                 color: CommonColor.BLACK_COLOR,)),
-                                            )*/
+                                            )*//*
+
                                           ],
                                         ),
                                         Row(
@@ -305,14 +308,16 @@ class _TabBarScreenState extends State<TabBarScreen>
                                                         CommonColor.Black,
                                                   )),
                                             ),
-                                            /* Padding(
+                                            */
+/* Padding(
                                               padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
                                               child: Text("05:30",style: TextStyle(
                                                 fontSize: SizeConfig.blockSizeHorizontal * 4.3,
                                                 fontFamily: 'Roboto_Bold',
                                                 fontWeight: FontWeight.w600,
                                                 color: CommonColor.BLACK_COLOR,)),
-                                            )*/
+                                            )*//*
+
                                           ],
                                         ),
                                         Row(
@@ -397,5 +402,48 @@ class _TabBarScreenState extends State<TabBarScreen>
             ),
           ))
         ]));
+  }
+}
+*/
+import 'package:another_carousel_pro/another_carousel_pro.dart';
+import 'package:flutter/material.dart';
+
+class ImageSliders extends StatefulWidget {
+  const ImageSliders({super.key});
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<ImageSliders> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("ImageSlider in Flutter"),
+        centerTitle: true,
+      ),
+      body: SizedBox(
+        height: 250,
+        width: double.infinity,
+        child: AnotherCarousel(
+          images: const [
+            NetworkImage(
+                "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
+            NetworkImage(
+                "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
+            NetworkImage(
+                "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
+            // we have display image from netwrok as well
+            NetworkImage(
+                "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
+          ],
+          dotSize: 6,
+          dotSpacing:17,
+          dotIncreasedColor:Colors.red,
+          indicatorBgPadding: 5.0,
+        ),
+      ),
+    );
   }
 }

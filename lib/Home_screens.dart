@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:another_carousel_pro/another_carousel_pro.dart';
 
 import 'bottomNavigationBar.dart';
 import 'Common_File/common_color.dart';
@@ -730,6 +731,16 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
     'https://images.pexels.com/photos/4489702/pexels-photo-4489702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
   ];
 
+  final List<String> Prodcutimages = [
+    "https://img.freepik.com/free-vector/gradient-car-rental-twitch-background_23-2149238538.jpg?w=1380&t=st=1724674607~exp=1724675207~hmac=0ab319f9d9411c32c9d26508151d51f62139e048ac598796c8463dac3ef0aad7"
+        'https://img.freepik.com/free-vector/real-estate-landing-page_23-2148686374.jpg?w=1380&t=st=1724741972~exp=1724742572~hmac=e21195893cb55e204d9618c983abd7d4d1dc18402402af3dbe0420bd08d6ad33',
+    "https://img.freepik.com/free-vector/hand-drawn-real-estate-poster-template_23-2149845735.jpg?w=740&t=st=1724742124~exp=1724742724~hmac=3920ca483a7e7dc65a3006016da9687799d3d72e35d5a70af985ce681bbdfc49"
+        'https://images.pexels.com/photos/3757226/pexels-photo-3757226.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/13065690/pexels-photo-13065690.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/372810/pexels-photo-372810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/4489702/pexels-photo-4489702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
+  ];
+
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -750,47 +761,69 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
       extendBody: true,
       body: ListView(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
+        physics: NeverScrollableScrollPhysics(),
         children: [
-          getAddMainHeadingLayout(
-              SizeConfig.screenHeight, SizeConfig.screenWidth),
-          HomeSearchBar(SizeConfig.screenHeight, SizeConfig.screenWidth),
-          sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
-          AddPostButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
-          PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
-          Stack(
-            children: [
-             /* Padding(
-                padding: EdgeInsets.only(
-                    left: SizeConfig.screenWidth * 0.68, top: 210),
-                child: Image(
-                  image: AssetImage('assets/images/home.png'),
-                  height: SizeConfig.screenHeight * 0.280,
+          Container(
+              height: SizeConfig.screenHeight * 0.17,
+              child: Column(
+                children: [
+                  getAddMainHeadingLayout(
+                      SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  HomeSearchBar(
+                      SizeConfig.screenHeight, SizeConfig.screenWidth),
+                ],
+              )),
+          Container(
+            height: SizeConfig.screenHeight * 0.83,
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              children: [
+                sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                AddPostButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                PopularCategories(
+                    SizeConfig.screenHeight, SizeConfig.screenWidth),
+                Padding(
+                  padding:
+                      EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.15),
+                  child: Container(
+                    height: SizeConfig.screenHeight * 4,
+                    child: getAddGameTabLayout(
+                        SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.65),
-                child: Image(
-                  image: AssetImage('assets/images/homecircle.png'),
-                  height: SizeConfig.screenHeight * 0.120,
+                /* Stack(
+                  children: [
+                 Padding(
+                  padding: EdgeInsets.only(
+                      left: SizeConfig.screenWidth * 0.68, top: 200),
+                  child: Image(
+                    image: AssetImage('assets/images/home.png'),
+                    height: SizeConfig.screenHeight * 0.280,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.79),
-                child: Image(
-                  image: AssetImage('assets/images/homecircle.png'),
-                  height: SizeConfig.screenHeight * 0.120,
+                Padding(
+                  padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.30),
+                  child: Image(
+                    image: AssetImage('assets/images/homecircle.png'),
+                    height: SizeConfig.screenHeight * 0.120,
+                  ),
                 ),
-              ),*/
-              Container(
-                  height: SizeConfig.screenHeight * 0.50,
-                  // color: Colors.red,
-                  child: getAddGameTabLayout(
-                      SizeConfig.screenHeight, SizeConfig.screenWidth)),
+                Padding(
+                  padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.40),
+                  child: Image(
+                    image: AssetImage('assets/images/homecircle.png'),
+                    height: SizeConfig.screenHeight * 0.120,
+                  ),
+                ),
 
-              // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
-            ],
+
+                    // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  ],
+                ),*/
+              ],
+            ),
           ),
         ],
       ),
@@ -1166,7 +1199,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => TabBarScreen(
+                builder: (context) => ImageSliders(
 
                     //  recLane: widget.recLane,
                     )));
@@ -1297,7 +1330,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           // give the tab bar a height [can change hheight to preferred height]
           Padding(
-            padding: const EdgeInsets.all(3.0),
+            padding: const EdgeInsets.all(0.0),
             child: Container(
               height: 45,
               decoration: BoxDecoration(
@@ -1323,7 +1356,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                   tabs: [
                     Tab(
                       child: Container(
-                        width: 150,
+                        width: 160,
                         child: Center(
                             child: Row(
                           children: [
@@ -1353,7 +1386,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                             Image(
                                 image: AssetImage('assets/images/service.png'),
                                 height: 72,
-                                width: 50),
+                                width: 80),
                             Text(
                               "Service",
                             ),
@@ -1375,17 +1408,17 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-
                     Container(
-                      height: 45,
                       decoration: BoxDecoration(
                         color: Color(0xffEBEFFF),
                         borderRadius: BorderRadius.circular(10),
-                      //  border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
+                        //  border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
                       ),
-                      child: ListView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        /*   physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        padding: EdgeInsets.zero,
+                        padding: EdgeInsets.zero,*/
                         children: [
                           SizedBox(height: 10),
                           Row(
@@ -1394,7 +1427,8 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                 "  Near by Location",
                                 style: TextStyle(
                                   fontFamily: "Montserrat-Medium",
-                                  fontSize: SizeConfig.blockSizeHorizontal * 4.1,
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 4.1,
                                   color: CommonColor.TextBlack,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -1408,16 +1442,15 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                               PopularCatagoriesData()));
                                 },
                                 child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: parentWidth * 0.35 ,
-                                      top: parentWidth * 0.0),
+                                  padding:
+                                      EdgeInsets.only(left: parentWidth * 0.35),
                                   child: Container(
                                     height: parentHeight * 0.025,
                                     width: parentWidth * 0.2,
                                     decoration: BoxDecoration(
                                         color: CommonColor.ViewAll,
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(5))),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5))),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
@@ -1425,9 +1458,9 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                         Text("View All",
                                             style: TextStyle(
                                               fontFamily: "Montserrat-Regular",
-                                              fontSize:
-                                                  SizeConfig.blockSizeHorizontal *
-                                                      2.4,
+                                              fontSize: SizeConfig
+                                                      .blockSizeHorizontal *
+                                                  2.4,
                                               color: CommonColor.TextBlack,
                                               fontWeight: FontWeight.w400,
                                             )),
@@ -1446,12 +1479,364 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                             ],
                           ),
                           Text(
-                            "  Recently add products",
+                            "   Near By Place",
                             style: TextStyle(
                               fontFamily: "Roboto_Regular",
                               fontSize: SizeConfig.blockSizeHorizontal * 3.5,
                               color: CommonColor.gray,
                               fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Expanded(
+                            child: GridView.builder(
+                              physics:
+                                  NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                              shrinkWrap: true, // Take only the space it needs
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount:
+                                    2, // Number of columns in the grid
+                                crossAxisSpacing: 1.0,
+                                mainAxisSpacing: 0.0,
+                                childAspectRatio: 1.0, // Adjust as needed
+                              ),
+                              itemCount: 4, // Number of items in the grid
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  height: SizeConfig.screenWidth * 0.35,
+                                  margin: EdgeInsets.only(
+                                      left: 10.0,
+                                      right: 5.0,
+                                      top: 0.0,
+                                      bottom: 30.0),
+                                  //  height: SizeConfig.screenHeight * 0,
+                                  decoration: BoxDecoration(
+                                      color: CommonColor.redContainer,
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Color(0xff000000)
+                                                .withOpacity(0.2),
+                                            blurRadius: 2,
+                                            spreadRadius: 0,
+                                            offset: Offset(0, 1)),
+                                      ],
+                                      /*  border: Border.all(
+                                              color: Colors.black38, width: 0.9),*/
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(7))),
+
+                                  // alignment: Alignment.center,
+
+                                  child: Column(
+                                    // crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Stack(
+                                        children: [
+                                          Container(
+                                            height:
+                                                SizeConfig.screenHeight * 0.1,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(7),
+                                                topRight: Radius.circular(7),
+                                              ),
+                                              child: AnotherCarousel(
+                                                images: const [
+                                                  NetworkImage(
+                                                      "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
+                                                  NetworkImage(
+                                                      "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
+                                                  NetworkImage(
+                                                      "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
+                                                  // we have display image from netwrok as well
+                                                  NetworkImage(
+                                                      "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
+                                                ],
+                                                dotSize: 6,
+                                                dotSpacing: 10,
+                                                dotColor: Colors.white70,
+                                                dotIncreasedColor:
+                                                    Colors.black45,
+                                                indicatorBgPadding: 5.0,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            //  border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
+
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 66, left: 111),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomLeft,
+                                                  child: Container(
+                                                    height: 15,
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xff5095f1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              0),
+                                                    ),
+                                                    child: Row(
+                                                        // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.location_on,
+                                                            size: SizeConfig
+                                                                    .screenHeight *
+                                                                0.019,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Text(
+                                                            '1.2 Km   ',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  "Montserrat-Regular",
+                                                              fontSize: SizeConfig
+                                                                      .blockSizeHorizontal *
+                                                                  2.5,
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ]),
+                                                  ),
+                                                )),
+                                          ),
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 65, left: 2),
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                child: Row(
+                                                    // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.star,
+                                                        size: SizeConfig
+                                                                .screenHeight *
+                                                            0.02,
+                                                        color:
+                                                            Color(0xffFFB905),
+                                                      ),
+                                                      Text(
+                                                        " 4.5",
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              "Roboto-Regular",
+                                                          fontSize: SizeConfig
+                                                                  .blockSizeHorizontal *
+                                                              2.8,
+                                                          color:
+                                                              CommonColor.white,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ]),
+                                              ))
+                                        ],
+                                      ),
+                                      SizedBox(height: 2),
+                                      Container(
+                                        width: SizeConfig.screenWidth * 0.39,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'HD Camera (black & white) dfgdf',
+                                              style: TextStyle(
+                                                fontFamily:
+                                                    "Montserrat-Regular",
+                                                fontSize: SizeConfig
+                                                        .blockSizeHorizontal *
+                                                    3.3,
+                                                color: CommonColor.Black,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(height: 2),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.location_on,
+                                                  size:
+                                                      SizeConfig.screenHeight *
+                                                          0.019,
+                                                  color: Color(0xff3684F0),
+                                                ),
+                                                Flexible(
+                                                  child: Text(
+                                                    ' Park Street,pune banner 20023',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          "Montserrat-Regular",
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          2.8,
+                                                      color: Color(0xff3684F0),
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 5),
+                                            Row(
+                                              children: [
+                                                // color: Color(0xff3684F0),
+
+                                                Text(
+                                                  " Share",
+                                                  style: TextStyle(
+                                                    color: CommonColor.Black,
+                                                    fontFamily:
+                                                        "Roboto_Regular",
+                                                    fontSize: SizeConfig
+                                                            .blockSizeHorizontal *
+                                                        2.7,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                SizedBox(width: 5),
+                                                Image(
+                                                    image: AssetImage(
+                                                        'assets/images/share.png'),
+                                                    height: 13),
+                                                SizedBox(width: 12),
+                                                Container(),
+                                                Icon(
+                                                  Icons.star,
+                                                  size: SizeConfig.screenHeight * 0.02,
+                                                  color: Color(0xffFFB905),
+                                                ),
+                                                Text(
+                                                  " 4.5",
+                                                  style: TextStyle(
+                                                    fontFamily: "Roboto-Regular",
+                                                    fontSize: SizeConfig.blockSizeHorizontal * 2.9,
+                                                    color: CommonColor.Black,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+
+                                              ],
+                                            ),
+
+                                            /*Text(
+                                              "Available At: ",
+                                              style: TextStyle(
+                                                fontFamily: "Montserrat-Medium",
+                                                fontSize: SizeConfig.blockSizeHorizontal * 2.8,
+                                                color: CommonColor.TextBlack,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),*/
+                                            /* Container(
+                                              width: 200,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+
+                                                  color: Color(0xffffffff),
+                                                  borderRadius: BorderRadius.circular(2),
+                                                  border: Border.all(color: CommonColor.grays,width: 0.5)
+                                                //  border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+
+                                                      Image(image: AssetImage('assets/images/check.png'),height: 10,),
+                                                       // color: Color(0xff3684F0),
+
+
+                                                      Text(
+                                                        "  ₹100 / Day",
+                                                        style: TextStyle(
+                                                          fontFamily: "Roboto-Regular",
+                                                          fontSize: SizeConfig.blockSizeHorizontal * 2.75,
+                                                          color: Color(0xffD17070),
+                                                          fontWeight: FontWeight.w400,
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                      SizedBox(width: 5),
+                                                      Image(image: AssetImage('assets/images/check.png'),height: 10,),
+                                                      // color: Color(0xff3684F0),
+                                                      Text(
+                                                        "  ₹100 / Day",
+                                                        style: TextStyle(
+                                                          fontFamily: "Roboto-Regular",
+                                                          fontSize: SizeConfig.blockSizeHorizontal * 2.75,
+                                                          color: Color(0xffD17070),
+                                                          fontWeight: FontWeight.w400,
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+
+                                                      Image(image: AssetImage('assets/images/check.png'),height: 10,),
+                                                      // color: Color(0xff3684F0),
+
+
+                                                      Text(
+                                                        "  ₹100 / Day",
+                                                        style: TextStyle(
+                                                          fontFamily: "Roboto-Regular",
+                                                          fontSize: SizeConfig.blockSizeHorizontal * 2.75,
+                                                          color: Color(0xffD17070),
+                                                          fontWeight: FontWeight.w400,
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                      SizedBox(width: 5),
+                                                      Image(image: AssetImage('assets/images/check.png'),height: 10,),
+                                                      // color: Color(0xff3684F0),
+                                                      Text(
+                                                        "  ₹100 / Day",
+                                                        style: TextStyle(
+                                                          fontFamily: "Roboto-Regular",
+                                                          fontSize: SizeConfig.blockSizeHorizontal * 2.75,
+                                                          color: Color(0xffD17070),
+                                                          fontWeight: FontWeight.w400,
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+*/
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -1461,275 +1846,251 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                     // first tab bar view widget
 
                     // second tab bar view widget
-                    Padding(
-                      padding: EdgeInsets.only(top: parentHeight * 0.0),
-                      child: SizedBox(
-                        height: parentHeight * 0.7,
-                        child: ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            itemCount: 2,
-                            padding: const EdgeInsets.only(bottom: 20, top: 5),
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding:
-                                    EdgeInsets.only(top: parentHeight * 0.03),
-                                child: Container(
-                                  height: parentHeight * 0.23,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                        color: Colors.grey.shade300,
-                                        spreadRadius: 1,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 5),
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.grey.shade50,
-                                        offset: const Offset(-5, 0),
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.grey.shade50,
-                                        offset: const Offset(5, 0),
-                                      )
-                                    ],
-                                  ),
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: parentWidth * 0.01),
-                                        child: Container(
-                                            height: parentHeight * 0.17,
-                                            width: parentWidth * 0.30,
-                                            decoration: BoxDecoration(
-                                                image: const DecorationImage(
-                                                  image: AssetImage(
-                                                      "assets/images/logo.png"),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(10))),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: parentHeight * 0.01),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: parentWidth * 0.05,
-                                                      top: parentHeight * 0.03),
-                                                  child: Text("Masjit Name",
-                                                      style: TextStyle(
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            4.3,
-                                                        fontFamily:
-                                                            'Roboto_Bold',
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color:
-                                                            CommonColor.Black,
-                                                      )),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: parentHeight * 0.03,
-                                                      left: parentWidth * 0.04,
-                                                      right: parentWidth * 0.0),
-                                                  child: Container(
-                                                      height:
-                                                          parentHeight * 0.04,
-                                                      width:
-                                                          parentHeight * 0.12,
-                                                      decoration: BoxDecoration(
-                                                        gradient: LinearGradient(
-                                                            begin: Alignment
-                                                                .centerLeft,
-                                                            end: Alignment
-                                                                .centerRight,
-                                                            colors: [
-                                                              CommonColor.Black,
-                                                              CommonColor.Black
-                                                            ]),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          "JOIN",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  "Roboto_Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              fontSize: SizeConfig
-                                                                      .blockSizeHorizontal *
-                                                                  4.3,
-                                                              color: CommonColor
-                                                                  .bottomsheet),
-                                                        ),
-                                                      )),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right:
-                                                          parentHeight * 0.02,
-                                                      top:
-                                                          parentHeight * 0.002),
-                                                  child: Text("Location :",
-                                                      style: TextStyle(
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            4.0,
-                                                        fontFamily:
-                                                            'Roboto_Bold',
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color:
-                                                            CommonColor.Black,
-                                                      )),
-                                                ),
-                                                /* Padding(
-                                              padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
-                                              child: Text("05:30",style: TextStyle(
-                                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                                fontFamily: 'Roboto_Bold',
-                                                fontWeight: FontWeight.w600,
-                                                color: CommonColor.BLACK_COLOR,)),
-                                            )*/
-                                              ],
-                                            ),
-                                            Row(
-                                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right:
-                                                          parentHeight * 0.02,
-                                                      top: parentHeight * 0.01),
-                                                  child: Text("FAZAR",
-                                                      style: TextStyle(
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            4.0,
-                                                        fontFamily:
-                                                            'Roboto_Bold',
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color:
-                                                            CommonColor.Black,
-                                                      )),
-                                                ),
-                                                /* Padding(
-                                              padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
-                                              child: Text("05:30",style: TextStyle(
-                                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                                fontFamily: 'Roboto_Bold',
-                                                fontWeight: FontWeight.w600,
-                                                color: CommonColor.BLACK_COLOR,)),
-                                            )*/
-                                              ],
-                                            ),
-                                            Row(
-                                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: parentHeight * 0.0,
-                                                      top: parentHeight * 0.01),
-                                                  child: Text("AZAN :",
-                                                      style: TextStyle(
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            4.0,
-                                                        fontFamily:
-                                                            'Roboto_Bold',
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color:
-                                                            CommonColor.Black,
-                                                      )),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: parentWidth * 0.02,
-                                                      top: parentHeight * 0.01),
-                                                  child: Text("05:30",
-                                                      style: TextStyle(
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            4.0,
-                                                        fontFamily:
-                                                            'Roboto_Bold',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            CommonColor.Black,
-                                                      )),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right:
-                                                          parentHeight * 0.01,
-                                                      top: parentHeight * 0.01),
-                                                  child: Text("JAMA'AT :",
-                                                      style: TextStyle(
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            4.0,
-                                                        fontFamily:
-                                                            'Roboto_Bold',
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color:
-                                                            CommonColor.Black,
-                                                      )),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: parentWidth * 0.0,
-                                                      top: parentHeight * 0.01),
-                                                  child: Text(
-                                                    "05:30",
-                                                    style: TextStyle(
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            4.0,
-                                                        fontFamily:
-                                                            'Roboto_Bold',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            CommonColor.Black),
-                                                  ),
-                                                )
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                    SizedBox(
+                      child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: 30,
+                          padding: const EdgeInsets.only(bottom: 20, top: 5),
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  EdgeInsets.only(top: parentHeight * 0.03),
+                              child: Container(
+                                height: parentHeight * 0.23,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.grey.shade50,
+                                      offset: const Offset(-5, 0),
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.grey.shade50,
+                                      offset: const Offset(5, 0),
+                                    )
+                                  ],
                                 ),
-                              );
-                            }),
-                      ),
+                                child: Row(
+                                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: parentWidth * 0.01),
+                                      child: Container(
+                                          height: parentHeight * 0.17,
+                                          width: parentWidth * 0.30,
+                                          decoration: BoxDecoration(
+                                              image: const DecorationImage(
+                                                image: AssetImage(
+                                                    "assets/images/logo.png"),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10))),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: parentHeight * 0.01),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentWidth * 0.05,
+                                                    top: parentHeight * 0.03),
+                                                child: Text("Masjit Name",
+                                                    style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          4.3,
+                                                      fontFamily: 'Roboto_Bold',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: CommonColor.Black,
+                                                    )),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: parentHeight * 0.03,
+                                                    left: parentWidth * 0.04,
+                                                    right: parentWidth * 0.0),
+                                                child: Container(
+                                                    height: parentHeight * 0.04,
+                                                    width: parentHeight * 0.12,
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                          begin: Alignment
+                                                              .centerLeft,
+                                                          end: Alignment
+                                                              .centerRight,
+                                                          colors: [
+                                                            CommonColor.Black,
+                                                            CommonColor.Black
+                                                          ]),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        "JOIN",
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                "Roboto_Regular",
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            fontSize: SizeConfig
+                                                                    .blockSizeHorizontal *
+                                                                4.3,
+                                                            color: CommonColor
+                                                                .bottomsheet),
+                                                      ),
+                                                    )),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentHeight * 0.02,
+                                                    top: parentHeight * 0.002),
+                                                child: Text("Location :",
+                                                    style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          4.0,
+                                                      fontFamily: 'Roboto_Bold',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: CommonColor.Black,
+                                                    )),
+                                              ),
+                                              /* Padding(
+                                            padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
+                                            child: Text("05:30",style: TextStyle(
+                                              fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                              fontFamily: 'Roboto_Bold',
+                                              fontWeight: FontWeight.w600,
+                                              color: CommonColor.BLACK_COLOR,)),
+                                          )*/
+                                            ],
+                                          ),
+                                          Row(
+                                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentHeight * 0.02,
+                                                    top: parentHeight * 0.01),
+                                                child: Text("FAZAR",
+                                                    style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          4.0,
+                                                      fontFamily: 'Roboto_Bold',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: CommonColor.Black,
+                                                    )),
+                                              ),
+                                              /* Padding(
+                                            padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
+                                            child: Text("05:30",style: TextStyle(
+                                              fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                              fontFamily: 'Roboto_Bold',
+                                              fontWeight: FontWeight.w600,
+                                              color: CommonColor.BLACK_COLOR,)),
+                                          )*/
+                                            ],
+                                          ),
+                                          Row(
+                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentHeight * 0.0,
+                                                    top: parentHeight * 0.01),
+                                                child: Text("AZAN :",
+                                                    style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          4.0,
+                                                      fontFamily: 'Roboto_Bold',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: CommonColor.Black,
+                                                    )),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentWidth * 0.02,
+                                                    top: parentHeight * 0.01),
+                                                child: Text("05:30",
+                                                    style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          4.0,
+                                                      fontFamily: 'Roboto_Bold',
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: CommonColor.Black,
+                                                    )),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentHeight * 0.01,
+                                                    top: parentHeight * 0.01),
+                                                child: Text("JAMA'AT :",
+                                                    style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          4.0,
+                                                      fontFamily: 'Roboto_Bold',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: CommonColor.Black,
+                                                    )),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentWidth * 0.0,
+                                                    top: parentHeight * 0.01),
+                                                child: Text(
+                                                  "05:30",
+                                                  style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          4.0,
+                                                      fontFamily: 'Roboto_Bold',
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: CommonColor.Black),
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
                     ),
                   ],
                 ),
