@@ -125,26 +125,23 @@ class _CommonWidgetState extends State<CommonWidget> {
               border: Border.all(color: Colors.black38,width: 0.5),
               borderRadius: BorderRadius.all(Radius.circular(10))
 
-          ),child: Stack(
+          ),child: Column(
 
           children: [
             Padding(
-              padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02),
+              padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.0),
               child: Image(image: AssetImage('assets/images/catthree.png'),height: 37,width: 75),
             ),
-            Padding(
-              padding:  EdgeInsets.only(top: 30),
-              child: Center(
-                child: Text(
+            Center(
+              child: Text(
 
-                  widget.textthree,
+                widget.textthree,
 
-                  style: TextStyle(
-                    color: CommonColor.Black,
-                    fontFamily: "Roboto_Regular",
-                    fontSize: SizeConfig.blockSizeHorizontal * 2.7,
-                    fontWeight: FontWeight.w400,
-                  ),
+                style: TextStyle(
+                  color: CommonColor.Black,
+                  fontFamily: "Roboto_Regular",
+                  fontSize: SizeConfig.blockSizeHorizontal * 2.7,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -159,15 +156,15 @@ class _CommonWidgetState extends State<CommonWidget> {
               border: Border.all(color: Colors.black38,width: 0.5),
               borderRadius: BorderRadius.all(Radius.circular(10))
 
-          ),child: Stack(
+          ),child: Column(
 
           children: [
             Padding(
-              padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02,top: SizeConfig.screenHeight*0.002),
+              padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.002),
               child: const Image(image: AssetImage('assets/images/catfour.png'),height:30,width: 75),
             ),
             Padding(
-              padding:  EdgeInsets.only(top: 30),
+              padding:  EdgeInsets.only(top: 4),
               child: Center(
                 child: Text(
 
@@ -193,15 +190,15 @@ class _CommonWidgetState extends State<CommonWidget> {
               border: Border.all(color: Colors.black38,width: 0.5),
               borderRadius: BorderRadius.all(Radius.circular(10))
 
-          ),child: Stack(
+          ),child: Column(
 
           children: [
             Padding(
-              padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.02,top: SizeConfig.screenHeight*0.002),
+              padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.002),
               child: const Image(image: AssetImage('assets/images/catfour.png'),height:30,width: 75),
             ),
             Padding(
-              padding:  EdgeInsets.only(top: 30),
+              padding:  EdgeInsets.only(top: 4),
               child: Center(
                 child: Text(
 
@@ -236,26 +233,23 @@ class _CommonWidgetState extends State<CommonWidget> {
               /*  border: Border.all(color: Colors.black38,width: 0.5),*/
                 borderRadius: BorderRadius.all(Radius.circular(10))
 
-            ),child: Stack(
+            ),child: Column(
 
             children: [
               Padding(
-                padding:  EdgeInsets.only(left:SizeConfig.screenWidth*0.07,top: SizeConfig.screenHeight*0.004),
+                padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.004),
                 child: const Image(image: AssetImage('assets/images/add.png'),height:30,width: 22),
               ),
-              Padding(
-                padding:  EdgeInsets.only(top: 30),
-                child: Center(
-                  child: Text(
+              Center(
+                child: Text(
 
-                    widget.textsix,
+                  widget.textsix,
 
-                    style: TextStyle(
-                      color: CommonColor.Black,
-                      fontFamily: "Roboto_Regular",
-                      fontSize: SizeConfig.blockSizeHorizontal * 2.7,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  style: TextStyle(
+                    color: CommonColor.Black,
+                    fontFamily: "Roboto_Regular",
+                    fontSize: SizeConfig.blockSizeHorizontal * 2.7,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
