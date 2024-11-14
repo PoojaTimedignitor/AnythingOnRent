@@ -103,8 +103,8 @@ class _AllProductListState extends State<AllProductList> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(7),
-                      border:
-                          Border.all(color: CommonColor.grayText, width: 0.1),
+                    /*  border:
+                          Border.all(color: CommonColor.grayText, width: 0.1),*/
                       boxShadow: [
                         BoxShadow(
                             color: Color(0xff535353).withOpacity(0.2),
@@ -121,12 +121,12 @@ class _AllProductListState extends State<AllProductList> {
                             flex: 1,
                             child: Container(
                               height: SizeConfig.screenHeight * 0.16,
-                            /*  decoration: BoxDecoration(
+                              decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: CommonColor.Black, width: 0.2),
+                                      color: CommonColor.Black, width: 0.1),
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(4),
-                                  )),*/
+                                  )),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(4),
@@ -172,19 +172,19 @@ class _AllProductListState extends State<AllProductList> {
                                           fontFamily: "Montserrat-Regular",
                                           fontSize:
                                               SizeConfig.blockSizeHorizontal *
-                                                  3.3,
+                                                  3.8,
                                           color: CommonColor.Black,
                                           fontWeight: FontWeight.w400,
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      SizedBox(height: 3),
+                                      SizedBox(height: 7),
                                       Row(
                                         children: [
                                           Icon(
                                             Icons.location_on,
                                             size:
-                                                SizeConfig.screenHeight * 0.019,
+                                                SizeConfig.screenHeight * 0.02,
                                             color: Color(0xff3684F0),
                                           ),
                                           Flexible(
@@ -195,7 +195,7 @@ class _AllProductListState extends State<AllProductList> {
                                                     "Montserrat-Regular",
                                                 fontSize: SizeConfig
                                                         .blockSizeHorizontal *
-                                                    3.1,
+                                                    3.0,
                                                 color: Color(0xff3684F0),
                                                 fontWeight: FontWeight.w400,
                                               ),
@@ -205,39 +205,93 @@ class _AllProductListState extends State<AllProductList> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 5),
+                                      SizedBox(height: 8),
                                       Container(
-                                        height: 19,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xfff8e8e8),
+                                        height: 28,
+                                        decoration:
+                                        BoxDecoration(
+                                          color: Color(
+                                              0xfff8e8e8),
                                           borderRadius:
-                                              BorderRadius.circular(4),
+                                          BorderRadius
+                                              .circular(
+                                              4),
                                         ),
                                         child: Row(
-                                            // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                          // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
                                             children: [
-                                              Icon(
-                                                Icons.location_on,
-                                                size: SizeConfig.screenHeight *
-                                                    0.019,
-                                                color: Colors.black87,
+
+                                              Text(
+                                                '   Posted By:  ',
+                                                style:
+                                                TextStyle(
+                                                  fontFamily:
+                                                  "Montserrat-Regular",
+                                                  fontSize:
+                                                  SizeConfig.blockSizeHorizontal * 2.8,
+                                                  color:
+                                                  Colors.black87,
+                                                  fontWeight:
+                                                  FontWeight.w400,
+                                                ),
+                                                overflow:
+                                                TextOverflow.ellipsis,
                                               ),
                                               Text(
-                                                '1.2 Km   ',
-                                                style: TextStyle(
+                                                'Aaysha',
+                                                style:
+                                                TextStyle(
                                                   fontFamily:
-                                                      "Montserrat-Regular",
-                                                  fontSize: SizeConfig
-                                                          .blockSizeHorizontal *
-                                                      2.5,
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.w600,
+                                                  "Montserrat-Regular",
+                                                  fontSize:
+                                                  SizeConfig.blockSizeHorizontal * 2.8,
+                                                  color:
+                                                  Color(0xffC56262),
+                                                  fontWeight:
+                                                  FontWeight.w400,
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
+                                                overflow:
+                                                TextOverflow.ellipsis,
                                               ),
+                                              SizedBox(width: 45),
+                                              Container(
+                                                width: SizeConfig.screenWidth *
+                                                    0.1,
+                                                decoration: BoxDecoration(
+                                                    color: Color(0xffffffff),
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        3)),
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.star,
+                                                      size: SizeConfig
+                                                          .screenHeight *
+                                                          0.016,
+                                                      color: Color(0xffFFB905),
+                                                    ),
+                                                    Text(
+                                                      "  4.5",
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                        "Roboto-Regular",
+                                                        fontSize: SizeConfig
+                                                            .blockSizeHorizontal *
+                                                            2.5,
+                                                        color:
+                                                        CommonColor.Black,
+                                                        fontWeight:
+                                                        FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
                                             ]),
                                       ),
-                                      SizedBox(height: 10),
+                                      SizedBox(height: 13),
                                       Row(
                                         children: [
                                           // color: Color(0xff3684F0),
@@ -259,37 +313,8 @@ class _AllProductListState extends State<AllProductList> {
                                               image: AssetImage(
                                                   'assets/images/share.png'),
                                               height: 15),
-                                          SizedBox(width: 85),
-                                          Container(
-                                            width: SizeConfig.screenWidth * 0.1,
-                                            decoration: BoxDecoration(
-                                                color: Color(0xffFFE5E3),
-                                                borderRadius:
-                                                    BorderRadius.circular(3)),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.star,
-                                                  size:
-                                                      SizeConfig.screenHeight *
-                                                          0.016,
-                                                  color: Color(0xffFFB905),
-                                                ),
-                                                Text(
-                                                  "  4.5",
-                                                  style: TextStyle(
-                                                    fontFamily:
-                                                        "Roboto-Regular",
-                                                    fontSize: SizeConfig
-                                                            .blockSizeHorizontal *
-                                                        2.5,
-                                                    color: CommonColor.Black,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+
+
                                         ],
                                       ),
                                     ],

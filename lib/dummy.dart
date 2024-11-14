@@ -1,4 +1,3 @@
-/*
 import 'package:flutter/material.dart';
 
 import 'Common_File/SizeConfig.dart';
@@ -275,15 +274,14 @@ class _TabBarScreenState extends State<TabBarScreen>
                                                         CommonColor.Black,
                                                   )),
                                             ),
-                                            */
-/* Padding(
+ Padding(
                                               padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
                                               child: Text("05:30",style: TextStyle(
                                                 fontSize: SizeConfig.blockSizeHorizontal * 4.3,
                                                 fontFamily: 'Roboto_Bold',
                                                 fontWeight: FontWeight.w600,
-                                                color: CommonColor.BLACK_COLOR,)),
-                                            )*//*
+                                                color: CommonColor.Black,)),
+                                            )
 
                                           ],
                                         ),
@@ -308,15 +306,14 @@ class _TabBarScreenState extends State<TabBarScreen>
                                                         CommonColor.Black,
                                                   )),
                                             ),
-                                            */
-/* Padding(
+ Padding(
                                               padding:EdgeInsets.only(right: parentWidth*0.1,top: parentHeight*0.02),
                                               child: Text("05:30",style: TextStyle(
                                                 fontSize: SizeConfig.blockSizeHorizontal * 4.3,
                                                 fontFamily: 'Roboto_Bold',
                                                 fontWeight: FontWeight.w600,
-                                                color: CommonColor.BLACK_COLOR,)),
-                                            )*//*
+                                                color: CommonColor.Black,)),
+                                            )
 
                                           ],
                                         ),
@@ -404,7 +401,7 @@ class _TabBarScreenState extends State<TabBarScreen>
         ]));
   }
 }
-*/
+/*
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:flutter/material.dart';
 
@@ -446,4 +443,4 @@ class _HomeState extends State<ImageSliders> {
       ),
     );
   }
-}
+}*/

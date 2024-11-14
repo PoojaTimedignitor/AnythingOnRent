@@ -8,9 +8,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 
+import 'MainScreen/forget_password.dart';
 import 'bottomNavigationBar.dart';
 import 'Common_File/common_color.dart';
 import 'dummy.dart';
+import 'addProductService.dart';
 
 final ZoomDrawerController z = ZoomDrawerController();
 
@@ -645,22 +647,65 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          z.stateNotifier?.addListener(() {
-            print("========> State: ${z.stateNotifier?.value}");
-          });
-          controller.fling(velocity: isPanelVisible ? -18.0 : 1.0);
-        },
-        child: AnimatedIcon(
-          icon: AnimatedIcons.close_menu,
-          progress: controller.view,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(70.0),
+        child: Container(
+
+    height: 60,
+
+    decoration: const BoxDecoration(
+    shape: BoxShape.circle,
+    gradient: LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    stops: [0.8, 0.9],
+    colors: [Color(0xffC291EE), Color(0xff8E55C1)],
+    ),
+    ),
+          child: FloatingActionButton(
+            onPressed: () {
+
+
+              showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(20)),
+                  ),
+                  context: context,
+                  backgroundColor: Colors.white,
+                  elevation: 10,
+                  isScrollControlled: true,
+                  isDismissible: true,
+                  builder: (BuildContext bc) {
+                    return CreateProductService(
+                    );
+                  });
+
+
+              z.stateNotifier?.addListener(() {
+                print("========> State: ${z.stateNotifier?.value}");
+              });
+              controller.fling(velocity: isPanelVisible ? -18.0 : 1.0);
+            },
+
+
+            shape: CircleBorder(),
+backgroundColor: Colors.transparent,
+            child: AnimatedIcon(
+color: Colors.white,
+              icon: AnimatedIcons.event_add,
+              progress: controller.view,
+            ),
+          ),
         ),
-      ),*/
+      ),
       body: TwoPanels(
         controller: controller,
       ),
     );
+
   }
 }
 
@@ -819,35 +864,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 25),
-        child: Container(
-          height: 60,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              stops: [0.8, 0.9],
-              colors: [Color(0xffC291EE), Color(0xff8E55C1)],
-            ),
-          ),
-          child: FloatingActionButton(
-            shape: CircleBorder(),
-            heroTag: GestureDetector(
-              onTap: () {},
-            ),
-            onPressed: _incrementCounter,
-            backgroundColor: Colors.transparent,
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 25,
-            ),
-          ),
-        ),
-      ),
+
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
@@ -952,6 +969,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
         ),
       ),
     );
+
   }
 
   Widget getAddMainHeadingLayout(double parentHeight, double parentWidth) {
@@ -1188,13 +1206,13 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushReplacement(
+     /*   Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => ImageSliders(
 
                     //  recLane: widget.recLane,
-                    )));
+                    )));*/
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -1835,7 +1853,8 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                         //  color: Color(0xffFFE5E3),
                                         //  borderRadius:
                                         /*     BorderRadius.circular(12.0),
-                                       */ /* boxShadow: [
+                                       */
+                                        /* boxShadow: [
                                           BoxShadow(
                                               color: Color(0xff000000)
                                                   .withOpacity(0.2),
@@ -1900,7 +1919,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                                             "Montserrat-Regular",
                                                         fontSize: SizeConfig
                                                                 .blockSizeHorizontal *
-                                                            3.3,
+                                                            3.7,
                                                         color:
                                                             CommonColor.Black,
                                                         fontWeight:
@@ -1928,7 +1947,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                                                   "Montserrat-Regular",
                                                               fontSize: SizeConfig
                                                                       .blockSizeHorizontal *
-                                                                  3.1,
+                                                                  3.0,
                                                               color: Color(
                                                                   0xff3684F0),
                                                               fontWeight:
@@ -1992,50 +2011,44 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                                               overflow:
                                                               TextOverflow.ellipsis,
                                                             ),
-SizedBox(width: 10),
-                                                            Icon(
-                                                              Icons.star,
-                                                              size: SizeConfig
-                                                                  .screenHeight *
-                                                                  0.016,
-                                                              color: Color(
-                                                                  0xffFFB905),
-                                                            ),
-                                                            Text(
-                                                              " 4.5",
-                                                              style:
-                                                              TextStyle(
-                                                                fontFamily:
-                                                                "Roboto-Regular",
-                                                                fontSize:
-                                                                SizeConfig.blockSizeHorizontal *
-                                                                    2.8,
-                                                                color: CommonColor
-                                                                    .Black,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .w400,
-                                                              ),
-                                                            ),
+                                                              SizedBox(width: 38),
                                                             Container(
-                                                              width: 40,
-                                                              child: Text(
-                                                                " (150 Reviews)",
-                                                                style:
-                                                                TextStyle(
-                                                                  fontFamily:
-                                                                  "Roboto-Regular",
-                                                                  fontSize:
-                                                                  SizeConfig.blockSizeHorizontal *
-                                                                      2.8,
-                                                                  color: CommonColor
-                                                                      .Black,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                                ),overflow: TextOverflow.ellipsis,
+                                                              width: SizeConfig.screenWidth *
+                                                                  0.1,
+                                                              decoration: BoxDecoration(
+                                                                  color: Color(0xffffffff),
+                                                                  borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      3)),
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons.star,
+                                                                    size: SizeConfig
+                                                                        .screenHeight *
+                                                                        0.016,
+                                                                    color: Color(0xffFFB905),
+                                                                  ),
+                                                                  Text(
+                                                                    "  4.5",
+                                                                    style: TextStyle(
+                                                                      fontFamily:
+                                                                      "Roboto-Regular",
+                                                                      fontSize: SizeConfig
+                                                                          .blockSizeHorizontal *
+                                                                          2.5,
+                                                                      color:
+                                                                      CommonColor.Black,
+                                                                      fontWeight:
+                                                                      FontWeight.w400,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
+
+
+
                                                           ]),
                                                     ),
                                                     SizedBox(height: 10),
@@ -2066,47 +2079,7 @@ SizedBox(width: 10),
                                                             image: AssetImage(
                                                                 'assets/images/share.png'),
                                                             height: 15),
-                                                     /*   SizedBox(width: 85),
-                                                        Container(
-                                                          width: SizeConfig
-                                                                  .screenWidth *
-                                                              0.1,
-                                                          decoration: BoxDecoration(
-                                                              color: Color(
-                                                                  0xffFFE5E3),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3)),
-                                                          child: Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons.star,
-                                                                size: SizeConfig
-                                                                        .screenHeight *
-                                                                    0.016,
-                                                                color: Color(
-                                                                    0xffFFB905),
-                                                              ),
-                                                              Text(
-                                                                "  4.5",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      "Roboto-Regular",
-                                                                  fontSize:
-                                                                      SizeConfig.blockSizeHorizontal *
-                                                                          2.5,
-                                                                  color: CommonColor
-                                                                      .Black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),*/
+
                                                       ],
                                                     ),
 

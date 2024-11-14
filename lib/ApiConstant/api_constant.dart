@@ -5,4 +5,5 @@ class ApiConstant {
 
   String registerss = "/users/register"; // User Register Api
   String login = "/login"; // User Register Api
+  String products = "/display/prod"; // all product Api
 }
