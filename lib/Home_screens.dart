@@ -4,15 +4,16 @@ import 'package:anything/Common_File/common_widget.dart';
 import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:another_carousel_pro/another_carousel_pro.dart';
+import 'package:buttons_tabbar/buttons_tabbar.dart';
 
-import 'MainScreen/forget_password.dart';
 import 'bottomNavigationBar.dart';
 import 'Common_File/common_color.dart';
 import 'dummy.dart';
 import 'addProductService.dart';
+import 'dummytwo.dart';
 
 final ZoomDrawerController z = ZoomDrawerController();
 
@@ -777,6 +778,53 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
     'https://images.pexels.com/photos/4489702/pexels-photo-4489702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
   ];
 
+  List<String> catagriesItemList = [
+    "Vehicle",
+    "Fashion",
+    "Home Appliances",
+    "Event",
+    "Furniture",
+    "Party Bus",
+    "Car",
+    "Camera",
+    "Bike",
+    "Sports Equipment",
+    "Clothing",
+    "Electronics",
+    "Kitchenware",
+    "Office Equipment",
+  ];
+  final List<String> catagriesImage = [
+    'assets/images/catsaven.png',
+    'assets/images/catthree.png',
+    'assets/images/catfour.png',
+    'assets/images/catone.png',
+    'assets/images/catthree.png',
+    'assets/images/catsix.png',
+    'assets/images/catfive.png',
+    'assets/images/catsix.png',
+    'assets/images/catfive.png',
+    'assets/images/catsix.png',
+    'assets/images/catsaven.png',
+    'assets/images/catfour.png',
+    'assets/images/catsix.png',
+    'assets/images/catsaven.png'
+  ];
+  final Map<String, int> productCountList = {
+    "Vehicle": 12,
+    "Fashion": 8,
+    "Home Appliances": 15,
+    "Event": 5,
+    "Furniture": 20,
+    "Party Bus": 3,
+    "Camera": 6,
+    "Bike": 7,
+    "Sports Equipment": 11,
+    "Clothing": 9,
+    "Electronics": 14,
+    "Kitchenware": 13,
+    "Office Equipment": 8,
+  };
 
 
   void _incrementCounter() {
@@ -1206,13 +1254,13 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
-     /*   Navigator.pushReplacement(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => ImageSliders(
+                builder: (context) => DashBoardScreen(
 
                     //  recLane: widget.recLane,
-                    )));*/
+                    )));
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -1230,7 +1278,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
               child: Text(
             "Create Post +",
             style: TextStyle(
-              fontFamily: "Roboto_Medium",
+              fontFamily: "okra_regular",
               fontSize: SizeConfig.blockSizeHorizontal * 3.1,
               color: Color(0xff3684F0),
               fontWeight: FontWeight.w300,
@@ -1242,7 +1290,91 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   }
 
   Widget PopularCategories(double parentHeight, double parentWidth) {
-    return Padding(
+    return
+Container(
+  //height: 241,
+
+  child: Column(
+
+    children: [
+       Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Expanded(child: Divider()),
+          SizedBox(
+            width: 10,
+          ),
+          Center(
+              child: Text(
+                " POPULAR CATEGORIES",
+                style: TextStyle(color: Colors.grey[500]!, fontFamily: "okra_Regular",
+      fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+      fontWeight: FontWeight.w400,
+                  letterSpacing: 0.9
+      ),overflow: TextOverflow.ellipsis
+              )),
+          SizedBox(
+            width: 10,
+          ),
+          const Expanded(child: Divider()),
+        ],
+      ),
+      SizedBox(
+        height: 200, // Set a fixed height for the GridView
+        child: GridView.builder(
+          scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // Number of rows
+            crossAxisSpacing: 0, // Space between columns
+            mainAxisSpacing: 42, // Space between rows
+            childAspectRatio: 3 / 2,
+          ),
+          itemCount: catagriesItemList.length,
+          itemBuilder: (context, index) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.00),
+                    child:   Image.asset(
+                      catagriesImage[index],
+                      height: 78,
+                      width: 45,
+                    ),
+                  ),
+                ),
+
+                Center(
+                  child: Text(
+                          catagriesItemList[index],
+                    style: TextStyle(
+                      color: Colors.black,
+                      letterSpacing: 0.0,
+                      fontFamily: "okra_medium",
+                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      fontWeight: FontWeight.w500,
+                    ),overflow: TextOverflow.ellipsis,
+                   /* style: TextStyle(
+                      color: CommonColor.Black,
+                      fontFamily: "Roboto_Regular",
+                      fontSize: SizeConfig.blockSizeHorizontal * 2.7,
+                      fontWeight: FontWeight.w500,
+                    ),*/
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    ],
+  ),
+);
+
+     /* Padding(
       padding: EdgeInsets.only(top: parentHeight * 0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1258,7 +1390,8 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              /*GestureDetector(
+              */
+    /*GestureDetector(
                 onTap: (){
                   Navigator.push(
                       context,
@@ -1295,7 +1428,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-              )*/
+              )*//*
             ],
           ),
           Padding(
@@ -1328,11 +1461,152 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
           )
         ],
       ),
-    );
+    );*/
   }
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
-    return Padding(
+    return
+
+      Padding(
+        padding:  EdgeInsets.only(top: parentHeight*0.04),
+        child: Column(
+
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Expanded(child: Divider()),
+                SizedBox(
+                  width: 10,
+                ),
+                Center(
+                    child: Text(
+                        " POPULAR CATEGORIES",
+                        style: TextStyle(color: Colors.grey[500]!, fontFamily: "okra_Regular",
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.9
+                        ),overflow: TextOverflow.ellipsis
+                    )),
+                SizedBox(
+                  width: 10,
+                ),
+                const Expanded(child: Divider()),
+              ],
+            ),
+            SafeArea(
+              child: DefaultTabController(
+                length: 2,
+                child: Column(
+
+                  children: [
+                    Container(
+                      height: 60,
+
+                      padding: EdgeInsets.only(left: 0, bottom: 20, right: 0),
+                      child: ButtonsTabBar(
+                        backgroundColor: CommonColor.ViewAll,
+                        buttonMargin: EdgeInsets.symmetric(horizontal: 25),
+                        unselectedBackgroundColor: Colors.grey[200],
+                        physics: NeverScrollableScrollPhysics(),
+                        unselectedLabelStyle: TextStyle(color: Colors.black),
+                         // center:true,
+                        labelStyle:
+                        TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+
+
+                        tabs: [
+                          Tab(
+                            child: Container(
+                              height: 40,
+                              width: 150,
+                              padding: EdgeInsets.only(left: 10, right: 0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+
+                                children: [
+                                  Image(
+                                      image: AssetImage('assets/images/pro.png'),
+                                      height: 72,
+                                      width: 50),
+                                  Text(
+                                    "Product",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      letterSpacing: 0.5,
+                                      fontFamily: "okra_medium",
+                                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Tab(
+                            child: Container(
+                              height: 40,
+                              width: 150,
+                              padding: EdgeInsets.only(left: 10, right: 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                /* border: Border.all(color: Colors.black, width: 0.5)*/),
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Center(
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                              image: AssetImage('assets/images/service.png'),
+                                              height: 72,
+                                              width: 50),
+                                          Text(
+                                            "Service",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              letterSpacing: 0.5,
+                                              fontFamily: "okra_medium",
+                                              fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      )),),
+                            ),
+                          ),
+
+
+                        ],
+                      ),
+                    ),
+
+                    Container(
+                      //child: Container(
+                      height: 200,
+                      //color: Colors.blue,
+                      child: TabBarView(
+                        children: [
+                          Text('One'),
+                          Text('Two'),
+
+                        ],
+                      ),
+                    ),
+                    //),
+                    //Container(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+
+       /* Padding(
         padding: EdgeInsets.only(
             top: parentHeight * 0.01,
             right: parentWidth * 0.02,
@@ -1426,9 +1700,9 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        /*   physics: NeverScrollableScrollPhysics(),
+                        *//*   physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        padding: EdgeInsets.zero,*/
+                        padding: EdgeInsets.zero,*//*
                         children: [
                           SizedBox(height: 10),
                           Row(
@@ -1529,8 +1803,8 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                           spreadRadius: 0,
                                           offset: Offset(0, 1)),
                                     ],
-                                    /*  border: Border.all(
-                                            color: Colors.black38, width: 0.9),*/
+                                    *//*  border: Border.all(
+                                            color: Colors.black38, width: 0.9),*//*
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(7))),
 
@@ -1613,7 +1887,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                                 ),
                                               )),
                                         ),
-                                        /*Padding(
+                                        *//*Padding(
                                             padding: EdgeInsets.only(
                                                 top: 65, left: 2),
                                             child: Align(
@@ -1645,7 +1919,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                                       ),
                                                     ),
                                                   ]),
-                                            ))*/
+                                            ))*//*
                                       ],
                                     ),
                                     SizedBox(height: 4),
@@ -1852,16 +2126,16 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                                             width: 0.3),
                                         //  color: Color(0xffFFE5E3),
                                         //  borderRadius:
-                                        /*     BorderRadius.circular(12.0),
-                                       */
-                                        /* boxShadow: [
+                                        *//*     BorderRadius.circular(12.0),
+                                       *//*
+                                        *//* boxShadow: [
                                           BoxShadow(
                                               color: Color(0xff000000)
                                                   .withOpacity(0.2),
                                               blurRadius: 2,
                                               spreadRadius: 0,
                                               offset: Offset(0, 1)),
-                                        ],*/
+                                        ],*//*
                                       ),
                                       child: Column(
                                         children: [
@@ -2342,7 +2616,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                   ],
                 ),
               ))
-        ]));
+        ]));*/
   }
 
   @override
