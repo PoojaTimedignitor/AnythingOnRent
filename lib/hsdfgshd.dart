@@ -1,30 +1,60 @@
 import 'package:flutter/material.dart';
 
-class TapColorChangeExample extends StatelessWidget {
+void main() {
+  runApp(const MyAppss());
+}
+
+class MyAppss extends StatelessWidget {
+  const MyAppss({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: InkWellColorChangeExample(),
+    );
+  }
+}
+
+class InkWellColorChangeExample extends StatefulWidget {
+  @override
+  _InkWellColorChangeExampleState createState() =>
+      _InkWellColorChangeExampleState();
+}
+
+class _InkWellColorChangeExampleState extends State<InkWellColorChangeExample> {
+  // State to keep track of color change
+  bool _isPressed = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Container Tap Color Change'),
+        title: const Text("InkWell Color Change"),
       ),
       body: Center(
         child: InkWell(
           onTap: () {
-            // Perform your action when tapped
-            print("Container tapped!");
+            setState(() {
+              _isPressed = !_isPressed; // Toggle the color state
+            });
           },
-          splashColor: Colors.blue.withOpacity(0.3), // Color when tapped
-          highlightColor: Colors.blue.withOpacity(0.1), // Color while holding
-          borderRadius: BorderRadius.circular(12), // Optional: Adds rounded corners
-          child: Container(
-            padding: EdgeInsets.all(20),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              color: Colors.teal, // Default container color
-              borderRadius: BorderRadius.circular(12), // Rounded corners
+              color: _isPressed ? Colors.blue : Colors.green, // Change color on tap
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(
-              'Tap Me!',
-              style: TextStyle(color: Colors.white),
+            height: 100,
+            width: 200,
+            child: Center(
+              child: Text(
+                'Tap Me!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
             ),
           ),
         ),
@@ -32,7 +62,3 @@ class TapColorChangeExample extends StatelessWidget {
     );
   }
 }
-
-void main() => runApp(MaterialApp(
-  home: TapColorChangeExample(),
-));

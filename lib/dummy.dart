@@ -407,6 +407,7 @@ class _TabBarScreenState extends State<TabBarScreen>
 
 
 
+import 'package:anything/MyBehavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -650,324 +651,327 @@ class DashBoardScreenState extends State<DashBoardScreen> {
                   ),
                 ),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Expanded(child: Divider()),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            Center(
-                                child: Text(
-                                  "OFFERS FOR YOU",
-                                  style: TextStyle(color: Colors.grey[500]!),
-                                )),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            const Expanded(child: Divider()),
-                          ],
+                  child: ScrollConfiguration(
+                    behavior: MyBehavior(),
+                    child: ListView(
+                      children: [
+                        SizedBox(
+                          height: 10.h,
                         ),
-                      ),
-                      Container(
-                        height: 100.h,
-                        child: ListView.builder(
-                          itemCount: 3,
-                          scrollDirection: Axis.horizontal,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Expanded(child: Divider()),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Center(
+                                  child: Text(
+                                    "OFFERS FOR YOU",
+                                    style: TextStyle(color: Colors.grey[500]!),
+                                  )),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              const Expanded(child: Divider()),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 100.h,
+                          child: ListView.builder(
+                            itemCount: 3,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (index != 1) {}
+                                  },
+                                  child: Container(
+                                    height: 80.h,
+                                    width: 150.w,
+                                    child: Image.asset(
+                                      "assets/images/onboardingthree.png",
+                                      height: 70.h,
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Expanded(child: Divider()),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Center(
+                                  child: Text(
+                                    "WHAT'S ON YOUR MIND?",
+                                    style: TextStyle(color: Colors.grey[500]!),
+                                  )),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              const Expanded(child: Divider()),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 180.h,
+                          child: GridView.count(
+                            scrollDirection: Axis.horizontal,
+                            crossAxisCount: 2,
+                            children: List.generate(
+                                16,
+                                    (index) => Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 5.h,
+                                    ),
+                                    Container(
+                                      height: 50.h,
+                                      child: Image.asset(
+                                        "assets/images/home.jpeg",
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    Text("${category[index]}")
+                                  ],
+                                )),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Expanded(child: Divider()),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Center(
+                                  child: Text(
+                                    "392 RESTAURANT",
+                                    style: TextStyle(color: Colors.grey[500]!),
+                                  )),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              const Expanded(child: Divider()),
+                            ],
+                          ),
+                        ),
+                        ListView.builder(
+                          itemCount: 2,
+                          physics: const ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
                             return Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (index != 1) {}
-                                },
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w, vertical: 10.h),
+                              child: Card(
                                 child: Container(
-                                  height: 80.h,
-                                  width: 150.w,
-                                  child: Image.asset(
-                                    "assets/images/onboardingthree.png",
-                                    height: 70.h,
-                                    fit: BoxFit.fill,
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(10.r)),
+                                  child: Stack(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Container(
+                                              height: 155.h,
+                                              width: double.infinity,
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                  BorderRadius.only(
+                                                    topRight:
+                                                    Radius.circular(10.r),
+                                                    topLeft:
+                                                    Radius.circular(10.r),
+                                                  ),
+                                                  child: Image.asset(
+                                                    "assets/images/home.jpeg",
+                                                    fit: BoxFit.fill,
+                                                  ))),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10.h),
+                                            child: Column(
+                                              children: [
+                                                SizedBox(
+                                                  height: 20.h,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 10.w,
+                                                    ),
+                                                    const Icon(
+                                                      Icons.alarm,
+                                                      color: Colors.green,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5.w,
+                                                    ),
+                                                    const Text(
+                                                        "35-40 min ● 1 km"),
+                                                    const Spacer(),
+                                                    const Text("₹ 150 for one"),
+                                                    SizedBox(
+                                                      width: 5.w,
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Positioned(
+                                          top: 10.h,
+                                          right: 10.w,
+                                          child: Icon(
+                                            Icons.favorite_outline,
+                                            color: Colors.red,
+                                            size: 20.sp,
+                                          )),
+                                      Positioned(
+                                          bottom: 90.h,
+                                          left: 10.w,
+                                          child: Container(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "The New Restaurant",
+                                                  style: TextStyle(
+                                                      fontSize: 20.sp,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                      FontWeight.bold),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    const Text(
+                                                      "SouthIndian ● North Indian ● Chinese",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 70.w,
+                                                    ),
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10.r),
+                                                          color: Colors.green),
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                            horizontal:
+                                                            5.w),
+                                                        child: const Text(
+                                                          "4.0★",
+                                                          style: TextStyle(
+                                                              color:
+                                                              Colors.white),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          )),
+                                      Positioned(
+                                          left: 10.w,
+                                          bottom: 40.h,
+                                          child: Container(
+                                            height: 40.h,
+                                            width: 317.w,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(10.r),
+                                              gradient: const LinearGradient(
+                                                colors: [
+                                                  Colors.indigo,
+                                                  Colors.indigoAccent
+                                                ],
+                                                begin: Alignment.bottomLeft,
+                                                end: Alignment.topRight,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                const Icon(
+                                                  Icons.percent,
+                                                  color: Colors.white,
+                                                ),
+                                                const Text(
+                                                  "50% OFF up to 100",
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                                SizedBox(
+                                                  width: 135.w,
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.indigo,
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.r)),
+                                                  child: Padding(
+                                                    padding:
+                                                    EdgeInsets.all(5.sp),
+                                                    child: const Text(
+                                                      "+1",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10.w,
+                                                )
+                                              ],
+                                            ),
+                                          ))
+                                    ],
                                   ),
                                 ),
                               ),
                             );
                           },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Expanded(child: Divider()),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            Center(
-                                child: Text(
-                                  "WHAT'S ON YOUR MIND?",
-                                  style: TextStyle(color: Colors.grey[500]!),
-                                )),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            const Expanded(child: Divider()),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 180.h,
-                        child: GridView.count(
-                          scrollDirection: Axis.horizontal,
-                          crossAxisCount: 2,
-                          children: List.generate(
-                              16,
-                                  (index) => Column(
-                                children: [
-                                  SizedBox(
-                                    height: 5.h,
-                                  ),
-                                  Container(
-                                    height: 50.h,
-                                    child: Image.asset(
-                                      "assets/images/home.jpeg",
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                  Text("${category[index]}")
-                                ],
-                              )),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Expanded(child: Divider()),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            Center(
-                                child: Text(
-                                  "392 RESTAURANT",
-                                  style: TextStyle(color: Colors.grey[500]!),
-                                )),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            const Expanded(child: Divider()),
-                          ],
-                        ),
-                      ),
-                      ListView.builder(
-                        itemCount: 2,
-                        physics: const ClampingScrollPhysics(),
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10.w, vertical: 10.h),
-                            child: Card(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(10.r)),
-                                child: Stack(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Container(
-                                            height: 155.h,
-                                            width: double.infinity,
-                                            child: ClipRRect(
-                                                borderRadius:
-                                                BorderRadius.only(
-                                                  topRight:
-                                                  Radius.circular(10.r),
-                                                  topLeft:
-                                                  Radius.circular(10.r),
-                                                ),
-                                                child: Image.asset(
-                                                  "assets/images/home.jpeg",
-                                                  fit: BoxFit.fill,
-                                                ))),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10.h),
-                                          child: Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 20.h,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 10.w,
-                                                  ),
-                                                  const Icon(
-                                                    Icons.alarm,
-                                                    color: Colors.green,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5.w,
-                                                  ),
-                                                  const Text(
-                                                      "35-40 min ● 1 km"),
-                                                  const Spacer(),
-                                                  const Text("₹ 150 for one"),
-                                                  SizedBox(
-                                                    width: 5.w,
-                                                  )
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Positioned(
-                                        top: 10.h,
-                                        right: 10.w,
-                                        child: Icon(
-                                          Icons.favorite_outline,
-                                          color: Colors.red,
-                                          size: 20.sp,
-                                        )),
-                                    Positioned(
-                                        bottom: 90.h,
-                                        left: 10.w,
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "The New Restaurant",
-                                                style: TextStyle(
-                                                    fontSize: 20.sp,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                    FontWeight.bold),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  const Text(
-                                                    "SouthIndian ● North Indian ● Chinese",
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 70.w,
-                                                  ),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius
-                                                            .circular(
-                                                            10.r),
-                                                        color: Colors.green),
-                                                    child: Padding(
-                                                      padding: EdgeInsets
-                                                          .symmetric(
-                                                          horizontal:
-                                                          5.w),
-                                                      child: const Text(
-                                                        "4.0★",
-                                                        style: TextStyle(
-                                                            color:
-                                                            Colors.white),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        )),
-                                    Positioned(
-                                        left: 10.w,
-                                        bottom: 40.h,
-                                        child: Container(
-                                          height: 40.h,
-                                          width: 317.w,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(10.r),
-                                            gradient: const LinearGradient(
-                                              colors: [
-                                                Colors.indigo,
-                                                Colors.indigoAccent
-                                              ],
-                                              begin: Alignment.bottomLeft,
-                                              end: Alignment.topRight,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              const Icon(
-                                                Icons.percent,
-                                                color: Colors.white,
-                                              ),
-                                              const Text(
-                                                "50% OFF up to 100",
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
-                                              SizedBox(
-                                                width: 135.w,
-                                              ),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                    color: Colors.indigo,
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        10.r)),
-                                                child: Padding(
-                                                  padding:
-                                                  EdgeInsets.all(5.sp),
-                                                  child: const Text(
-                                                    "+1",
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 10.w,
-                                              )
-                                            ],
-                                          ),
-                                        ))
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],

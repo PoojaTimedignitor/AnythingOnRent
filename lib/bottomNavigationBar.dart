@@ -108,7 +108,7 @@ class BottomNavyBar extends StatelessWidget {
               offset: shadowOffset,
             ),
         ],
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(0),
       ),
       child: Container(
 

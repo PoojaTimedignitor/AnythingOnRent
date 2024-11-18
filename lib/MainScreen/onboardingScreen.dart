@@ -4,7 +4,10 @@ import 'package:anything/MainScreen/login_screen.dart';
 import 'package:anything/MainScreen/register_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../BottomBar.dart';
 import '../Common_File/SizeConfig.dart';
+import '../MainHome.dart';
+import '../ddd.dart';
 import '../drop.dart';
 import 'onBoardingContent.dart';
 
@@ -144,7 +147,7 @@ class _onboardingScreenState extends State<onboardingScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => HomeScreen(/*address: '', lat: '', long: '', ProfilePicture: '', FrontImage: '', BackImage: '',*/)),
+                                        builder: (context) => MainHome(/*address: '', lat: '', long: '', ProfilePicture: '', FrontImage: '', BackImage: '',*/)),
                                   );
                                 },
                                 child: Text("START"),

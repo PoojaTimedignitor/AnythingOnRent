@@ -1,712 +1,75 @@
 import 'package:anything/All_Product_List.dart';
-import 'package:anything/Common_File/SizeConfig.dart';
-import 'package:another_carousel_pro/another_carousel_pro.dart';
-import 'package:anything/MyBehavior.dart';
-
 import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
+import 'Common_File/SizeConfig.dart';
+import 'Common_File/common_color.dart';
+import 'Home_screens.dart';
+import 'MyBehavior.dart';
+import 'addProductService.dart';
+import 'dummy.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 
-import 'Common_File/common_color.dart';
-import 'dummy.dart';
 
 
-final ZoomDrawerController z = ZoomDrawerController();
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
 
+class BottomBar extends StatefulWidget{
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<StatefulWidget> createState()=>BottomBarState();
+
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class BottomBarState extends State<BottomBar> with SingleTickerProviderStateMixin {
+  PersistentTabController? _controller;
 
   @override
-  Widget build(BuildContext context) {
-    return ZoomDrawer(
-      controller: z,
-      borderRadius: 25,
-      mainScreenScale: 0.04,
-      androidCloseOnBackTap: true,
-      moveMenuScreen: true,
-      // showShadow: true,
-      openCurve: Curves.fastOutSlowIn,
-      slideWidth: 240,
-      showShadow: true,
-      duration: const Duration(milliseconds: 300),
-      menuScreenTapClose: true,
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      _tabController = TabController(length: 2, vsync: this);
+      _controller = PersistentTabController(initialIndex: 0);
 
-      // angle: 0.0,
-      menuBackgroundColor: Color(0xFFFEDEDE),
-      mainScreen: const Body(),
-      // moveMenuScreen: false,
-      menuScreen: Scaffold(
-        backgroundColor: Color(0xFFFEDEDE),
-        body: Column(
-          //shrinkWrap: true,
-         // physics: const NeverScrollableScrollPhysics(),
-         // padding: EdgeInsets.zero,
-          //crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    width: 108,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.only(bottomRight: Radius.circular(100)),
-                      color: Color(0xffFBB3B3),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    width: 85,
-                    height: 95,
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.only(bottomRight: Radius.circular(100)),
-                      color: Color(0xffF48A8A),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundImage: AssetImage("assets/images/profile.png"),
-                  ),
-
-                  SizedBox(
-                      width: 10,
-                      height:
-                          5), // Add some space between the avatar and the column
-                  Text(
-                    "Hii, Aaysha",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Roboto_Regular",
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: 2),
-                  // Adds space between the icon and text
-
-                  GestureDetector(
-                    onTap: () {},
-                    child: Wrap(
-                      spacing: 8,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 3),
-                          child: const Image(
-                            image: AssetImage('assets/images/location.png'),
-                            height: 13,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        Container(
-                          width: 160,
-                          //  color: Colors.red,
-                          child: Text(
-                            "Park pashan pune, 2004 pune pashan... ",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'Poppins_Medium',
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black45,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 5),
-            Padding(
-              padding: EdgeInsets.only(top: 30, left: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Wrap(
-                      spacing: 10,
-                      children: [
-                        Image(
-                          image: AssetImage('assets/images/dashboard.png'),
-                          height: 20,
-                          color: Colors.black54,
-                        ),
-                        Text(
-                            // the text of the row.
-                            "My Dashboard",
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: CommonColor.gray,
-                                fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Wrap(
-                      spacing: 10,
-                      children: [
-                        Image(
-                          image: AssetImage('assets/images/userprofile.png'),
-                          height: 20,
-                          color: Colors.black54,
-                        ),
-                        Text(
-                            // the text of the row.
-                            "My Profile",
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: CommonColor.gray,
-                                fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Wrap(
-                      spacing: 10,
-                      children: [
-                        Image(
-                          image: AssetImage('assets/images/myads.png'),
-                          height: 20,
-                          color: Colors.black54,
-                        ),
-                        Text(
-                            // the text of the row.
-                            "My Ads",
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: CommonColor.gray,
-                                fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Wrap(
-                      spacing: 10,
-                      children: [
-                        Image(
-                          image: AssetImage('assets/images/like.png'),
-                          height: 20,
-                          color: Colors.black54,
-                        ),
-                        Text(
-                            // the text of the row.
-                            "My Favorites",
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: CommonColor.gray,
-                                fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Row(
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            const Image(
-                              image:
-                                  AssetImage('assets/images/transaction.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Container(
-                              width: 140,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "My Transaction History",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: CommonColor.gray,
-                                      fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Row(
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            const Image(
-                              image: AssetImage('assets/images/ratings.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "My Ratings",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: CommonColor.gray,
-                                      fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Row(
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            const Image(
-                              image: AssetImage('assets/images/noti.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "Notifications",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: CommonColor.gray,
-                                      fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Row(
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            const Image(
-                              image: AssetImage('assets/images/payment.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Container(
-                              width: 140,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "My Payment History",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: CommonColor.gray,
-                                      fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Row(
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            const Image(
-                              image: AssetImage('assets/images/privacy.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "privacy policy",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: CommonColor.gray,
-                                      fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Row(
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            const Image(
-                              image: AssetImage('assets/images/terms.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "Terms & Conditions",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: CommonColor.gray,
-                                      fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Row(
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            const Image(
-                              image: AssetImage('assets/images/terms.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "Support",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: CommonColor.gray,
-                                      fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    height: SizeConfig.screenHeight * 0.0007,
-                    width: 160,
-                    color: Colors.black54,
-                  ),
-                  SizedBox(height: 18),
-                  GestureDetector(
-                    onTap: () {
-                      final navigator = Navigator.of(
-                        context,
-                      );
-                      z.close?.call()?.then(
-                            (value) => navigator.push(
-                              MaterialPageRoute(
-                                builder: (_) => TestPage(),
-                              ),
-                            ),
-                          );
-                    },
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 0),
-                          child: const Image(
-                            image: AssetImage('assets/images/logout.png'),
-                            height: 20,
-                            color: Colors.blueAccent,
-                          ),
-                        ),
-                        SizedBox(
-                            width:
-                                10), // Add spacing between the image and text
-                        Expanded(
-                          child: Text(
-                            "Logout",
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.blueAccent,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 18),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Body extends StatefulWidget {
-  const Body({Key? key}) : super(key: key);
-
-  @override
-  State<Body> createState() => _BodyState();
-}
-
-class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
-  late AnimationController controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 100),
-    value: -1.0,
-  );
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  bool get isPanelVisible {
-    final AnimationStatus status = controller.status;
-    return status == AnimationStatus.completed ||
-        status == AnimationStatus.forward;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: TwoPanels(
-        controller: controller,
-      ),
-    );
-
-  }
-}
-
-class TwoPanels extends StatefulWidget {
-  final AnimationController controller;
-
-  const TwoPanels({Key? key, required this.controller}) : super(key: key);
-
-  @override
-  _TwoPanelsState createState() => _TwoPanelsState();
-}
-
-class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
-  static const _headerHeight = 32.0;
-  late TabController tabController = TabController(length: 3, vsync: this);
-  late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 2),
-    vsync: this,
-  )..addListener(() {
-      print("SlideValue: ${_controller.value} - ${_controller.status}");
     });
-  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-    begin: Offset.zero,
-    end: const Offset(1.5, 0.0),
-  ).animate(CurvedAnimation(
-    parent: _controller,
-    curve: Curves.elasticIn,
-  ));
-
-  Animation<RelativeRect> getPanelAnimation(BoxConstraints constraints) {
-    final _height = constraints.biggest.height;
-    final _backPanelHeight = _height - _headerHeight;
-    const _frontPanelHeight = -_headerHeight;
-
-    return RelativeRectTween(
-      begin: RelativeRect.fromLTRB(
-        0.0,
-        _backPanelHeight,
-        0.0,
-        _frontPanelHeight,
-      ),
-      end: const RelativeRect.fromLTRB(0.0, 100, 0.0, 0.0),
-    ).animate(
-      CurvedAnimation(parent: widget.controller, curve: Curves.linear),
-    );
   }
-
+  List<Widget> _buildScreens() {
+    return [
+      BottomBar(),
+     AllProductList(),
+     AllProductList(),
+    ];
+  }
+  List<PersistentBottomNavBarItem> _navBarsItems() {
+    return [
+      PersistentBottomNavBarItem(
+        icon:  Icon(Icons.electric_moped),
+        title: ("Home"),
+        activeColorPrimary: Color(0xffC291EE),
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+      PersistentBottomNavBarItem(
+        icon:  Icon(Icons.dining_outlined),
+        title: ("Fev"),
+        activeColorPrimary: Color(0xffC291EE),
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ), PersistentBottomNavBarItem(
+        icon:  Icon(Icons.wallet),
+        title: ("Chat"),
+        activeColorPrimary: Color(0xffC291EE),
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+    ];
+  }
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     _searchFocus.dispose();
-    tabController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -716,6 +79,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   int _currentIndex = 0;
   int _counter = 0;
   late TabController _tabController;
+
   final List<String> images = [
     "https://img.freepik.com/free-vector/gradient-car-rental-twitch-background_23-2149238538.jpg?w=1380&t=st=1724674607~exp=1724675207~hmac=0ab319f9d9411c32c9d26508151d51f62139e048ac598796c8463dac3ef0aad7"
         'https://img.freepik.com/free-vector/real-estate-landing-page_23-2148686374.jpg?w=1380&t=st=1724741972~exp=1724742572~hmac=e21195893cb55e204d9618c983abd7d4d1dc18402402af3dbe0420bd08d6ad33',
@@ -775,24 +139,64 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   };
 
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+
+
 
   @override
-  void initState() {
-    _tabController = TabController(length: 2, vsync: this);
-    super.initState();
-  }
-
-  Widget bothPanels(BuildContext context, BoxConstraints constraints) {
-
+  Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBody: true,
-      body: ScrollConfiguration(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Container(
+
+          height: 60,
+
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              stops: [0.8, 0.9],
+              colors: [Color(0xffC291EE), Color(0xff8E55C1)],
+            ),
+          ),
+          child: FloatingActionButton(
+            onPressed: () {
+
+
+              showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(20)),
+                  ),
+                  context: context,
+                  backgroundColor: Colors.white,
+                  elevation: 10,
+                  isScrollControlled: true,
+                  isDismissible: true,
+                  builder: (BuildContext bc) {
+                    return CreateProductService(
+                    );
+                  });
+
+
+
+            },
+
+
+            shape: CircleBorder(),
+            backgroundColor: Colors.transparent,
+child: Icon(Icons.add,color: Colors.white,),
+          ),
+        ),
+      ),
+      body:
+
+    /*  ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView(
           shrinkWrap: true,
@@ -822,14 +226,14 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
                   Padding(
                     padding:
-                        EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.07),
+                    EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.07),
                     child: Container(
-                    //  height: SizeConfig.screenHeight * 0.99,
+                      //  height: SizeConfig.screenHeight * 0.99,
                       child: getAddGameTabLayout(
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ),
                   ),
-                  /* Stack(
+                  *//* Stack(
                     children: [
                    Padding(
                     padding: EdgeInsets.only(
@@ -857,116 +261,60 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
 
                       // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ],
-                  ),*/
+                  ),*//*
                 ],
               ),
             ),
           ],
         ),
-      ),
-
-     /* bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(24),
-          topLeft: Radius.circular(24),
-        ),
-        child: BottomNavyBar(
-          showInactiveTitle: true,
-          backgroundColor: Colors.grey[200],
-          selectedIndex: _currentIndex,
-          showElevation: true,
-          itemPadding: EdgeInsets.symmetric(horizontal: 0),
-        //  itemCornerRadius: 24,
-         // iconSize: 20,
-
-          curve: Curves.linear,
-          onItemSelected: (index) => setState(() => _currentIndex = index),
-          items: <BottomNavyBarItem>[
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Icon(Icons.home, color: Colors.black, size: 17),
-              ),
-              title: Text(
-                'Home',
-                style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.4,
-                  fontFamily: 'Roboto_Medium',
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                ),
-              ),
-              activeBackgroundColor: Colors.white,
-              activeTextColor: Colors.black87,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Icon(
-                  Icons.search,
-                  color: Colors.black,
-                  size: 17,
-                ),
-              ),
-              title: Text(
-                'Search',
-                style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.4,
-                  fontFamily: 'Roboto_Medium',
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                ),
-              ),
-              activeTextColor: Colors.black87,
-              activeBackgroundColor: Colors.white,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Image(
-                  image: AssetImage('assets/images/like.png'),
-                  color: Colors.black,
-                  height: 18,
-                ),
-              ),
-              title: Text(
-                'Favorite',
-                style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.4,
-                  fontFamily: 'Roboto_Medium',
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                ),
-              ),
-              activeTextColor: Colors.black,
-              textAlign: TextAlign.center,
-              activeBackgroundColor: Colors.white,
-            ),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Icon(Icons.settings, color: Colors.black, size: 17),
-              ),
-              title: Text(
-                'Settings',
-                style: TextStyle(
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.4,
-                  fontFamily: 'Roboto_Medium',
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                ),
-              ),
-              activeTextColor: Colors.black87,
-              activeBackgroundColor: Colors.white,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),*/
-    );
 
+
+  PersistentTabView(
+
+    context,
+    controller: _controller,
+    screens: _buildScreens(),
+    items: _navBarsItems(),
+    confineInSafeArea: true,
+
+    backgroundColor: Colors.white, // Default is Colors.white.
+    handleAndroidBackButtonPress: true, // Default is true.
+    resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+    stateManagement: true, // Default is true.
+    hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
+    decoration: NavBarDecoration(
+      borderRadius: const BorderRadius.only(
+        topRight: Radius.circular(15),
+        topLeft: Radius.circular(15),),
+      boxShadow: <BoxShadow>[
+        BoxShadow(
+            color: Colors.black54,
+            blurRadius: 15.0,
+            offset: Offset(0.0, 0.75)
+        )
+      ],
+      colorBehindNavBar: Colors.white,
+    ),
+    popAllScreensOnTapOfSelectedTab: true,
+    popActionScreens: PopActionScreensType.all,
+    itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
+      duration: Duration(milliseconds: 200),
+      curve: Curves.ease,
+    ),
+    screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
+      animateTabTransition: true,
+      curve: Curves.ease,
+
+      duration: Duration(milliseconds: 200),
+    ),
+    navBarStyle: NavBarStyle.style9, // Choose the nav bar style with this property.
+  ),
+
+
+
+
+    );
   }
 
   Widget getAddMainHeadingLayout(double parentHeight, double parentWidth) {
@@ -974,8 +322,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
       children: [
         GestureDetector(
           onTap: () {
-            z.toggle!();
-            z.open!();
+
           },
           onDoubleTap: () {},
           child: Padding(
@@ -1088,7 +435,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(10.0)),
                         focusedBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.black12, width: 1),
+                          BorderSide(color: Colors.black12, width: 1),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ))),
@@ -1166,34 +513,34 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
             for (int i = 0; i < images.length; i++)
               currentIndex == i
                   ? Container(
-                      width: 25,
-                      height: 7,
-                      margin: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              Color(0xff6a83da),
-                              Color(0xff665365B7),
-                            ]),
-                      ),
-                    )
+                width: 25,
+                height: 7,
+                margin: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        Color(0xff6a83da),
+                        Color(0xff665365B7),
+                      ]),
+                ),
+              )
                   : Container(
-                      width: 7,
-                      height: 7,
-                      margin: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                Color(0xff7F9ED4),
-                                Color(0xff999999),
-                              ]),
-                          shape: BoxShape.circle),
-                    )
+                width: 7,
+                height: 7,
+                margin: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          Color(0xff7F9ED4),
+                          Color(0xff999999),
+                        ]),
+                    shape: BoxShape.circle),
+              )
           ],
         ),
       ],
@@ -1208,8 +555,8 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
             MaterialPageRoute(
                 builder: (context) => DashBoardScreen(
 
-                    //  recLane: widget.recLane,
-                    )));
+                  //  recLane: widget.recLane,
+                )));
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -1225,14 +572,14 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
           ),
           child: Center(
               child: Text(
-            "Create Post +",
-            style: TextStyle(
-              fontFamily: "okra_regular",
-              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
-              color: Color(0xff3684F0),
-              fontWeight: FontWeight.w300,
-            ),
-          )),
+                "Create Post +",
+                style: TextStyle(
+                  fontFamily: "okra_regular",
+                  fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                  color: Color(0xff3684F0),
+                  fontWeight: FontWeight.w300,
+                ),
+              )),
         ),
       ),
     );
@@ -1240,89 +587,89 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
 
   Widget PopularCategories(double parentHeight, double parentWidth) {
     return
-Column(
+      Column(
 
-  children: [
-     Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Expanded(child: Divider()),
-        SizedBox(
-          width: 10,
-        ),
-        Center(
-            child: Text(
-              " POPULAR CATEGORIES",
-              style: TextStyle(color: Colors.grey[500]!, fontFamily: "okra_Regular",
-    fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-    fontWeight: FontWeight.w400,
-                letterSpacing: 0.9
-    ),overflow: TextOverflow.ellipsis
-            )),
-        SizedBox(
-          width: 10,
-        ),
-        const Expanded(child: Divider()),
-      ],
-    ),
-    Padding(
-      padding:  EdgeInsets.only(left: parentWidth*0.02),
-      child: SizedBox(
-        height: 200, // Set a fixed height for the GridView
-        child: GridView.builder(
-          scrollDirection: Axis.horizontal, // Enable horizontal scrolling
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Number of rows
-            crossAxisSpacing: 2, // Space between columns
-            mainAxisSpacing: 23, // Space between rows
-            childAspectRatio: 3 / 2,
-          ),
-          itemCount: catagriesItemList.length,
-          itemBuilder: (context, index) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.00),
-                    child:   Image.asset(
-                      catagriesImage[index],
-                      height: 78,
-                      width: 45,
-                    ),
-                  ),
-                ),
-
-                Center(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Expanded(child: Divider()),
+              SizedBox(
+                width: 10,
+              ),
+              Center(
                   child: Text(
+                      " POPULAR CATEGORIES",
+                      style: TextStyle(color: Colors.grey[500]!, fontFamily: "okra_Regular",
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.9
+                      ),overflow: TextOverflow.ellipsis
+                  )),
+              SizedBox(
+                width: 10,
+              ),
+              const Expanded(child: Divider()),
+            ],
+          ),
+          Padding(
+            padding:  EdgeInsets.only(left: parentWidth*0.02),
+            child: SizedBox(
+              height: 200, // Set a fixed height for the GridView
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Number of rows
+                  crossAxisSpacing: 2, // Space between columns
+                  mainAxisSpacing: 23, // Space between rows
+                  childAspectRatio: 3 / 2,
+                ),
+                itemCount: catagriesItemList.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.00),
+                          child:   Image.asset(
+                            catagriesImage[index],
+                            height: 78,
+                            width: 45,
+                          ),
+                        ),
+                      ),
+
+                      Center(
+                        child: Text(
                           catagriesItemList[index],
-                    style: TextStyle(
-                      color: Colors.black,
-                      letterSpacing: 0.0,
-                      fontFamily: "okra_medium",
-                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                      fontWeight: FontWeight.w500,
-                    ),overflow: TextOverflow.ellipsis,
-                   /* style: TextStyle(
+                          style: TextStyle(
+                            color: Colors.black,
+                            letterSpacing: 0.0,
+                            fontFamily: "okra_medium",
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                            fontWeight: FontWeight.w500,
+                          ),overflow: TextOverflow.ellipsis,
+                          /* style: TextStyle(
                       color: CommonColor.Black,
                       fontFamily: "Roboto_Regular",
                       fontSize: SizeConfig.blockSizeHorizontal * 2.7,
                       fontWeight: FontWeight.w500,
                     ),*/
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    ),
-  ],
-);
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      );
 
-     /* Padding(
+    /* Padding(
       padding: EdgeInsets.only(top: parentHeight * 0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1459,7 +806,7 @@ Column(
                         unselectedBackgroundColor: Colors.grey[200],
                         physics: NeverScrollableScrollPhysics(),
                         unselectedLabelStyle: TextStyle(color: Colors.black),
-                         // center:true,
+                        // center:true,
                         labelStyle:
                         TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
 
@@ -1503,26 +850,26 @@ Column(
                                 borderRadius: BorderRadius.circular(10),
                                 /* border: Border.all(color: Colors.black, width: 0.5)*/),
                               child: Align(
-                                  alignment: Alignment.center,
-                                  child: Center(
-                                      child: Row(
-                                        children: [
-                                          Image(
-                                              image: AssetImage('assets/images/service.png'),
-                                              height: 72,
-                                              width: 50),
-                                          Text(
-                                            "Service",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              letterSpacing: 0.5,
-                                              fontFamily: "okra_medium",
-                                              fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                alignment: Alignment.center,
+                                child: Center(
+                                    child: Row(
+                                      children: [
+                                        Image(
+                                            image: AssetImage('assets/images/service.png'),
+                                            height: 72,
+                                            width: 50),
+                                        Text(
+                                          "Service",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.5,
+                                            fontFamily: "okra_medium",
+                                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                        ],
-                                      )),),
+                                        ),
+                                      ],
+                                    )),),
                             ),
                           ),
 
@@ -1640,7 +987,7 @@ Column(
                                                 spreadRadius: 0,
                                                 offset: Offset(0, 1)),
                                           ],
-                                   /*       border: Border.all(
+                                          /*       border: Border.all(
                                               color: Colors.black38, width: 0.9),*/
                                           borderRadius:
                                           BorderRadius.all(Radius.circular(7))),
@@ -1942,7 +1289,7 @@ Column(
                                 Expanded(
                                   child: Container(
                                     height: 10,
-                                   // color: Colors.red,
+                                    // color: Colors.red,
                                     padding: EdgeInsets.only(top: 15.0),
                                     // Set height to fit the horizontal list
                                     child: ListView.builder(
@@ -2231,26 +1578,5 @@ Column(
 
 
 
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: bothPanels,
-    );
-  }
-}
-
-class TestPage extends StatelessWidget {
-  const TestPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Text("Test Page !"),
-      ),
-    );
   }
 }

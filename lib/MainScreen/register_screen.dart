@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 
