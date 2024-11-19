@@ -1,7 +1,6 @@
 import 'package:anything/All_Product_List.dart';
 import 'package:anything/MainHome.dart';
 import 'package:flutter/material.dart';
-
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 import 'Home_screens.dart';
@@ -16,6 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: HomePage(),
     );
+
   }
 }
 
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier<int>(0);
 
   // Define the content for each screen/tab
-  static List<Widget> _screens = <Widget>[
+  static final List<Widget> _screens = <Widget>[
     MainHome(),
     AllProductList(),
     ProfileScreen(),
@@ -176,6 +176,7 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.black54,
                               ),
                             ),
+
                             Container(
                               width: 160,
                               //  color: Colors.red,
@@ -279,6 +280,7 @@ class _HomePageState extends State<HomePage> {
                           MaterialPageRoute(
                             builder: (_) => TestPage(),
                           ),
+
                         ),
                       );
                     },
@@ -733,7 +735,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
 // Define screens for each tab
 class HomeScreen extends StatelessWidget {
   @override

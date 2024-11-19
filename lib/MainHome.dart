@@ -24,7 +24,7 @@ class MainHome extends StatefulWidget {
 
 class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
-  PersistentTabController? _controller;
+
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class MainHomeState extends State<MainHome>
     super.initState();
     setState(() {
       _tabController = TabController(length: 2, vsync: this);
-      _controller = PersistentTabController(initialIndex: 0);
+
     });
   }
 
@@ -69,7 +69,7 @@ class MainHomeState extends State<MainHome>
 
   @override
   void dispose() {
-    _controller?.dispose();
+
     _searchFocus.dispose();
     _tabController.dispose();
     super.dispose();
@@ -118,11 +118,11 @@ class MainHomeState extends State<MainHome>
     'assets/images/catsix.png',
     'assets/images/catfive.png',
     'assets/images/catsix.png',
-    'assets/images/catfive.png',
-    'assets/images/catsix.png',
+    'assets/images/catone.png',
+    'assets/images/catfour.png',
     'assets/images/catsaven.png',
     'assets/images/catfour.png',
-    'assets/images/catsix.png',
+    'assets/images/catthree.png',
     'assets/images/catsaven.png'
   ];
   final Map<String, int> productCountList = {
@@ -144,7 +144,7 @@ class MainHomeState extends State<MainHome>
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xfff69c9c),
+      color: Color(0xffFE7F64),
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
@@ -617,14 +617,13 @@ class MainHomeState extends State<MainHome>
                         child: Expanded(
                           child: Row(
                             children: [
-                            //  Spacer(),
+                              //  Spacer(),
                               Container(
-
                                 child: Padding(
                                   padding: EdgeInsets.all(5),
                                   child: Row(
                                     children: [
-                                       Image(
+                                      Image(
                                         image: AssetImage(
                                             'assets/images/logout.png'),
                                         height: 20,
@@ -632,7 +631,11 @@ class MainHomeState extends State<MainHome>
                                       ),
                                       Text(
                                         "    Logout    ",
-                                        style: TextStyle(color: Colors.pink, fontSize:  SizeConfig.blockSizeHorizontal * 3.9),
+                                        style: TextStyle(
+                                            color: Colors.pink,
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    3.9),
                                       )
                                     ],
                                   ),
@@ -655,6 +658,47 @@ class MainHomeState extends State<MainHome>
               FloatingActionButtonLocation.centerDocked,
 
           floatingActionButton: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
+              onPressed: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(30),),
+                    ),
+                    context: context,
+                    backgroundColor: Colors.white,
+                    elevation: 2,
+                    isScrollControlled: true,
+                    isDismissible: true,
+                    builder: (BuildContext bc) {
+                      return CreateProductService();
+                    });
+              },
+              tooltip: 'Cool FAB',
+              elevation: 009,
+              child: Container(
+                width: 56,
+                height: 56,
+                child: Center(
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [Color(0xffFE7F64), Color(0xffFE7F64)],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          /*  floatingActionButton: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Container(
               height: 60,
@@ -664,7 +708,8 @@ class MainHomeState extends State<MainHome>
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                   stops: [0.8, 0.9],
-                  colors: [Color(0xffC291EE), Color(0xff8E55C1)],
+                  colors: [ Color(0xffFEBA69),
+                    Color(0xffFE7F64)],
                 ),
               ),
               child: FloatingActionButton(
@@ -675,7 +720,7 @@ class MainHomeState extends State<MainHome>
                       ),
                       context: context,
                       backgroundColor: Colors.white,
-                      elevation: 10,
+                      elevation: 2,
                       isScrollControlled: true,
                       isDismissible: true,
                       builder: (BuildContext bc) {
@@ -683,6 +728,8 @@ class MainHomeState extends State<MainHome>
                       });
                 },
                 shape: CircleBorder(),
+                foregroundColor: Color.fromARGB(200, 255, 255, 255),
+
                 backgroundColor: Colors.transparent,
                 child: Icon(
                   Icons.add,
@@ -690,7 +737,8 @@ class MainHomeState extends State<MainHome>
                 ),
               ),
             ),
-          ),
+          ),*/
+
           body: ScrollConfiguration(
             behavior: MyBehavior(),
             child: ListView(
@@ -1117,7 +1165,7 @@ class MainHomeState extends State<MainHome>
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // Number of rows
                   crossAxisSpacing: 2, // Space between columns
-                  mainAxisSpacing: 23, // Space between rows
+                  mainAxisSpacing: 20, // Space between rows
                   childAspectRatio: 3 / 2,
                 ),
                 itemCount: catagriesItemList.length,
@@ -1296,42 +1344,44 @@ class MainHomeState extends State<MainHome>
                     height: 60,
                     padding: EdgeInsets.only(left: 0, bottom: 20, right: 0),
                     child: ButtonsTabBar(
-                      backgroundColor: Color(0xffffaea8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          Color(0xffFEBA69),
+                          Color(0xffFE7F64),
+                        ],
+                      )),
                       buttonMargin: EdgeInsets.symmetric(horizontal: 18),
-                      unselectedBackgroundColor: Colors.grey[200],
+                      unselectedDecoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      unselectedBorderColor: Color(0xffFE7F64),
                       physics: NeverScrollableScrollPhysics(),
-                      unselectedLabelStyle: TextStyle(color: Colors.black),
-                      // center:true,
                       labelStyle: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
-
                       tabs: [
                         Tab(
                           child: Container(
                             height: 40,
                             width: 165,
-                            padding: EdgeInsets.only(left: 10, right: 0),
+
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Row(
-                              children: [
-                                Image(
-                                    image: AssetImage('assets/images/pro.png'),
-                                    height: 62,
-                                    width: 40),
-                                Text(
-                                  "Product",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    letterSpacing: 0.5,
-                                    fontFamily: "Roboto-Regular",
-                                    fontSize:
-                                        SizeConfig.blockSizeHorizontal * 3.7,
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                            child: Center(
+                              child: Text(
+                                "Product",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Roboto-Medium",
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.6,
+                                  fontWeight: FontWeight.w400,
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
@@ -1339,34 +1389,24 @@ class MainHomeState extends State<MainHome>
                           child: Container(
                             height: 40,
                             width: 165,
-                            padding: EdgeInsets.only(left: 10, right: 20),
+                            padding: EdgeInsets.only(left: 28, right: 20),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
-                                  10), /* border: Border.all(color: Colors.black, width: 0.5)*/
+                                  20), /* border: Border.all(color: Colors.black, width: 0.5)*/
                             ),
                             child: Align(
                               alignment: Alignment.center,
                               child: Center(
-                                  child: Row(
-                                children: [
-                                  Image(
-                                      image: AssetImage(
-                                          'assets/images/service.png'),
-                                      height: 72,
-                                      width: 50),
-                                  Text(
+                                  child: Text(
                                     "Service",
                                     style: TextStyle(
                                       color: Colors.black,
-                                      letterSpacing: 0.5,
-                                      fontFamily: "okra_Regular",
+                                      fontFamily: "Roboto-Medium",
                                       fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.7,
+                                          SizeConfig.blockSizeHorizontal * 3.6,
                                       fontWeight: FontWeight.w400,
                                     ),
-                                  ),
-                                ],
-                              )),
+                                  )),
                             ),
                           ),
                         ),
