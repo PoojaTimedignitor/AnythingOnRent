@@ -663,9 +663,7 @@ class MainHomeState extends State<MainHome>
               backgroundColor: Colors.transparent,
               onPressed: () {
                 showModalBottomSheet(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(topRight: Radius.circular(30),),
-                    ),
+
                     context: context,
                     backgroundColor: Colors.white,
                     elevation: 2,

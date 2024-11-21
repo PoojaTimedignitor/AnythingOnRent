@@ -164,12 +164,12 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
 
          Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(2.0),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3, // Number of columns
                   crossAxisSpacing: 8.0, // Space between columns
-                  mainAxisSpacing: 8.0, // Space between rows
+                  mainAxisSpacing: 1.0, // Space between rows
                   childAspectRatio: 1,
                   // Aspect ratio of each grid item
                 ),

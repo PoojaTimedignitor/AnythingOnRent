@@ -1,63 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:io';
 
-void main() {
-  runApp(const MyAppss());
+class ImagePickerCarousel extends StatefulWidget {
+  @override
+  _ImagePickerCarouselState createState() => _ImagePickerCarouselState();
 }
 
-class MyAppss extends StatelessWidget {
-  const MyAppss({Key? key}) : super(key: key);
+class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
+  final ImagePicker _picker = ImagePicker();
+  List<File> _selectedImages = []; // To store selected images
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: InkWellColorChangeExample(),
-    );
+  // Method to pick images from the gallery
+  Future<void> _pickImagesFromGallery() async {
+    if (_selectedImages.length >= 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('You can only add up to 5 images.')),
+      );
+      return;
+    }
+
+    final List<XFile>? pickedFiles = await _picker.pickMultiImage();
+
+    if (pickedFiles != null) {
+      setState(() {
+        // Add selected images to the list, limit to 5
+        _selectedImages.addAll(
+          pickedFiles.map((file) => File(file.path)).take(5 - _selectedImages.length),
+        );
+      });
+    }
   }
-}
 
-class InkWellColorChangeExample extends StatefulWidget {
-  @override
-  _InkWellColorChangeExampleState createState() =>
-      _InkWellColorChangeExampleState();
-}
-
-class _InkWellColorChangeExampleState extends State<InkWellColorChangeExample> {
-  // State to keep track of color change
-  bool _isPressed = false;
+  // Method to clear selected images
+  void _clearImages() {
+    setState(() {
+      _selectedImages.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("InkWell Color Change"),
+        title: Text('Gallery Picker & Carousel'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _clearImages,
+          ),
+        ],
       ),
-      body: Center(
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              _isPressed = !_isPressed; // Toggle the color state
-            });
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            decoration: BoxDecoration(
-              color: _isPressed ? Colors.blue : Colors.green, // Change color on tap
-              borderRadius: BorderRadius.circular(12),
-            ),
-            height: 100,
-            width: 200,
-            child: Center(
-              child: Text(
-                'Tap Me!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-              ),
+      body: Column(
+        children: [
+          // Button to open gallery
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton.icon(
+              icon: Icon(Icons.photo_library),
+              label: Text('Select Images from Gallery'),
+              onPressed: _pickImagesFromGallery,
             ),
           ),
-        ),
+
+          // Carousel Slider to display selected images
+          if (_selectedImages.isNotEmpty)
+            Expanded(
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  height: 400,
+                  enlargeCenterPage: true,
+                  enableInfiniteScroll: false,
+                  autoPlay: true,
+                ),
+                items: _selectedImages.map((image) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 5.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.file(
+                            image,
+                            fit: BoxFit.cover,
+                            width: MediaQuery.of(context).size.width,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+
+          // Message when no images are selected
+          if (_selectedImages.isEmpty)
+            Center(
+              child: Text(
+                'No images selected',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+        ],
       ),
     );
   }

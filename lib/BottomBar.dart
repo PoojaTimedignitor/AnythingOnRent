@@ -14,17 +14,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 
-
-
-
-
-class BottomBar extends StatefulWidget{
+class BottomBar extends StatefulWidget {
   @override
-  State<StatefulWidget> createState()=>BottomBarState();
-
+  State<StatefulWidget> createState() => BottomBarState();
 }
 
-class BottomBarState extends State<BottomBar> with SingleTickerProviderStateMixin {
+class BottomBarState extends State<BottomBar>
+    with SingleTickerProviderStateMixin {
   PersistentTabController? _controller;
 
   @override
@@ -34,37 +30,40 @@ class BottomBarState extends State<BottomBar> with SingleTickerProviderStateMixi
     setState(() {
       _tabController = TabController(length: 2, vsync: this);
       _controller = PersistentTabController(initialIndex: 0);
-
     });
   }
+
   List<Widget> _buildScreens() {
     return [
       BottomBar(),
-     AllProductList(),
-     AllProductList(),
+      AllProductList(),
+      AllProductList(),
     ];
   }
+
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon:  Icon(Icons.electric_moped),
+        icon: Icon(Icons.electric_moped),
         title: ("Home"),
         activeColorPrimary: Color(0xffC291EE),
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon:  Icon(Icons.dining_outlined),
+        icon: Icon(Icons.dining_outlined),
         title: ("Fev"),
         activeColorPrimary: Color(0xffC291EE),
         inactiveColorPrimary: CupertinoColors.systemGrey,
-      ), PersistentBottomNavBarItem(
-        icon:  Icon(Icons.wallet),
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.wallet),
         title: ("Chat"),
         activeColorPrimary: Color(0xffC291EE),
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
     ];
   }
+
   @override
   void dispose() {
     _controller?.dispose();
@@ -138,23 +137,16 @@ class BottomBarState extends State<BottomBar> with SingleTickerProviderStateMixi
     "Office Equipment": 8,
   };
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(30.0),
         child: Container(
-
           height: 60,
-
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
@@ -166,37 +158,28 @@ class BottomBarState extends State<BottomBar> with SingleTickerProviderStateMixi
           ),
           child: FloatingActionButton(
             onPressed: () {
-
-
               showModalBottomSheet(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(20)),
-                  ),
                   context: context,
                   backgroundColor: Colors.white,
                   elevation: 10,
                   isScrollControlled: true,
                   isDismissible: true,
                   builder: (BuildContext bc) {
-                    return CreateProductService(
-                    );
+                    return CreateProductService();
                   });
-
-
-
             },
-
-
             shape: CircleBorder(),
             backgroundColor: Colors.transparent,
-child: Icon(Icons.add,color: Colors.white,),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
       body:
 
-    /*  ScrollConfiguration(
+          /*  ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView(
           shrinkWrap: true,
@@ -233,7 +216,7 @@ child: Icon(Icons.add,color: Colors.white,),
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ),
                   ),
-                  *//* Stack(
+                  */ /* Stack(
                     children: [
                    Padding(
                     padding: EdgeInsets.only(
@@ -261,7 +244,7 @@ child: Icon(Icons.add,color: Colors.white,),
 
                       // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ],
-                  ),*//*
+                  ),*/ /*
                 ],
               ),
             ),
@@ -269,51 +252,50 @@ child: Icon(Icons.add,color: Colors.white,),
         ),
       ),*/
 
+          PersistentTabView(
+        context,
+        controller: _controller,
+        screens: _buildScreens(),
+        items: _navBarsItems(),
+        confineInSafeArea: true,
 
-  PersistentTabView(
+        backgroundColor: Colors.white, // Default is Colors.white.
+        handleAndroidBackButtonPress: true, // Default is true.
+        resizeToAvoidBottomInset:
+            true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+        stateManagement: true, // Default is true.
+        hideNavigationBarWhenKeyboardShows:
+            true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
+        decoration: NavBarDecoration(
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(15),
+            topLeft: Radius.circular(15),
+          ),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.black54,
+                blurRadius: 15.0,
+                offset: Offset(0.0, 0.75))
+          ],
+          colorBehindNavBar: Colors.white,
+        ),
+        popAllScreensOnTapOfSelectedTab: true,
+        popActionScreens: PopActionScreensType.all,
+        itemAnimationProperties: ItemAnimationProperties(
+          // Navigation Bar's items animation properties.
+          duration: Duration(milliseconds: 200),
+          curve: Curves.ease,
+        ),
+        screenTransitionAnimation: ScreenTransitionAnimation(
+          // Screen transition animation on change of selected tab.
+          animateTabTransition: true,
+          curve: Curves.ease,
 
-    context,
-    controller: _controller,
-    screens: _buildScreens(),
-    items: _navBarsItems(),
-    confineInSafeArea: true,
-
-    backgroundColor: Colors.white, // Default is Colors.white.
-    handleAndroidBackButtonPress: true, // Default is true.
-    resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-    stateManagement: true, // Default is true.
-    hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-    decoration: NavBarDecoration(
-      borderRadius: const BorderRadius.only(
-        topRight: Radius.circular(15),
-        topLeft: Radius.circular(15),),
-      boxShadow: <BoxShadow>[
-        BoxShadow(
-            color: Colors.black54,
-            blurRadius: 15.0,
-            offset: Offset(0.0, 0.75)
-        )
-      ],
-      colorBehindNavBar: Colors.white,
-    ),
-    popAllScreensOnTapOfSelectedTab: true,
-    popActionScreens: PopActionScreensType.all,
-    itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
-      duration: Duration(milliseconds: 200),
-      curve: Curves.ease,
-    ),
-    screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
-      animateTabTransition: true,
-      curve: Curves.ease,
-
-      duration: Duration(milliseconds: 200),
-    ),
-    navBarStyle: NavBarStyle.style9, // Choose the nav bar style with this property.
-  ),
-
-
-
-
+          duration: Duration(milliseconds: 200),
+        ),
+        navBarStyle:
+            NavBarStyle.style9, // Choose the nav bar style with this property.
+      ),
     );
   }
 
@@ -321,9 +303,7 @@ child: Icon(Icons.add,color: Colors.white,),
     return Row(
       children: [
         GestureDetector(
-          onTap: () {
-
-          },
+          onTap: () {},
           onDoubleTap: () {},
           child: Padding(
             padding: EdgeInsets.only(left: parentWidth * .02),
@@ -435,7 +415,7 @@ child: Icon(Icons.add,color: Colors.white,),
                             borderRadius: BorderRadius.circular(10.0)),
                         focusedBorder: OutlineInputBorder(
                           borderSide:
-                          BorderSide(color: Colors.black12, width: 1),
+                              BorderSide(color: Colors.black12, width: 1),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ))),
@@ -513,34 +493,34 @@ child: Icon(Icons.add,color: Colors.white,),
             for (int i = 0; i < images.length; i++)
               currentIndex == i
                   ? Container(
-                width: 25,
-                height: 7,
-                margin: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Color(0xff6a83da),
-                        Color(0xff665365B7),
-                      ]),
-                ),
-              )
+                      width: 25,
+                      height: 7,
+                      margin: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xff6a83da),
+                              Color(0xff665365B7),
+                            ]),
+                      ),
+                    )
                   : Container(
-                width: 7,
-                height: 7,
-                margin: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                          Color(0xff7F9ED4),
-                          Color(0xff999999),
-                        ]),
-                    shape: BoxShape.circle),
-              )
+                      width: 7,
+                      height: 7,
+                      margin: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                Color(0xff7F9ED4),
+                                Color(0xff999999),
+                              ]),
+                          shape: BoxShape.circle),
+                    )
           ],
         ),
       ],
@@ -555,8 +535,8 @@ child: Icon(Icons.add,color: Colors.white,),
             MaterialPageRoute(
                 builder: (context) => DashBoardScreen(
 
-                  //  recLane: widget.recLane,
-                )));
+                    //  recLane: widget.recLane,
+                    )));
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -572,102 +552,101 @@ child: Icon(Icons.add,color: Colors.white,),
           ),
           child: Center(
               child: Text(
-                "Create Post +",
-                style: TextStyle(
-                  fontFamily: "okra_regular",
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.1,
-                  color: Color(0xff3684F0),
-                  fontWeight: FontWeight.w300,
-                ),
-              )),
+            "Create Post +",
+            style: TextStyle(
+              fontFamily: "okra_regular",
+              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+              color: Color(0xff3684F0),
+              fontWeight: FontWeight.w300,
+            ),
+          )),
         ),
       ),
     );
   }
 
   Widget PopularCategories(double parentHeight, double parentWidth) {
-    return
-      Column(
-
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Expanded(child: Divider()),
-              SizedBox(
-                width: 10,
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Expanded(child: Divider()),
+            SizedBox(
+              width: 10,
+            ),
+            Center(
+                child: Text(" POPULAR CATEGORIES",
+                    style: TextStyle(
+                        color: Colors.grey[500]!,
+                        fontFamily: "okra_Regular",
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.9),
+                    overflow: TextOverflow.ellipsis)),
+            SizedBox(
+              width: 10,
+            ),
+            const Expanded(child: Divider()),
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: parentWidth * 0.02),
+          child: SizedBox(
+            height: 200, // Set a fixed height for the GridView
+            child: GridView.builder(
+              scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Number of rows
+                crossAxisSpacing: 2, // Space between columns
+                mainAxisSpacing: 23, // Space between rows
+                childAspectRatio: 3 / 2,
               ),
-              Center(
-                  child: Text(
-                      " POPULAR CATEGORIES",
-                      style: TextStyle(color: Colors.grey[500]!, fontFamily: "okra_Regular",
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 0.9
-                      ),overflow: TextOverflow.ellipsis
-                  )),
-              SizedBox(
-                width: 10,
-              ),
-              const Expanded(child: Divider()),
-            ],
-          ),
-          Padding(
-            padding:  EdgeInsets.only(left: parentWidth*0.02),
-            child: SizedBox(
-              height: 200, // Set a fixed height for the GridView
-              child: GridView.builder(
-                scrollDirection: Axis.horizontal, // Enable horizontal scrolling
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Number of rows
-                  crossAxisSpacing: 2, // Space between columns
-                  mainAxisSpacing: 23, // Space between rows
-                  childAspectRatio: 3 / 2,
-                ),
-                itemCount: catagriesItemList.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Padding(
-                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.00),
-                          child:   Image.asset(
-                            catagriesImage[index],
-                            height: 78,
-                            width: 45,
-                          ),
+              itemCount: catagriesItemList.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: SizeConfig.screenHeight * 0.00),
+                        child: Image.asset(
+                          catagriesImage[index],
+                          height: 78,
+                          width: 45,
                         ),
                       ),
-
-                      Center(
-                        child: Text(
-                          catagriesItemList[index],
-                          style: TextStyle(
-                            color: Colors.black,
-                            letterSpacing: 0.0,
-                            fontFamily: "okra_medium",
-                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                            fontWeight: FontWeight.w500,
-                          ),overflow: TextOverflow.ellipsis,
-                          /* style: TextStyle(
+                    ),
+                    Center(
+                      child: Text(
+                        catagriesItemList[index],
+                        style: TextStyle(
+                          color: Colors.black,
+                          letterSpacing: 0.0,
+                          fontFamily: "okra_medium",
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        /* style: TextStyle(
                       color: CommonColor.Black,
                       fontFamily: "Roboto_Regular",
                       fontSize: SizeConfig.blockSizeHorizontal * 2.7,
                       fontWeight: FontWeight.w500,
                     ),*/
-                        ),
                       ),
-                    ],
-                  );
-                },
-              ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
 
     /* Padding(
       padding: EdgeInsets.only(top: parentHeight * 0.0),
@@ -723,7 +702,7 @@ child: Icon(Icons.add,color: Colors.white,),
                     ),
                   ),
                 ),
-              )*//*
+              )*/ /*
             ],
           ),
           Padding(
@@ -760,823 +739,845 @@ child: Icon(Icons.add,color: Colors.white,),
   }
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
-    return
+    return Padding(
+      padding: EdgeInsets.only(top: parentHeight * 0.04),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Expanded(child: Divider()),
+              SizedBox(
+                width: 10,
+              ),
+              Center(
+                  child: Text("WHAT'S ON YOUR RENTAL MATERIALS?",
+                      style: TextStyle(
+                          color: Colors.grey[500]!,
+                          fontFamily: "okra_Regular",
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.9),
+                      overflow: TextOverflow.ellipsis)),
+              SizedBox(
+                width: 10,
+              ),
+              const Expanded(child: Divider()),
+            ],
+          ),
+          SafeArea(
+            child: DefaultTabController(
+              length: 2,
+              child: Column(
+                children: [
+                  Container(
+                    height: 60,
+                    padding: EdgeInsets.only(left: 0, bottom: 20, right: 0),
+                    child: ButtonsTabBar(
+                      backgroundColor: CommonColor.ViewAll,
+                      buttonMargin: EdgeInsets.symmetric(horizontal: 25),
+                      unselectedBackgroundColor: Colors.grey[200],
+                      physics: NeverScrollableScrollPhysics(),
+                      unselectedLabelStyle: TextStyle(color: Colors.black),
+                      // center:true,
+                      labelStyle: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
 
-      Padding(
-        padding:  EdgeInsets.only(top: parentHeight*0.04),
-        child: Column(
-
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Expanded(child: Divider()),
-                SizedBox(
-                  width: 10,
-                ),
-                Center(
-                    child: Text(
-                        "WHAT'S ON YOUR RENTAL MATERIALS?",
-                        style: TextStyle(color: Colors.grey[500]!, fontFamily: "okra_Regular",
-                            fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 0.9
-                        ),overflow: TextOverflow.ellipsis
-                    )),
-                SizedBox(
-                  width: 10,
-                ),
-                const Expanded(child: Divider()),
-              ],
-            ),
-            SafeArea(
-              child: DefaultTabController(
-                length: 2,
-                child: Column(
-
-                  children: [
-                    Container(
-                      height: 60,
-
-                      padding: EdgeInsets.only(left: 0, bottom: 20, right: 0),
-                      child: ButtonsTabBar(
-                        backgroundColor: CommonColor.ViewAll,
-                        buttonMargin: EdgeInsets.symmetric(horizontal: 25),
-                        unselectedBackgroundColor: Colors.grey[200],
-                        physics: NeverScrollableScrollPhysics(),
-                        unselectedLabelStyle: TextStyle(color: Colors.black),
-                        // center:true,
-                        labelStyle:
-                        TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-
-
-                        tabs: [
-                          Tab(
-                            child: Container(
-                              height: 40,
-                              width: 150,
-                              padding: EdgeInsets.only(left: 10, right: 0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-
+                      tabs: [
+                        Tab(
+                          child: Container(
+                            height: 40,
+                            width: 150,
+                            padding: EdgeInsets.only(left: 10, right: 0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                Image(
+                                    image: AssetImage('assets/images/pro.png'),
+                                    height: 72,
+                                    width: 50),
+                                Text(
+                                  "Product",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    letterSpacing: 0.5,
+                                    fontFamily: "okra_medium",
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal * 3.5,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Tab(
+                          child: Container(
+                            height: 40,
+                            width: 150,
+                            padding: EdgeInsets.only(left: 10, right: 20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  10), /* border: Border.all(color: Colors.black, width: 0.5)*/
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Center(
+                                  child: Row(
                                 children: [
                                   Image(
-                                      image: AssetImage('assets/images/pro.png'),
+                                      image: AssetImage(
+                                          'assets/images/service.png'),
                                       height: 72,
                                       width: 50),
                                   Text(
-                                    "Product",
+                                    "Service",
                                     style: TextStyle(
                                       color: Colors.black,
                                       letterSpacing: 0.5,
                                       fontFamily: "okra_medium",
-                                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal * 3.5,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ],
-                              ),
+                              )),
                             ),
                           ),
-                          Tab(
-                            child: Container(
-                              height: 40,
-                              width: 150,
-                              padding: EdgeInsets.only(left: 10, right: 20),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                /* border: Border.all(color: Colors.black, width: 0.5)*/),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Center(
-                                    child: Row(
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Container(
+                    //child: Container(
+                    height: SizeConfig.screenHeight * 0.9,
+                    //color: Colors.blue,
+                    child: TabBarView(
+                      children: [
+                        Flexible(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text(
+                                    "  Near by Location",
+                                    style: TextStyle(
+                                      fontFamily: "Montserrat-Medium",
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal * 4.1,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PopularCatagoriesData()));
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: parentWidth * 0.35),
+                                      child: Container(
+                                        height: parentHeight * 0.035,
+                                        width: parentWidth * 0.22,
+                                        decoration: BoxDecoration(
+                                            color: CommonColor.ViewAll,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5))),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text("View All",
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      "Montserrat-Regular",
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      2.8,
+                                                  color: CommonColor.TextBlack,
+                                                  fontWeight: FontWeight.w400,
+                                                )),
+                                            Image(
+                                              image: AssetImage(
+                                                  'assets/images/arrow.png'),
+                                              height: 20,
+                                              width: 15,
+                                              color: Colors.black54,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Text(
+                                "   Near By Place",
+                                style: TextStyle(
+                                  fontFamily: "Roboto_Normal",
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.3,
+                                  color: CommonColor.grayText,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              GridView.builder(
+                                padding: EdgeInsets.only(top: 15),
+                                physics:
+                                    NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                                shrinkWrap:
+                                    true, // Take only the space it needs
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      2, // Number of columns in the grid
+                                  crossAxisSpacing: 1.0,
+                                  mainAxisSpacing: 0.0,
+                                  childAspectRatio: 1.0, // Adjust as needed
+                                ),
+                                itemCount: 4, // Number of items in the grid
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: EdgeInsets.only(
+                                        left: 10.0,
+                                        right: 5.0,
+                                        top: 0.0,
+                                        bottom: 30.0),
+                                    //  height: SizeConfig.screenHeight * 0,
+                                    decoration: BoxDecoration(
+                                        color: CommonColor.redContainer,
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Color(0xff000000)
+                                                  .withOpacity(0.2),
+                                              blurRadius: 2,
+                                              spreadRadius: 0,
+                                              offset: Offset(0, 1)),
+                                        ],
+                                        /*       border: Border.all(
+                                              color: Colors.black38, width: 0.9),*/
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(7))),
+
+                                    // alignment: Alignment.center,
+
+                                    child: Column(
+                                      // crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Image(
-                                            image: AssetImage('assets/images/service.png'),
-                                            height: 72,
-                                            width: 50),
-                                        Text(
-                                          "Service",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            letterSpacing: 0.5,
-                                            fontFamily: "okra_medium",
-                                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                                            fontWeight: FontWeight.w500,
+                                        Stack(
+                                          children: [
+                                            Container(
+                                              height:
+                                                  SizeConfig.screenHeight * 0.1,
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(7),
+                                                  topRight: Radius.circular(7),
+                                                ),
+                                                child: AnotherCarousel(
+                                                  images: const [
+                                                    NetworkImage(
+                                                        "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
+                                                    NetworkImage(
+                                                        "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
+                                                    NetworkImage(
+                                                        "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
+                                                    // we have display image from netwrok as well
+                                                    NetworkImage(
+                                                        "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
+                                                  ],
+                                                  dotSize: 6,
+                                                  dotSpacing: 10,
+                                                  dotColor: Colors.white70,
+                                                  dotIncreasedColor:
+                                                      Colors.black45,
+                                                  indicatorBgPadding: 5.0,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              //  border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
+
+                                              child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 67, left: 111),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.bottomLeft,
+                                                    child: Container(
+                                                      height: 15,
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            Color(0xff5095f1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(0),
+                                                      ),
+                                                      child: Row(
+                                                          // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                                          children: [
+                                                            Icon(
+                                                              Icons.location_on,
+                                                              size: SizeConfig
+                                                                      .screenHeight *
+                                                                  0.019,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            Text(
+                                                              '1.2 Km   ',
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    "Montserrat-Regular",
+                                                                fontSize: SizeConfig
+                                                                        .blockSizeHorizontal *
+                                                                    2.5,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ]),
+                                                    ),
+                                                  )),
+                                            ),
+                                            Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 65, left: 2),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: Row(
+                                                      // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.star,
+                                                          size: SizeConfig
+                                                                  .screenHeight *
+                                                              0.02,
+                                                          color:
+                                                              Color(0xffFFB905),
+                                                        ),
+                                                        Text(
+                                                          " 4.5",
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                "Roboto-Regular",
+                                                            fontSize: SizeConfig
+                                                                    .blockSizeHorizontal *
+                                                                2.8,
+                                                            color: CommonColor
+                                                                .white,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ]),
+                                                ))
+                                          ],
+                                        ),
+                                        SizedBox(height: 4),
+                                        Container(
+                                          width: SizeConfig.screenWidth * 0.42,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'HD Camera (black & white) dfgdf',
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      "Montserrat-Regular",
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      3.3,
+                                                  color: CommonColor.Black,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(height: 2),
+                                              Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.location_on,
+                                                    size: SizeConfig
+                                                            .screenHeight *
+                                                        0.019,
+                                                    color: Color(0xff3684F0),
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(
+                                                      ' Park Street,pune banner 20023',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            "Montserrat-Regular",
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            2.6,
+                                                        color:
+                                                            Color(0xff3684F0),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 5),
+                                              Row(
+                                                children: [
+                                                  // color: Color(0xff3684F0),
+
+                                                  Text(
+                                                    " Share",
+                                                    style: TextStyle(
+                                                      color:
+                                                          CommonColor.grayText,
+                                                      fontFamily:
+                                                          "Roboto_Regular",
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          2.7,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  SizedBox(width: 6),
+                                                  Image(
+                                                      image: AssetImage(
+                                                          'assets/images/share.png'),
+                                                      height: 13),
+                                                  SizedBox(width: 71),
+                                                  Container(
+                                                    width:
+                                                        SizeConfig.screenWidth *
+                                                            0.1,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Color(0xffffffff),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(3)),
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.star,
+                                                          size: SizeConfig
+                                                                  .screenHeight *
+                                                              0.016,
+                                                          color:
+                                                              Color(0xffFFB905),
+                                                        ),
+                                                        Text(
+                                                          "  4.5",
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                "Roboto-Regular",
+                                                            fontSize: SizeConfig
+                                                                    .blockSizeHorizontal *
+                                                                2.5,
+                                                            color: CommonColor
+                                                                .Black,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
-                                    )),),
-                            ),
-                          ),
-
-
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      //child: Container(
-                      height: SizeConfig.screenHeight*0.9,
-                      //color: Colors.blue,
-                      child: TabBarView(
-                        children: [
-
-                          Flexible(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "  Near by Location",
-                                      style: TextStyle(
-                                        fontFamily: "Montserrat-Medium",
-                                        fontSize:
-                                        SizeConfig.blockSizeHorizontal * 4.1,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PopularCatagoriesData()));
-                                      },
-                                      child: Padding(
-                                        padding:
-                                        EdgeInsets.only(left: parentWidth * 0.35),
-                                        child: Container(
-                                          height: parentHeight * 0.035,
-                                          width: parentWidth * 0.22,
-                                          decoration: BoxDecoration(
-                                              color: CommonColor.ViewAll,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5))),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                            children: [
-                                              Text("View All",
-                                                  style: TextStyle(
-                                                    fontFamily: "Montserrat-Regular",
-                                                    fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                        2.8,
-                                                    color: CommonColor.TextBlack,
-                                                    fontWeight: FontWeight.w400,
-                                                  )),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/images/arrow.png'),
-                                                height: 20,
-                                                width: 15,
-                                                color: Colors.black54,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Text(
-                                  "   Near By Place",
-                                  style: TextStyle(
-                                    fontFamily: "Roboto_Normal",
-                                    fontSize: SizeConfig.blockSizeHorizontal * 3.3,
-                                    color: CommonColor.grayText,
-                                    fontWeight: FontWeight.w300,
+                                  );
+                                },
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "  All Product List",
+                                    style: TextStyle(
+                                      fontFamily: "Montserrat-Medium",
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal * 4.1,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                GridView.builder(
-                                  padding: EdgeInsets.only(top: 15),
-                                  physics:
-                                  NeverScrollableScrollPhysics(), // Disable GridView's scrolling
-                                  shrinkWrap: true, // Take only the space it needs
-                                  gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                    2, // Number of columns in the grid
-                                    crossAxisSpacing: 1.0,
-                                    mainAxisSpacing: 0.0,
-                                    childAspectRatio: 1.0, // Adjust as needed
-                                  ),
-                                  itemCount: 4, // Number of items in the grid
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      margin: EdgeInsets.only(
-                                          left: 10.0,
-                                          right: 5.0,
-                                          top: 0.0,
-                                          bottom: 30.0),
-                                      //  height: SizeConfig.screenHeight * 0,
-                                      decoration: BoxDecoration(
-                                          color: CommonColor.redContainer,
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Color(0xff000000)
-                                                    .withOpacity(0.2),
-                                                blurRadius: 2,
-                                                spreadRadius: 0,
-                                                offset: Offset(0, 1)),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AllProductList()));
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: parentWidth * 0.35),
+                                      child: Container(
+                                        height: parentHeight * 0.035,
+                                        width: parentWidth * 0.22,
+                                        decoration: BoxDecoration(
+                                            color: CommonColor.ViewAll,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5))),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text("View All",
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      "Montserrat-Regular",
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      2.8,
+                                                  color: CommonColor.TextBlack,
+                                                  fontWeight: FontWeight.w400,
+                                                )),
+                                            Image(
+                                              image: AssetImage(
+                                                  'assets/images/arrow.png'),
+                                              height: 20,
+                                              width: 15,
+                                              color: Colors.black54,
+                                            )
                                           ],
-                                          /*       border: Border.all(
-                                              color: Colors.black38, width: 0.9),*/
-                                          borderRadius:
-                                          BorderRadius.all(Radius.circular(7))),
-
-                                      // alignment: Alignment.center,
-
-                                      child: Column(
-                                        // crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Stack(
-                                            children: [
-                                              Container(
-                                                height: SizeConfig.screenHeight * 0.1,
-                                                child: ClipRRect(
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(7),
-                                                    topRight: Radius.circular(7),
-                                                  ),
-                                                  child: AnotherCarousel(
-                                                    images: const [
-                                                      NetworkImage(
-                                                          "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
-                                                      NetworkImage(
-                                                          "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
-                                                      NetworkImage(
-                                                          "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
-                                                      // we have display image from netwrok as well
-                                                      NetworkImage(
-                                                          "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
-                                                    ],
-                                                    dotSize: 6,
-                                                    dotSpacing: 10,
-                                                    dotColor: Colors.white70,
-                                                    dotIncreasedColor: Colors.black45,
-                                                    indicatorBgPadding: 5.0,
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                //  border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
-
-                                                child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: 67, left: 111),
-                                                    child: Align(
-                                                      alignment: Alignment.bottomLeft,
-                                                      child: Container(
-                                                        height: 15,
-                                                        decoration: BoxDecoration(
-                                                          color: Color(0xff5095f1),
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                        ),
-                                                        child: Row(
-                                                          // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
-                                                            children: [
-                                                              Icon(
-                                                                Icons.location_on,
-                                                                size: SizeConfig
-                                                                    .screenHeight *
-                                                                    0.019,
-                                                                color: Colors.white,
-                                                              ),
-                                                              Text(
-                                                                '1.2 Km   ',
-                                                                style: TextStyle(
-                                                                  fontFamily:
-                                                                  "Montserrat-Regular",
-                                                                  fontSize: SizeConfig
-                                                                      .blockSizeHorizontal *
-                                                                      2.5,
-                                                                  color: Colors.white,
-                                                                  fontWeight:
-                                                                  FontWeight.w600,
-                                                                ),
-                                                                overflow: TextOverflow
-                                                                    .ellipsis,
-                                                              ),
-                                                            ]),
-                                                      ),
-                                                    )),
-                                              ),
-                                              Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 65, left: 2),
-                                                  child: Align(
-                                                    alignment:
-                                                    Alignment.bottomRight,
-                                                    child: Row(
-                                                      // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
-                                                        children: [
-                                                          Icon(
-                                                            Icons.star,
-                                                            size: SizeConfig
-                                                                .screenHeight *
-                                                                0.02,
-                                                            color:
-                                                            Color(0xffFFB905),
-                                                          ),
-                                                          Text(
-                                                            " 4.5",
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                              "Roboto-Regular",
-                                                              fontSize: SizeConfig
-                                                                  .blockSizeHorizontal *
-                                                                  2.8,
-                                                              color:
-                                                              CommonColor.white,
-                                                              fontWeight:
-                                                              FontWeight.w400,
-                                                            ),
-                                                          ),
-                                                        ]),
-                                                  ))
-                                            ],
-                                          ),
-                                          SizedBox(height: 4),
-                                          Container(
-                                            width: SizeConfig.screenWidth * 0.42,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'HD Camera (black & white) dfgdf',
-                                                  style: TextStyle(
-                                                    fontFamily: "Montserrat-Regular",
-                                                    fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                        3.3,
-                                                    color: CommonColor.Black,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                                SizedBox(height: 2),
-                                                Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.location_on,
-                                                      size: SizeConfig.screenHeight *
-                                                          0.019,
-                                                      color: Color(0xff3684F0),
-                                                    ),
-                                                    Flexible(
-                                                      child: Text(
-                                                        ' Park Street,pune banner 20023',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                          "Montserrat-Regular",
-                                                          fontSize: SizeConfig
-                                                              .blockSizeHorizontal *
-                                                              2.6,
-                                                          color: Color(0xff3684F0),
-                                                          fontWeight: FontWeight.w400,
-                                                        ),
-                                                        overflow:
-                                                        TextOverflow.ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 5),
-                                                Row(
-                                                  children: [
-                                                    // color: Color(0xff3684F0),
-
-                                                    Text(
-                                                      " Share",
-                                                      style: TextStyle(
-                                                        color: CommonColor.grayText,
-                                                        fontFamily: "Roboto_Regular",
-                                                        fontSize: SizeConfig
-                                                            .blockSizeHorizontal *
-                                                            2.7,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                    SizedBox(width: 6),
-                                                    Image(
-                                                        image: AssetImage(
-                                                            'assets/images/share.png'),
-                                                        height: 13),
-                                                    SizedBox(width: 71),
-                                                    Container(
-                                                      width: SizeConfig.screenWidth *
-                                                          0.1,
-                                                      decoration: BoxDecoration(
-                                                          color: Color(0xffffffff),
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              3)),
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.star,
-                                                            size: SizeConfig
-                                                                .screenHeight *
-                                                                0.016,
-                                                            color: Color(0xffFFB905),
-                                                          ),
-                                                          Text(
-                                                            "  4.5",
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                              "Roboto-Regular",
-                                                              fontSize: SizeConfig
-                                                                  .blockSizeHorizontal *
-                                                                  2.5,
-                                                              color:
-                                                              CommonColor.Black,
-                                                              fontWeight:
-                                                              FontWeight.w400,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "  All Product List",
-                                      style: TextStyle(
-                                        fontFamily: "Montserrat-Medium",
-                                        fontSize:
-                                        SizeConfig.blockSizeHorizontal * 4.1,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AllProductList()));
-                                      },
-                                      child: Padding(
-                                        padding:
-                                        EdgeInsets.only(left: parentWidth * 0.35),
-                                        child: Container(
-                                          height: parentHeight * 0.035,
-                                          width: parentWidth * 0.22,
-                                          decoration: BoxDecoration(
-                                              color: CommonColor.ViewAll,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5))),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                            children: [
-                                              Text("View All",
-                                                  style: TextStyle(
-                                                    fontFamily: "Montserrat-Regular",
-                                                    fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                        2.8,
-                                                    color: CommonColor.TextBlack,
-                                                    fontWeight: FontWeight.w400,
-                                                  )),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/images/arrow.png'),
-                                                height: 20,
-                                                width: 15,
-                                                color: Colors.black54,
-                                              )
-                                            ],
-                                          ),
                                         ),
                                       ),
-                                    )
-                                  ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Text(
+                                "   Display All rental product options in your choose location",
+                                style: TextStyle(
+                                  fontFamily: "Roboto_Normal",
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.3,
+                                  color: CommonColor.grayText,
+                                  fontWeight: FontWeight.w300,
                                 ),
-                                Text(
-                                  "   Display All rental product options in your choose location",
-                                  style: TextStyle(
-                                    fontFamily: "Roboto_Normal",
-                                    fontSize: SizeConfig.blockSizeHorizontal * 3.3,
-                                    color: CommonColor.grayText,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    height: 10,
-                                    // color: Colors.red,
-                                    padding: EdgeInsets.only(top: 15.0),
-                                    // Set height to fit the horizontal list
-                                    child: ListView.builder(
-                                        padding: EdgeInsets.zero,
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: 10, // Define the number of items
-                                        itemBuilder: (context, index) {
-                                          return Container(
-                                            width: parentWidth * 0.55,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 10,
+                                  // color: Colors.red,
+                                  padding: EdgeInsets.only(top: 15.0),
+                                  // Set height to fit the horizontal list
+                                  child: ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                          10, // Define the number of items
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          width: parentWidth * 0.55,
 
-                                            // Set width for each item
-                                            margin:
-                                            EdgeInsets.symmetric(horizontal: 9.0),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                              BorderRadius.circular(7),
-                                              border: Border.all(
-                                                  color: CommonColor.grayText,
-                                                  width: 0.3),
-                                              //  color: Color(0xffFFE5E3),
-                                              //  borderRadius:
-                                              //  BorderRadius.circular(12.0),
+                                          // Set width for each item
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 9.0),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                            border: Border.all(
+                                                color: CommonColor.grayText,
+                                                width: 0.3),
+                                            //  color: Color(0xffFFE5E3),
+                                            //  borderRadius:
+                                            //  BorderRadius.circular(12.0),
 
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    color: Color(0xff000000)
-                                                        .withOpacity(0.2),
-                                                    blurRadius: 2,
-                                                    spreadRadius: 0,
-                                                    offset: Offset(0, 1)),
-                                              ],
-                                            ),
-                                            child: ListView(
-                                              physics: NeverScrollableScrollPhysics(),
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.all(3.0),
-                                                  child: Container(
-                                                    height: SizeConfig.screenHeight *
-                                                        0.13,
-                                                    child: ClipRRect(
-                                                      borderRadius: BorderRadius.only(
-                                                        topLeft: Radius.circular(7),
-                                                        topRight: Radius.circular(7),
-                                                      ),
-                                                      child: AnotherCarousel(
-                                                        images: const [
-                                                          NetworkImage(
-                                                              "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
-                                                          NetworkImage(
-                                                              "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
-                                                          NetworkImage(
-                                                              "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
-                                                          // we have display image from netwrok as well
-                                                          NetworkImage(
-                                                              "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
-                                                        ],
-                                                        dotSize: 6,
-                                                        dotSpacing: 10,
-                                                        dotColor: Colors.white70,
-                                                        dotIncreasedColor:
-                                                        Colors.black45,
-                                                        indicatorBgPadding: 5.0,
-                                                      ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  color: Color(0xff000000)
+                                                      .withOpacity(0.2),
+                                                  blurRadius: 2,
+                                                  spreadRadius: 0,
+                                                  offset: Offset(0, 1)),
+                                            ],
+                                          ),
+                                          child: ListView(
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(3.0),
+                                                child: Container(
+                                                  height:
+                                                      SizeConfig.screenHeight *
+                                                          0.13,
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(7),
+                                                      topRight:
+                                                          Radius.circular(7),
+                                                    ),
+                                                    child: AnotherCarousel(
+                                                      images: const [
+                                                        NetworkImage(
+                                                            "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
+                                                        NetworkImage(
+                                                            "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
+                                                        NetworkImage(
+                                                            "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
+                                                        // we have display image from netwrok as well
+                                                        NetworkImage(
+                                                            "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
+                                                      ],
+                                                      dotSize: 6,
+                                                      dotSpacing: 10,
+                                                      dotColor: Colors.white70,
+                                                      dotIncreasedColor:
+                                                          Colors.black45,
+                                                      indicatorBgPadding: 5.0,
                                                     ),
                                                   ),
                                                 ),
-
-                                                Container(
-                                                  width: SizeConfig.screenWidth * 0.5,
-
-
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                    children: [
-                                                      SizedBox(height: 7),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                        children: [
-                                                          Text(
-                                                            ' HD Camera (black & white) dfgdf',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                              "Montserrat-Regular",
-                                                              fontSize: SizeConfig
-                                                                  .blockSizeHorizontal *
-                                                                  3.7,
-                                                              color:
-                                                              CommonColor.Black,
-                                                              fontWeight:
-                                                              FontWeight.w400,
-                                                            ),
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                              ),
+                                              Container(
+                                                width: SizeConfig.screenWidth *
+                                                    0.5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(height: 7),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          ' HD Camera (black & white) dfgdf',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                "Montserrat-Regular",
+                                                            fontSize: SizeConfig
+                                                                    .blockSizeHorizontal *
+                                                                3.7,
+                                                            color: CommonColor
+                                                                .Black,
+                                                            fontWeight:
+                                                                FontWeight.w400,
                                                           ),
-                                                          SizedBox(height: 3),
-                                                          Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons.location_on,
-                                                                size: SizeConfig
-                                                                    .screenHeight *
-                                                                    0.019,
-                                                                color: Color(
-                                                                    0xff3684F0),
-                                                              ),
-                                                              Flexible(
-                                                                child: Text(
-                                                                  ' Park Street,pune banner 20023',
-                                                                  style: TextStyle(
-                                                                    fontFamily:
-                                                                    "Montserrat-Regular",
-                                                                    fontSize: SizeConfig
-                                                                        .blockSizeHorizontal *
-                                                                        3.0,
-                                                                    color: Color(
-                                                                        0xff3684F0),
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                  ),
-                                                                  overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                                  maxLines: 1,
-                                                                ),
-                                                              ),
-
-                                                            ],
-                                                          ),
-                                                          SizedBox(height: 5),
-                                                          Container(
-                                                            height: 25,
-                                                            decoration:
-                                                            BoxDecoration(
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                        SizedBox(height: 3),
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.location_on,
+                                                              size: SizeConfig
+                                                                      .screenHeight *
+                                                                  0.019,
                                                               color: Color(
-                                                                  0xfff8e8e8),
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  4),
+                                                                  0xff3684F0),
                                                             ),
-                                                            child: Row(
-                                                              // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
-                                                                children: [
-
-                                                                  Text(
-                                                                    '   Posted By:  ',
-                                                                    style:
+                                                            Flexible(
+                                                              child: Text(
+                                                                ' Park Street,pune banner 20023',
+                                                                style:
                                                                     TextStyle(
-                                                                      fontFamily:
-                                                                      "Montserrat-Regular",
-                                                                      fontSize:
-                                                                      SizeConfig.blockSizeHorizontal * 2.8,
-                                                                      color:
-                                                                      Colors.black87,
-                                                                      fontWeight:
-                                                                      FontWeight.w400,
-                                                                    ),
-                                                                    overflow:
-                                                                    TextOverflow.ellipsis,
-                                                                  ),
-                                                                  Text(
-                                                                    'Aaysha',
-                                                                    style:
-                                                                    TextStyle(
-                                                                      fontFamily:
-                                                                      "Montserrat-Regular",
-                                                                      fontSize:
-                                                                      SizeConfig.blockSizeHorizontal * 2.8,
-                                                                      color:
-                                                                      Color(0xffC56262),
-                                                                      fontWeight:
-                                                                      FontWeight.w400,
-                                                                    ),
-                                                                    overflow:
-                                                                    TextOverflow.ellipsis,
-                                                                  ),
-                                                                  SizedBox(width: 38),
-                                                                  Container(
-                                                                    width: SizeConfig.screenWidth *
-                                                                        0.1,
-                                                                    decoration: BoxDecoration(
-                                                                        color: Color(0xffffffff),
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            3)),
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                          Icons.star,
-                                                                          size: SizeConfig
-                                                                              .screenHeight *
-                                                                              0.016,
-                                                                          color: Color(0xffFFB905),
-                                                                        ),
-                                                                        Text(
-                                                                          "  4.5",
-                                                                          style: TextStyle(
-                                                                            fontFamily:
-                                                                            "Roboto-Regular",
-                                                                            fontSize: SizeConfig
-                                                                                .blockSizeHorizontal *
-                                                                                2.5,
-                                                                            color:
-                                                                            CommonColor.Black,
-                                                                            fontWeight:
-                                                                            FontWeight.w400,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-
-
-
-                                                                ]),
-                                                          ),
-                                                          SizedBox(height: 10),
-                                                          Row(
-                                                            children: [
-                                                              // color: Color(0xff3684F0),
-
-                                                              Text(
-                                                                " Share",
-                                                                style: TextStyle(
-                                                                  color: CommonColor
-                                                                      .grayText,
                                                                   fontFamily:
-                                                                  "Roboto_Regular",
-                                                                  fontSize: SizeConfig
-                                                                      .blockSizeHorizontal *
-                                                                      3.0,
+                                                                      "Montserrat-Regular",
+                                                                  fontSize:
+                                                                      SizeConfig
+                                                                              .blockSizeHorizontal *
+                                                                          3.0,
+                                                                  color: Color(
+                                                                      0xff3684F0),
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
+                                                                      FontWeight
+                                                                          .w400,
                                                                 ),
                                                                 overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
                                                               ),
-                                                              SizedBox(width: 17),
-                                                              Image(
-                                                                  image: AssetImage(
-                                                                      'assets/images/share.png'),
-                                                                  height: 15),
-
-                                                            ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 5),
+                                                        Container(
+                                                          height: 25,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Color(
+                                                                0xfff8e8e8),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4),
                                                           ),
+                                                          child: Row(
+                                                              // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                                              children: [
+                                                                Text(
+                                                                  '   Posted By:  ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        "Montserrat-Regular",
+                                                                    fontSize:
+                                                                        SizeConfig.blockSizeHorizontal *
+                                                                            2.8,
+                                                                    color: Colors
+                                                                        .black87,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                                Text(
+                                                                  'Aaysha',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        "Montserrat-Regular",
+                                                                    fontSize:
+                                                                        SizeConfig.blockSizeHorizontal *
+                                                                            2.8,
+                                                                    color: Color(
+                                                                        0xffC56262),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                                SizedBox(
+                                                                    width: 38),
+                                                                Container(
+                                                                  width: SizeConfig
+                                                                          .screenWidth *
+                                                                      0.1,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Color(
+                                                                          0xffffffff),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              3)),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .star,
+                                                                        size: SizeConfig.screenHeight *
+                                                                            0.016,
+                                                                        color: Color(
+                                                                            0xffFFB905),
+                                                                      ),
+                                                                      Text(
+                                                                        "  4.5",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontFamily:
+                                                                              "Roboto-Regular",
+                                                                          fontSize:
+                                                                              SizeConfig.blockSizeHorizontal * 2.5,
+                                                                          color:
+                                                                              CommonColor.Black,
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ]),
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        Row(
+                                                          children: [
+                                                            // color: Color(0xff3684F0),
 
-                                                        ],
-                                                      ),
-
-
-                                                    ],
-                                                  ),
+                                                            Text(
+                                                              " Share",
+                                                              style: TextStyle(
+                                                                color: CommonColor
+                                                                    .grayText,
+                                                                fontFamily:
+                                                                    "Roboto_Regular",
+                                                                fontSize: SizeConfig
+                                                                        .blockSizeHorizontal *
+                                                                    3.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                            SizedBox(width: 17),
+                                                            Image(
+                                                                image: AssetImage(
+                                                                    'assets/images/share.png'),
+                                                                height: 15),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          );
-                                        }),
-                                  ),
-                                )
-                              ],
-                            ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                ),
+                              )
+                            ],
                           ),
-
-                          Text('Two'),
-
-                        ],
-                      ),
+                        ),
+                        Text('Two'),
+                      ],
                     ),
-                    //),
-                    //Container(),
-                  ],
-                ),
+                  ),
+                  //),
+                  //Container(),
+                ],
               ),
             ),
-          ],
-        ),
-      );
-
-
-
+          ),
+        ],
+      ),
+    );
   }
 }
