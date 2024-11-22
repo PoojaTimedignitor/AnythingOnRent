@@ -1,17 +1,18 @@
 import 'dart:io';
 
+import 'package:anything/City_Create.dart';
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
-import 'package:anything/hsdfgshd.dart';
+import 'package:anything/secound.dart';
 import 'package:flutter/material.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
-import 'All_Product_List.dart';
 import 'CatagrioesList.dart';
 import 'MyBehavior.dart';
+import 'hsdfgshd.dart';
 
 
 class CreateProductService extends StatefulWidget {
@@ -21,25 +22,101 @@ class CreateProductService extends StatefulWidget {
   State<CreateProductService> createState() => _CreateProductServiceState();
 }
 
-class _CreateProductServiceState extends State<CreateProductService>  with SingleTickerProviderStateMixin {
+class _CreateProductServiceState extends State<CreateProductService>
+    with SingleTickerProviderStateMixin {
   TextEditingController emailController = TextEditingController();
   final _productNameFocus = FocusNode();
   final _productDiscriptionFocus = FocusNode();
   TextEditingController productNameController = TextEditingController();
+  TextEditingController productPerHourController = TextEditingController();
+  TextEditingController productPerDayController = TextEditingController();
+  TextEditingController productPerWeekController = TextEditingController();
+  TextEditingController productPerMonthController = TextEditingController();
   TextEditingController productDiscriptionController = TextEditingController();
   late TabController _tabController;
   String updatedText = "Original Text";
+  String updatedCity = "Choose City";
   final box = GetStorage();
   final ImagePicker _picker = ImagePicker();
   List<File> _selectedImages = [];
+  int quantity = 0;
 
-  Future<void> _pickImagesFromGallery() async {
+  bool perDay = false;
+  bool perHour = false;
+  bool perMonth = false;
+  bool perWeek = false;
+
+  void _loadSavedImages() {
+    List<String>? savedImages = box.read('selectedImages');
+    if (savedImages != null) {
+      setState(() {
+        _selectedImages = savedImages.map((path) => File(path)).toList();
+      });
+    }
+  }
+
+  void _saveImagePath(List<File> images) {
+    List<String> paths = images.map((image) => image.path).toList();
+    box.write('selectedImages', paths); // Save paths to GetStorage
+  }
+  void showTopSnackBar(BuildContext context, String message) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: SizeConfig.screenHeight*0.7, // Adjust this value to position it exactly where you want
+        left: 2,
+        right: 2,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.black87,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              message,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+
+    // Remove the snack bar after some time
+    Future.delayed(Duration(seconds: 3), () {
+      overlayEntry.remove();
+    });
+  }
+
+
+ /* Future<void> _pickImagesFromGallery() async {
     if (_selectedImages.length >= 5) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You can only add up to 5 images.')),
-      );
+      showTopSnackBar(context, 'You can only add up to 5 images.');
       return;
     }
+    final List<XFile>? pickedFiles = await _picker.pickMultiImage();
+
+    if (pickedFiles != null) {
+      setState(() {
+        // Add selected images to the list, limit to 5
+        _selectedImages.addAll(
+          pickedFiles
+              .map((file) => File(file.path))
+              .take(5 - _selectedImages.length),
+        );
+      });
+      _saveImagePath(_selectedImages); // Save image paths to GetStorage
+    }
+  }*/
+  Future<void> _pickImagesFromGallery() async {
+    if (_selectedImages.length >= 5) {
+      showTopSnackBar(context, 'You can only add up to 5 images.');
+      return;
+    }
+
 
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
 
@@ -47,41 +124,58 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
       setState(() {
         // Add selected images to the list, limit to 5
         _selectedImages.addAll(
-          pickedFiles.map((file) => File(file.path)).take(5 - _selectedImages.length),
+          pickedFiles
+              .map((file) => File(file.path))
+              .take(5 - _selectedImages.length),
         );
+      });
+      _saveImagePath(_selectedImages); // Save image paths to GetStorage
+    }
+  }
+  void _loadSavedTextCat() {
+    String? savedTextCat = box.read('updatedTextCat'); // Retrieve saved text
+    if (savedTextCat != null) {
+      setState(() {
+        updatedText = savedTextCat; // Update the UI with the saved text
       });
     }
   }
 
-
-  void _loadSavedText() {
-    String? savedText = box.read('updatedText');  // Retrieve saved text
-    if (savedText != null) {
+  void _loadSavedTextCity() {
+    String? savedTextCity = box.read('updatedTextCity'); // Retrieve saved text
+    if (savedTextCity != null) {
       setState(() {
-        updatedText = savedText;  // Update the UI with the saved text
+        updatedCity = savedTextCity; // Update the UI with the saved text
       });
     }
+  }
+
+  void updateTextCity(String newText) {
+    box.write('updatedTextCity', newText); // Save the new text
+    setState(() {
+      updatedCity = newText; // Update the state to show the new text
+    });
   }
 
   // Function to update text and save it using GetStorage
   void updateText(String newText) {
-    box.write('updatedText', newText);  // Save the new text
+    box.write('updatedTextCat', newText); // Save the new text
     setState(() {
-      updatedText = newText;  // Update the state to show the new text
+      updatedText = newText; // Update the state to show the new text
     });
   }
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
-    _loadSavedText();
+    _loadSavedTextCat();
+    _loadSavedTextCity();
+    _loadSavedImages();
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -93,7 +187,7 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
-        //  borderRadius: BorderRadius.circular(15)
+          //  borderRadius: BorderRadius.circular(15)
         ),
         child: ScrollConfiguration(
           behavior: MyBehavior(),
@@ -106,7 +200,7 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    height: SizeConfig.screenHeight*0.23,
+                    height: SizeConfig.screenHeight * 0.23,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -121,7 +215,8 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                 padding: EdgeInsets.only(
                                     left: SizeConfig.screenWidth * 0.4),
                                 child: Container(
-                                  color: CommonColor.showBottombar.withOpacity(0.2),
+                                  color: CommonColor.showBottombar
+                                      .withOpacity(0.2),
                                   height: SizeConfig.screenHeight * 0.004,
                                   width: SizeConfig.screenHeight * 0.1,
                                 ),
@@ -152,8 +247,7 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                             "  Create Product / Service",
                             style: TextStyle(
                               fontFamily: "Montserrat-Medium",
-                              fontSize:
-                              SizeConfig.blockSizeHorizontal * 4.4,
+                              fontSize: SizeConfig.blockSizeHorizontal * 4.4,
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
                             ),
@@ -161,15 +255,12 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                         ),
                         SizedBox(height: 20),
                         Padding(
-                          padding:  EdgeInsets.only(left: 13,right: 12),
+                          padding: EdgeInsets.only(left: 13, right: 12),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Color(0xffF1E7FB),
-                              borderRadius: BorderRadius.circular(10)
-                            ),
-                            height: SizeConfig.screenHeight*0.1,
-
-
+                                color: Color(0xffF1E7FB),
+                                borderRadius: BorderRadius.circular(10)),
+                            height: SizeConfig.screenHeight * 0.1,
                             child: Padding(
                               padding: EdgeInsets.only(left: 13),
                               child: Row(
@@ -178,13 +269,15 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                   CircleAvatar(
                                     radius: 23,
                                     backgroundImage:
-                                    AssetImage("assets/images/profile.png"),
+                                        AssetImage("assets/images/profile.png"),
                                   ),
 
                                   SizedBox(
-                                      width:08 ), // Add some space between the avatar and the column
+                                      width:
+                                          08), // Add some space between the avatar and the column
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(height: 12),
                                       Text(
@@ -196,13 +289,12 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-
                                       Padding(
-                                        padding:  EdgeInsets.only(left: 9,top: 2),
+                                        padding:
+                                            EdgeInsets.only(left: 9, top: 2),
                                         child: Container(
                                           height: 38,
                                           width: 270,
-
                                           child: Text(
                                             "Generating ideas for new products or services",
                                             style: TextStyle(
@@ -210,7 +302,8 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                               fontFamily: "okra_Regular",
                                               fontSize: 13,
                                               fontWeight: FontWeight.w400,
-                                            ),overflow: TextOverflow.ellipsis,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                             maxLines: 2,
                                           ),
                                         ),
@@ -225,8 +318,7 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                           ),
                         ),
                       ],
-                    ) ,
-
+                    ),
                   ),
                   ScrollConfiguration(
                     behavior: MyBehavior(),
@@ -234,22 +326,18 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                       shrinkWrap: true,
                       padding: EdgeInsets.zero,
                       children: [
-                        Expanded(
-                          child: Container(
-                                   height: SizeConfig.screenHeight*0.77,
-                          
-                              child: Padding(
-                                padding:  EdgeInsets.only(bottom: SizeConfig.screenHeight*0.0),
-                                child: getAddGameTabLayout(
-                                    SizeConfig.screenHeight, SizeConfig.screenWidth),
-                              )),
-                        ),
+                        Container(
+                            height: SizeConfig.screenHeight * 0.77,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: SizeConfig.screenHeight * 0.04),
+                              child: getAddGameTabLayout(
+                                  SizeConfig.screenHeight,
+                                  SizeConfig.screenWidth),
+                            )),
                       ],
                     ),
                   ),
-
-
-
                 ],
               ),
             ],
@@ -259,14 +347,11 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
     );
   }
 
-
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
     return SafeArea(
       child: DefaultTabController(
         length: 2,
-        child: 
-        
-        Column(
+        child: Column(
           children: [
             SingleChildScrollView(
               child: Container(
@@ -279,7 +364,6 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
                         colors: [
-
                           Color(0xffC0B5E8),
                           Color(0xff9584D6),
                         ],
@@ -338,7 +422,7 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
 
             // Remove fixed height here and use an Expanded widget
             Container(
-             height: SizeConfig.screenHeight*0.6,
+              height: SizeConfig.screenHeight * 0.6,
               child: TabBarView(
                 children: [
                   SingleChildScrollView(
@@ -368,7 +452,8 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 10),
                                   child: TextFormField(
                                       textAlign: TextAlign.start,
                                       maxLines: 2,
@@ -379,22 +464,28 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                       textInputAction: TextInputAction.next,
                                       decoration: InputDecoration(
                                         isDense: true,
-                                        hintText: 'Ex.HD Camera (black & white)',
+                                        hintText:
+                                            'Ex.HD Camera (black & white)',
                                         contentPadding: EdgeInsets.all(10.0),
                                         hintStyle: TextStyle(
                                           fontFamily: "Roboto_Regular",
                                           color: Color(0xff7D7B7B),
-                                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  3.5,
                                         ),
                                         fillColor: Color(0xffF5F6FB),
                                         hoverColor: Colors.white,
                                         filled: true,
                                         enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide.none,
-                                            borderRadius: BorderRadius.circular(10.0)),
+                                            borderRadius:
+                                                BorderRadius.circular(10.0)),
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.black12, width: 1),
-                                          borderRadius: BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                              color: Color(0xffebd7fb), width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
                                         ),
                                       )),
                                 ),
@@ -425,7 +516,8 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 10),
                                   child: TextFormField(
                                       textAlign: TextAlign.start,
                                       maxLines: 6,
@@ -436,22 +528,28 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                       textInputAction: TextInputAction.next,
                                       decoration: InputDecoration(
                                         isDense: true,
-                                        hintText: 'HD cameras capture images and videos in 1920x1080 pixels and a resolution of 1080p. 4K cameras, on the other hand',
+                                        hintText:
+                                            'HD cameras capture images and videos in 1920x1080 pixels and a resolution of 1080p. 4K cameras, on the other hand',
                                         contentPadding: EdgeInsets.all(10.0),
                                         hintStyle: TextStyle(
                                           fontFamily: "Roboto_Regular",
                                           color: Color(0xff7D7B7B),
-                                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  3.5,
                                         ),
                                         fillColor: Color(0xffF5F6FB),
                                         hoverColor: Colors.white,
                                         filled: true,
                                         enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide.none,
-                                            borderRadius: BorderRadius.circular(10.0)),
+                                            borderRadius:
+                                                BorderRadius.circular(10.0)),
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.black12, width: 1),
-                                          borderRadius: BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                              color: Colors.black12, width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
                                         ),
                                       )),
                                 ),
@@ -473,7 +571,7 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                               children: [
                                 SizedBox(height: 12),
                                 GestureDetector(
-                                  onTap: (){
+                                  onTap: () {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -489,13 +587,14 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                     ),
                                   ),
                                 ),
-
                                 GestureDetector(
                                   onTap: () async {
                                     // Navigate to the second screen and await the result
-                                    final String? result = await showModalBottomSheet<String>(
+                                    final String? result =
+                                        await showModalBottomSheet<String>(
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20)),
                                       ),
                                       context: context,
                                       backgroundColor: Colors.white,
@@ -513,28 +612,36 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                     }
                                   },
                                   child: Padding(
-                                    padding: EdgeInsets.only(left: 10, right: 10, top: 7),
+                                    padding: EdgeInsets.only(
+                                        left: 10, right: 10, top: 7),
                                     child: Container(
                                       height: 60,
-                                  width: SizeConfig.screenWidth*0.9,
+                                      width: SizeConfig.screenWidth * 0.9,
                                       decoration: BoxDecoration(
-                                        color: Color(0xffF5F6FB) ,
-                                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                                      ),child: Padding(
+                                        color: Color(0xffF5F6FB),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(7)),
+                                      ),
+                                      child: Padding(
                                         padding: const EdgeInsets.all(18.0),
-                                        child: Text((updatedText),style: TextStyle(color: Color(0xff7D7B7B), fontFamily: "Roboto_Regular",
-
-                                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,),),
+                                        child: Text(
+                                          (updatedText),
+                                          style: TextStyle(
+                                            color: Color(0xff7D7B7B),
+                                            fontFamily: "Roboto_Regular",
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    3.5,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 )
-
                               ],
                             ),
                           ),
                         ),
-
                         SizedBox(height: 27),
                         Padding(
                           padding: EdgeInsets.only(left: 10),
@@ -560,108 +667,130 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                 Row(
                                   children: [
                                     Padding(
-                                      padding:  EdgeInsets.only(top: 13,left: 20),
+                                      padding:
+                                          EdgeInsets.only(top: 13, left: 20),
                                       child: Container(
-                                          width: parentWidth * 0.38,
+                                          width: parentWidth * 0.36,
                                           // padding: EdgeInsets.all(20), //padding of outer Container
                                           child: DottedBorder(
                                             borderType: BorderType.RRect,
                                             radius: Radius.circular(10),
 
-                                            color: CommonColor.Blue, //color of dotted/dash line
-                                            strokeWidth: 1, //thickness of dash/dots
+                                            color: CommonColor
+                                                .Blue, //color of dotted/dash line
+                                            strokeWidth:
+                                                1, //thickness of dash/dots
                                             dashPattern: [4, 5],
                                             //dash patterns, 10 is dash width, 6 is space width
                                             child: GestureDetector(
-                                              onTap: () {
-                                                _pickImagesFromGallery();
-                                               // _showFrontGallaryDialogBox(context);
-                                              },
-                                              child:  Container(
-                                                //inner container
-                                                height: parentHeight *
-                                                    0.14, //height of inner container
-                                                width: double.infinity,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                                  children: [
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: parentHeight * 0.01),
-                                                      child: Image(
-                                                          image: AssetImage(
-                                                              'assets/images/uploadpic.png'),
-                                                          height: parentHeight * 0.04),
-                                                    ),
-                                                    SizedBox(height: 10),
-                                                    Container(
-                                                      height: 26,
-                                                      width: 100,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: CommonColor.Blue),
-                                                        borderRadius:
-                                                        BorderRadius.circular(7),
+                                                onTap: () {
+                                                  _pickImagesFromGallery();
+                                                  // _showFrontGallaryDialogBox(context);
+                                                },
+                                                child: Container(
+                                                  //inner container
+                                                  height: parentHeight *
+                                                      0.14, //height of inner container
+                                                  width: double.infinity,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Padding(
+                                                        padding: EdgeInsets.only(
+                                                            top: parentHeight *
+                                                                0.01),
+                                                        child: Image(
+                                                            image: AssetImage(
+                                                                'assets/images/uploadpic.png'),
+                                                            height:
+                                                                parentHeight *
+                                                                    0.04),
                                                       ),
-                                                      child: Center(
-                                                        child: Text("Browser file",
-                                                            style: TextStyle(
-                                                                fontSize: SizeConfig
-                                                                    .blockSizeHorizontal *
-                                                                    2.5,
-                                                                fontFamily:
-                                                                'Roboto_Regular',
-                                                                fontWeight:
-                                                                FontWeight.w400,
-                                                                //overflow: TextOverflow.ellipsis,
-                                                                color: CommonColor.Blue)),
+                                                      SizedBox(height: 10),
+                                                      Container(
+                                                        height: 26,
+                                                        width: 100,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                              color: CommonColor
+                                                                  .Blue),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(7),
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                              "Browser file",
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      SizeConfig
+                                                                              .blockSizeHorizontal *
+                                                                          2.5,
+                                                                  fontFamily:
+                                                                      'Roboto_Regular',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  //overflow: TextOverflow.ellipsis,
+                                                                  color:
+                                                                      CommonColor
+                                                                          .Blue)),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ), //width to 100% match to parent container.
-                                                // color:Colors.yellow //background color of inner container
-                                              )
-
-                                            ),
+                                                    ],
+                                                  ), //width to 100% match to parent container.
+                                                  // color:Colors.yellow //background color of inner container
+                                                )),
                                           )),
                                     ),
                                     if (_selectedImages.isNotEmpty)
-
-                                    Padding(
-                                      padding:  EdgeInsets.only(top: parentHeight*0.02,left: parentWidth*0.05),
-                                      child: Container(
-                                        height: 120,
-                                        width: 170,
-                                        child:    Stack(
-                                          children: [
-                                            Container(
-                                          
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.all(
-                                                Radius.circular(10)
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: parentHeight * 0.02,
+                                            left: parentWidth * 0.05),
+                                        child: Container(
+                                            height: 120,
+                                            width: 170,
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10)),
+                                                    child: AnotherCarousel(
+                                                      images: _selectedImages
+                                                          .map((image) {
+                                                        return ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10.0),
+                                                          child: Image.file(
+                                                            image,
+                                                            fit: BoxFit.cover,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      dotSize: 6,
+                                                      dotSpacing: 10,
+                                                      dotColor: Colors.white70,
+                                                      dotIncreasedColor:
+                                                          Colors.black45,
+                                                      indicatorBgPadding: 5.0,
+                                                    ),
+                                                  ),
                                                 ),
-                                                child:  AnotherCarousel(
-                                                  images: _selectedImages.map((image) {
-                                                    return ClipRRect(
-                                                      borderRadius: BorderRadius.circular(10.0),
-                                                      child: Image.file(
-                                                        image,
-                                                        fit: BoxFit.cover,
-                                                        width: MediaQuery.of(context).size.width,
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  dotSize: 6,
-                                                  dotSpacing: 10,
-                                                  dotColor: Colors.white70,
-                                                  dotIncreasedColor:
-                                                  Colors.black45,
-                                                  indicatorBgPadding: 5.0,
-                                                ),
-                                              ),
-                                            ),
-                                        /*    Padding(
+                                                /*    Padding(
                                                 padding: EdgeInsets.only(
                                                     top: 67, left: 111),
                                                 child: Align(
@@ -702,15 +831,19 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                                         ]),
                                                   ),
                                                 )),*/
-                                          ],
-                                        )
+                                              ],
+                                            )),
                                       ),
-                                    ),
+                                    SizedBox(width: 17),
                                     if (_selectedImages.isEmpty)
                                       Center(
-                                        child: Text(
-                                          'No images selected',
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                        child: Container(
+                                          child: Text(
+                                            'No images selected',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ),
                                       ),
                                   ],
@@ -719,7 +852,6 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                             ),
                           ),
                         ),
-
                         SizedBox(height: 27),
                         Padding(
                           padding: EdgeInsets.only(left: 10),
@@ -727,14 +859,14 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10)),
-                            height: SizeConfig.screenHeight * 0.28,
+                            height: SizeConfig.screenHeight * 0.14,
                             width: SizeConfig.screenWidth * 0.94,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: 12),
                                 Text(
-                                  "    Product Description",
+                                  "    City",
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: "okra_Medium",
@@ -742,41 +874,548 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-                                  child: TextFormField(
-                                      textAlign: TextAlign.start,
-                                      maxLines: 6,
-                                      focusNode: _productDiscriptionFocus,
-                                      keyboardType: TextInputType.text,
-                                      controller: productDiscriptionController,
-                                      autocorrect: true,
-                                      textInputAction: TextInputAction.next,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        hintText: 'Product description here...',
-                                        contentPadding: EdgeInsets.all(10.0),
-                                        hintStyle: TextStyle(
-                                          fontFamily: "Roboto_Regular",
-                                          color: Color(0xff7D7B7B),
-                                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                GestureDetector(
+                                  onTap: () async {
+                                    // Navigate to the second screen and await the result
+                                    final String? result =
+                                        await showModalBottomSheet<String>(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20)),
+                                      ),
+                                      context: context,
+                                      backgroundColor: Colors.white,
+                                      elevation: 10,
+                                      isScrollControlled: true,
+                                      isDismissible: true,
+                                      builder: (BuildContext bc) {
+                                        return CreateCity();
+                                      },
+                                    );
+
+                                    // If a result is received (i.e., category was selected), update the text
+                                    if (result != null) {
+                                      updateTextCity(result);
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 10, right: 10, top: 7),
+                                    child: Container(
+                                      height: 60,
+                                      width: SizeConfig.screenWidth * 0.9,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xffF5F6FB),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(7)),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(18.0),
+                                        child: Text(
+                                          (updatedCity),
+                                          style: TextStyle(
+                                            color: Color(0xff7D7B7B),
+                                            fontFamily: "Roboto_Regular",
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    3.5,
+                                          ),
                                         ),
-                                        fillColor: Color(0xffF5F6FB),
-                                        hoverColor: Colors.white,
-                                        filled: true,
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                            borderRadius: BorderRadius.circular(10.0)),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.black12, width: 1),
-                                          borderRadius: BorderRadius.circular(10.0),
-                                        ),
-                                      )),
-                                ),
+                                      ),
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           ),
                         ),
+                        SizedBox(height: 22),
+
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)),
+                            height: SizeConfig.screenHeight * 0.08,
+                            width: SizeConfig.screenWidth * 0.94,
+                            child: Row(
+                              children: [
+                                Text(
+                                  "    Product Exact Quantity",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(width: 21),
+                                Container(
+                                  height: 43,
+                                  width: 130,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xffF1E7FB),
+
+                                      borderRadius: BorderRadius.circular(10)),
+
+
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.remove),
+                                        onPressed: () {
+                                          setState(() {
+                                            quantity--;
+                                          });
+                                        },
+                                      ),
+                                      Container(
+
+                                          padding:
+                                          EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(3),
+                                              color: Colors.white),
+                                          child: Text(quantity.toString())),
+                                      IconButton(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () {
+                                          setState(() {
+                                            quantity++;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 30),
+
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding:  EdgeInsets.only(top: parentHeight*0.03),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(7)),
+                                  height: SizeConfig.screenHeight * 0.36,
+                                  width: SizeConfig.screenWidth * 0.94,
+
+                                ),
+                              ),
+                              SafeArea(
+                                child: DefaultTabController(
+                                  length: 2,
+                                  child: Column(
+                                    children: [
+                                      SingleChildScrollView(
+                                        child: Padding(
+                                          padding:  EdgeInsets.only(right: 10),
+                                          child: Container(
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                          border: Border.all(color:Color(0xff9584D6)),
+                                                borderRadius: BorderRadius.circular(7),
+                                             ),
+
+
+                                            child: ButtonsTabBar(
+
+                                              decoration: BoxDecoration(
+
+                                                  borderRadius: BorderRadius.circular(7),
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topRight,
+                                                    end: Alignment.bottomLeft,
+                                                    colors: [
+                                                     Color(0xffF1E7FB),
+                                                      Color(0xffC0B5E8),
+                                                    ],
+                                                  )),
+                                              buttonMargin: EdgeInsets.symmetric(horizontal: 0),
+                                              unselectedDecoration: BoxDecoration(
+                                                color: Colors.transparent,
+                                                borderRadius: BorderRadius.circular(7),
+                                              ),
+                                              unselectedBorderColor: Color(0xffFE7F64),
+                                              physics: NeverScrollableScrollPhysics(),
+                                              labelStyle: TextStyle(
+                                                  color: Colors.white, fontWeight: FontWeight.bold),
+                                              tabs: [
+                                                Tab(
+                                                  child: Container(
+                                                    height: 40,
+                                                    width: 165,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "To Rent",
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontFamily: "okra-Medium",
+                                                          fontSize: SizeConfig.blockSizeHorizontal * 3.6,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Tab(
+                                                  child: Container(
+                                                    height: 40,
+                                                    width: 165,
+                                                    padding: EdgeInsets.only(left: 28, right: 20),
+                                                    child: Align(
+                                                      alignment: Alignment.center,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "To Sell",
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontFamily: "okra-Medium",
+                                                            fontSize: SizeConfig.blockSizeHorizontal * 3.6,
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Remove fixed height here and use an Expanded widget
+                                      Container(
+                                        height: SizeConfig.screenHeight * 0.4,
+                                        child: TabBarView(
+                                          children: [
+                                            SingleChildScrollView(
+                                              child:  Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:  EdgeInsets.only(left: 10,right: 20,top: 14),
+                                                    child: Container(
+                                                      height: 180,
+                                                      width: 500,
+                                                     decoration: BoxDecoration(
+                                                       color: Color(0xffF1E7FB),
+                                                       borderRadius: BorderRadius.circular(7),
+
+                                                     ),child: Expanded(
+                                                       child: Padding(
+                                                         padding:  EdgeInsets.all(8.0),
+                                                         child: Column(
+                                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                                           children: [
+                                                             Row(
+                                                               children: [
+                                                                 Text('Per Hour'),
+                                                                 Expanded(
+                                                                   child: Padding(
+                                                                     padding:  EdgeInsets.only(left: 20,right: 15,top: 3),
+                                                                     child: TextFormField(
+                                                                         textAlign: TextAlign.start,
+
+                                                                        // focusNode: _productNameFocus,
+                                                                         keyboardType: TextInputType.number,
+                                                                         controller: productPerHourController,
+                                                                         autocorrect: true,
+                                                                         textInputAction: TextInputAction.next,
+                                                                         decoration: InputDecoration(
+                                                                           isDense: true,
+                                                                           hintText:
+                                                                           '₹ 1000',
+                                                                           contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                                                           hintStyle: TextStyle(
+                                                                             fontFamily: "Roboto_Regular",
+                                                                             color: Color(0xff7D7B7B),
+                                                                             fontSize:
+                                                                             SizeConfig.blockSizeHorizontal *
+                                                                                 3.5,
+                                                                           ),
+                                                                           fillColor: Color(0xffF5F6FB),
+                                                                           hoverColor: Colors.white,
+                                                                           filled: true,
+                                                                           enabledBorder: OutlineInputBorder(
+                                                                               borderSide: BorderSide.none,
+                                                                               borderRadius:
+                                                                               BorderRadius.circular(8.0)),
+                                                                           focusedBorder: OutlineInputBorder(
+                                                                             borderSide: BorderSide(
+                                                                                 color: Color(0xffebd7fb), width: 1),
+                                                                             borderRadius:
+                                                                             BorderRadius.circular(8.0),
+                                                                           ),
+                                                                         )),
+                                                                   ),
+                                                                 ),
+                                                                 Padding(
+                                                                   padding:  EdgeInsets.only(top: 5),
+                                                                   child: Checkbox(
+                                                                     value: perHour,
+                                                                     onChanged: (bool? value) {
+                                                                       setState(() {
+                                                                         perHour = value!;
+                                                                       });
+                                                                     }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
+                                                                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                   ),
+                                                                 ),
+
+                                                               ],
+                                                             ),    SizedBox(height: 2),
+                                                             Row(
+                                                               children: [
+                                                                 Text('Per Day '),
+                                                                 Expanded(
+                                                                   child: Padding(
+                                                                     padding:  EdgeInsets.only(left: 24,right: 15,top: 3),
+                                                                     child: TextFormField(
+                                                                         textAlign: TextAlign.start,
+
+                                                                         // focusNode: _productNameFocus,
+                                                                         keyboardType: TextInputType.number,
+                                                                         controller: productPerDayController,
+                                                                         autocorrect: true,
+                                                                         textInputAction: TextInputAction.next,
+                                                                         decoration: InputDecoration(
+                                                                           isDense: true,
+                                                                           hintText:
+                                                                           '₹ 1000',
+                                                                           contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                                                           hintStyle: TextStyle(
+                                                                             fontFamily: "Roboto_Regular",
+                                                                             color: Color(0xff7D7B7B),
+                                                                             fontSize:
+                                                                             SizeConfig.blockSizeHorizontal *
+                                                                                 3.5,
+                                                                           ),
+                                                                           fillColor: Color(0xffF5F6FB),
+                                                                           hoverColor: Colors.white,
+                                                                           filled: true,
+                                                                           enabledBorder: OutlineInputBorder(
+                                                                               borderSide: BorderSide.none,
+                                                                               borderRadius:
+                                                                               BorderRadius.circular(8.0)),
+                                                                           focusedBorder: OutlineInputBorder(
+                                                                             borderSide: BorderSide(
+                                                                                 color: Color(0xffebd7fb), width: 1),
+                                                                             borderRadius:
+                                                                             BorderRadius.circular(8.0),
+                                                                           ),
+                                                                         )),
+                                                                   ),
+                                                                 ),
+                                                                 Checkbox(
+                                                                   value: perDay,
+                                                                   onChanged: (bool? value) {
+                                                                     setState(() {
+                                                                       perDay = value!;
+                                                                     });
+                                                                   }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
+                                                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                 ),
+
+                                                               ],
+                                                             ), SizedBox(height: 5),
+                                                             Row(
+                                                               children: [
+                                                                 Text('Per Week'),
+                                                                 Expanded(
+                                                                   child: Padding(
+                                                                     padding:  EdgeInsets.only(left: 17,right: 15,top: 3),
+                                                                     child: TextFormField(
+                                                                         textAlign: TextAlign.start,
+
+                                                                         // focusNode: _productNameFocus,
+                                                                         keyboardType: TextInputType.number,
+                                                                         controller: productPerWeekController,
+                                                                         autocorrect: true,
+                                                                         textInputAction: TextInputAction.next,
+                                                                         decoration: InputDecoration(
+                                                                           isDense: true,
+                                                                           hintText:
+                                                                           '₹ 1000',
+                                                                           contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                                                           hintStyle: TextStyle(
+                                                                             fontFamily: "Roboto_Regular",
+                                                                             color: Color(0xff7D7B7B),
+                                                                             fontSize:
+                                                                             SizeConfig.blockSizeHorizontal *
+                                                                                 3.5,
+                                                                           ),
+                                                                           fillColor: Color(0xffF5F6FB),
+                                                                           hoverColor: Colors.white,
+                                                                           filled: true,
+                                                                           enabledBorder: OutlineInputBorder(
+                                                                               borderSide: BorderSide.none,
+                                                                               borderRadius:
+                                                                               BorderRadius.circular(8.0)),
+                                                                           focusedBorder: OutlineInputBorder(
+                                                                             borderSide: BorderSide(
+                                                                                 color: Color(0xffebd7fb), width: 1),
+                                                                             borderRadius:
+                                                                             BorderRadius.circular(8.0),
+                                                                           ),
+                                                                         )),
+                                                                   ),
+                                                                 ),
+                                                                 Checkbox(
+                                                                   value: perWeek,
+                                                                   onChanged: (bool? value) {
+                                                                     setState(() {
+                                                                       perWeek = value!;
+                                                                     });
+                                                                   }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
+                                                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                 ),
+
+                                                               ],
+                                                             ), SizedBox(height: 5),
+                                                             Row(
+                                                               children: [
+                                                                 Text('Per Month'),
+                                                                 Expanded(
+                                                                   child: Padding(
+                                                                     padding:  EdgeInsets.only(left: 13,right: 15,top: 3),
+                                                                     child: TextFormField(
+                                                                         textAlign: TextAlign.start,
+
+                                                                         // focusNode: _productNameFocus,
+                                                                         keyboardType: TextInputType.number,
+                                                                         controller: productPerMonthController,
+                                                                         autocorrect: true,
+                                                                         textInputAction: TextInputAction.next,
+                                                                         decoration: InputDecoration(
+                                                                           isDense: true,
+                                                                           hintText:
+                                                                           '₹ 1000',
+                                                                           contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                                                           hintStyle: TextStyle(
+                                                                             fontFamily: "Roboto_Regular",
+                                                                             color: Color(0xff7D7B7B),
+                                                                             fontSize:
+                                                                             SizeConfig.blockSizeHorizontal *
+                                                                                 3.5,
+                                                                           ),
+                                                                           fillColor: Color(0xffF5F6FB),
+                                                                           hoverColor: Colors.white,
+                                                                           filled: true,
+                                                                           enabledBorder: OutlineInputBorder(
+                                                                               borderSide: BorderSide.none,
+                                                                               borderRadius:
+                                                                               BorderRadius.circular(8.0)),
+                                                                           focusedBorder: OutlineInputBorder(
+                                                                             borderSide: BorderSide(
+                                                                                 color: Color(0xffebd7fb), width: 1),
+                                                                             borderRadius:
+                                                                             BorderRadius.circular(8.0),
+                                                                           ),
+                                                                         )),
+                                                                   ),
+                                                                 ),
+                                                                 Checkbox(
+                                                                   value: perMonth,
+                                                                   onChanged: (bool? value) {
+                                                                     setState(() {
+                                                                       perMonth = value!;
+                                                                     });
+                                                                   }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
+                                                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                 ),
+
+                                                               ],
+                                                             ),
+
+                                                           /*  ElevatedButton(
+                                                               onPressed: () {
+                                                                 // Logic for what to do with selected checkboxes
+                                                                 print('Per Day: $perDay');
+                                                                 print('Per Hour: $perHour');
+                                                                 print('Per Month: $perMonth');
+                                                                 print('Per Week: $perWeek');
+                                                               }, child: Container(),
+
+                                                             ),*/
+                                                           ],
+                                                         ),
+                                                       ),
+                                                     ),
+                                                    ),
+
+                                                  ),
+                                                  Padding(
+                                                    padding:  EdgeInsets.only(left: 10),
+                                                    child: Row(
+                                                      children: [
+                                                        Text("Price",      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontFamily: "okra-Medium",
+                                                          fontSize: SizeConfig.blockSizeHorizontal * 3.9,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(
+                                                              left: 10, right: 10, top: 7),
+                                                          child: Container(
+                                                            height: 50,
+                                                            width: SizeConfig.screenWidth * 0.3,
+                                                            decoration: BoxDecoration(
+                                                              color: Color(0xffF5F6FB),
+                                                              borderRadius: BorderRadius.all(
+                                                                  Radius.circular(7)),
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                               "Lowest Prise",
+                                                                style: TextStyle(
+                                                                  color: Color(0xff7D7B7B),
+                                                                  fontFamily: "Roboto_Regular",
+                                                                  fontSize:
+                                                                  SizeConfig.blockSizeHorizontal *
+                                                                      3.5,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+
+
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Text('Service Tab'),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+
+
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 22),
+
                       ],
                     ),
                   ),
@@ -788,7 +1427,5 @@ class _CreateProductServiceState extends State<CreateProductService>  with Singl
         ),
       ),
     );
-
   }
-
 }
