@@ -9,6 +9,7 @@ import '../Common_File/SizeConfig.dart';
 import '../MainHome.dart';
 import '../ddd.dart';
 import '../drop.dart';
+import '../imageApiHit.dart';
 import 'onBoardingContent.dart';
 
 class onboardingScreen extends StatefulWidget {
@@ -147,7 +148,7 @@ class _onboardingScreenState extends State<onboardingScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => MainHome(/*address: '', lat: '', long: '', ProfilePicture: '', FrontImage: '', BackImage: '',*/)),
+                                        builder: (context) => RegisterScreen(address: '', lat: '', long: '', ProfilePicture: '', FrontImage: '', BackImage: '')),
                                   );
                                 },
                                 child: Text("START"),

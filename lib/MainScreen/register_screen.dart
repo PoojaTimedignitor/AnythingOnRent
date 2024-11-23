@@ -9,9 +9,10 @@ import 'package:dotted_border/dotted_border.dart';
 import '../Common_File/SizeConfig.dart';
 import '../ConstantData/Constant_data.dart';
 import '../location_map.dart';
-import 'login_screen.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   final String address;
@@ -28,6 +29,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final box = GetStorage();
   final fields = <String, dynamic>{};
   final _firstNameFocus = FocusNode();
   final _lastNameFocus = FocusNode();
@@ -70,7 +72,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   File? _imageBack;
   File? _imageProfile;
 
-  Future<void> _pickImageFront(ImageSource source) async {
+
+    Future<void> _pickImageFront(ImageSource source) async {
     try {
       final XFile? pickedFile = await ImagePicker().pickImage(source: source);
 
@@ -512,6 +515,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController permanentAddressController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
 
+  void saveFrontImages(List<Map<String, String>> frontImages) {
+    box.write('frontImages', frontImages);  // Saving the list of images
+  }
+
+  // Fetch front images from local storage
+  List<Map<String, String>> getFrontImages() {
+    return box.read('frontImages') ?? [];
+  }
   @override
   void initState() {
     super.initState();
@@ -522,6 +533,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         isLoading = true;
       });
     }
+    List<Map<String, String>> frontImages = [
+      {
+        "public_id": "icurcfr6h2wplzeqro9q",
+        "url": "https://res.cloudinary.com/duqvffqxj/image/upload/v1732343215/icurcfr6h2wplzeqro9q.jpg"
+      },
+    ];
+
+    // Save frontImages to local storage
+    saveFrontImages(frontImages);
 
     /*  if(mounted){
       setState(() {
@@ -541,6 +561,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     addressController = TextEditingController();
     permanentAddressController = TextEditingController();
     mobileNumberController = TextEditingController();
+
+
+
+
   }
 
   @override
@@ -558,6 +582,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, String>> frontImages = getFrontImages();
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Stack(
@@ -790,7 +816,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ]),
                         child: TextFormField(
                             keyboardType: TextInputType.text,
-                            controller: firstNameController,
+                            controller:firstNameController,
                             autocorrect: true,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
@@ -1537,7 +1563,7 @@ GestureDetector(
                                           Padding(
                                             padding: EdgeInsets.only(
                                                 top: parentHeight * 0.01),
-                                            child: Image(
+                                            child:  /*Image.network(frontImages[index]['url']!)*/ Image(
                                                 image: AssetImage(
                                                     'assets/images/uploadpic.png'),
                                                 height: parentHeight * 0.04),
@@ -1592,7 +1618,7 @@ GestureDetector(
                                           ),
                                           GestureDetector(
                                             onTap: () {
-                                              _imageFront;
+                                              _imageFront = null;
                                               setState(() {});
                                             },
                                             child: Padding(
@@ -1709,7 +1735,7 @@ GestureDetector(
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          _imageBack;
+                                          _imageBack = null;
                                           setState(() {});
                                         },
                                         child: Padding(
@@ -1788,14 +1814,17 @@ GestureDetector(
 
 /*else {*/
         // print("Full Name: ${fullNameController.text}");
-        print("firstname: ${firstNameController.text}");
+       print("firstname: ${firstNameController.text}");
         print("lastname: ${lastNameController.text}");
         print("phoneNumber: ${mobileNumberController.text}");
         print("email: ${emailController.text}");
         print("password: ${passwordController.text}");
         print("cpassword: ${confirmPasswordController.text}");
         print("currentLocation: ${widget.lat}");
-        print("mobile: ${mobileNumberController.text}");
+        print("PermanentAdd: ${permanentAddressController.text}");
+        print("profileImage: ${_imageProfile}");
+        print("frountImage: ${_imageFront}");
+        print("backImage: ${_imageBack}");
         ApiClients()
             .registerDio(
           // fullNameController.text,
@@ -1805,9 +1834,9 @@ GestureDetector(
           emailController.text,
           passwordController.text,
           confirmPasswordController.text,
-          widget.ProfilePicture,
-          widget.FrontImage,
-          widget.BackImage,
+          _imageProfile,
+          _imageFront,
+          _imageBack,
           permanentAddressController.text,
           widget.lat,
           widget.long,
@@ -1824,13 +1853,32 @@ GestureDetector(
             });
           }
 
-          if (value['success'] == true) {
-            print("..aaaass ${value['newUser']['userId']}");
 
 
-            GetStorage().write(ConstantData.UserId, value['newUser']['userId']);
-            GetStorage()
-                .write(ConstantData.Useremail, value['newUser']['email']);
+
+        if (value['success'] == true) {
+          print("email stored successfully: ${value['newUser']?['userId']}");
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['userId']);
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['email']);
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['password']);
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['cpassword']);
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['permanentAddress']);
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['PhoneNumber']);
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['frontImages']);
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['backImages']);
+          GetStorage().write(ConstantData.UserId,  value['newUser']?['profilePicture']);
+
+        Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+        }
+
+
+
+         /* GetStorage().write(ConstantData.UserId, "userId");
+        GetStorage()
+                .write(ConstantData.Useremail, 'newUser']['email']);
             GetStorage()
                 .write(ConstantData.Userpassword, value['newUser']['password']);
             GetStorage().write(
@@ -1841,18 +1889,25 @@ GestureDetector(
             GetStorage().write(
                 ConstantData.UserMobile, value['newUser']['PhoneNumber']);
 
+            GetStorage().write(
+                ConstantData.UserFrontImage, value['newUser']['frontImages']);
             // print("numVal ${value['data']}");
-
+*/
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const LoginScreen()));
             // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
-          }
+
           if (mounted) {
             setState(() {
               isLoading = false;
             });
           }
-        });
+        }
+
+
+
+
+        );
         // }
       },
 

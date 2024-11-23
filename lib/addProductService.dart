@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:anything/City_Create.dart';
@@ -47,7 +48,7 @@ class _CreateProductServiceState extends State<CreateProductService>
   bool perWeek = false;
 
   void _loadSavedImages() {
-    List<String>? savedImages = box.read('selectedImages');
+    List<dynamic>? savedImages = box.read('selectedImages');
     if (savedImages != null) {
       setState(() {
         _selectedImages = savedImages.map((path) => File(path)).toList();
@@ -92,25 +93,7 @@ class _CreateProductServiceState extends State<CreateProductService>
   }
 
 
- /* Future<void> _pickImagesFromGallery() async {
-    if (_selectedImages.length >= 5) {
-      showTopSnackBar(context, 'You can only add up to 5 images.');
-      return;
-    }
-    final List<XFile>? pickedFiles = await _picker.pickMultiImage();
 
-    if (pickedFiles != null) {
-      setState(() {
-        // Add selected images to the list, limit to 5
-        _selectedImages.addAll(
-          pickedFiles
-              .map((file) => File(file.path))
-              .take(5 - _selectedImages.length),
-        );
-      });
-      _saveImagePath(_selectedImages); // Save image paths to GetStorage
-    }
-  }*/
   Future<void> _pickImagesFromGallery() async {
     if (_selectedImages.length >= 5) {
       showTopSnackBar(context, 'You can only add up to 5 images.');
@@ -136,7 +119,7 @@ class _CreateProductServiceState extends State<CreateProductService>
     String? savedTextCat = box.read('updatedTextCat'); // Retrieve saved text
     if (savedTextCat != null) {
       setState(() {
-        updatedText = savedTextCat; // Update the UI with the saved text
+        updatedText = savedTextCat; // Update the U I with the saved text
       });
     }
   }
@@ -165,12 +148,22 @@ class _CreateProductServiceState extends State<CreateProductService>
     });
   }
 
+
+  void _updateQuantity(int change){
+    setState(() {
+      quantity+= change;
+      box.write('quantity',quantity);
+    });
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     _loadSavedTextCat();
     _loadSavedTextCity();
     _loadSavedImages();
+
+    quantity = box.read<int>('quantity') ?? 0;
     super.initState();
   }
 
@@ -968,7 +961,9 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         icon: const Icon(Icons.remove),
                                         onPressed: () {
                                           setState(() {
-                                            quantity--;
+                                           if(quantity > 0){
+                                             _updateQuantity(-1);
+                                           }
                                           });
                                         },
                                       ),
@@ -984,7 +979,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         icon: const Icon(Icons.add),
                                         onPressed: () {
                                           setState(() {
-                                            quantity++;
+                                           _updateQuantity(1);
                                           });
                                         },
                                       ),
@@ -1114,233 +1109,232 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                        color: Color(0xffF1E7FB),
                                                        borderRadius: BorderRadius.circular(7),
 
-                                                     ),child: Expanded(
-                                                       child: Padding(
-                                                         padding:  EdgeInsets.all(8.0),
-                                                         child: Column(
-                                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                                           children: [
-                                                             Row(
-                                                               children: [
-                                                                 Text('Per Hour'),
-                                                                 Expanded(
-                                                                   child: Padding(
-                                                                     padding:  EdgeInsets.only(left: 20,right: 15,top: 3),
-                                                                     child: TextFormField(
-                                                                         textAlign: TextAlign.start,
+                                                     ),child: Padding(
+                                                      padding:  EdgeInsets.all(8.0),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Text('Per Hour'),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding:  EdgeInsets.only(left: 20,right: 15,top: 3),
+                                                                  child: TextFormField(
+                                                                      textAlign: TextAlign.start,
 
-                                                                        // focusNode: _productNameFocus,
-                                                                         keyboardType: TextInputType.number,
-                                                                         controller: productPerHourController,
-                                                                         autocorrect: true,
-                                                                         textInputAction: TextInputAction.next,
-                                                                         decoration: InputDecoration(
-                                                                           isDense: true,
-                                                                           hintText:
-                                                                           '₹ 1000',
-                                                                           contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                                                                           hintStyle: TextStyle(
-                                                                             fontFamily: "Roboto_Regular",
-                                                                             color: Color(0xff7D7B7B),
-                                                                             fontSize:
-                                                                             SizeConfig.blockSizeHorizontal *
-                                                                                 3.5,
-                                                                           ),
-                                                                           fillColor: Color(0xffF5F6FB),
-                                                                           hoverColor: Colors.white,
-                                                                           filled: true,
-                                                                           enabledBorder: OutlineInputBorder(
-                                                                               borderSide: BorderSide.none,
-                                                                               borderRadius:
-                                                                               BorderRadius.circular(8.0)),
-                                                                           focusedBorder: OutlineInputBorder(
-                                                                             borderSide: BorderSide(
-                                                                                 color: Color(0xffebd7fb), width: 1),
-                                                                             borderRadius:
-                                                                             BorderRadius.circular(8.0),
-                                                                           ),
-                                                                         )),
-                                                                   ),
-                                                                 ),
-                                                                 Padding(
-                                                                   padding:  EdgeInsets.only(top: 5),
-                                                                   child: Checkbox(
-                                                                     value: perHour,
-                                                                     onChanged: (bool? value) {
-                                                                       setState(() {
-                                                                         perHour = value!;
-                                                                       });
-                                                                     }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
-                                                                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                   ),
-                                                                 ),
+                                                                      // focusNode: _productNameFocus,
+                                                                      keyboardType: TextInputType.number,
+                                                                      controller: productPerHourController,
+                                                                      autocorrect: true,
+                                                                      textInputAction: TextInputAction.next,
+                                                                      decoration: InputDecoration(
+                                                                        isDense: true,
+                                                                        hintText:
+                                                                        '₹ 1000',
+                                                                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                                                        hintStyle: TextStyle(
+                                                                          fontFamily: "Roboto_Regular",
+                                                                          color: Color(0xff7D7B7B),
+                                                                          fontSize:
+                                                                          SizeConfig.blockSizeHorizontal *
+                                                                              3.5,
+                                                                        ),
+                                                                        fillColor: Color(0xffF5F6FB),
+                                                                        hoverColor: Colors.white,
+                                                                        filled: true,
+                                                                        enabledBorder: OutlineInputBorder(
+                                                                            borderSide: BorderSide.none,
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(8.0)),
+                                                                        focusedBorder: OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              color: Color(0xffebd7fb), width: 1),
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(8.0),
+                                                                        ),
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:  EdgeInsets.only(top: 5),
+                                                                child: Checkbox(
+                                                                  value: perHour,
+                                                                  onChanged: (bool? value) {
+                                                                    setState(() {
+                                                                      perHour = value!;
+                                                                    });
+                                                                  }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
+                                                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                ),
+                                                              ),
 
-                                                               ],
-                                                             ),    SizedBox(height: 2),
-                                                             Row(
-                                                               children: [
-                                                                 Text('Per Day '),
-                                                                 Expanded(
-                                                                   child: Padding(
-                                                                     padding:  EdgeInsets.only(left: 24,right: 15,top: 3),
-                                                                     child: TextFormField(
-                                                                         textAlign: TextAlign.start,
+                                                            ],
+                                                          ),    SizedBox(height: 2),
+                                                          Row(
+                                                            children: [
+                                                              Text('Per Day '),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding:  EdgeInsets.only(left: 24,right: 15,top: 5),
+                                                                  child: TextFormField(
+                                                                      textAlign: TextAlign.start,
 
-                                                                         // focusNode: _productNameFocus,
-                                                                         keyboardType: TextInputType.number,
-                                                                         controller: productPerDayController,
-                                                                         autocorrect: true,
-                                                                         textInputAction: TextInputAction.next,
-                                                                         decoration: InputDecoration(
-                                                                           isDense: true,
-                                                                           hintText:
-                                                                           '₹ 1000',
-                                                                           contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                                                                           hintStyle: TextStyle(
-                                                                             fontFamily: "Roboto_Regular",
-                                                                             color: Color(0xff7D7B7B),
-                                                                             fontSize:
-                                                                             SizeConfig.blockSizeHorizontal *
-                                                                                 3.5,
-                                                                           ),
-                                                                           fillColor: Color(0xffF5F6FB),
-                                                                           hoverColor: Colors.white,
-                                                                           filled: true,
-                                                                           enabledBorder: OutlineInputBorder(
-                                                                               borderSide: BorderSide.none,
-                                                                               borderRadius:
-                                                                               BorderRadius.circular(8.0)),
-                                                                           focusedBorder: OutlineInputBorder(
-                                                                             borderSide: BorderSide(
-                                                                                 color: Color(0xffebd7fb), width: 1),
-                                                                             borderRadius:
-                                                                             BorderRadius.circular(8.0),
-                                                                           ),
-                                                                         )),
-                                                                   ),
-                                                                 ),
-                                                                 Checkbox(
-                                                                   value: perDay,
-                                                                   onChanged: (bool? value) {
-                                                                     setState(() {
-                                                                       perDay = value!;
-                                                                     });
-                                                                   }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
-                                                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                 ),
+                                                                      // focusNode: _productNameFocus,
+                                                                      keyboardType: TextInputType.number,
+                                                                      controller: productPerDayController,
+                                                                      autocorrect: true,
+                                                                      textInputAction: TextInputAction.next,
+                                                                      decoration: InputDecoration(
+                                                                        isDense: true,
+                                                                        hintText:
+                                                                        '₹ 1000',
+                                                                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                                                        hintStyle: TextStyle(
+                                                                          fontFamily: "Roboto_Regular",
+                                                                          color: Color(0xff7D7B7B),
+                                                                          fontSize:
+                                                                          SizeConfig.blockSizeHorizontal *
+                                                                              3.5,
+                                                                        ),
+                                                                        fillColor: Color(0xffF5F6FB),
+                                                                        hoverColor: Colors.white,
+                                                                        filled: true,
+                                                                        enabledBorder: OutlineInputBorder(
+                                                                            borderSide: BorderSide.none,
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(8.0)),
+                                                                        focusedBorder: OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              color: Color(0xffebd7fb), width: 1),
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(8.0),
+                                                                        ),
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                              Checkbox(
+                                                                value: perDay,
+                                                                onChanged: (bool? value) {
+                                                                  setState(() {
+                                                                    perDay = value!;
+                                                                  });
+                                                                }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
+                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                              ),
 
-                                                               ],
-                                                             ), SizedBox(height: 5),
-                                                             Row(
-                                                               children: [
-                                                                 Text('Per Week'),
-                                                                 Expanded(
-                                                                   child: Padding(
-                                                                     padding:  EdgeInsets.only(left: 17,right: 15,top: 3),
-                                                                     child: TextFormField(
-                                                                         textAlign: TextAlign.start,
+                                                            ],
+                                                          ), SizedBox(height: 5),
+                                                          Row(
+                                                            children: [
+                                                              Text('Per Week'),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding:  EdgeInsets.only(left: 17,right: 15,top: 3),
+                                                                  child: TextFormField(
+                                                                      textAlign: TextAlign.start,
 
-                                                                         // focusNode: _productNameFocus,
-                                                                         keyboardType: TextInputType.number,
-                                                                         controller: productPerWeekController,
-                                                                         autocorrect: true,
-                                                                         textInputAction: TextInputAction.next,
-                                                                         decoration: InputDecoration(
-                                                                           isDense: true,
-                                                                           hintText:
-                                                                           '₹ 1000',
-                                                                           contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                                                                           hintStyle: TextStyle(
-                                                                             fontFamily: "Roboto_Regular",
-                                                                             color: Color(0xff7D7B7B),
-                                                                             fontSize:
-                                                                             SizeConfig.blockSizeHorizontal *
-                                                                                 3.5,
-                                                                           ),
-                                                                           fillColor: Color(0xffF5F6FB),
-                                                                           hoverColor: Colors.white,
-                                                                           filled: true,
-                                                                           enabledBorder: OutlineInputBorder(
-                                                                               borderSide: BorderSide.none,
-                                                                               borderRadius:
-                                                                               BorderRadius.circular(8.0)),
-                                                                           focusedBorder: OutlineInputBorder(
-                                                                             borderSide: BorderSide(
-                                                                                 color: Color(0xffebd7fb), width: 1),
-                                                                             borderRadius:
-                                                                             BorderRadius.circular(8.0),
-                                                                           ),
-                                                                         )),
-                                                                   ),
-                                                                 ),
-                                                                 Checkbox(
-                                                                   value: perWeek,
-                                                                   onChanged: (bool? value) {
-                                                                     setState(() {
-                                                                       perWeek = value!;
-                                                                     });
-                                                                   }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
-                                                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                 ),
+                                                                      // focusNode: _productNameFocus,
+                                                                      keyboardType: TextInputType.number,
+                                                                      controller: productPerWeekController,
+                                                                      autocorrect: true,
+                                                                      textInputAction: TextInputAction.next,
+                                                                      decoration: InputDecoration(
+                                                                        isDense: true,
+                                                                        hintText:
+                                                                        '₹ 1000',
+                                                                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                                                        hintStyle: TextStyle(
+                                                                          fontFamily: "Roboto_Regular",
+                                                                          color: Color(0xff7D7B7B),
+                                                                          fontSize:
+                                                                          SizeConfig.blockSizeHorizontal *
+                                                                              3.5,
+                                                                        ),
+                                                                        fillColor: Color(0xffF5F6FB),
+                                                                        hoverColor: Colors.white,
+                                                                        filled: true,
+                                                                        enabledBorder: OutlineInputBorder(
+                                                                            borderSide: BorderSide.none,
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(8.0)),
+                                                                        focusedBorder: OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              color: Color(0xffebd7fb), width: 1),
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(8.0),
+                                                                        ),
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                              Checkbox(
+                                                                value: perWeek,
+                                                                onChanged: (bool? value) {
+                                                                  setState(() {
+                                                                    perWeek = value!;
+                                                                  });
+                                                                }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
+                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                              ),
 
-                                                               ],
-                                                             ), SizedBox(height: 5),
-                                                             Row(
-                                                               children: [
-                                                                 Text('Per Month'),
-                                                                 Expanded(
-                                                                   child: Padding(
-                                                                     padding:  EdgeInsets.only(left: 13,right: 15,top: 3),
-                                                                     child: TextFormField(
-                                                                         textAlign: TextAlign.start,
+                                                            ],
+                                                          ), SizedBox(height: 5),
+                                                          Row(
+                                                            children: [
+                                                              Text('Per Month'),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding:  EdgeInsets.only(left: 13,right: 15,top: 3),
+                                                                  child: TextFormField(
+                                                                      textAlign: TextAlign.start,
 
-                                                                         // focusNode: _productNameFocus,
-                                                                         keyboardType: TextInputType.number,
-                                                                         controller: productPerMonthController,
-                                                                         autocorrect: true,
-                                                                         textInputAction: TextInputAction.next,
-                                                                         decoration: InputDecoration(
-                                                                           isDense: true,
-                                                                           hintText:
-                                                                           '₹ 1000',
-                                                                           contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                                                                           hintStyle: TextStyle(
-                                                                             fontFamily: "Roboto_Regular",
-                                                                             color: Color(0xff7D7B7B),
-                                                                             fontSize:
-                                                                             SizeConfig.blockSizeHorizontal *
-                                                                                 3.5,
-                                                                           ),
-                                                                           fillColor: Color(0xffF5F6FB),
-                                                                           hoverColor: Colors.white,
-                                                                           filled: true,
-                                                                           enabledBorder: OutlineInputBorder(
-                                                                               borderSide: BorderSide.none,
-                                                                               borderRadius:
-                                                                               BorderRadius.circular(8.0)),
-                                                                           focusedBorder: OutlineInputBorder(
-                                                                             borderSide: BorderSide(
-                                                                                 color: Color(0xffebd7fb), width: 1),
-                                                                             borderRadius:
-                                                                             BorderRadius.circular(8.0),
-                                                                           ),
-                                                                         )),
-                                                                   ),
-                                                                 ),
-                                                                 Checkbox(
-                                                                   value: perMonth,
-                                                                   onChanged: (bool? value) {
-                                                                     setState(() {
-                                                                       perMonth = value!;
-                                                                     });
-                                                                   }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
-                                                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                 ),
+                                                                      // focusNode: _productNameFocus,
+                                                                      keyboardType: TextInputType.number,
+                                                                      controller: productPerMonthController,
+                                                                      autocorrect: true,
+                                                                      textInputAction: TextInputAction.next,
+                                                                      decoration: InputDecoration(
+                                                                        isDense: true,
+                                                                        hintText:
+                                                                        '₹ 1000',
+                                                                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                                                        hintStyle: TextStyle(
+                                                                          fontFamily: "Roboto_Regular",
+                                                                          color: Color(0xff7D7B7B),
+                                                                          fontSize:
+                                                                          SizeConfig.blockSizeHorizontal *
+                                                                              3.5,
+                                                                        ),
+                                                                        fillColor: Color(0xffF5F6FB),
+                                                                        hoverColor: Colors.white,
+                                                                        filled: true,
+                                                                        enabledBorder: OutlineInputBorder(
+                                                                            borderSide: BorderSide.none,
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(8.0)),
+                                                                        focusedBorder: OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              color: Color(0xffebd7fb), width: 1),
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(8.0),
+                                                                        ),
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                              Checkbox(
+                                                                value: perMonth,
+                                                                onChanged: (bool? value) {
+                                                                  setState(() {
+                                                                    perMonth = value!;
+                                                                  });
+                                                                }, visualDensity: VisualDensity.compact, // Optional: Adjusts checkbox size/density
+                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                              ),
 
-                                                               ],
-                                                             ),
+                                                            ],
+                                                          ),
 
-                                                           /*  ElevatedButton(
+                                                          /*  ElevatedButton(
                                                                onPressed: () {
                                                                  // Logic for what to do with selected checkboxes
                                                                  print('Per Day: $perDay');
@@ -1350,10 +1344,9 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                                }, child: Container(),
 
                                                              ),*/
-                                                           ],
-                                                         ),
-                                                       ),
-                                                     ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                     ),
 
                                                   ),
@@ -1396,7 +1389,10 @@ class _CreateProductServiceState extends State<CreateProductService>
 
                                                       ],
                                                     ),
-                                                  )
+                                                  ),
+
+
+
                                                 ],
                                               ),
                                             ),
@@ -1414,8 +1410,47 @@ class _CreateProductServiceState extends State<CreateProductService>
                             ],
                           ),
                         ),
-                        SizedBox(height: 22),
 
+                        Padding(
+                          padding: EdgeInsets.only(
+                           bottom:SizeConfig.screenHeight*0.03,
+                              left: parentWidth * 0.04,
+                              right: parentWidth * 0.04),
+                          child: Container(
+                              width: parentWidth * 0.9,
+                              height: parentHeight * 0.06,
+                              decoration: BoxDecoration(
+                              /*  boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 1,
+                                      spreadRadius: 1,
+                                      offset: Offset(1,1)),
+                                ],*/
+                                gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [
+                                    Color(0xffC0B5E8),
+                                    Color(0xff9584D6),
+                                  ],
+                                ),
+                                /*   border: Border.all(
+                  width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(30),
+                                ),
+                              ),
+                              child: Center(
+                                  child: Text(
+                                    "Add Product",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Roboto-Regular',
+                                        fontSize: SizeConfig.blockSizeHorizontal * 4.2),
+                                  ))),
+                        ),
                       ],
                     ),
                   ),

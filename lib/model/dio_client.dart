@@ -1,6 +1,7 @@
 
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,62 +14,85 @@ class ApiClients {
 
 
  Future<Map<String, dynamic>> registerDio(
-
      String firstName,
      String lastName,
      String phoneNumber,
      String email,
      String password,
      String cpassword,
-     String profilePicture,
-     String frontImages,
-     String backImages,
+     File? profilePicture,
+     File? frontImages,
+     File? backImages,
      String permanentAddress,
-     String lat,
-     String long,
-
-
+     String latitude,
+     String longitude,
      ) async {
    String url = ApiConstant().BaseUrl + ApiConstant().registerss;
 
-   String? sessionToken =
-   GetStorage().read<String>(ConstantData.UserAccessToken);
+   String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
    print("Session Token: $sessionToken");
 
-   var dataa = jsonEncode({
-   'firstName': firstName,
-   'lastName': lastName,
-   'phoneNumber': phoneNumber,
-   'email': email,
-   'password': password,
-   'cpassword': cpassword,
-  // 'currentLocation': currentLocation,
-   'frontImages': frontImages,
-   'backImages': backImages,
-   'profilePicture': profilePicture,
-   'permanentAddress': permanentAddress,
-    'lat':lat,
-     'long':long
-  });
-   print("data....> $dataa");
    try {
+     FormData formData = FormData.fromMap({
+       'firstName': firstName,
+       'lastName': lastName,
+       'phoneNumber': phoneNumber,
+       'email': email,
+       'password': password,
+       'cpassword': cpassword,
+       'permanentAddress': permanentAddress,
+       'latitude': latitude,
+       'longitude': longitude,
+       if (profilePicture != null)
+         'profilePicture': await MultipartFile.fromFile(
+           profilePicture.path,
+           filename: profilePicture.path.split('/').last,
+         ),
+       if (frontImages != null)
+         'frontImages': await MultipartFile.fromFile(
+           frontImages.path,
+           filename: frontImages.path.split('/').last,
+         ),
+       if (backImages != null)
+         'backImages': await MultipartFile.fromFile(
+           backImages.path,
+           filename: backImages.path.split('/').last,
+         ),
+     });
+
+     // Debug: Print the URL and the form data
+     print("URL: $url");
+     print("FormData: $formData");
+
+     // Make the POST request
      Response response = await _dio.post<Map<String, dynamic>>(
        url,
-       data : dataa,
+       data: formData,
        options: Options(
-         headers: {
-           'Authorization': 'Bearer $sessionToken',
-         },
+         headers: {'Authorization': 'Bearer $sessionToken'},
        ),
      );
-    // print("data....>$dataa");
-     print("statusCode --> ${response.statusCode}");
-     print("dateeeee --> ${response.data}");
-     return response.data;
+
+     // Debug: Print the response data
+     print("Response: ${response.data}");
+     return response.data!;
    } on DioError catch (e) {
-     return e.response!.data;
+     // Handle Dio errors and log details
+     if (e.response != null) {
+       print("DioError Response: ${e.response!.data}");
+     } else {
+       print("DioError Message: ${e.message}");
+     }
+
+     // Return error response if available
+     return e.response?.data ?? {'error': 'Unknown error'};
+   } catch (e) {
+     // Catch any other errors
+     print("Error: $e");
+     return {'error': e.toString()};
    }
  }
+
 
 
  Future<Map<String, dynamic>> loginDio(
