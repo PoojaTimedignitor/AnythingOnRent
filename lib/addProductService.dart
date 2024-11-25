@@ -1,10 +1,8 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:anything/City_Create.dart';
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
-import 'package:anything/secound.dart';
 import 'package:flutter/material.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:get_storage/get_storage.dart';
@@ -34,6 +32,7 @@ class _CreateProductServiceState extends State<CreateProductService>
   TextEditingController productPerWeekController = TextEditingController();
   TextEditingController productPerMonthController = TextEditingController();
   TextEditingController productDiscriptionController = TextEditingController();
+  TextEditingController productPriceController = TextEditingController();
   late TabController _tabController;
   String updatedText = "Original Text";
   String updatedCity = "Choose City";
@@ -159,7 +158,7 @@ class _CreateProductServiceState extends State<CreateProductService>
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
-    _loadSavedTextCat();
+      _loadSavedTextCat();
     _loadSavedTextCity();
     _loadSavedImages();
 
@@ -1360,7 +1359,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                           fontSize: SizeConfig.blockSizeHorizontal * 3.9,
                                                           fontWeight: FontWeight.w600,
                                                         ),),
-                                                        Padding(
+                                                      /*  Padding(
                                                           padding: EdgeInsets.only(
                                                               left: 10, right: 10, top: 7),
                                                           child: Container(
@@ -1384,8 +1383,47 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                               ),
                                                             ),
                                                           ),
+                                                        ),*/
+                                                        Expanded(
+                                                          child: Padding(
+                                                            padding: EdgeInsets.only(
+                                                                left: 10, right: 40, top: 10),
+                                                            child: TextFormField(
+                                                                textAlign: TextAlign.start,
+                                                                maxLines: 2,
+                                                                focusNode: _productNameFocus,
+                                                                keyboardType: TextInputType.text,
+                                                                controller: productPriceController,
+                                                                autocorrect: true,
+                                                                textInputAction: TextInputAction.next,
+                                                                decoration: InputDecoration(
+                                                                  isDense: true,
+                                                                  hintText:
+                                                                  '  Lowest Price',
+                                                                  contentPadding: EdgeInsets.all(1.0),
+                                                                  hintStyle: TextStyle(
+                                                                    fontFamily: "Roboto_Regular",
+                                                                    color: Color(0xff7D7B7B),
+                                                                    fontSize:
+                                                                    SizeConfig.blockSizeHorizontal *
+                                                                        3.5,
+                                                                  ),
+                                                                  fillColor: Color(0xffF5F6FB),
+                                                                  hoverColor: Colors.white,
+                                                                  filled: true,
+                                                                  enabledBorder: OutlineInputBorder(
+                                                                      borderSide: BorderSide.none,
+                                                                      borderRadius:
+                                                                      BorderRadius.circular(10.0)),
+                                                                  focusedBorder: OutlineInputBorder(
+                                                                    borderSide: BorderSide(
+                                                                        color: Color(0xffebd7fb), width: 1),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(10.0),
+                                                                  ),
+                                                                )),
+                                                          ),
                                                         ),
-
 
                                                       ],
                                                     ),

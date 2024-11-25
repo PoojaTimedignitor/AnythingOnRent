@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
+import '../MainHome.dart';
 import 'forget_password.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -29,20 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey _tooltipKey = GlobalKey();
  bool showTooltip = true;
 
-/*  String? _errorMessage;
 
-  String? _validateText(String? value) {
-    if (value == null || value.isEmpty) {
-      setState(() {
-        _errorMessage = 'This field is required'; // Customize error message
-      });
-      return ''; // Return empty string so no error line is shown
-    }
-    setState(() {
-      _errorMessage = null; // Clear error message
-    });
-    return null; // No error
-  }*/
 
   void _validateAndShowTooltip() {
     if (emailController.text.isEmpty) {
@@ -78,13 +66,29 @@ class _LoginScreenState extends State<LoginScreen> {
       shrinkWrap: true,
       padding: EdgeInsets.zero,
       children: [
-        Image(
-          image: AssetImage('assets/images/login.png'),
+        Stack(
+          children: [
+
+            Image(
+              image: AssetImage('assets/images/login.png'),
+            ),
+            Padding(
+              padding:  EdgeInsets.only(left: 22,top: 40),
+              child: GestureDetector(
+
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+
+                  child: Icon(Icons.arrow_back,color: Colors.white,size: 25)),
+            ),
+          ],
         ),
         ImagesWithText(SizeConfig.screenHeight, SizeConfig.screenWidth),
         LoginContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
         Stack(
           children: [
+
             Padding(
               padding: EdgeInsets.only(
                   left: SizeConfig.screenWidth * 0.6, top: 25),
@@ -93,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: SizeConfig.screenHeight * 0.267,
               ),
             ),
+
             RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
           ],
         ),
@@ -424,17 +429,19 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         if (value['success'] == true) {
-          print("Logged-in User Email: ${value['Data']['email']}");
+          print("UserId: ${value['user']?['email']}");
 
           // Store credentials in GetStorage
-          GetStorage().write(ConstantData.Useremail, value['Data']['email']);
-          GetStorage().write(ConstantData.Userpassword, value['Data']['password']);
+
+          GetStorage().write(ConstantData.Useremail, value['user']?['email']);
+          GetStorage().write(ConstantData.UserId, value['user']?['userId']);
+          GetStorage().write(ConstantData.Userpassword, value['user']?['password']);
 
           // Navigate to the home screen upon successful login
-         /* Navigator.pushReplacement(
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const Zoom()),
-          );*/
+            MaterialPageRoute(builder: (context) =>  MainHome()),
+          );
         } else if(value['success'] == false) {
           print("Email or password does not match");
         }
@@ -478,7 +485,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: Center(
                     child: Text(
-                  "Register",
+                  "Login",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -561,11 +568,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 14),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const RegisterScreen(address: '', lat: '', long: '', ProfilePicture: '', FrontImage: '', BackImage: '',)));
+                            Navigator.pop(context);
                           },
                       ),
                     ])),

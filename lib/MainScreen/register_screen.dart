@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 
@@ -72,8 +73,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
   File? _imageBack;
   File? _imageProfile;
 
+  void _loadSavedData() {
+    // Update the controllers with saved data
+    firstNameController.text = box.read('name') ?? '';
+    /*_emailController.text = storage.read('email') ?? '';
+    _passwordController.text = storage.read('password') ?? '';*/
+  }
 
-    Future<void> _pickImageFront(ImageSource source) async {
+
+
+
+  Future<void> _pickImageFront(ImageSource source) async {
     try {
       final XFile? pickedFile = await ImagePicker().pickImage(source: source);
 
@@ -526,6 +536,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
+    _loadSavedData();
+    String savedFirstName = box.read('firstName') ?? "";
     passwordVisible = true;
     cPasswordVisible = true;
     if (mounted) {
@@ -552,7 +564,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // RegisterLocalDataStore();
     focusNode = FocusNode();
     focusNode.addListener(() => setState(() {}));
-    firstNameController = TextEditingController();
+    firstNameController = TextEditingController(text: savedFirstName);
     lastNameController = TextEditingController();
 
     emailController = TextEditingController();
@@ -567,8 +579,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   }
 
+  void _saveData() {
+    // Save the data to GetStorage
+    box.write('name', firstNameController.text);
+   /* storage.write('email', _emailController.text);
+    storage.write('password', _passwordController.text);*/
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Data saved successfully!')),
+    );
+  }
+
+
+
   @override
   void dispose() {
+    firstNameController.text = box.read('name') ?? '';
+    firstNameController.dispose();
     _firstNameFocus.dispose();
     _lastNameFocus.dispose();
     _emailFocus.dispose();
@@ -1139,11 +1166,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 widget.address.isEmpty?
               GestureDetector(
                 onTap: (){
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => LocationMapScreen(
 
-                      //  recLane: widget.recLane,
-                        )));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LocationMapScreen()),
+                  ).then((_) {
+                    // Reload saved data when coming back
+                    _loadSavedData();
+
+                  }
+
+                  );
+
                 },
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -1785,174 +1819,196 @@ GestureDetector(
   }
 
   Widget RegisterButton(double parentWidth, double parentHeight) {
-    return GestureDetector(
-      onTap: () {
-          if (passwordController.text != confirmPasswordController.text) {
-        print("Error: Password and Confirm Password do not match");
-        // You can also show a UI error message here
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Passwords do not match'))
-        );
-        return;
-      }
-/*
-         if(mounted){
-            setState(() {
-              isLoading = true;
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            _saveData();
+              if (passwordController.text != confirmPasswordController.text) {
+            print("Error: Password and Confirm Password do not match");
+            // You can also show a UI error message here
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Passwords do not match'))
+            );
+            return;
+          }
+        /*
+             if(mounted){
+                setState(() {
+                  isLoading = true;
+                });
+              }*/
+            if (formKey.currentState != null) {
+              final isValid = formKey.currentState!.validate();
+              if (!isValid) return;
+              // proceed with form submission or other logic
+            } else {
+              print("Form state is null");
+            }
+
+
+
+
+        /*else {*/
+            // print("Full Name: ${fullNameController.text}");
+           print("firstname: ${firstNameController.text}");
+            print("lastname: ${lastNameController.text}");
+            print("phoneNumber: ${mobileNumberController.text}");
+            print("email: ${emailController.text}");
+            print("password: ${passwordController.text}");
+            print("cpassword: ${confirmPasswordController.text}");
+            print("currentLocation: ${widget.lat}");
+            print("PermanentAdd: ${permanentAddressController.text}");
+            print("profileImage: ${_imageProfile}");
+            print("frountImage: ${_imageFront}");
+            print("backImage: ${_imageBack}");
+            ApiClients()
+                .registerDio(
+              // fullNameController.text,
+              firstNameController.text,
+              lastNameController.text,
+              mobileNumberController.text,
+              emailController.text,
+              passwordController.text,
+              confirmPasswordController.text,
+              _imageProfile,
+              _imageFront,
+              _imageBack,
+              permanentAddressController.text,
+              widget.lat,
+              widget.long,
+
+            )
+                .then((value) {
+              //  if (value.isEmpty) return;
+              print("token...${value['token']}");
+              print(value['data']);
+              print("Loading: $isLoading");
+              if (mounted) {
+                setState(() {
+                  isLoading = false;
+                });
+              }
+
+
+              if (value['success'] == true) {
+                if (value['newUser']?['email'] != null) {}
+                print("email stored successfully: ${value['newUser']?['userId']}");
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']?['userId']);
+                GetStorage().write(ConstantData.UserId, value['newUser']?['email']);
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']?['password']);
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']?['cpassword']);
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']?['permanentAddress']);
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']?['PhoneNumber']);
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']?['frontImages']);
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']?['backImages']);
+                GetStorage().write(
+                    ConstantData.UserId, value['newUser']?['profilePicture']);
+
+
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()));
+                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
+
+                if (mounted) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+              }
             });
-          }*/
-        if (formKey.currentState != null) {
-          final isValid = formKey.currentState!.validate();
-          if (!isValid) return;
-          // proceed with form submission or other logic
-        } else {
-          print("Form state is null");
-        }
+            // }
+          },
 
 
 
+          child: Padding(
+            padding: EdgeInsets.only(
+                top: parentHeight * 0.05,
+                left: parentWidth * 0.04,
+                right: parentWidth * 0.04),
+            child: Container(
+                width: parentWidth * 0.77,
+                height: parentHeight * 0.13,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 5,
+                        spreadRadius: 1,
+                        offset: Offset(1, 1)),
+                  ],
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      Color(0xffFEBA69),
+                      Color(0xffFE7F64),
+                    ],
+                  ),
+                  /*   border: Border.all(
+                      width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(30),
+                  ),
+                ),
+                child: Center(
+                    child: Text(
+                  "Register",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Roboto-Regular',
+                      fontSize: SizeConfig.blockSizeHorizontal * 4.3),
+                ))),
+          ),
+        ),
 
-/*else {*/
-        // print("Full Name: ${fullNameController.text}");
-       print("firstname: ${firstNameController.text}");
-        print("lastname: ${lastNameController.text}");
-        print("phoneNumber: ${mobileNumberController.text}");
-        print("email: ${emailController.text}");
-        print("password: ${passwordController.text}");
-        print("cpassword: ${confirmPasswordController.text}");
-        print("currentLocation: ${widget.lat}");
-        print("PermanentAdd: ${permanentAddressController.text}");
-        print("profileImage: ${_imageProfile}");
-        print("frountImage: ${_imageFront}");
-        print("backImage: ${_imageBack}");
-        ApiClients()
-            .registerDio(
-          // fullNameController.text,
-          firstNameController.text,
-          lastNameController.text,
-          mobileNumberController.text,
-          emailController.text,
-          passwordController.text,
-          confirmPasswordController.text,
-          _imageProfile,
-          _imageFront,
-          _imageBack,
-          permanentAddressController.text,
-          widget.lat,
-          widget.long,
+        SizedBox(height: 15),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RichText(
+                text: TextSpan(
+                    text: "Already have an account ?",
+                    style: TextStyle(
+                        color: Colors.black38,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Roboto-Regular',
+                        fontSize: 15),
+                    children: [
+                      TextSpan(
+                        text: " Sign Up",
+                        style: TextStyle(
+                            color: CommonColor.Blue,
+                            fontWeight: FontWeight.w500,
+                            decoration: TextDecoration.underline,
+                            fontFamily: 'Roboto-Regular',
+                            fontSize: 17),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginScreen()),
+                            ).then((_) {
+                              // Reload saved data when coming back
+                              _loadSavedData();
+                            }
 
+                            );
+                          },
+                      ),
+                    ])),
+          ],
         )
-            .then((value) {
-          //  if (value.isEmpty) return;
-          print("token...${value['token']}");
-          print(value['data']);
-          print("Loading: $isLoading");
-          if (mounted) {
-            setState(() {
-              isLoading = false;
-            });
-          }
-
-
-
-
-        if (value['success'] == true) {
-          print("email stored successfully: ${value['newUser']?['userId']}");
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['userId']);
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['email']);
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['password']);
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['cpassword']);
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['permanentAddress']);
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['PhoneNumber']);
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['frontImages']);
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['backImages']);
-          GetStorage().write(ConstantData.UserId,  value['newUser']?['profilePicture']);
-
-        Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-        }
-
-
-
-         /* GetStorage().write(ConstantData.UserId, "userId");
-        GetStorage()
-                .write(ConstantData.Useremail, 'newUser']['email']);
-            GetStorage()
-                .write(ConstantData.Userpassword, value['newUser']['password']);
-            GetStorage().write(
-                ConstantData.UserCpassword, value['newUser']['cpassword']);
-
-            GetStorage().write(ConstantData.UserParmanentAddress,
-                value['newUser']['permanentAddress']);
-            GetStorage().write(
-                ConstantData.UserMobile, value['newUser']['PhoneNumber']);
-
-            GetStorage().write(
-                ConstantData.UserFrontImage, value['newUser']['frontImages']);
-            // print("numVal ${value['data']}");
-*/
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()));
-            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
-
-          if (mounted) {
-            setState(() {
-              isLoading = false;
-            });
-          }
-        }
-
-
-
-
-        );
-        // }
-      },
-
-
-
-      child: Padding(
-        padding: EdgeInsets.only(
-            top: parentHeight * 0.05,
-            left: parentWidth * 0.04,
-            right: parentWidth * 0.04),
-        child: Container(
-            width: parentWidth * 0.77,
-            height: parentHeight * 0.13,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 5,
-                    spreadRadius: 1,
-                    offset: Offset(4, 4)),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Color(0xffFEBA69),
-                  Color(0xffFE7F64),
-                ],
-              ),
-              /*   border: Border.all(
-                  width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
-              borderRadius: const BorderRadius.all(
-                Radius.circular(30),
-              ),
-            ),
-            child: Center(
-                child: Text(
-              "Register",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Roboto-Regular',
-                  fontSize: SizeConfig.blockSizeHorizontal * 4.3),
-            ))),
-      ),
+      ],
     );
   }
 }
