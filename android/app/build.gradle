@@ -42,3 +42,7 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation 'com.google.mlkit:text-recognition:16.0.0-beta3'  // Ensure you include this line
+}

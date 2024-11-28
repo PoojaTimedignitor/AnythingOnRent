@@ -1,7 +1,11 @@
+import 'package:anything/ResponseModule/getAllCatList.dart';
+
 import 'package:flutter/material.dart';
 
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
+
+import 'model/dio_client.dart';
 class CatagriesList extends StatefulWidget {
   const CatagriesList({super.key});
 
@@ -10,7 +14,7 @@ class CatagriesList extends StatefulWidget {
 }
 
 class _CatagriesListState extends State<CatagriesList> {
-  final List<String> items = [
+/*  final List<String> items = [
     "Vehicle",
     "Fashion",
     "Home Appliances",
@@ -25,7 +29,11 @@ class _CatagriesListState extends State<CatagriesList> {
     "Electronics",
     "Kitchenware",
     "Office Equipment",
-  ];
+  ];*/
+  //final items = <Data>[];
+  List<Data> items = [];
+
+
 
   final List<String> catagriesImage = [
     'assets/images/cattwo.png',
@@ -43,7 +51,7 @@ class _CatagriesListState extends State<CatagriesList> {
     'assets/images/catfour.png',
     'assets/images/cattwo.png'
   ];
-  final Map<String, int> productCountList = {
+ /* final Map<String, int> productCountList = {
     "Vehicle": 12,
     "Fashion": 8,
     "Home Appliances": 15,
@@ -57,15 +65,35 @@ class _CatagriesListState extends State<CatagriesList> {
     "Electronics": 14,
     "Kitchenware": 13,
     "Office Equipment": 8,
-  };
-  List<String> filteredItems = [];
+  };*/
+  List<Data> filteredItems = [];
+  bool isLoading = true;
 
   @override
   void initState() {
+    fetchCategories();
     super.initState();
-    filteredItems = List.from(items);
+
     // Initially display all items
   }
+
+  void fetchCategories() async {
+    try {
+      Map<String, dynamic> response = await ApiClients().getAllCat();
+      var jsonList = GetAllCategoriesList.fromJson(response);
+      setState(() {
+        items = jsonList.data ?? [];
+        filteredItems = List.from(items);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false; // Stop loading in case of error
+      });
+      print("Error fetching categories: $e");
+    }
+  }
+
 
 
   @override
@@ -97,7 +125,10 @@ class _CatagriesListState extends State<CatagriesList> {
   }
 
  Widget AllCatagriesList(double parentheight,double parentWidth){
-    return Center(
+
+   return  isLoading
+       ? Center(child: CircularProgressIndicator())
+       : Center(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9, // Set the width of the bottom sheet
         child: Padding(
@@ -106,30 +137,32 @@ class _CatagriesListState extends State<CatagriesList> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Search bar to filter items
-              TextField(
+                TextField(
                 decoration: InputDecoration(
                   hintText: 'Search...',
                   prefixIcon: Icon(Icons.search),
                 ),
-                onChanged: (query) {
+                onChanged: (String query) {
                   setState(() {
                     filteredItems = items
                         .where((item) =>
-                        item.toLowerCase().contains(query.toLowerCase()))
+                    item.categoryName != null &&
+                        item.categoryName!.toLowerCase().contains(query.toLowerCase()))
                         .toList();
                   });
                 },
               ),
               SizedBox(height: 10),
               // ListView to show filtered items
+
               Expanded(
                 child:
 
 
                 Padding(
-                  padding: const EdgeInsets.all(1.0),
+                  padding:  EdgeInsets.all(1.0),
                   child:  filteredItems.isNotEmpty
-                      ? GridView.builder(
+                      ? GridView.builder  (
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3, // Number of columns
                       crossAxisSpacing: 11.0, // Space between columns
@@ -140,11 +173,15 @@ class _CatagriesListState extends State<CatagriesList> {
                     itemCount: filteredItems.length,
                     // Total number of items
                     itemBuilder: (context, index) {
-                      String categoryName = filteredItems[index];
-                      int productCount = productCountList[categoryName] ?? 0;
+                      print( "ddddd  ${filteredItems[index].categoryName.toString()}");
+
+                      /* String categoryName = filteredItems[index];
+                      int productCount = productCountList[categoryName] ?? 0;*/
                       return GestureDetector(
+
                         onTap: (){
-                          Navigator.pop(context, filteredItems [index]);
+
+                          Navigator.pop(context, filteredItems [index].categoryName.toString());
                         },
                         child: Container(
                           // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -163,7 +200,7 @@ class _CatagriesListState extends State<CatagriesList> {
                                   children: [
                                     // Container for the background
 
-                                    Align(
+                                   /* Align(
                                       alignment: Alignment.topRight,
                                       child: Padding(
                                         padding: const EdgeInsets.all(5.0),
@@ -186,7 +223,7 @@ class _CatagriesListState extends State<CatagriesList> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(2.0),
                                             child: Text(
-                                              "$productCount",
+                                             "productCount",
                                               style: TextStyle(
                                                 color: CommonColor.Black,
                                                 fontFamily: "Roboto_Regular",
@@ -201,7 +238,7 @@ class _CatagriesListState extends State<CatagriesList> {
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    ),*/
                                     // Image on top
                                     Image.asset(
                                       catagriesImage[index],
@@ -213,11 +250,12 @@ class _CatagriesListState extends State<CatagriesList> {
                                 ),
                               ),
                               Container(
+
                                 width: 120,
                                 margin: EdgeInsets.only(bottom: 5),
                                 // bottom: 10, // Position the text at the bottom
                                 child: Text(
-                                  filteredItems [index],
+                                  filteredItems[index].categoryName.toString(),
                                   style: TextStyle(
                                     color: CommonColor.Black,
                                     fontFamily: "Roboto_Regular",
@@ -235,7 +273,7 @@ class _CatagriesListState extends State<CatagriesList> {
                     },
                   ):  Column(
                     children: [
-                      Icon(Icons.search_sharp,  color: CommonColor.noResult,size: 50,),
+                       Icon(Icons.search_sharp,  color: CommonColor.noResult,size: 50,),
                       Text("No results found",  style: TextStyle(
                         color: CommonColor.Black,
                         fontFamily: "Roboto_Regular",

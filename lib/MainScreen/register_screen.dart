@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:ui';
+import 'package:google_ml_kit/google_ml_kit.dart'; // For text recognition
+
 
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/model/dio_client.dart';
@@ -6,24 +9,35 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as img;
 import '../Common_File/SizeConfig.dart';
 import '../ConstantData/Constant_data.dart';
 import '../location_map.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:image_picker/image_picker.dart';
+
 
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
+  final String firstName;
   final String address;
   final String lat;
   final String long;
+  final String lastname;
+  final String email;
+  final String password;
+  final String cpassword;
+  final String permanetAddress;
+  final String mobileNumber;
   final String ProfilePicture;
   final String FrontImage;
   final String BackImage;
 
-  const RegisterScreen({super.key, required this.address, required this.lat, required this.long, required this.ProfilePicture, required this.FrontImage, required this.BackImage});
+ /* final File FrontImage;
+  final File BackImage;
+*/
+  const RegisterScreen({super.key, required this.address, required this.lat, required this.long, required this.ProfilePicture, /*required this.FrontImage, required this.BackImage*/ required this.firstName, required this.lastname, required this.email, required this.password, required this.cpassword, required this.permanetAddress, required this.mobileNumber, required this.FrontImage, required this.BackImage});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -48,13 +62,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   var chosenValue;
   final GlobalKey _tooltipKey = GlobalKey();
   bool showTooltip = true;
-  List<String> gameList = [
-    "Aadhaar Card",
-    "PAN Card",
-    "Driving License",
-    "Passport",
-    "Post Office ID card"
-  ];
 
   void _validateAndShowTooltip() {
     if (emailController.text.isEmpty) {
@@ -73,31 +80,96 @@ class _RegisterScreenState extends State<RegisterScreen> {
   File? _imageBack;
   File? _imageProfile;
 
-  void _loadSavedData() {
-    // Update the controllers with saved data
-    firstNameController.text = box.read('name') ?? '';
-    /*_emailController.text = storage.read('email') ?? '';
-    _passwordController.text = storage.read('password') ?? '';*/
-  }
 
 
-
-
-  Future<void> _pickImageFront(ImageSource source) async {
+  Future<void> _pickImageFront(ImageSource source, bool isBackSide) async {
     try {
       final XFile? pickedFile = await ImagePicker().pickImage(source: source);
 
       if (pickedFile != null) {
-        if (mounted) {
-          setState(() {
-            _imageFront = File(pickedFile.path);
-          });
+        setState(() {
+          _imageFront = File(pickedFile.path);
+        });
+
+        bool isValid = await validateAadhaarImage(_imageFront!,);
+        if (isValid) {
+          await preprocessImage(_imageFront!);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('This image is not valid for Aadhaar card.')),
+          );
         }
       }
     } catch (e) {
-      print('Error picking image: $e');
+
     }
   }
+
+  Future<bool> validateAadhaarImage(File file) async {
+
+    return true;
+  }
+
+  Future<void> preprocessImage(File file) async {
+
+    img.Image? image = img.decodeImage(file.readAsBytesSync());
+
+    if (image != null) {
+
+      img.Image grayscaleImage = img.grayscale(image);
+
+
+      File processedFile = File('${file.path}_processed.jpg')..writeAsBytesSync(img.encodeJpg(grayscaleImage));
+
+
+      await verifyAadhaar(processedFile);
+    }
+  }
+
+  Future<void> verifyAadhaar(File file) async {
+    final inputImage = InputImage.fromFile(file);
+    final textRecognizer = GoogleMlKit.vision.textRecognizer();
+    final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+
+    print("Detected Text: ${recognizedText.text}");
+
+    if (_containsAadhaarSpecificText(recognizedText.text)) {
+      print("Valid Aadhaar card image.");
+    } else {
+      print("This is not a valid Aadhaar card.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('This image is not a valid Aadhaar card.')),
+      );
+    }
+
+    textRecognizer.close();
+  }
+
+// Helper function to match Aadhaar-specific text
+  bool _containsAadhaarSpecificText(String text) {
+    final aadhaarKeywords = [
+      "Aadhaar",
+      "Unique Identification Authority of India",
+      "UIDAI",
+      "Aadhaar Number",
+      "UID",
+    ];
+
+    for (String keyword in aadhaarKeywords) {
+      if (text.contains(keyword)) {
+        return true;
+      }
+    }
+
+    RegExp aadhaarRegExp = RegExp(r'\d{4}\s\d{4}\s\d{4}');
+    if (aadhaarRegExp.hasMatch(text)) {
+      return true;
+    }
+
+    return false;
+  }
+
+
 
   Future<void> _pickImageBack(ImageSource source) async {
     try {
@@ -151,7 +223,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).pop();
-                        _pickImageFront(ImageSource.camera);
+                        _pickImageFront(ImageSource.camera,false);
+                        _pickImageFront(ImageSource.camera, true);
                       },
                       child: Row(
                         children: [
@@ -185,7 +258,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).pop();
-                        _pickImageFront(ImageSource.gallery);
+                        _pickImageFront(ImageSource.gallery,false);
+                        _pickImageFront(ImageSource.gallery,true);
                       },
                       child: Row(
                         children: [
@@ -536,8 +610,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSavedData();
-    String savedFirstName = box.read('firstName') ?? "";
+
+    if(mounted){
+      setState(() {
+        firstNameController =  TextEditingController(text: widget.firstName);
+        lastNameController = TextEditingController(text: widget.lastname);
+        emailController = TextEditingController(text: widget.email);
+        passwordController = TextEditingController(text: widget.password);
+        confirmPasswordController = TextEditingController(text: widget.cpassword);
+        permanentAddressController = TextEditingController(text: widget.permanetAddress);
+        mobileNumberController = TextEditingController(text: widget.mobileNumber);
+        if (widget.ProfilePicture.isNotEmpty) {
+          // Convert path to File
+          _imageProfile = File(widget.ProfilePicture);
+        } else {
+          // Set to null if no image path is provided
+          AssetImage('assets/images/profiless.png');
+        }
+         if(widget.FrontImage.isNotEmpty){
+           _imageFront = File(widget.FrontImage);
+         }
+
+        else{
+           AssetImage(
+               'assets/images/picremove.png');
+         }
+
+        if(widget.BackImage.isNotEmpty){
+          _imageBack = File(widget.BackImage);
+        }  else{
+          AssetImage('assets/images/picremove.png');
+        }
+
+      });
+    }
+
     passwordVisible = true;
     cPasswordVisible = true;
     if (mounted) {
@@ -545,71 +652,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
         isLoading = true;
       });
     }
-    List<Map<String, String>> frontImages = [
-      {
-        "public_id": "icurcfr6h2wplzeqro9q",
-        "url": "https://res.cloudinary.com/duqvffqxj/image/upload/v1732343215/icurcfr6h2wplzeqro9q.jpg"
-      },
-    ];
 
-    // Save frontImages to local storage
-    saveFrontImages(frontImages);
 
-    /*  if(mounted){
-      setState(() {
-        isLoading = true;
-      });
-    }*/
-    // print("dddd   $RegisterLocalDataStore");
-    // RegisterLocalDataStore();
     focusNode = FocusNode();
     focusNode.addListener(() => setState(() {}));
-    firstNameController = TextEditingController(text: savedFirstName);
-    lastNameController = TextEditingController();
+    firstNameController = TextEditingController(text: widget.firstName);
+    lastNameController = TextEditingController(text: widget.lastname);
 
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    confirmPasswordController = TextEditingController();
-    addressController = TextEditingController();
-    permanentAddressController = TextEditingController();
-    mobileNumberController = TextEditingController();
+    emailController = TextEditingController(text: widget.email);
+    passwordController = TextEditingController(text: widget.password);
+    confirmPasswordController = TextEditingController(text: widget.cpassword);
+    addressController = TextEditingController(text: widget.address);
+    permanentAddressController = TextEditingController(text:widget.permanetAddress);
+    mobileNumberController = TextEditingController(text: widget.mobileNumber);
 
 
 
 
   }
 
+/*
   void _saveData() {
     // Save the data to GetStorage
     box.write('name', firstNameController.text);
-   /* storage.write('email', _emailController.text);
-    storage.write('password', _passwordController.text);*/
+
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Data saved successfully!')),
     );
   }
+*/
 
 
 
   @override
   void dispose() {
-    firstNameController.text = box.read('name') ?? '';
     firstNameController.dispose();
     _firstNameFocus.dispose();
     _lastNameFocus.dispose();
     _emailFocus.dispose();
     _passwordFocus.dispose();
-    //fullNameController.dispose();
 
     super.dispose();
   }
 
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> frontImages = getFrontImages();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -632,39 +721,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               RegisterContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
               NameData(SizeConfig.screenHeight, SizeConfig.screenWidth),
-              /*Visibility(
 
-                visible: isLoading,
-                child: Center(child:  Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: SizeConfig.screenHeight * .05,
-                      width: SizeConfig.screenWidth * .1,
-
-                      child: Image(
-                        image: const AssetImage(
-                            "assets/images/anything_loding.png"),
-
-                        width: SizeConfig.screenWidth * .1,
-                      ),
-                    ),
-                    Text("  Loading...",    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'Roboto-Regular',
-                        fontSize: SizeConfig.blockSizeHorizontal * 3.3),
-
-                    )
-                  ],
-                ),),
-              )*/
             ],
           ),
-          /*    GestureDetector(
 
-                behavior: HitTestBehavior.translucent,
-                child: AnimationScreen(color: Theme.of(context).colorScheme.secondary),)*/
         ],
       ),
     );
@@ -835,12 +895,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           left: parentWidth * 0.0,
                           right: parentWidth * 0.04),
                       child: Container(
-                        decoration: BoxDecoration(boxShadow: [
-                          BoxShadow(
-                              spreadRadius: 0,
-                              blurRadius: 7,
-                              color: Colors.black26)
-                        ]),
+
                         child: TextFormField(
                             keyboardType: TextInputType.text,
                             controller:firstNameController,
@@ -894,12 +949,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           left: parentWidth * 0.0,
                           right: parentWidth * 0.04),
                       child: Container(
-                          decoration: BoxDecoration(boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 0,
-                                blurRadius: 7,
-                                color: Colors.black26)
-                          ]),
+
                           child: TextFormField(
                               keyboardType: TextInputType.text,
                               controller: lastNameController,
@@ -951,13 +1001,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
+
                 child: TextFormField(
                     focusNode: _emailFocus,
                     keyboardType: TextInputType.text,
@@ -1012,13 +1056,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
+
                 child: TextFormField(
                     obscureText: passwordVisible,
                     focusNode: _passwordFocus,
@@ -1090,13 +1128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
+
                 child: TextFormField(
                     obscureText: cPasswordVisible,
                     keyboardType: TextInputType.text,
@@ -1167,14 +1199,9 @@ widget.address.isEmpty?
               GestureDetector(
                 onTap: (){
 
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LocationMapScreen()),
-                  ).then((_) {
-                    // Reload saved data when coming back
-                    _loadSavedData();
-
-                  }
+                    MaterialPageRoute(builder: (context) => LocationMapScreen(firstName: firstNameController.text, lastname: lastNameController.text, email: emailController.text, password: passwordController.text, cpassword: confirmPasswordController.text, permanetAddress: permanentAddressController.text, mobileNumber: mobileNumberController.text, ProfileImage:_imageProfile?.path ?? '', frontImage: _imageFront?.path ?? '', BackImage: _imageBack?.path ?? '',)),
 
                   );
 
@@ -1190,13 +1217,6 @@ widget.address.isEmpty?
                       color: Color(0xffFFF0F0),
                         borderRadius: BorderRadius.circular(10.0),
 
-                        boxShadow: [
-                      BoxShadow(
-                          spreadRadius: 0,
-                          blurRadius: 7,
-                          offset: Offset(0, 2),
-                          color: Colors.black26)
-                    ]
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(14.0),
@@ -1225,7 +1245,7 @@ widget.address.isEmpty?
 GestureDetector(
   onTap: (){
     Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => LocationMapScreen(
+        MaterialPageRoute(builder: (context) => LocationMapScreen(firstName: firstNameController.text, lastname: lastNameController.text, email: emailController.text, password: passwordController.text, cpassword: confirmPasswordController.text, permanetAddress: permanentAddressController.text, mobileNumber: mobileNumberController.text, ProfileImage:_imageProfile?.path ?? '', frontImage: _imageFront?.path?? '', BackImage: _imageBack?.path ?? '',
 
           //  recLane: widget.recLane,
         )));
@@ -1239,14 +1259,7 @@ GestureDetector(
       decoration: BoxDecoration(
         color: Color(0xffFFF0F0),
         borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            spreadRadius: 0,
-            blurRadius: 7,
-            offset: Offset(0, 2),
-            color: Colors.black26,
-          )
-        ],
+
       ),
       child: Padding(
         padding: const EdgeInsets.all(22.0),
@@ -1255,7 +1268,7 @@ GestureDetector(
           children: [
             Image(
               image: AssetImage('assets/images/location.png'),
-              color: Colors.black45,
+              color: Color(0xff7F96F0),
               height: 18,
             ),
             SizedBox(width: 10), // Add some space between the icon and text
@@ -1263,10 +1276,10 @@ GestureDetector(
               child: Text(
                 widget.address,
                 style: TextStyle(
-                  color: Color(0xff7D7B7B),
+                  color: Color(0xff7F96F0),
                   fontSize: 14, // Adjust font size accordingly
-                  fontWeight: FontWeight.normal,
-                  fontFamily: 'Roboto-Regular',
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Roboto-Medium',
                 ),
                 maxLines: 3, // Maximum two lines
                 overflow: TextOverflow.ellipsis, // Show ellipsis for overflow
@@ -1300,13 +1313,7 @@ GestureDetector(
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
+
                 child: TextFormField(
                     keyboardType: TextInputType.text,
                     focusNode: _permanentAddressFocus,
@@ -1360,13 +1367,7 @@ GestureDetector(
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
+
                 child: TextFormField(
                     keyboardType: TextInputType.number,
                     autocorrect: true,
@@ -1823,7 +1824,7 @@ GestureDetector(
       children: [
         GestureDetector(
           onTap: () {
-            _saveData();
+
               if (passwordController.text != confirmPasswordController.text) {
             print("Error: Password and Confirm Password do not match");
             // You can also show a UI error message here
@@ -1893,24 +1894,32 @@ GestureDetector(
 
               if (value['success'] == true) {
                 if (value['newUser']?['email'] != null) {}
-                print("email stored successfully: ${value['newUser']?['userId']}");
+                print("userId stored successfully: ${value['newUser']?['userId']}");
                 GetStorage().write(
                     ConstantData.UserId, value['newUser']?['userId']);
-                GetStorage().write(ConstantData.UserId, value['newUser']?['email']);
+                GetStorage().write(ConstantData.Useremail, value['newUser']?['email']);
                 GetStorage().write(
-                    ConstantData.UserId, value['newUser']?['password']);
+                    ConstantData.Userpassword, passwordController.text);
                 GetStorage().write(
-                    ConstantData.UserId, value['newUser']?['cpassword']);
+                    ConstantData.UserCpassword, confirmPasswordController.text);
                 GetStorage().write(
-                    ConstantData.UserId, value['newUser']?['permanentAddress']);
+                    ConstantData.UserParmanentAddress, value['newUser']?['permanentAddress']);
                 GetStorage().write(
-                    ConstantData.UserId, value['newUser']?['PhoneNumber']);
+                    ConstantData.UserMobile, value['newUser']?['PhoneNumber']);
                 GetStorage().write(
-                    ConstantData.UserId, value['newUser']?['frontImages']);
+                    ConstantData.UserFirstName, value['newUser']?['firstName']);
                 GetStorage().write(
-                    ConstantData.UserId, value['newUser']?['backImages']);
+                    ConstantData.UserLastName, value['newUser']?['lastName']);
                 GetStorage().write(
-                    ConstantData.UserId, value['newUser']?['profilePicture']);
+                    ConstantData.UserFrontImage, value['newUser']?['frontImages']);
+                GetStorage().write(
+                    ConstantData.UserBackImage, value['newUser']?['backImages']);
+                GetStorage().write(
+                    ConstantData.UserProfileImage, value['newUser']?['profilePicture']);
+                GetStorage().write(
+                    ConstantData.Userlatitude, value['newUser']?['latitude']);
+                GetStorage().write(
+                    ConstantData.Userlongitude, value['newUser']?['longitude']);
 
 
                 Navigator.pushReplacement(context,
@@ -1994,13 +2003,10 @@ GestureDetector(
                             fontSize: 17),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (context) => LoginScreen()),
-                            ).then((_) {
-                              // Reload saved data when coming back
-                              _loadSavedData();
-                            }
+
 
                             );
                           },

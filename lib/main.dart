@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/frame': (BuildContext context) =>  onboardingScreen(),
         /*  '/registration': (BuildContext context) => RegisterScreen(),*/
-          '/homeScreen': (BuildContext context) =>  RegisterScreen(address: '', lat: '', long: '', ProfilePicture: '', FrontImage: '', BackImage: '',),
+          '/homeScreen': (BuildContext context) =>  RegisterScreen(address: '', lat: '', long: '', ProfilePicture: '',  firstName: '', lastname: '', email: '', password: '', cpassword: '', permanetAddress: '', mobileNumber: '', FrontImage: '', BackImage: '',),
          /* '/rec_dashboard': (BuildContext context) => const ReceiverDashboard(),*/
         }
 

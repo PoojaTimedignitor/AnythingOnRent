@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:anything/MainScreen/register_screen.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +19,17 @@ import 'Common_File/common_color.dart';
 
 class LocationMapScreen extends StatefulWidget {
 
-
-
-  const LocationMapScreen({super.key});
+final String firstName;
+final String lastname;
+final String email;
+final String password;
+final String cpassword;
+final String permanetAddress;
+final String mobileNumber;
+final String frontImage;
+final String BackImage;
+final String ProfileImage;
+  const LocationMapScreen({super.key, required this.firstName, required this.lastname, required this.email, required this.password, required this.cpassword, required this.permanetAddress, required this.mobileNumber,/* required this.frontImage, required this.FileBackImage,*/ required this.ProfileImage, required this.frontImage, required this.BackImage});
 
   @override
   State<LocationMapScreen> createState() => _LocationMapScreenState();
@@ -209,23 +218,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            /* Expanded(
-                      child:name.isNotEmpty ? Padding(
-                        padding: EdgeInsets.only(right: SizeConfig.screenWidth*0.1),
-                        child: Card(
-                            elevation: 5,
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: name.isNotEmpty ? Text('$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
-                                  style: const TextStyle(
-                                      color: Colors.black
-                                  ),) : const Text(""),
-                              ),
-                            )),
-                      )
-                          : Container(),
-                    ),*/
+
 
                             name.isNotEmpty ?
                             Padding(
@@ -293,45 +286,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
 
 
 
-                            /*ElevatedButton(
-                        onPressed: () {
 
-                          widget.comeFrom == "1" ?
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>
-                              PickUpLocation(
-                                address: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
-                                lat: "$selectLat",
-                                long: "$selectLong",
-                                country: country,
-                                personName: widget.personName,
-                                phoneNo: widget.phoneNo,
-                                addresses: widget.addresses,
-                                citys: widget.citys,
-                                states: widget.states,
-                                pincodes: widget.pincodes,
-                                lane: widget.laneNumber,
-                                taluka: widget.taluka,
-                              ))) :
-                          widget.comeFrom == "2" ?
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>
-                              DeliveryLocationScreen(
-                                address: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
-                                lat: "$selectLat",
-                                long: "$selectLong",
-                                country: country,
-                                personName: widget.personName,
-                                phoneNo: widget.phoneNo,
-                                addresses: widget.addresses,
-                                citys: widget.citys,
-                                states: widget.states,
-                                pincodes: widget.pincodes,
-                                pickUpAddress: widget.pickUpLocation,
-                                lane: widget.laneNumber,
-                                taluka: widget.taluka,
-                              ))) : Container();
-                        },
-                        child: const Text('Save Address'),
-                      )*/
                           ]),
                     ),
                   ),
@@ -340,14 +295,16 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
             ),
             GestureDetector(
               onTap: (){
-                //print("Street value: ${widget.street}");
+                print("Street firstName: ${widget.firstName}");
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) =>  RegisterScreen(
                       address: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
                       lat: "$selectLat",
-                      long: "$selectLong", ProfilePicture: '', FrontImage: '', BackImage: '+',
+                      long: "$selectLong", ProfilePicture: widget.ProfileImage, firstName: widget.firstName, lastname: widget.lastname, email: widget.email, password: widget.password, cpassword: widget.cpassword, permanetAddress: widget.mobileNumber, mobileNumber: widget.mobileNumber, FrontImage: widget.frontImage, BackImage: widget.BackImage,
 
-                    )));
+
+                    )
+                    ));
               },
               child: Align(
                 alignment: Alignment.bottomCenter,

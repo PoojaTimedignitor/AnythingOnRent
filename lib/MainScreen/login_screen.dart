@@ -24,31 +24,37 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _fullNameFocus = FocusNode();
   final _emailFocus = FocusNode();
-  bool passwordVisible=true;
+  bool passwordVisible = true;
   bool isObscure = false;
   var _formKey = GlobalKey<FormState>();
   final GlobalKey _tooltipKey = GlobalKey();
- bool showTooltip = true;
-
-
+  bool showTooltip = true;
+  final box = GetStorage();
 
   void _validateAndShowTooltip() {
     if (emailController.text.isEmpty) {
       final dynamic tooltip = _tooltipKey.currentState;
       tooltip.ensureTooltipVisible(); // Show the tooltip if validation fails
-    } else    if (emailController.text.isEmpty) {
+    } else if (emailController.text.isEmpty) {
       setState(() {
         showTooltip = false;
       });
-
     }
-
   }
-  @override
 
-  void initState(){
+  @override
+  void initState() {
     super.initState();
-    passwordVisible=true;
+    passwordVisible = true;
+
+    if (mounted) {
+      setState(() {
+        emailController.text =
+            box.read<String>(ConstantData.Useremail)?.trim() ?? "";
+        passwordController.text =
+            box.read<String>(ConstantData.Userpassword)?.trim() ?? "";
+      });
+    }
   }
 /*  void _submit() {
     final isValid = _formKey.currentState!.validate();
@@ -61,48 +67,43 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-
         body: ListView(
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      children: [
-        Stack(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
           children: [
-
-            Image(
-              image: AssetImage('assets/images/login.png'),
+            Stack(
+              children: [
+                Image(
+                  image: AssetImage('assets/images/login.png'),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 22, top: 40),
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.arrow_back,
+                          color: Colors.white, size: 25)),
+                ),
+              ],
             ),
-            Padding(
-              padding:  EdgeInsets.only(left: 22,top: 40),
-              child: GestureDetector(
-
-                  onTap: (){
-                    Navigator.pop(context);
-                  },
-
-                  child: Icon(Icons.arrow_back,color: Colors.white,size: 25)),
+            ImagesWithText(SizeConfig.screenHeight, SizeConfig.screenWidth),
+            LoginContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
+            Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: SizeConfig.screenWidth * 0.6, top: 25),
+                  child: Image(
+                    image: AssetImage('assets/images/loginsecound.png'),
+                    height: SizeConfig.screenHeight * 0.267,
+                  ),
+                ),
+                RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
+              ],
             ),
           ],
-        ),
-        ImagesWithText(SizeConfig.screenHeight, SizeConfig.screenWidth),
-        LoginContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
-        Stack(
-          children: [
-
-            Padding(
-              padding: EdgeInsets.only(
-                  left: SizeConfig.screenWidth * 0.6, top: 25),
-              child: Image(
-                image: AssetImage('assets/images/loginsecound.png'),
-                height: SizeConfig.screenHeight * 0.267,
-              ),
-            ),
-
-            RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
-          ],
-        ),
-      ],
-    ));
+        ));
   }
 
   Widget ImagesWithText(double parentHeight, double parentWidth) {
@@ -169,29 +170,30 @@ class _LoginScreenState extends State<LoginScreen> {
                     key: _tooltipKey,
 
                     padding: EdgeInsets.only(
-                        top: parentHeight * 0.2,
-                       ),
+                      top: parentHeight * 0.2,
+                    ),
 
-                    message: '                                This field cannot be empty*',
-                  //  triggerMode: TooltipTriggerMode.manual,
+                    message:
+                        '                                This field cannot be empty*',
+                    //  triggerMode: TooltipTriggerMode.manual,
 
                     decoration: BoxDecoration(
                       color: Colors.transparent,
-                     // Background color
+                      // Background color
                       borderRadius: BorderRadius.circular(8), // Rounded corners
 
-                     // Border color and width
+                      // Border color and width
                     ),
                     textStyle: TextStyle(
                       color: Colors.red, // Tooltip text color
                       fontWeight: FontWeight.bold, // Bold text
                     ),
                     child: TextFormField(
-                        controller: emailController,
-                        keyboardType: TextInputType.text,
+                      controller: emailController,
+                      keyboardType: TextInputType.text,
 
-                       // validator: _validateText,
-                    /*
+                      // validator: _validateText,
+                      /*
                         validator: (value) {
 
 
@@ -204,68 +206,48 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         },*/
 
-
-                        autocorrect: true,
-                        textInputAction: TextInputAction.next,
+                      autocorrect: true,
+                      textInputAction: TextInputAction.next,
                       /*  onChanged: (value) {
                           setState(() {
                             emailError = validatorss(value);
                           });
                         },*/
 
-
-
-
-                        decoration: InputDecoration(
-                          errorText: null,
-                          prefixIcon: IconButton(
-                              onPressed: () {},
-                              icon: Image(
-                                image: AssetImage('assets/images/email.png'),
-                                height: 20,
-                              )),
-                          hintText: 'Email',
-
-                          contentPadding: EdgeInsets.only(
-                            left: parentWidth * 0.04,
-                          ),
-
-
-
-
-                          hintStyle: TextStyle(
-                            fontFamily: "Roboto_Regular",
-                            color: Color(0xff7D7B7B),
-                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                            // color: CommonColor.DIVIDER_COLOR,
-                          ),
-                          fillColor: Color(0xffFFF0F0),
-                          hoverColor: Colors.white,
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(10.0)),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black12, width: 1),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-
-
-
-
+                      decoration: InputDecoration(
+                        errorText: null,
+                        prefixIcon: IconButton(
+                            onPressed: () {},
+                            icon: Image(
+                              image: AssetImage('assets/images/email.png'),
+                              height: 20,
+                            )),
+                        hintText: 'Email',
+                        contentPadding: EdgeInsets.only(
+                          left: parentWidth * 0.04,
                         ),
-
-
+                        hintStyle: TextStyle(
+                          fontFamily: "Roboto_Regular",
+                          color: Color(0xff7D7B7B),
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                          // color: CommonColor.DIVIDER_COLOR,
+                        ),
+                        fillColor: Color(0xffFFF0F0),
+                        hoverColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(10.0)),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black12, width: 1),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
                     ),
                   )),
-
             ),
-
           ),
-
-
-
-
           SizedBox(
             height: parentHeight * 0.025,
           ),
@@ -285,7 +267,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 right: parentWidth * 0.04),
             child: Container(
                 decoration: BoxDecoration(boxShadow: [
-
                   BoxShadow(
                       spreadRadius: 0,
                       blurRadius: 7,
@@ -294,7 +275,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ]),
                 child: TextFormField(
                     obscureText: passwordVisible,
-
                     controller: passwordController,
                     keyboardType: TextInputType.text,
                     autocorrect: true,
@@ -306,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             image: AssetImage('assets/images/user.png'),
                             height: 20,
                           )),
-                   /*   suffixIcon: IconButton(
+                      /*   suffixIcon: IconButton(
                           onPressed: () {},
                           icon: Image(
                             image: AssetImage('assets/images/eye.png'),
@@ -319,8 +299,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             : Icons.visibility),
                         onPressed: () {
                           setState(
-                                () {
-                                  isObscure = !isObscure;
+                            () {
+                              isObscure = !isObscure;
                               passwordVisible = !passwordVisible;
                             },
                           );
@@ -351,9 +331,8 @@ class _LoginScreenState extends State<LoginScreen> {
             height: parentHeight * 0.025,
           ),
           GestureDetector(
-            onTap: (){
-
-             /* showModalBottomSheet(
+            onTap: () {
+              /* showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent, // Keeps the transparency, but handles background in Container
@@ -371,24 +350,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
               );*/
 
-
-                showModalBottomSheet(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(20)),
-                    ),
-                    context: context,
-                    backgroundColor: Colors.white,
-                    elevation: 10,
-                    isScrollControlled: true,
-                    isDismissible: true,
-                    builder: (BuildContext bc) {
-                      return ForgetPassword(
-                      );
-                    });
-              },
-
-
+              showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  context: context,
+                  backgroundColor: Colors.white,
+                  elevation: 10,
+                  isScrollControlled: true,
+                  isDismissible: true,
+                  builder: (BuildContext bc) {
+                    return ForgetPassword();
+                  });
+            },
             child: Padding(
               padding: EdgeInsets.only(left: parentWidth * 0.58),
               child: Text(
@@ -410,46 +384,46 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget RegisterButton(double parentWidth, double parentHeight) {
     return GestureDetector(
       onTap: () {
-
         _validateAndShowTooltip();
 
         // Password validation (ensure it's not empty and meets a minimum length requirement)
-      if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-        print("Password must be at least 6 characters long");
-        return;
-      }
-
-      // Call login API if validation passes
-      ApiClients().loginDio(emailController.text, passwordController.text).then((value) {
-        print(value['data']);
-        print("Response: $value");
-
-        if (mounted) {
-          setState(() {});
+        if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+          print("Password must be at least 6 characters long");
+          return;
         }
 
-        if (value['success'] == true) {
-          print("UserId: ${value['user']?['email']}");
+        // Call login API if validation passes
+        ApiClients()
+            .loginDio(emailController.text, passwordController.text)
+            .then((value) {
+          print(value['data']);
+          print("Response: $value");
 
-          // Store credentials in GetStorage
+          if (mounted) {
+            setState(() {});
+          }
 
-          GetStorage().write(ConstantData.Useremail, value['user']?['email']);
-          GetStorage().write(ConstantData.UserId, value['user']?['userId']);
-          GetStorage().write(ConstantData.Userpassword, value['user']?['password']);
+          if (value['success'] == true) {
+            print("UserId: ${value['user']?['email']}");
 
-          // Navigate to the home screen upon successful login
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) =>  MainHome()),
-          );
-        } else if(value['success'] == false) {
-          print("Email or password does not match");
-        }
-      }).catchError((error) {
-        print("An error occurred: $error");
-      });
+            // Store credentials in GetStorage
 
+            GetStorage().write(ConstantData.Useremail, value['user']?['email']);
+            GetStorage().write(ConstantData.UserId, value['user']?['userId']);
+            GetStorage()
+                .write(ConstantData.Userpassword, value['user']?['password']);
 
+            // Navigate to the home screen upon successful login
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => MainHome()),
+            );
+          } else if (value['success'] == false) {
+            print("Email or password does not match");
+          }
+        }).catchError((error) {
+          print("An error occurred: $error");
+        });
       },
       child: Column(
         children: [
@@ -484,17 +458,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 child: Center(
-                    child: Text(
-                  "Login",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Roboto-Regular',
-                      fontSize: SizeConfig.blockSizeHorizontal * 4.3),
-                ),
-
-
-
+                  child: Text(
+                    "Login",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Roboto-Regular',
+                        fontSize: SizeConfig.blockSizeHorizontal * 4.3),
+                  ),
                 )),
           ),
           SizedBox(height: 20),

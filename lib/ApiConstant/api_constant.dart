@@ -2,11 +2,10 @@ class ApiConstant {
   String BaseUrl = "https://rental-api-5vfa.onrender.com/user/api";
   String BaseUrlCreateProduct = "https://rental-api-5vfa.onrender.com/api";
   String BaseUrlLogin = "https://rental-api-5vfa.onrender.com/user//user";
-
-  // Base url Anything on rent
-
   String registerss = "/users/register"; // User Register Api
   String login = "/login"; // User Register Api
   String products = "/addproduct/jhdfs"; // all product Api
+  String getAllCatagries = "/get-all-cat"; // all product Api
+  String BaseUrlgetAllCatagries = "https://rental-api-5vfa.onrender.com/api"; // all product Api
 
 }
