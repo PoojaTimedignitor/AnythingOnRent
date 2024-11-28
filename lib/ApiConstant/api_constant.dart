@@ -7,5 +7,7 @@ class ApiConstant {
   String products = "/addproduct/jhdfs"; // all product Api
   String getAllCatagries = "/get-all-cat"; // all product Api
   String BaseUrlgetAllCatagries = "https://rental-api-5vfa.onrender.com/api"; // all product Api
+  String BaseUrlCreateProdcut = "https://rental-api-5vfa.onrender.com/api/addon"; // all product Api
+  String createProduct = "/hgsd"; // all product Api
 
 }

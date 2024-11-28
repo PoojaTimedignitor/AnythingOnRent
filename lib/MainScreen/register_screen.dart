@@ -169,8 +169,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return false;
   }
 
-
-
   Future<void> _pickImageBack(ImageSource source) async {
     try {
       final XFile? pickedFile = await ImagePicker().pickImage(source: source);
@@ -202,9 +200,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       print('Error picking image: $e');
     }
   }
-
-
-
 
   void _showFrontGallaryDialogBox(BuildContext context) {
     SizeConfig().init(context);
@@ -588,7 +583,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
     );
   }
-
 
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
