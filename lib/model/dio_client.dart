@@ -163,7 +163,7 @@ class ApiClients {
       String categoryName,
       int quantity,
       List<File> images, // List of selected images
-      String rating,
+      double rating,
       String productCurrentAddress,
       String price,
 
@@ -180,7 +180,7 @@ class ApiClients {
         'name': name,
         'description': description,
         'categoryName': categoryName,
-        'Quantity': quantity,
+        'quantity': quantity,
         'productCurrentAddress': productCurrentAddress,
         'price': price,
         'rating': rating,
@@ -215,7 +215,7 @@ class ApiClients {
       );
 
       // Debug: Print the response data
-      print("Response: ${response.data}");
+      print("Responsesss: ${response.data}");
       String? type = response.data?['data']['type'];
       print("Received type: $type");
       return response.data!;

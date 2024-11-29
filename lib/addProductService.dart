@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:anything/City_Create.dart';
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
+import 'package:anything/MainHome.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/material.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
@@ -24,11 +25,11 @@ class CreateProductService extends StatefulWidget {
 class _CreateProductServiceState extends State<CreateProductService>
     with SingleTickerProviderStateMixin {
   TextEditingController emailController = TextEditingController();
-  final _productNameFocus = FocusNode();
   final _productcurrentAddFocus = FocusNode();
   final _productDiscriptionFocus = FocusNode();
   TextEditingController productNameController = TextEditingController();
-  TextEditingController productCurrentAddressController = TextEditingController();
+  TextEditingController productCurrentAddressController =
+      TextEditingController();
 
   TextEditingController productPerHourController = TextEditingController();
   TextEditingController productPerDayController = TextEditingController();
@@ -36,6 +37,7 @@ class _CreateProductServiceState extends State<CreateProductService>
   TextEditingController productPerMonthController = TextEditingController();
   TextEditingController productDiscriptionController = TextEditingController();
   TextEditingController productPriceController = TextEditingController();
+  TextEditingController productRatingController = TextEditingController();
   late TabController _tabController;
   String updatedTexts = "Original Text";
   String productType = "Product";
@@ -135,7 +137,8 @@ class _CreateProductServiceState extends State<CreateProductService>
   }
 
   void _loadSavedTextCity() {
-    String? savedTextCity = box.read('updatedTextCit  y'); // Retrieve saved text
+    String? savedTextCity =
+        box.read('updatedTextCit  y'); // Retrieve saved text
     if (savedTextCity != null) {
       setState(() {
         updatedCitys = savedTextCity; // Update the UI with the saved text
@@ -152,10 +155,11 @@ class _CreateProductServiceState extends State<CreateProductService>
 
   // Function to update text and save it using GetStorage
 
-
   void _updateQuantity(int change) {
     setState(() {
       quantity += change;
+      if (quantity < 0) quantity = 0; // Prevent negative quantity
+
       box.write('quantity', quantity);
     });
   }
@@ -380,7 +384,13 @@ class _CreateProductServiceState extends State<CreateProductService>
                         width: 165,
                         child: Center(
                           child: Text(
-                            productType,
+                            () {
+                              print(
+                                  "Rendering productType: $productType"); // Debug print
+                              return productType.isNotEmpty
+                                  ? productType
+                                  : 'Unknown Type';
+                            }(),
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: "Montserrat-Medium",
@@ -454,7 +464,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                   child: TextFormField(
                                       textAlign: TextAlign.start,
                                       maxLines: 2,
-                                      focusNode: _productNameFocus,
+
                                       keyboardType: TextInputType.text,
                                       controller: productNameController,
                                       autocorrect: true,
@@ -1598,12 +1608,11 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                                         TextAlign
                                                                             .start,
                                                                     maxLines: 2,
-                                                                    focusNode:
-                                                                        _productNameFocus,
                                                                     keyboardType:
                                                                         TextInputType
                                                                             .text,
                                                                     controller:
+
                                                                         productPriceController,
                                                                     autocorrect:
                                                                         true,
@@ -1616,6 +1625,120 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                                           true,
                                                                       hintText:
                                                                           '  Lowest Price',
+                                                                      contentPadding:
+                                                                          EdgeInsets.all(
+                                                                              1.0),
+                                                                      hintStyle:
+                                                                          TextStyle(
+                                                                        fontFamily:
+                                                                            "Roboto_Regular",
+                                                                        color: Color(
+                                                                            0xff7D7B7B),
+                                                                        fontSize:
+                                                                            SizeConfig.blockSizeHorizontal *
+                                                                                3.5,
+                                                                      ),
+                                                                      fillColor:
+                                                                          Color(
+                                                                              0xffF5F6FB),
+                                                                      hoverColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      filled:
+                                                                          true,
+                                                                      enabledBorder: OutlineInputBorder(
+                                                                          borderSide: BorderSide
+                                                                              .none,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10.0)),
+                                                                      focusedBorder:
+                                                                          OutlineInputBorder(
+                                                                        borderSide: BorderSide(
+                                                                            color:
+                                                                                Color(0xffebd7fb),
+                                                                            width: 1),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10.0),
+                                                                      ),
+                                                                    )),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 10),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          "rating",
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontFamily:
+                                                                "okra-Medium",
+                                                            fontSize: SizeConfig
+                                                                    .blockSizeHorizontal *
+                                                                3.9,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        /*  Padding(
+                                                          padding: EdgeInsets.only(
+                                                              left: 10, right: 10, top: 7),
+                                                          child: Container(
+                                                            height: 50,
+                                                            width: SizeConfig.screenWidth * 0.3,
+                                                            decoration: BoxDecoration(
+                                                              color: Color(0xffF5F6FB),
+                                                              borderRadius: BorderRadius.all(
+                                                                  Radius.circular(7)),
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                               "Lowest Prise",
+                                                                style: TextStyle(
+                                                                  color: Color(0xff7D7B7B),
+                                                                  fontFamily: "Roboto_Regular",
+                                                                  fontSize:
+                                                                  SizeConfig.blockSizeHorizontal *
+                                                                      3.5,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),*/
+                                                        Expanded(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10,
+                                                                    right: 40,
+                                                                    top: 10),
+                                                            child:
+                                                                TextFormField(
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    maxLines: 2,
+                                                                    
+                                                                    keyboardType:
+                                                                        TextInputType
+                                                                            .text,
+                                                                    controller:
+                                                                        productRatingController,
+                                                                    autocorrect:
+                                                                        true,
+                                                                    textInputAction:
+                                                                        TextInputAction
+                                                                            .next,
+                                                                    decoration:
+                                                                        InputDecoration(
+                                                                      isDense:
+                                                                          true,
+                                                                      hintText:
+                                                                          '  rating',
                                                                       contentPadding:
                                                                           EdgeInsets.all(
                                                                               1.0),
@@ -1673,44 +1796,64 @@ class _CreateProductServiceState extends State<CreateProductService>
                         ),
                         GestureDetector(
                           onTap: () {
-
-                            print("productNameController: ${productNameController.text}");
+                            double? rating =
+                                double.tryParse(productRatingController.text);
+                            int qty = quantity;
+                            print("Quantity: $quantity");
+                            print(
+                                "productNameController: ${productNameController.text}");
                             print("updatedTexts: ${updatedTexts}");
                             print("_selectedImage: ${_selectedImages}");
-                            ApiClients().PostCreateProductApi(
-                              productNameController.text,
-                              productDiscriptionController.text,
-                              updatedTexts,  // Pass updatedTexts (category) here
-                              quantity, // The quantity of the product
-                              _selectedImages, // List of images (List<File>)
-                              productCurrentAddressController.text,
-                              productPriceController.text,
-                              productType
 
-                            ).then((value) {
-                              //  if (value.isEmpty) return;
+                            if (rating != null && qty > 0) {
+                              ApiClients()
+                                  .PostCreateProductApi(
+                                productNameController.text,
+                                productDiscriptionController.text,
+                                updatedTexts,
+                                quantity,
+                                _selectedImages,
+                                rating, // Pass the rating as double
+                                productCurrentAddressController.text,
+                                productPriceController.text,
+                              )
+                                  .then((value) {
+                                //  if (value.isEmpty) return;
 
-                              print( value['data']?['type']);
+                                print("type.. ${value['data']?['type']}");
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MainHome()));
+                                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
 
-
-                              if (value['success'] == true) {
+                                /*  if (value['success'] == true) {
                                 if (value['success']) {
                                   setState(() {
                                     productType = value['data']?['type']; // Update the type from the response
                                   });
-                                  /*  Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => const LoginScreen()));*/
+                                  */ /*  Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => const LoginScreen()));*/ /*
                                   // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
 
 
                                 }
-                              }
-                              // }
-                            }); },
+                              }*/
+                                if (value['success'] == true) {
+                                  setState(() {
+                                    productType =
+                                        value['data']?['type'] ?? 'Unknown';
+                                  });
+                                } else {
+                                  print(
+                                      "Error: ${value['error'] ?? 'Failed to create product'}");
+                                }
 
-
-                          child:
-                          Padding(
+                                // }
+                              });
+                            }
+                          },
+                          child: Padding(
                             padding: EdgeInsets.only(
                                 bottom: SizeConfig.screenHeight * 0.03,
                                 left: parentWidth * 0.04,

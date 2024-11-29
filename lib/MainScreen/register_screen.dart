@@ -1892,8 +1892,10 @@ GestureDetector(
                 GetStorage().write(
                     ConstantData.UserId, value['newUser']?['userId']);
                 GetStorage().write(ConstantData.Useremail, value['newUser']?['email']);
-                GetStorage().write(
-                    ConstantData.Userpassword, passwordController.text);
+                GetStorage().write(ConstantData.Userpassword, passwordController.text);
+
+
+
                 GetStorage().write(
                     ConstantData.UserCpassword, confirmPasswordController.text);
                 GetStorage().write(
@@ -1988,7 +1990,7 @@ GestureDetector(
                         fontSize: 15),
                     children: [
                       TextSpan(
-                        text: " Sign Up",
+                        text: " Login",
                         style: TextStyle(
                             color: CommonColor.Blue,
                             fontWeight: FontWeight.w500,
@@ -1997,6 +1999,7 @@ GestureDetector(
                             fontSize: 17),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
+                          print("jdfbsdff");
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (context) => LoginScreen()),

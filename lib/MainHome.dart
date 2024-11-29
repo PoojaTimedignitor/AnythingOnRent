@@ -2,20 +2,21 @@ import 'package:anything/All_Product_List.dart';
 import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
+import 'ConstantData/Constant_data.dart';
 import 'Home_screens.dart';
 import 'MyBehavior.dart';
+import 'SearchCatagries.dart';
 import 'SideBar/MyProfileDetails.dart';
 import 'addProductService.dart';
-import 'dummy.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 
-import 'hsdfgshd.dart';
+import 'package:get_storage/get_storage.dart';
+
+import 'dummyData.dart';
 
 class MainHome extends StatefulWidget {
   @override
@@ -24,64 +25,32 @@ class MainHome extends StatefulWidget {
 
 class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
-
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     setState(() {
+      firstname = GetStorage().read(ConstantData.UserFirstName) ?? "Guest";
+
       _tabController = TabController(length: 2, vsync: this);
-
     });
-  }
-
-  List<Widget> _buildScreens() {
-    return [
-      AllProductList(),
-      AllProductList(),
-      AllProductList(),
-    ];
-  }
-
-  List<PersistentBottomNavBarItem> _navBarsItems() {
-    return [
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.electric_moped),
-        title: ("Home"),
-        activeColorPrimary: Color(0xffC291EE),
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.dining_outlined),
-        title: ("Fev"),
-        activeColorPrimary: Color(0xffC291EE),
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.wallet),
-        title: ("Chat"),
-        activeColorPrimary: Color(0xffC291EE),
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-    ];
   }
 
   @override
   void dispose() {
-
     _searchFocus.dispose();
     _tabController.dispose();
     super.dispose();
   }
 
+  late final String firstname;
   final _searchFocus = FocusNode();
   final searchController = TextEditingController();
   int currentIndex = 0;
-  int _currentIndex = 0;
-  int _counter = 0;
+
+  final box = GetStorage();
+
   late TabController _tabController;
-  bool _isPressed = false;
 
   final List<String> images = [
     "https://img.freepik.com/free-vector/gradient-car-rental-twitch-background_23-2149238538.jpg?w=1380&t=st=1724674607~exp=1724675207~hmac=0ab319f9d9411c32c9d26508151d51f62139e048ac598796c8463dac3ef0aad7"
@@ -151,65 +120,68 @@ class MainHomeState extends State<MainHome>
           resizeToAvoidBottomInset: false,
           // extendBody: true,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(50.0),
+            preferredSize: Size.fromHeight(55.0),
             child: AppBar(
-              title: Column(
-                children: [
-                  Row(
-                    children: [
-                      Column(
+              title: Container(
+                width: 300,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Hi,Aaysha",
+                            "Hi, $firstname",
                             style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                                fontFamily: 'Roboto_Medium',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
+                              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                              fontFamily: 'Roboto_Medium',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ),
                           ),
                           SizedBox(height: 4),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: SizeConfig.screenWidth * 0.0),
-                            child: Row(
-                              children: [
-                                Image(
-                                  image:
-                                      AssetImage('assets/images/location.png'),
-                                  height: SizeConfig.screenHeight * 0.017,
-                                ),
-                                Text(
-                                  "Park Street, Kolkata, 700021",
+                          Row(
+                            children: [
+                              Image(
+                                image: AssetImage('assets/images/location.png'),
+                                height: SizeConfig.screenHeight * 0.017,
+                                color: Color(0xff7993f3),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  " Park Street, Kolkata, 700021",
                                   style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.0,
-                                      fontFamily: 'Poppins_Medium',
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black),
-                                )
-                              ],
-                            ),
-                          )
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal * 3.4,
+                                    fontFamily: 'Poppins_Medium',
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 0.5,
+                                    color: Color(0xff7F96F0),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: SizeConfig.screenWidth * .29),
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.0),
-                          child: Image(
-                            image: AssetImage('assets/images/notification.png'),
-                            height: SizeConfig.screenHeight * 0.025,
-                          ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(left: SizeConfig.screenWidth * .0),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: SizeConfig.screenHeight * 0.0,
+                        ),
+                        child: Image(
+                          image: AssetImage('assets/images/notification.png'),
+                          height: SizeConfig.screenHeight * 0.025,
                         ),
                       ),
-                    ],
-                  ),
-                  /* HomeSearchBar(
-                      SizeConfig.screenHeight, SizeConfig.screenWidth),*/
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -270,7 +242,7 @@ class MainHomeState extends State<MainHome>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Hii, Aaysha",
+                                      "Hii, $firstname",
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontFamily: "okra_Medium",
@@ -663,7 +635,6 @@ class MainHomeState extends State<MainHome>
               backgroundColor: Colors.transparent,
               onPressed: () {
                 showModalBottomSheet(
-
                     context: context,
                     backgroundColor: Colors.white,
                     elevation: 2,
@@ -928,62 +899,50 @@ class MainHomeState extends State<MainHome>
   }
 
   Widget HomeSearchBar(double parentHeight, double parentWidth) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(
-              left: SizeConfig.screenWidth * .05,
-              top: SizeConfig.screenHeight * 0.0),
-          child: SizedBox(
-            height: SizeConfig.screenHeight * .055,
-            width: SizeConfig.screenWidth * .95,
-            child: Padding(
-              padding: EdgeInsets.only(right: parentWidth * 0.04),
-              child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black26),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextFormField(
-                      keyboardType: TextInputType.text,
-                      autocorrect: true,
-                      controller: searchController,
-                      focusNode: _searchFocus,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        prefixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Image(
-                              image: AssetImage("assets/images/search.png"),
-                              height: SizeConfig.screenWidth * 0.07,
-                            )),
-                        hintText: "Search product/service",
-                        hintStyle: TextStyle(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RecentSearchesScreen()),
+        );
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+                left: SizeConfig.screenWidth * .05,
+                top: SizeConfig.screenHeight * 0.0),
+            child: SizedBox(
+              height: SizeConfig.screenHeight * .055,
+              width: SizeConfig.screenWidth * .95,
+              child: Padding(
+                padding: EdgeInsets.only(right: parentWidth * 0.04),
+                child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black26),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 10),
+                        Image(
+                          image: AssetImage("assets/images/search.png"),
+                          height: SizeConfig.screenWidth * 0.07,
+                        ),
+                        Text(" Search Product/Service", style:  TextStyle(
                           fontFamily: "Roboto_Regular",
                           fontSize: SizeConfig.blockSizeHorizontal * 3.5,
                           color: CommonColor.SearchBar,
                           fontWeight: FontWeight.w300,
-                        ),
-                        contentPadding: EdgeInsets.only(
-                          top: parentWidth * 0.05,
-                        ),
-                        fillColor: Color(0xfffbf3f3),
-                        hoverColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(10.0)),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black12, width: 1),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ))),
+                        ),),
+                      ],
+                    )),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -1091,13 +1050,15 @@ class MainHomeState extends State<MainHome>
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DashBoardScreen(
-
-                    //  recLane: widget.recLane,
-                    )));
+        showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.white,
+            elevation: 2,
+            isScrollControlled: true,
+            isDismissible: true,
+            builder: (BuildContext bc) {
+              return CreateProductService();
+            });
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -1139,15 +1100,21 @@ class MainHomeState extends State<MainHome>
               SizedBox(
                 width: 10,
               ),
-              Center(
-                  child: Text(" POPULAR CATEGORIES",
-                      style: TextStyle(
-                          color: Colors.grey[500]!,
-                          fontFamily: "okra_Regular",
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 0.9),
-                      overflow: TextOverflow.ellipsis)),
+              GestureDetector(
+                onTap: () {
+                 /* Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => searchbarrr()));*/
+                },
+                child: Center(
+                    child: Text(" POPULAR CATEGORIES",
+                        style: TextStyle(
+                            color: Colors.grey[500]!,
+                            fontFamily: "okra_Regular",
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.9),
+                        overflow: TextOverflow.ellipsis)),
+              ),
               SizedBox(
                 width: 10,
               ),
@@ -1345,13 +1312,13 @@ class MainHomeState extends State<MainHome>
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                          Color(0xffFEBA69),
-                          Color(0xffFE7F64),
-                        ],
-                      )),
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffFEBA69),
+                              Color(0xffFE7F64),
+                            ],
+                          )),
                       buttonMargin: EdgeInsets.symmetric(horizontal: 18),
                       unselectedDecoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -1365,7 +1332,6 @@ class MainHomeState extends State<MainHome>
                           child: Container(
                             height: 40,
                             width: 165,
-
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -1396,15 +1362,15 @@ class MainHomeState extends State<MainHome>
                               alignment: Alignment.center,
                               child: Center(
                                   child: Text(
-                                    "Service",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "Roboto-Medium",
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.6,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  )),
+                                "Service",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Roboto-Medium",
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.6,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              )),
                             ),
                           ),
                         ),
@@ -2118,3 +2084,5 @@ class MainHomeState extends State<MainHome>
     );
   }
 }
+
+

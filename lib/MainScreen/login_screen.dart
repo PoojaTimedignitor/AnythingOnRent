@@ -1,6 +1,4 @@
 import 'package:anything/ConstantData/Constant_data.dart';
-import 'package:anything/Home_screen.dart';
-import 'package:anything/MainScreen/register_screen.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  final _fullNameFocus = FocusNode();
-  final _emailFocus = FocusNode();
+
   bool passwordVisible = true;
   bool isObscure = false;
   var _formKey = GlobalKey<FormState>();
@@ -49,10 +46,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       setState(() {
+
         emailController.text =
             box.read<String>(ConstantData.Useremail)?.trim() ?? "";
         passwordController.text =
-            box.read<String>(ConstantData.Userpassword)?.trim() ?? "";
+            box.read<String>(ConstantData.UserCpassword)?.trim() ?? "";
       });
     }
   }
@@ -159,13 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   left: parentWidth * 0.0,
                   right: parentWidth * 0.04),
               child: Container(
-                  decoration: BoxDecoration(boxShadow: [
-                    BoxShadow(
-                        spreadRadius: 0,
-                        blurRadius: 7,
-                        offset: Offset(0, 2),
-                        color: Colors.black26)
-                  ]),
+
                   child: Tooltip(
                     key: _tooltipKey,
 
@@ -266,13 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 0,
-                      blurRadius: 7,
-                      offset: Offset(0, 2),
-                      color: Colors.black26)
-                ]),
+
                 child: TextFormField(
                     obscureText: passwordVisible,
                     controller: passwordController,
@@ -404,18 +390,17 @@ class _LoginScreenState extends State<LoginScreen> {
           }
 
           if (value['success'] == true) {
-            print("UserId: ${value['user']?['email']}");
+            print("UserId: ${ value['user']?['userId']}");
 
             // Store credentials in GetStorage
 
             GetStorage().write(ConstantData.Useremail, value['user']?['email']);
             GetStorage().write(ConstantData.UserId, value['user']?['userId']);
-            GetStorage()
-                .write(ConstantData.Userpassword, value['user']?['password']);
+            GetStorage().write(
+                ConstantData.Userpassword, passwordController.text);
 
             // Navigate to the home screen upon successful login
-            Navigator.pushReplacement(
-              context,
+            Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => MainHome()),
             );
           } else if (value['success'] == false) {
