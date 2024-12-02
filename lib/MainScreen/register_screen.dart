@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:google_ml_kit/google_ml_kit.dart'; // For text recognition
 
-
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +14,6 @@ import '../Common_File/SizeConfig.dart';
 import '../ConstantData/Constant_data.dart';
 import '../location_map.dart';
 import 'package:get_storage/get_storage.dart';
-
 
 import 'login_screen.dart';
 
@@ -34,10 +32,24 @@ class RegisterScreen extends StatefulWidget {
   final String FrontImage;
   final String BackImage;
 
- /* final File FrontImage;
+  /* final File FrontImage;
   final File BackImage;
 */
-  const RegisterScreen({super.key, required this.address, required this.lat, required this.long, required this.ProfilePicture, /*required this.FrontImage, required this.BackImage*/ required this.firstName, required this.lastname, required this.email, required this.password, required this.cpassword, required this.permanetAddress, required this.mobileNumber, required this.FrontImage, required this.BackImage});
+  const RegisterScreen(
+      {super.key,
+      required this.address,
+      required this.lat,
+      required this.long,
+      required this.ProfilePicture,
+      /*required this.FrontImage, required this.BackImage*/ required this.firstName,
+      required this.lastname,
+      required this.email,
+      required this.password,
+      required this.cpassword,
+      required this.permanetAddress,
+      required this.mobileNumber,
+      required this.FrontImage,
+      required this.BackImage});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -80,8 +92,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   File? _imageBack;
   File? _imageProfile;
 
-
-
   Future<void> _pickImageFront(ImageSource source, bool isBackSide) async {
     try {
       final XFile? pickedFile = await ImagePicker().pickImage(source: source);
@@ -91,36 +101,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _imageFront = File(pickedFile.path);
         });
 
-        bool isValid = await validateAadhaarImage(_imageFront!,);
+        bool isValid = await validateAadhaarImage(
+          _imageFront!,
+        );
         if (isValid) {
           await preprocessImage(_imageFront!);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('This image is not valid for Aadhaar card.')),
+            SnackBar(
+                content: Text('This image is not valid for Aadhaar card.')),
           );
         }
       }
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   Future<bool> validateAadhaarImage(File file) async {
-
     return true;
   }
 
   Future<void> preprocessImage(File file) async {
-
     img.Image? image = img.decodeImage(file.readAsBytesSync());
 
     if (image != null) {
-
       img.Image grayscaleImage = img.grayscale(image);
 
-
-      File processedFile = File('${file.path}_processed.jpg')..writeAsBytesSync(img.encodeJpg(grayscaleImage));
-
+      File processedFile = File('${file.path}_processed.jpg')
+        ..writeAsBytesSync(img.encodeJpg(grayscaleImage));
 
       await verifyAadhaar(processedFile);
     }
@@ -129,7 +136,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> verifyAadhaar(File file) async {
     final inputImage = InputImage.fromFile(file);
     final textRecognizer = GoogleMlKit.vision.textRecognizer();
-    final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+    final RecognizedText recognizedText =
+        await textRecognizer.processImage(inputImage);
 
     print("Detected Text: ${recognizedText.text}");
 
@@ -204,141 +212,136 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _showFrontGallaryDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
-        context: context,
-        builder: (BuildContext context,) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            title: Column(
-              children: [
-                Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        _pickImageFront(ImageSource.camera,false);
-                        _pickImageFront(ImageSource.camera, true);
-                      },
-                      child: Row(
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: SizeConfig.screenHeight * 0.024),
-                              child: Image(
-                                image: AssetImage(
-                                    'assets/images/camerapop.png'),
-                                height: 20,
-                              )
-                          ),
-                          Padding(
+      context: context,
+      builder: (
+        BuildContext context,
+      ) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Column(
+            children: [
+              Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _pickImageFront(ImageSource.camera, false);
+                      _pickImageFront(ImageSource.camera, true);
+                    },
+                    child: Row(
+                      children: [
+                        Padding(
                             padding: EdgeInsets.only(
-                                top: SizeConfig.screenHeight * 0.024,
-                                left: SizeConfig.screenHeight * 0.024),
-                            child: Text(
-                              "Camera",
-                              style: TextStyle(
-                                  height: 2.5,
-                                  fontSize: SizeConfig.blockSizeHorizontal *
-                                      4.3,
-                                  fontFamily: 'Roboto_Regular',
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black),
-                            ),
+                                top: SizeConfig.screenHeight * 0.024),
+                            child: Image(
+                              image: AssetImage('assets/images/camerapop.png'),
+                              height: 20,
+                            )),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.024,
+                              left: SizeConfig.screenHeight * 0.024),
+                          child: Text(
+                            "Camera",
+                            style: TextStyle(
+                                height: 2.5,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Regular',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        _pickImageFront(ImageSource.gallery,false);
-                        _pickImageFront(ImageSource.gallery,true);
-                      },
-                      child: Row(
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: SizeConfig.screenHeight * 0.0),
-                              child: Image(
-                                image: AssetImage(
-                                    'assets/images/gallerypop.png'),
-                                height: 20,
-                              )
-                          ),
-                          Padding(
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _pickImageFront(ImageSource.gallery, false);
+                      _pickImageFront(ImageSource.gallery, true);
+                    },
+                    child: Row(
+                      children: [
+                        Padding(
                             padding: EdgeInsets.only(
-                                top: SizeConfig.screenHeight * 0.0,
-                                left: SizeConfig.screenHeight * 0.024),
-                            child: Text(
-                              "Photos And Gallery Library",
-                              style: TextStyle(
-                                  height: 2.5,
-                                  fontSize: SizeConfig.blockSizeHorizontal *
-                                      4.3,
-                                  fontFamily: 'Roboto_Regular',
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black),
-                            ),
+                                top: SizeConfig.screenHeight * 0.0),
+                            child: Image(
+                              image: AssetImage('assets/images/gallerypop.png'),
+                              height: 20,
+                            )),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.0,
+                              left: SizeConfig.screenHeight * 0.024),
+                          child: Text(
+                            "Photos And Gallery Library",
+                            style: TextStyle(
+                                height: 2.5,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Regular',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                    /* AppPreferences.clearAppPreference();
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  /* AppPreferences.clearAppPreference();
                   Get.to(() => const  SignIn());*/
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        top: SizeConfig.screenHeight * 0.02),
-                    child: Container(
-                      width: SizeConfig.screenWidth * 0.3,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        // color: Colors.white,
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                  child: Container(
+                    width: SizeConfig.screenWidth * 0.3,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      // color: Colors.white,
 
-                        gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                          // stops: [0.8, 0.9],
-                          colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
-                        ),
-
-                        color: Color(0xffFF8B8B),
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        // stops: [0.8, 0.9],
+                        colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
                       ),
-                      child: Center(
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(
-                              height: 2,
-                              fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                              fontFamily: 'Roboto_Medium',
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white),
-                        ),
+
+                      color: Color(0xffFF8B8B),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                            height: 2,
+                            fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                            fontFamily: 'Roboto_Medium',
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white),
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        },
-      );
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-      }
   void _showBackGallaryDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
       context: context,
       builder: (
-          BuildContext context,
-          ) {
+        BuildContext context,
+      ) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -352,18 +355,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       _pickImageBack(ImageSource.camera);
-
                     },
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.024),
-                          child:   Image(
-                            image: AssetImage('assets/images/camerapop.png'),
-                            height: 20,
-                          )
-                        ),
+                            padding: EdgeInsets.only(
+                                top: SizeConfig.screenHeight * 0.024),
+                            child: Image(
+                              image: AssetImage('assets/images/camerapop.png'),
+                              height: 20,
+                            )),
                         Padding(
                           padding: EdgeInsets.only(
                               top: SizeConfig.screenHeight * 0.024,
@@ -389,13 +390,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.0),
-                          child:  Image(
-                            image: AssetImage('assets/images/gallerypop.png'),
-                            height: 20,
-                          )
-                        ),
+                            padding: EdgeInsets.only(
+                                top: SizeConfig.screenHeight * 0.0),
+                            child: Image(
+                              image: AssetImage('assets/images/gallerypop.png'),
+                              height: 20,
+                            )),
                         Padding(
                           padding: EdgeInsets.only(
                               top: SizeConfig.screenHeight * 0.0,
@@ -464,8 +464,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     showDialog(
       context: context,
       builder: (
-          BuildContext context,
-          ) {
+        BuildContext context,
+      ) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -473,24 +473,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
           title: Column(
             //   crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickImageProfile(ImageSource.camera);
-
                 },
                 child: Row(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: SizeConfig.screenHeight * 0.024),
-                      child:
-                      Image(
-                        image: AssetImage('assets/images/camerapop.png'),
-                        height: 20,
-                      )
-                    ),
+                        padding: EdgeInsets.only(
+                            top: SizeConfig.screenHeight * 0.024),
+                        child: Image(
+                          image: AssetImage('assets/images/camerapop.png'),
+                          height: 20,
+                        )),
                     Padding(
                       padding: EdgeInsets.only(
                           top: SizeConfig.screenHeight * 0.024,
@@ -516,13 +512,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Row(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: SizeConfig.screenHeight * 0.0),
-                      child:   Image(
-                        image: AssetImage('assets/images/gallerypop.png'),
-                        height: 20,
-                      )
-                    ),
+                        padding:
+                            EdgeInsets.only(top: SizeConfig.screenHeight * 0.0),
+                        child: Image(
+                          image: AssetImage('assets/images/gallerypop.png'),
+                          height: 20,
+                        )),
                     Padding(
                       padding: EdgeInsets.only(
                           top: SizeConfig.screenHeight * 0.0,
@@ -594,26 +589,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController mobileNumberController = TextEditingController();
 
   void saveFrontImages(List<Map<String, String>> frontImages) {
-    box.write('frontImages', frontImages);  // Saving the list of images
+    box.write('frontImages', frontImages); // Saving the list of images
   }
 
   // Fetch front images from local storage
   List<Map<String, String>> getFrontImages() {
     return box.read('frontImages') ?? [];
   }
+
   @override
   void initState() {
     super.initState();
 
-    if(mounted){
+    if (mounted) {
       setState(() {
-        firstNameController =  TextEditingController(text: widget.firstName);
+        firstNameController = TextEditingController(text: widget.firstName);
         lastNameController = TextEditingController(text: widget.lastname);
         emailController = TextEditingController(text: widget.email);
         passwordController = TextEditingController(text: widget.password);
-        confirmPasswordController = TextEditingController(text: widget.cpassword);
-        permanentAddressController = TextEditingController(text: widget.permanetAddress);
-        mobileNumberController = TextEditingController(text: widget.mobileNumber);
+        confirmPasswordController =
+            TextEditingController(text: widget.cpassword);
+        permanentAddressController =
+            TextEditingController(text: widget.permanetAddress);
+        mobileNumberController =
+            TextEditingController(text: widget.mobileNumber);
         if (widget.ProfilePicture.isNotEmpty) {
           // Convert path to File
           _imageProfile = File(widget.ProfilePicture);
@@ -621,21 +620,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Set to null if no image path is provided
           AssetImage('assets/images/profiless.png');
         }
-         if(widget.FrontImage.isNotEmpty){
-           _imageFront = File(widget.FrontImage);
-         }
-
-        else{
-           AssetImage(
-               'assets/images/picremove.png');
-         }
-
-        if(widget.BackImage.isNotEmpty){
-          _imageBack = File(widget.BackImage);
-        }  else{
+        if (widget.FrontImage.isNotEmpty) {
+          _imageFront = File(widget.FrontImage);
+        } else {
           AssetImage('assets/images/picremove.png');
         }
 
+        if (widget.BackImage.isNotEmpty) {
+          _imageBack = File(widget.BackImage);
+        } else {
+          AssetImage('assets/images/picremove.png');
+        }
       });
     }
 
@@ -647,7 +642,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
     }
 
-
     focusNode = FocusNode();
     focusNode.addListener(() => setState(() {}));
     firstNameController = TextEditingController(text: widget.firstName);
@@ -657,12 +651,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     passwordController = TextEditingController(text: widget.password);
     confirmPasswordController = TextEditingController(text: widget.cpassword);
     addressController = TextEditingController(text: widget.address);
-    permanentAddressController = TextEditingController(text:widget.permanetAddress);
+    permanentAddressController =
+        TextEditingController(text: widget.permanetAddress);
     mobileNumberController = TextEditingController(text: widget.mobileNumber);
-
-
-
-
   }
 
 /*
@@ -677,8 +668,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 */
 
-
-
   @override
   void dispose() {
     firstNameController.dispose();
@@ -690,10 +679,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Stack(
@@ -715,10 +702,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               RegisterContent(SizeConfig.screenHeight, SizeConfig.screenWidth),
               NameData(SizeConfig.screenHeight, SizeConfig.screenWidth),
-
             ],
           ),
-
         ],
       ),
     );
@@ -889,10 +874,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           left: parentWidth * 0.0,
                           right: parentWidth * 0.04),
                       child: Container(
-
                         child: TextFormField(
                             keyboardType: TextInputType.text,
-                            controller:firstNameController,
+                            controller: firstNameController,
                             autocorrect: true,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
@@ -943,7 +927,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           left: parentWidth * 0.0,
                           right: parentWidth * 0.04),
                       child: Container(
-
                           child: TextFormField(
                               keyboardType: TextInputType.text,
                               controller: lastNameController,
@@ -995,7 +978,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-
                 child: TextFormField(
                     focusNode: _emailFocus,
                     keyboardType: TextInputType.text,
@@ -1050,7 +1032,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-
                 child: TextFormField(
                     obscureText: passwordVisible,
                     focusNode: _passwordFocus,
@@ -1122,7 +1103,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-
                 child: TextFormField(
                     obscureText: cPasswordVisible,
                     keyboardType: TextInputType.text,
@@ -1174,7 +1154,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           SizedBox(
             height: parentHeight * 0.025,
-
           ),
           Text(
             "Current Address",
@@ -1185,110 +1164,136 @@ class _RegisterScreenState extends State<RegisterScreen> {
               fontFamily: 'Roboto-Regular',
             ),
           ),
-
           Stack(
             children: [
-
-widget.address.isEmpty?
-              GestureDetector(
-                onTap: (){
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LocationMapScreen(firstName: firstNameController.text, lastname: lastNameController.text, email: emailController.text, password: passwordController.text, cpassword: confirmPasswordController.text, permanetAddress: permanentAddressController.text, mobileNumber: mobileNumberController.text, ProfileImage:_imageProfile?.path ?? '', frontImage: _imageFront?.path ?? '', BackImage: _imageBack?.path ?? '',)),
-
-                  );
-
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: parentHeight * 0.01,
-                      left: parentWidth * 0.0,
-                      right: parentWidth * 0.04),
-                  child: Container(
-                    height: parentHeight*0.065,
-                    decoration: BoxDecoration(
-                      color: Color(0xffFFF0F0),
-                        borderRadius: BorderRadius.circular(10.0),
-
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14.0),
-                      child: Row(
-                        children: [
-                          Image(
-                            image: AssetImage('assets/images/location.png'),
-                            color: Colors.black45,
-                            height: 18,
+              widget.address.isEmpty
+                  ? GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LocationMapScreen(
+                                    firstName: firstNameController.text,
+                                    lastname: lastNameController.text,
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                    cpassword: confirmPasswordController.text,
+                                    permanetAddress:
+                                        permanentAddressController.text,
+                                    mobileNumber: mobileNumberController.text,
+                                    ProfileImage: _imageProfile?.path ?? '',
+                                    frontImage: _imageFront?.path ?? '',
+                                    BackImage: _imageBack?.path ?? '',
+                                  )),
+                        );
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: parentHeight * 0.01,
+                            left: parentWidth * 0.0,
+                            right: parentWidth * 0.04),
+                        child: Container(
+                          height: parentHeight * 0.065,
+                          decoration: BoxDecoration(
+                            color: Color(0xffFFF0F0),
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                          Text(
-                            "    Select Current Address",
-                            style: TextStyle(
-                              color: Color(0xff7D7B7B),
-                              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                              fontWeight: FontWeight.normal,
-                              fontFamily: 'Roboto-Regular',
+                          child: Padding(
+                            padding: const EdgeInsets.all(14.0),
+                            child: Row(
+                              children: [
+                                Image(
+                                  image:
+                                      AssetImage('assets/images/location.png'),
+                                  color: Colors.black45,
+                                  height: 18,
+                                ),
+                                Text(
+                                  "    Select Current Address",
+                                  style: TextStyle(
+                                    color: Color(0xff7D7B7B),
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal * 3.8,
+                                    fontWeight: FontWeight.normal,
+                                    fontFamily: 'Roboto-Regular',
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ):
-GestureDetector(
-  onTap: (){
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => LocationMapScreen(firstName: firstNameController.text, lastname: lastNameController.text, email: emailController.text, password: passwordController.text, cpassword: confirmPasswordController.text, permanetAddress: permanentAddressController.text, mobileNumber: mobileNumberController.text, ProfileImage:_imageProfile?.path ?? '', frontImage: _imageFront?.path?? '', BackImage: _imageBack?.path ?? '',
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LocationMapScreen(
+                                      firstName: firstNameController.text,
+                                      lastname: lastNameController.text,
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                      cpassword: confirmPasswordController.text,
+                                      permanetAddress:
+                                          permanentAddressController.text,
+                                      mobileNumber: mobileNumberController.text,
+                                      ProfileImage: _imageProfile?.path ?? '',
+                                      frontImage: _imageFront?.path ?? '',
+                                      BackImage: _imageBack?.path ?? '',
 
-          //  recLane: widget.recLane,
-        )));
-  },
-  child: Padding(
-    padding: EdgeInsets.only(
-        top: parentHeight * 0.01,
-        left: parentWidth * 0.0,
-        right: parentWidth * 0.04),
-    child:Container(
-      decoration: BoxDecoration(
-        color: Color(0xffFFF0F0),
-        borderRadius: BorderRadius.circular(10.0),
-
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(22.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start, // Align items at the top
-          children: [
-            Image(
-              image: AssetImage('assets/images/location.png'),
-              color: Color(0xff7F96F0),
-              height: 18,
-            ),
-            SizedBox(width: 10), // Add some space between the icon and text
-            Expanded(  // Allows the text to take up available space
-              child: Text(
-                widget.address,
-                style: TextStyle(
-                  color: Color(0xff7F96F0),
-                  fontSize: 14, // Adjust font size accordingly
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Roboto-Medium',
-                ),
-                maxLines: 3, // Maximum two lines
-                overflow: TextOverflow.ellipsis, // Show ellipsis for overflow
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-
-  ),
-)
+                                      //  recLane: widget.recLane,
+                                    )));
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: parentHeight * 0.01,
+                            left: parentWidth * 0.0,
+                            right: parentWidth * 0.04),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xffFFF0F0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(22.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment
+                                  .start, // Align items at the top
+                              children: [
+                                Image(
+                                  image:
+                                      AssetImage('assets/images/location.png'),
+                                  color: Color(0xff7F96F0),
+                                  height: 18,
+                                ),
+                                SizedBox(
+                                    width:
+                                        10), // Add some space between the icon and text
+                                Expanded(
+                                  // Allows the text to take up available space
+                                  child: Text(
+                                    widget.address,
+                                    style: TextStyle(
+                                      color: Color(0xff7F96F0),
+                                      fontSize:
+                                          14, // Adjust font size accordingly
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Roboto-Medium',
+                                    ),
+                                    maxLines: 3, // Maximum two lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Show ellipsis for overflow
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
             ],
           ),
-
           SizedBox(
             height: parentHeight * 0.025,
           ),
@@ -1307,7 +1312,6 @@ GestureDetector(
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-
                 child: TextFormField(
                     keyboardType: TextInputType.text,
                     focusNode: _permanentAddressFocus,
@@ -1361,7 +1365,6 @@ GestureDetector(
                 left: parentWidth * 0.0,
                 right: parentWidth * 0.04),
             child: Container(
-
                 child: TextFormField(
                     keyboardType: TextInputType.number,
                     autocorrect: true,
@@ -1459,24 +1462,23 @@ GestureDetector(
             ),
           ),
           SizedBox(height: 3),
-         Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                  padding: EdgeInsets.only(
-                      left: parentWidth * 0.02),
-                  child: Text(
-                    "(Aadhar Card)",
-                    style: TextStyle(
-                      color: CommonColor.bottomsheet,
-                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                      // fontWeight: FontWeight.normal,
+                padding: EdgeInsets.only(left: parentWidth * 0.02),
+                child: Text(
+                  "(Aadhar Card)",
+                  style: TextStyle(
+                    color: CommonColor.bottomsheet,
+                    fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                    // fontWeight: FontWeight.normal,
 
-                      fontFamily: 'Roboto-Regular',
-                    ),
+                    fontFamily: 'Roboto-Regular',
                   ),
                 ),
-     /*         Padding(
+              ),
+              /*         Padding(
                 padding: EdgeInsets.only(right: 20),
                 child: Form(
                   key: formKey,
@@ -1592,7 +1594,136 @@ GestureDetector(
                                           Padding(
                                             padding: EdgeInsets.only(
                                                 top: parentHeight * 0.01),
-                                            child:  /*Image.network(frontImages[index]['url']!)*/ Image(
+                                            child: /*Image.network(frontImages[index]['url']!)*/
+                                                Image(
+                                                    image: AssetImage(
+                                                        'assets/images/uploadpic.png'),
+                                                    height:
+                                                        parentHeight * 0.04),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Container(
+                                            height: 26,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: CommonColor.Blue),
+                                              borderRadius:
+                                                  BorderRadius.circular(7),
+                                            ),
+                                            child: Center(
+                                              child: Text("Browser file",
+                                                  style: TextStyle(
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          2.5,
+                                                      fontFamily:
+                                                          'Roboto_Regular',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      //overflow: TextOverflow.ellipsis,
+                                                      color: CommonColor.Blue)),
+                                            ),
+                                          ),
+                                        ],
+                                      ), //width to 100% match to parent container.
+                                      // color:Colors.yellow //background color of inner container
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 7, bottom: 5),
+                                            child: Center(
+                                              child: Container(
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  70))),
+                                                  height: parentWidth * 0.256,
+                                                  width: parentWidth * 0.256,
+                                                  child: Image.file(
+                                                      _imageFront!,
+                                                      fit: BoxFit.cover)),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              _imageFront = null;
+                                              setState(() {});
+                                            },
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: parentWidth * 0.03),
+                                                child: Align(
+                                                    alignment:
+                                                        Alignment.bottomRight,
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      radius: 13.0,
+                                                      child: Image(
+                                                          image: AssetImage(
+                                                              'assets/images/picremove.png'),
+                                                          height: parentHeight *
+                                                              0.016),
+                                                    ))),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                            ),
+                          )),
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: EdgeInsets.only(left: parentHeight * 0.0),
+                        child: Text(
+                          "Front Side",
+                          style: TextStyle(
+                            color: Color(0xff242222),
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.2,
+                            // fontWeight: FontWeight.w500,
+                            fontFamily: 'Montserrat-Regular',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 20),
+                  Column(
+                    children: [
+                      Container(
+                        width: parentWidth *
+                            0.42, // padding: EdgeInsets.all(20), //padding of outer Container
+                        child: DottedBorder(
+                            borderType: BorderType.RRect,
+                            radius: Radius.circular(10),
+                            color: CommonColor.Blue, //color of dotted/dash line
+                            strokeWidth: 1, //thickness of dash/dots
+                            dashPattern: [4, 5],
+                            //dash patterns, 10 is dash width, 6 is space width
+                            child: GestureDetector(
+                              onTap: () {
+                                _showBackGallaryDialogBox(context);
+                              },
+                              child: _imageBack == null
+                                  ? Container(
+                                      //inner container
+                                      height: parentHeight *
+                                          0.14, //height of inner container
+                                      width: double.infinity,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: parentHeight * 0.01),
+                                            child: Image(
                                                 image: AssetImage(
                                                     'assets/images/uploadpic.png'),
                                                 height: parentHeight * 0.04),
@@ -1631,23 +1762,19 @@ GestureDetector(
                                         alignment: Alignment.topRight,
                                         children: [
                                           Padding(
-                                            padding:  EdgeInsets.only(top: 7,bottom: 5),
+                                            padding: EdgeInsets.only(
+                                                top: 7, bottom: 5),
                                             child: Center(
                                               child: Container(
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  70))),
-                                                  height: parentWidth * 0.256,
-                                                  width: parentWidth * 0.256,
-                                                  child: Image.file(_imageFront!,
+                                                  height: parentWidth * 0.250,
+                                                  width: parentWidth * 0.250,
+                                                  child: Image.file(_imageBack!,
                                                       fit: BoxFit.cover)),
                                             ),
                                           ),
                                           GestureDetector(
                                             onTap: () {
-                                              _imageFront = null;
+                                              _imageBack = null;
                                               setState(() {});
                                             },
                                             child: Padding(
@@ -1655,141 +1782,22 @@ GestureDetector(
                                                     right: parentWidth * 0.03),
                                                 child: Align(
                                                     alignment:
-                                                    Alignment.bottomRight,
+                                                        Alignment.bottomRight,
                                                     child: CircleAvatar(
-                                                      backgroundColor: Colors.white,
+                                                      backgroundColor:
+                                                          Colors.white,
                                                       radius: 13.0,
                                                       child: Image(
                                                           image: AssetImage(
                                                               'assets/images/picremove.png'),
-                                                          height:
-                                                          parentHeight * 0.016),
-                                                    ))
-                                            ),
+                                                          height: parentHeight *
+                                                              0.016),
+                                                    ))),
                                           )
                                         ],
                                       ),
                                     ),
-                            ),
-                          )),
-                      SizedBox(height: 10),
-                      Padding(
-                        padding: EdgeInsets.only(left: parentHeight * 0.0),
-                        child: Text(
-                          "Front Side",
-                          style: TextStyle(
-                            color: Color(0xff242222),
-                            fontSize: SizeConfig.blockSizeHorizontal * 3.2,
-                            // fontWeight: FontWeight.w500,
-                            fontFamily: 'Montserrat-Regular',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 20),
-                  Column(
-                    children: [
-                      Container(
-                        width: parentWidth *
-                            0.42, // padding: EdgeInsets.all(20), //padding of outer Container
-                        child: DottedBorder(
-                          borderType: BorderType.RRect,
-                          radius: Radius.circular(10),
-
-                          color: CommonColor.Blue, //color of dotted/dash line
-                          strokeWidth: 1, //thickness of dash/dots
-                          dashPattern: [4, 5],
-                          //dash patterns, 10 is dash width, 6 is space width
-                          child:  GestureDetector(
-                            onTap: (){
-                              _showBackGallaryDialogBox(context);
-                            },
-                                child: _imageBack == null
-    ? Container(
-                                    //inner container
-                                    height: parentHeight *
-                                        0.14, //height of inner container
-                                    width: double.infinity,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: parentHeight * 0.01),
-                                          child: Image(
-                                              image: AssetImage(
-                                                  'assets/images/uploadpic.png'),
-                                              height: parentHeight * 0.04),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Container(
-                                          height: 26,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: CommonColor.Blue),
-                                            borderRadius:
-                                                BorderRadius.circular(7),
-                                          ),
-                                          child: Center(
-                                            child: Text("Browser file",
-                                                style: TextStyle(
-                                                    fontSize: SizeConfig
-                                                            .blockSizeHorizontal *
-                                                        2.5,
-                                                    fontFamily: 'Roboto_Regular',
-                                                    fontWeight: FontWeight.w400,
-                                                    //overflow: TextOverflow.ellipsis,
-                                                    color: CommonColor.Blue)),
-                                          ),
-                                        ),
-                                      ],
-                                    ), //width to 100% match to parent container.
-                                    // color:Colors.yellow //background color of inner container
-                                  ):  Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Stack(
-                                    alignment: Alignment.topRight,
-                                    children: [
-                                      Padding(
-                                        padding:  EdgeInsets.only(top: 7,bottom: 5),
-                                        child: Center(
-                                          child: Container(
-                                              height: parentWidth * 0.250,
-                                              width: parentWidth * 0.250,
-                                              child: Image.file(_imageBack!,
-                                                  fit: BoxFit.cover)),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          _imageBack = null;
-                                          setState(() {});
-                                        },
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                right: parentWidth * 0.03),
-                                            child: Align(
-                                                alignment:
-                                                Alignment.bottomRight,
-                                                child: CircleAvatar(
-                                                  backgroundColor: Colors.white,
-                                                  radius: 13.0,
-                                                  child: Image(
-                                                      image: AssetImage(
-                                                          'assets/images/picremove.png'),
-                                                      height:
-                                                      parentHeight * 0.016),
-                                                ))
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-
-                        ),
+                            )),
                       ),
                       SizedBox(height: 10),
                       Padding(
@@ -1809,7 +1817,7 @@ GestureDetector(
                 ],
               ),
             ],
-         )
+          )
         ]));
   }
 
@@ -1818,16 +1826,14 @@ GestureDetector(
       children: [
         GestureDetector(
           onTap: () {
-
-              if (passwordController.text != confirmPasswordController.text) {
-            print("Error: Password and Confirm Password do not match");
-            // You can also show a UI error message here
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Passwords do not match'))
-            );
-            return;
-          }
-        /*
+            if (passwordController.text != confirmPasswordController.text) {
+              print("Error: Password and Confirm Password do not match");
+              // You can also show a UI error message here
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Passwords do not match')));
+              return;
+            }
+            /*
              if(mounted){
                 setState(() {
                   isLoading = true;
@@ -1841,12 +1847,9 @@ GestureDetector(
               print("Form state is null");
             }
 
-
-
-
-        /*else {*/
+            /*else {*/
             // print("Full Name: ${fullNameController.text}");
-           print("firstname: ${firstNameController.text}");
+            print("firstname: ${firstNameController.text}");
             print("lastname: ${lastNameController.text}");
             print("phoneNumber: ${mobileNumberController.text}");
             print("email: ${emailController.text}");
@@ -1872,7 +1875,6 @@ GestureDetector(
               permanentAddressController.text,
               widget.lat,
               widget.long,
-
             )
                 .then((value) {
               //  if (value.isEmpty) return;
@@ -1885,41 +1887,42 @@ GestureDetector(
                 });
               }
 
-
               if (value['success'] == true) {
                 if (value['newUser']?['email'] != null) {}
-                print("userId stored successfully: ${value['newUser']?['userId']}");
-                GetStorage().write(
-                    ConstantData.UserId, value['newUser']?['userId']);
-                GetStorage().write(ConstantData.Useremail, value['newUser']?['email']);
-                GetStorage().write(ConstantData.Userpassword, passwordController.text);
-
-
+                print(
+                    "phone number stored successfully: ${value['newUser']?['phoneNumber']}");
+                GetStorage()
+                    .write(ConstantData.UserId, value['newUser']?['userId']);
+                GetStorage()
+                    .write(ConstantData.Useremail, value['newUser']?['email']);
+                GetStorage()
+                    .write(ConstantData.Userpassword, passwordController.text);
 
                 GetStorage().write(
                     ConstantData.UserCpassword, confirmPasswordController.text);
+                GetStorage().write(ConstantData.UserParmanentAddress,
+                    value['newUser']?['permanentAddress']);
                 GetStorage().write(
-                    ConstantData.UserParmanentAddress, value['newUser']?['permanentAddress']);
-                GetStorage().write(
-                    ConstantData.UserMobile, value['newUser']?['PhoneNumber']);
+                    ConstantData.UserMobile, value['newUser']?['phoneNumber']);
                 GetStorage().write(
                     ConstantData.UserFirstName, value['newUser']?['firstName']);
                 GetStorage().write(
                     ConstantData.UserLastName, value['newUser']?['lastName']);
-                GetStorage().write(
-                    ConstantData.UserFrontImage, value['newUser']?['frontImages']);
-                GetStorage().write(
-                    ConstantData.UserBackImage, value['newUser']?['backImages']);
-                GetStorage().write(
-                    ConstantData.UserProfileImage, value['newUser']?['profilePicture']);
+                GetStorage().write(ConstantData.UserFrontImage,
+                    value['newUser']?['frontImages']);
+                GetStorage().write(ConstantData.UserBackImage,
+                    value['newUser']?['backImages']);
+                GetStorage().write(ConstantData.UserProfileImage,
+                    value['newUser']?['profilePicture']?['url']);
                 GetStorage().write(
                     ConstantData.Userlatitude, value['newUser']?['latitude']);
                 GetStorage().write(
                     ConstantData.Userlongitude, value['newUser']?['longitude']);
 
-
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
                 // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
 
                 if (mounted) {
@@ -1931,9 +1934,6 @@ GestureDetector(
             });
             // }
           },
-
-
-
           child: Padding(
             padding: EdgeInsets.only(
                 top: parentHeight * 0.05,
@@ -1975,7 +1975,6 @@ GestureDetector(
                 ))),
           ),
         ),
-
         SizedBox(height: 15),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1989,26 +1988,25 @@ GestureDetector(
                         fontFamily: 'Roboto-Regular',
                         fontSize: 15),
                     children: [
-                      TextSpan(
-                        text: " Login",
-                        style: TextStyle(
-                            color: CommonColor.Blue,
-                            fontWeight: FontWeight.w500,
-                            decoration: TextDecoration.underline,
-                            fontFamily: 'Roboto-Regular',
-                            fontSize: 17),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                          print("jdfbsdff");
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => LoginScreen()),
-
-
-                            );
-                          },
-                      ),
-                    ])),
+                  TextSpan(
+                    text: " Login",
+                    style: TextStyle(
+                        color: CommonColor.Blue,
+                        fontWeight: FontWeight.w500,
+                        decoration: TextDecoration.underline,
+                        fontFamily: 'Roboto-Regular',
+                        fontSize: 17),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        print("jdfbsdff");
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
+                      },
+                  ),
+                ])),
           ],
         )
       ],

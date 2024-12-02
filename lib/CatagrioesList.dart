@@ -51,23 +51,11 @@ class _CatagriesListState extends State<CatagriesList> {
     'assets/images/catfour.png',
     'assets/images/cattwo.png'
   ];
- /* final Map<String, int> productCountList = {
-    "Vehicle": 12,
-    "Fashion": 8,
-    "Home Appliances": 15,
-    "Event": 5,
-    "Furniture": 20,
-    "Party Bus": 3,
-    "Camera": 6,
-    "Bike": 7,
-    "Sports Equipment": 11,
-    "Clothing": 9,
-    "Electronics": 14,
-    "Kitchenware": 13,
-    "Office Equipment": 8,
-  };*/
+
   List<Data> filteredItems = [];
   bool isLoading = true;
+  bool isSearchingData = false;
+
 
   @override
   void initState() {
@@ -102,7 +90,7 @@ class _CatagriesListState extends State<CatagriesList> {
       padding:
       EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
-        height: SizeConfig.screenHeight * 0.96,
+        height: SizeConfig.screenHeight * 0.93,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -132,16 +120,112 @@ class _CatagriesListState extends State<CatagriesList> {
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9, // Set the width of the bottom sheet
         child: Padding(
-          padding:  EdgeInsets.only(top: parentheight*0.07),
+          padding:  EdgeInsets.only(top: parentheight*0.03),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Search bar to filter items
-                TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: Icon(Icons.search),
+              Row(
+                children: [
+                  GestureDetector(
+                      onTap: (){
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.arrow_back)),
+                  Expanded(
+                    child: Center(
+                      child: !isSearchingData
+                          ? Text(
+                        "Popular Categories",
+                        style: TextStyle(
+                          fontFamily: "Montserrat-Medium",
+                          fontSize: SizeConfig.blockSizeHorizontal * 4.5,
+                          color: CommonColor.TextBlack,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                          : Padding(
+                            padding:  EdgeInsets.only(left: 14),
+                            child: TextField(
+                                                    onChanged: (String query) {
+                            setState(() {
+                              filteredItems = items
+                                  .where((item) =>
+                              item.categoryName != null &&
+                                  item.categoryName!
+                                      .toLowerCase()
+                                      .contains(query.toLowerCase()))
+                                  .toList();
+                            });
+                                                    },
+                                                    decoration: InputDecoration(
+                            hintText: "Search...",
+                            border: InputBorder.none,
+                                                    ),
+                                                    autofocus: true,
+                                                  ),
+                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(13.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        print("list...$filteredItems");
+                        setState(() {
+                          isSearchingData = !isSearchingData;
+                          if (!isSearchingData) {
+                            filteredItems = items;
+                          }
+                        });
+                      },
+                      child: Icon(
+                        isSearchingData ? Icons.close : Icons.search_rounded,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Container(
+                height: SizeConfig.screenHeight * 0.0005,
+                color: CommonColor.SearchBar,
+              ),
+        /*  TextFormField(
+          keyboardType: TextInputType.text,
+              autocorrect: true,
+
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
+                prefixIcon: IconButton(
+                    onPressed: () {},
+                    icon: Image(
+                      image: AssetImage("assets/images/search.png"),
+                      height: SizeConfig.screenWidth * 0.07,
+                    )),
+                hintText: "Search Product / Service",
+                hintStyle: TextStyle(
+                  fontFamily: "Roboto_Regular",
+                  fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                  color: CommonColor.SearchBar,
+                  fontWeight: FontWeight.w300,
                 ),
+                contentPadding: EdgeInsets.only(
+                  top: parentWidth * 0.05,
+                ),
+                border: OutlineInputBorder(),
+                fillColor: Colors.white,
+                hoverColor: Colors.white,
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                    borderSide:
+                    BorderSide(color: Colors.black12, width: 1),
+                    borderRadius: BorderRadius.circular(10.0)),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                  BorderSide(color: Colors.black12, width: 1),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
                 onChanged: (String query) {
                   setState(() {
                     filteredItems = items
@@ -151,8 +235,8 @@ class _CatagriesListState extends State<CatagriesList> {
                         .toList();
                   });
                 },
-              ),
-              SizedBox(height: 10),
+              ),*/
+              SizedBox(height: 15),
               // ListView to show filtered items
 
               Expanded(
@@ -192,61 +276,13 @@ class _CatagriesListState extends State<CatagriesList> {
                               border: Border.all(color: Color(0xff9584D6), width: 0.5),
                               borderRadius: BorderRadius.all(Radius.circular(10))),
                           child: Column(
+                           mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
-                                child: Stack(
-                                  alignment: Alignment
-                                      .center, // Center aligns items in the stack
-                                  children: [
-                                    // Container for the background
+                                child:  Image.asset(
+                                  catagriesImage[index],
 
-                                   /* Align(
-                                      alignment: Alignment.topRight,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Container(
-                                          height: 23,
-                                          width: 23,
-                                          decoration: BoxDecoration(
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    spreadRadius: 0,
-                                                    blurRadius: 6,
-                                                    offset: Offset(0, 1),
-                                                    color: Colors.black12)
-                                              ],
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(100)),
-                                              color: Colors
-                                                  .white // Use a placeholder color for debugging
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Text(
-                                             "productCount",
-                                              style: TextStyle(
-                                                color: CommonColor.Black,
-                                                fontFamily: "Roboto_Regular",
-                                                fontSize:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    3.2,
-                                                fontWeight: FontWeight.w400,
-
-                                              ), textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),*/
-                                    // Image on top
-                                    Image.asset(
-                                      catagriesImage[index],
-
-                                      width: 45,
-                                    ),
-                                    // Text below the image
-                                  ],
+                                  width: 45,
                                 ),
                               ),
                               Container(
@@ -254,16 +290,19 @@ class _CatagriesListState extends State<CatagriesList> {
                                 width: 120,
                                 margin: EdgeInsets.only(bottom: 5),
                                 // bottom: 10, // Position the text at the bottom
-                                child: Text(
-                                  filteredItems[index].categoryName.toString(),
-                                  style: TextStyle(
-                                    color: CommonColor.Black,
-                                    fontFamily: "Roboto_Regular",
-                                    fontSize: SizeConfig.blockSizeHorizontal * 3.2,
-                                    fontWeight: FontWeight.w400,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text(
+                                    filteredItems[index].categoryName.toString(),
+                                    style: TextStyle(
+                                      color: CommonColor.Black,
+                                      fontFamily: "Roboto_Regular",
+                                      fontSize: SizeConfig.blockSizeHorizontal * 3.2,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ],

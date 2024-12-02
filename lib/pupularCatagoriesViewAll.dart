@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
-import 'package:another_carousel_pro/another_carousel_pro.dart';
 
 class PopularCatagoriesData extends StatefulWidget {
   const PopularCatagoriesData({super.key});
@@ -135,7 +134,7 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
 
          Column(
            children: [
-             Icon(Icons.search_sharp,  color: CommonColor.noResult,size: 50,),
+             const Icon(Icons.search_sharp,  color: CommonColor.noResult,size: 50,),
              Text("No results found",  style: TextStyle(
                color: CommonColor.Black,
                fontFamily: "Roboto_Regular",
@@ -147,7 +146,7 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
              )),SizedBox(height: 10) ,Container(
                width: SizeConfig.screenWidth*0.6,
                child: Text("We couldn't find what you searched for try searching again",  style: TextStyle(
-                 color: CommonColor.gray,
+                 color: Colors.grey,
                  fontFamily: "Roboto_Regular",
                  fontSize:
                  SizeConfig.blockSizeHorizontal *

@@ -1,289 +1,277 @@
-import 'package:anything/ResponseModule/getAllCatList.dart';
+import 'package:get_storage/get_storage.dart';
+
 import 'package:flutter/material.dart';
+
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
-import 'model/dio_client.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 class RecentSearchesScreen extends StatefulWidget {
-  const RecentSearchesScreen({super.key});
-
   @override
-  State<RecentSearchesScreen> createState() => _RecentSearchesScreenState();
+  _RecentSearchesScreenState createState() => _RecentSearchesScreenState();
 }
 
 class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
-  List<Data> items = [];
-  bool isLoading = true;
-  List<String> recentSearches = []; // To store recent searches
-  List<String> filteredItems = [];  // To store filtered categories based on search
-
-  final List<String> catagriesImage = [
-    'assets/images/cattwo.png',
-    'assets/images/catthree.png',
-    'assets/images/catfour.png',
-    'assets/images/catone.png',
-    'assets/images/catthree.png',
-    'assets/images/cattwo.png',
-    'assets/images/catone.png',
-    'assets/images/cattwo.png',
-    'assets/images/catthree.png',
-    'assets/images/catthree.png',
-    'assets/images/catthree.png',
-    'assets/images/catfour.png',
-    'assets/images/catfour.png',
-    'assets/images/cattwo.png'
-  ];
-
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
+  final GetStorage storage = GetStorage();
+  List<String> recentSearches = [];
 
   @override
   void initState() {
     super.initState();
-    fetchCategories();
+    // Load recent searches from GetStorage
     loadRecentSearches();
   }
 
-  // Fetch Categories data
-  void fetchCategories() async {
-    try {
-      Map<String, dynamic> response = await ApiClients().getAllCat();
-      var jsonList = GetAllCategoriesList.fromJson(response);
-      setState(() {
-        items = jsonList.data ?? [];
-        filteredItems = items.map((e) => e.categoryName.toString()).toList(); // Initial filter with all categories
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      print("Error fetching categories: $e");
-    }
+  void loadRecentSearches() {
+    recentSearches = storage.read<List<dynamic>>('recentSearches')?.cast<String>() ?? [];
+    setState(() {});
   }
 
-  // Load recent searches from SharedPreferences
-  void loadRecentSearches() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  void saveSearch(String search) {
     setState(() {
-      recentSearches = prefs.getStringList('recent_searches') ?? [];
-    });
-  }
-
-  // Add a search term to recent searches and save it
-  void addToRecentSearch(String categoryName) async {
-    if (!recentSearches.contains(categoryName)) {
-      setState(() {
-        recentSearches.insert(0, categoryName); // Add to the top
-      });
-      if (recentSearches.length > 5) {
-        recentSearches.removeLast(); // Limit to 5 recent searches
+      // Check if the recent searches already contain this search
+      if (!recentSearches.contains(search)) {
+        // If there are already 10 items, remove the first (oldest) one
+        if (recentSearches.length == 10) {
+          recentSearches.removeAt(0);  // Removes the oldest search
+        }
+        // Add the new search at the end of the list
+        recentSearches.add(search);
       }
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setStringList('recent_searches', recentSearches); // Save to storage
-    }
+    });
+    storage.write('recentSearches', recentSearches);  // Store the updated list
   }
 
-  // Filter items based on the search query
-  void filterSearchResults(String query) {
-    List<String> filtered = items
-        .where((category) =>
-        category.categoryName!.toLowerCase().contains(query.toLowerCase()))
-        .map((e) => e.categoryName.toString())
-        .toList();
-    setState(() {
-      filteredItems = filtered;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Container(
-          height: SizeConfig.screenHeight * 0.96,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
-          ),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              Container(
-                  height: SizeConfig.screenHeight * 0.9,
-                  child: AllCatagriesList(SizeConfig.screenHeight, SizeConfig.screenWidth))
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+      resizeToAvoidBottomInset: true,
+      backgroundColor:Color(0xffF5F6FB),
 
-  Widget AllCatagriesList(double parentheight, double parentWidth) {
-    return isLoading
-        ? Center(child: CircularProgressIndicator())
-        : Center(
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
+
+      body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(top: parentheight * 0.07),
+          padding:  EdgeInsets.only(top: 30),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar
               Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: "Search for a category...",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onChanged: (query) {
-                    filterSearchResults(query);
-                  },
-                ),
-              ),
-
-              // Recent Searches Section
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.all(18.0),
+                child: Row(
                   children: [
-                    Text(
-                      "Recent Searches",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: CommonColor.Black,
+                    GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+        
+                        child: Icon(Icons.arrow_back)),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        onSubmitted: (value) {
+                          saveSearch(value);
+                          searchController.clear();
+                          loadRecentSearches();
+                        },
+                        keyboardType: TextInputType.text,
+                        autocorrect: true,
+        
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          prefixIcon: IconButton(
+                              onPressed: () {},
+                              icon: Image(
+                                image: AssetImage("assets/images/search.png"),
+                                height: SizeConfig.screenWidth * 0.07,
+                              )),
+                          hintText: "Search Product / Service",
+                          hintStyle: TextStyle(
+                            fontFamily: "Roboto_Regular",
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                            color: CommonColor.SearchBar,
+                            fontWeight: FontWeight.w300,
+                          ),
+                          contentPadding: EdgeInsets.only(
+                            top: SizeConfig.screenWidth * 0.05,
+                          ),
+                          border: OutlineInputBorder(),
+                          fillColor: Colors.white,
+                          hoverColor: Colors.white,
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.black12, width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                            BorderSide(color: Colors.black12, width: 1),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    recentSearches.isEmpty
-                        ? Text(
-                      "No recent searches",
-                      style: TextStyle(
-                        color: CommonColor.gray,
-                      ),
-                    )
-                        : Column(
-                      children: recentSearches.map((search) {
-                        return ListTile(
-                          title: Text(search),
-                          onTap: () {
-                            // Navigate to the category on search click
-                            Navigator.pop(context, search);
-                            _searchController.text = search; // Fill search bar with the selected search
-                            filterSearchResults(search); // Filter the categories
-                          },
-                        );
-                      }).toList(),
                     ),
                   ],
                 ),
               ),
-
-              SizedBox(height: 10),
-
-              // Categories Grid
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(1.0),
-                  child: filteredItems.isNotEmpty
-                      ? GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 11.0,
-                      mainAxisSpacing: 1.0,
-                      childAspectRatio: 1,
-                    ),
-                    itemCount: filteredItems.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          addToRecentSearch(filteredItems[index]);
-                          Navigator.pop(context, filteredItems[index]);
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              left: 0.0, right: 5.0, top: 10.0, bottom: 10.0),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xff9584D6), width: 0.5),
-                              borderRadius: BorderRadius.all(Radius.circular(10))),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Image.asset(
-                                      catagriesImage[index],
-                                      width: 45,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                width: 120,
-                                margin: EdgeInsets.only(bottom: 5),
-                                child: Text(
-                                  filteredItems[index],
-                                  style: TextStyle(
-                                    color: CommonColor.Black,
-                                    fontFamily: "Roboto_Regular",
-                                    fontSize: SizeConfig.blockSizeHorizontal * 3.2,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                      : Column(
-                    children: [
-                      Icon(Icons.search_sharp, color: CommonColor.noResult, size: 50),
-                      Text(
-                        "No results found",
+               SizedBox(height: 2),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Show "Recent Searches" only if the list has items
+                  if (recentSearches.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Text(
+                        'Recent Searches',  // Header text
                         style: TextStyle(
-                          color: CommonColor.Black,
-                          fontFamily: "Roboto_Regular",
-                          fontSize: SizeConfig.blockSizeHorizontal * 4.0,
+                          color: Colors.black,
+                          fontFamily: "okra_Medium",
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Container(
-                        width: SizeConfig.screenWidth * 0.6,
+                    ),
+                  SizedBox(height: 4),
+                  // Only show ListView when recentSearches is not empty
+                  if (recentSearches.isNotEmpty)
+                  // Wrap the ListView in a Container or use Expanded to give it size
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      color: Colors.white,// Set a specific height if needed
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: recentSearches.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              ListTile(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 15.0),
+
+                          title: Text(recentSearches[index],style:  TextStyle(
+                            fontFamily: "Poppins-Regular",
+                            color: Colors.black,
+                            fontSize:
+                            SizeConfig.blockSizeHorizontal *
+                                4.0,
+                          ),),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.close,size: 20,),
+                                  onPressed: () {
+                                    setState(() {
+                                      recentSearches.removeAt(index);
+                                      storage.write('recentSearches', recentSearches);
+                                    });
+                                  },
+                                ),
+                                onTap: () {
+                                  searchController.text = recentSearches[index];
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  // Optionally, add a message if no recent searches are available
+                  if (recentSearches.isEmpty)
+                    Padding(
+                      padding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Center(
                         child: Text(
-                          "We couldn't find what you searched for. Try searching again.",
+                          'No recent searches available.',
                           style: TextStyle(
-                            color: CommonColor.gray,
-                            fontFamily: "Roboto_Regular",
-                            fontSize: SizeConfig.blockSizeHorizontal * 3.3,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 16.0,
+                            color: Colors.grey,
                           ),
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
                         ),
                       ),
-                    ],
+                    ),
+                  if (recentSearches.isNotEmpty)
+                    SizedBox(height: 20,),
+                 /* Text(
+                    '   Popular Searches',  // Header text
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "okra_Medium",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ),
+                  SizedBox(height: 10),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.16,
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                       children: [
+                         Container(
+                           height: 30,
+
+                           decoration: BoxDecoration(
+                             border: Border.all(color: Colors.grey,width: 0.3),
+                             borderRadius: BorderRadius.circular(20),   color: Color(0xffF5F6FB),),
+                           child: Center(
+                             child: Text("   electronics   ", style:  TextStyle(
+                               fontFamily: "Poppins-Regular",
+                               color: Colors.black,
+                               fontSize:
+                               SizeConfig.blockSizeHorizontal *
+                                   3.2,
+                             ),),
+                           ),
+                         ),Container(
+                           height: 30,
+
+                           decoration: BoxDecoration(
+                             border: Border.all(color: Colors.grey,width: 0.3),
+                             borderRadius: BorderRadius.circular(20),   color: Color(0xffF5F6FB),),
+                           child: Center(
+                             child: Text("   Furniture   ", style:  TextStyle(
+                               fontFamily: "Poppins-Regular",
+                               color: Colors.black,
+                               fontSize:
+
+                               SizeConfig.blockSizeHorizontal *
+                                   3.2,
+                             ),),
+                           ),
+                         ),Container(
+                           height: 30,
+
+                           decoration: BoxDecoration(
+                             border: Border.all(color: Colors.grey,width: 0.3),
+                             borderRadius: BorderRadius.circular(20),   color: Color(0xffF5F6FB),),
+                           child: Center(
+                             child: Text("   electronics   ", style:  TextStyle(
+                               fontFamily: "Poppins-Regular",
+                               color: Colors.black,
+                               fontSize:
+                               SizeConfig.blockSizeHorizontal *
+                                   3.2,
+                             ),),
+                           ),
+                         )
+                       ],
+                      ),
+                    ),
+                  )*/
+                  
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image(image: AssetImage('assets/images/anthingAds.png')),
+                  )
+                ],
+              )
+        
+        
+        
+        
             ],
           ),
         ),

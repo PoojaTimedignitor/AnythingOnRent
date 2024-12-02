@@ -1,4 +1,5 @@
 import 'package:anything/All_Product_List.dart';
+import 'package:anything/CatagrioesList.dart';
 import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,6 @@ import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 
 import 'package:get_storage/get_storage.dart';
-
-import 'dummyData.dart';
 
 class MainHome extends StatefulWidget {
   @override
@@ -72,11 +71,7 @@ class MainHomeState extends State<MainHome>
     "Car",
     "Camera",
     "Bike",
-    "Sports Equipment",
-    "Clothing",
-    "Electronics",
-    "Kitchenware",
-    "Office Equipment",
+    "Sports Equipment"
   ];
   final List<String> catagriesImage = [
     'assets/images/catsaven.png',
@@ -88,743 +83,709 @@ class MainHomeState extends State<MainHome>
     'assets/images/catfive.png',
     'assets/images/catsix.png',
     'assets/images/catone.png',
-    'assets/images/catfour.png',
-    'assets/images/catsaven.png',
-    'assets/images/catfour.png',
-    'assets/images/catthree.png',
-    'assets/images/catsaven.png'
+    'assets/images/catfour.png'
   ];
-  final Map<String, int> productCountList = {
-    "Vehicle": 12,
-    "Fashion": 8,
-    "Home Appliances": 15,
-    "Event": 5,
-    "Furniture": 20,
-    "Party Bus": 3,
-    "Camera": 6,
-    "Bike": 7,
-    "Sports Equipment": 11,
-    "Clothing": 9,
-    "Electronics": 14,
-    "Kitchenware": 13,
-    "Office Equipment": 8,
-  };
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xffFE7F64),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          resizeToAvoidBottomInset: false,
-          // extendBody: true,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(55.0),
-            child: AppBar(
-              title: Container(
-                width: 300,
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Hi, $firstname",
-                            style: TextStyle(
-                              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                              fontFamily: 'Roboto_Medium',
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Image(
-                                image: AssetImage('assets/images/location.png'),
-                                height: SizeConfig.screenHeight * 0.017,
-                                color: Color(0xff7993f3),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  " Park Street, Kolkata, 700021",
-                                  style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeHorizontal * 3.4,
-                                    fontFamily: 'Poppins_Medium',
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 0.5,
-                                    color: Color(0xff7F96F0),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: SizeConfig.screenWidth * .0),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: SizeConfig.screenHeight * 0.0,
-                        ),
-                        child: Image(
-                          image: AssetImage('assets/images/notification.png'),
-                          height: SizeConfig.screenHeight * 0.025,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          drawer: Drawer(
-            backgroundColor: Color(0xffffffff),
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                Container(
-                  height: 160,
-                  color: Color(0xfff69c9c),
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Container(
-                          width: 108,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(100)),
-                            color: Color(0xffFBB3B3),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Container(
-                          width: 85,
-                          height: 95,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(100)),
-                            color: Color(0xffF48A8A),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.09, left: 23),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: CircleAvatar(
-                                  radius: 26,
-                                  backgroundImage:
-                                      AssetImage("assets/images/profile.png"),
-                                ),
-                              ),
-
-                              // Add some space between the avatar and the column
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Hii, $firstname",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    SizedBox(height: 2),
-                                    // Adds space between the icon and text
-
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Wrap(
-                                        spacing: 4,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 3),
-                                            child: const Image(
-                                              image: AssetImage(
-                                                  'assets/images/location.png'),
-                                              height: 13,
-                                              color: Colors.black54,
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 170,
-                                            //  color: Colors.red,
-                                            child: Text(
-                                              "Park pashan pune, 2004 pune pashan... ",
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                fontFamily: 'Montserrat_Medium',
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black54,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                /*   Container(
-                  height: SizeConfig.screenHeight * 0.0003,
-                  width: 160,
-                  color: Colors.grey[500]!,
-                ),*/
-                Padding(
-                  padding: EdgeInsets.only(top: 30, left: 10),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      // extendBody: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(55.0),
+        child: AppBar(
+          title: Container(
+            width: 300,
+            child: Row(
+              children: [
+                Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Wrap(
-                          spacing: 13,
-                          children: [
-                            SizedBox(width: 03),
-                            Image(
-                              image:
-                                  AssetImage('assets/images/userprofile.png'),
-                              height: 22,
-                              //color: CommonColor.gray,
-                            ),
-                            Text(
-                                // the text of the row.
-                                "My Profile",
-                                style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeHorizontal * 3.9,
-                                    fontFamily: "okra_Regular",
-                                    color: CommonColor.Black,
-                                    fontWeight: FontWeight.w400)),
-                          ],
+                      Text(
+                        "Hi, $firstname",
+                        style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                          fontFamily: 'Roboto_Medium',
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
                         ),
                       ),
-                      SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Wrap(
-                          spacing: 13,
-                          children: [
-                            SizedBox(width: 01),
-                            Image(
-                              image: AssetImage('assets/images/myads.png'),
-                              height: 22,
+                      SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Image(
+                            image: AssetImage('assets/images/location.png'),
+                            height: SizeConfig.screenHeight * 0.017,
+                            color: Color(0xff7993f3),
+                          ),
+                          Expanded(
+                            child: Text(
+                              " Park Street, Kolkata, 700021",
+                              style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.4,
+                                fontFamily: 'Poppins_Medium',
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 0.5,
+                                color: Color(0xff7F96F0),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
-                            Text(
-                                // the text of the row.
-                                "My Collection",
-                                style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeHorizontal * 3.9,
-                                    fontFamily: "okra_Regular",
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: SizeConfig.screenWidth * .0),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: SizeConfig.screenHeight * 0.0,
+                    ),
+                    child: Image(
+                      image: AssetImage('assets/images/notification.png'),
+                      height: SizeConfig.screenHeight * 0.025,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      drawer: Drawer(
+        backgroundColor: Color(0xffffffff),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: 160,
+              color: Color(0xfff69c9c),
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      width: 108,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(100)),
+                        color: Color(0xffFBB3B3),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      width: 85,
+                      height: 95,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(100)),
+                        color: Color(0xffF48A8A),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: SizeConfig.screenHeight * 0.09, left: 23),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: CircleAvatar(
+                              radius: 26,
+                              backgroundImage:
+                                  AssetImage("assets/images/profile.png"),
+                            ),
+                          ),
+
+                          // Add some space between the avatar and the column
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Hii, $firstname",
+                                  style: TextStyle(
                                     color: Colors.black,
-                                    fontWeight: FontWeight.w400)),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Wrap(
-                          spacing: 13,
-                          children: [
-                            SizedBox(width: 02),
-                            Image(
-                              image: AssetImage('assets/images/like.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Text(
-                                // the text of the row.
-                                "My Favorites",
-                                style: TextStyle(
-                                    fontSize:
-                                        SizeConfig.blockSizeHorizontal * 3.9,
-                                    fontFamily: "okra_Regular",
-                                    color: CommonColor.Black,
-                                    fontWeight: FontWeight.w400)),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Wrap(
-                          spacing: 10,
-                          children: [
-                            SizedBox(width: 0),
-                            const Image(
-                              image:
-                                  AssetImage('assets/images/transaction.png'),
-                              height: 27,
-                            ),
-                            Container(
-                              width: 180,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "My Transaction History",
-                                  style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.9,
-                                      fontFamily: "okra_Regular",
-                                      color: CommonColor.Black,
-                                      fontWeight: FontWeight.w400),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Wrap(
-                          spacing: 11,
-                          children: [
-                            SizedBox(height: 10),
-                            const Image(
-                              image: AssetImage('assets/images/rating.png'),
-                              height: 27,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "My Ratings",
-                                  style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.9,
-                                      fontFamily: "okra_Regular",
-                                      color: CommonColor.Black,
-                                      fontWeight: FontWeight.w400),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Wrap(
-                          spacing: 13,
-                          children: [
-                            SizedBox(width: 0),
-                            const Image(
-                              image: AssetImage('assets/images/chat.png'),
-                              height: 20,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "Chat",
-                                  style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.9,
-                                      fontFamily: "okra_Regular",
-                                      color: CommonColor.Black,
-                                      fontWeight: FontWeight.w400),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                            SizedBox(width: 50),
-                            Container(
-                              height: 23,
-                              width: 23,
-                              decoration: BoxDecoration(
-                                color: Color(0xffF8C5C2),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(6)),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "12",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontFamily: "okra_Medium",
-                                      color: CommonColor.Black,
-                                      fontWeight: FontWeight.w400),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Wrap(
-                          spacing: 12,
-                          children: [
-                            SizedBox(width: 02),
-                            const Image(
-                              image: AssetImage('assets/images/terms.png'),
-                              height: 20,
-                              color: Colors.black54,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "Help",
-                                  style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.9,
-                                      fontFamily: "okra_Regular",
-                                      color: CommonColor.Black,
-                                      fontWeight: FontWeight.w400),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Wrap(
-                          spacing: 09,
-                          children: [
-                            SizedBox(width: 03),
-                            const Image(
-                              image: AssetImage('assets/images/setting.png'),
-                              height: 20,
-                            ),
-                            Container(
-                              width: 108,
-                              //  color: Colors.red,
-                              child: Text(
-                                  // the text of the row.
-                                  "Setting",
-                                  style: TextStyle(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.9,
-                                      fontFamily: "okra_Regular",
-                                      color: CommonColor.Black,
-                                      fontWeight: FontWeight.w400),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 25),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Myprofiledetails()));
-                        },
-                        child: Expanded(
-                          child: Row(
-                            children: [
-                              //  Spacer(),
-                              Container(
-                                child: Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Row(
+                                SizedBox(height: 2),
+                                // Adds space between the icon and text
+
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Wrap(
+                                    spacing: 4,
                                     children: [
-                                      Image(
-                                        image: AssetImage(
-                                            'assets/images/logout.png'),
-                                        height: 20,
-                                        color: Colors.pink,
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 3),
+                                        child: const Image(
+                                          image: AssetImage(
+                                              'assets/images/location.png'),
+                                          height: 13,
+                                          color: Colors.black54,
+                                        ),
                                       ),
-                                      Text(
-                                        "    Logout    ",
-                                        style: TextStyle(
-                                            color: Colors.pink,
-                                            fontSize:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    3.9),
-                                      )
+                                      Container(
+                                        width: 170,
+                                        //  color: Colors.red,
+                                        child: Text(
+                                          "Park pashan pune, 2004 pune pashan... ",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontFamily: 'Montserrat_Medium',
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black54,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ),
-                              Spacer()
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: FloatingActionButton(
-              backgroundColor: Colors.transparent,
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Colors.white,
-                    elevation: 2,
-                    isScrollControlled: true,
-                    isDismissible: true,
-                    builder: (BuildContext bc) {
-                      return CreateProductService();
-                    });
-              },
-              tooltip: 'Cool FAB',
-              elevation: 009,
-              child: Container(
-                width: 56,
-                height: 56,
-                child: Center(
-                  child: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                ),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: [Color(0xffFE7F64), Color(0xffFE7F64)],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          /*  floatingActionButton: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              height: 60,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  stops: [0.8, 0.9],
-                  colors: [ Color(0xffFEBA69),
-                    Color(0xffFE7F64)],
-                ),
-              ),
-              child: FloatingActionButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      context: context,
-                      backgroundColor: Colors.white,
-                      elevation: 2,
-                      isScrollControlled: true,
-                      isDismissible: true,
-                      builder: (BuildContext bc) {
-                        return CreateProductService();
-                      });
-                },
-                shape: CircleBorder(),
-                foregroundColor: Color.fromARGB(200, 255, 255, 255),
-
-                backgroundColor: Colors.transparent,
-                child: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),*/
-
-          body: ScrollConfiguration(
-            behavior: MyBehavior(),
-            child: ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                /*  Container(
-                    height: SizeConfig.screenHeight * 0.17,
-                    child: Column(
-
-                      children: [
-                        getAddMainHeadingLayout(
-                            SizeConfig.screenHeight, SizeConfig.screenWidth),
-                        HomeSearchBar(
-                            SizeConfig.screenHeight, SizeConfig.screenWidth),
-                      ],
-                    )),*/
-                Container(
-                  height: SizeConfig.screenHeight * 0.90,
-                  child: ListView(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    children: <Widget>[
-                      HomeSearchBar(
-                          SizeConfig.screenHeight, SizeConfig.screenWidth),
-                      sliderData(
-                          SizeConfig.screenHeight, SizeConfig.screenWidth),
-                      AddPostButton(
-                          SizeConfig.screenHeight, SizeConfig.screenWidth),
-                      PopularCategories(
-                          SizeConfig.screenHeight, SizeConfig.screenWidth),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            bottom: SizeConfig.screenHeight * 0.03),
-                        child: getAddGameTabLayout(
-                            SizeConfig.screenHeight, SizeConfig.screenWidth),
-                      ),
-                      /* Stack(
-                        children: [
-                       Padding(
-                        padding: EdgeInsets.only(
-                            left: SizeConfig.screenWidth * 0.68, top: 200),
-                        child: Image(
-                          image: AssetImage('assets/images/home.png'),
-                          height: SizeConfig.screenHeight * 0.280,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.30),
-                        child: Image(
-                          image: AssetImage('assets/images/homecircle.png'),
-                          height: SizeConfig.screenHeight * 0.120,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.40),
-                        child: Image(
-                          image: AssetImage('assets/images/homecircle.png'),
-                          height: SizeConfig.screenHeight * 0.120,
-                        ),
-                      ),
-
-
-                          // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
                         ],
-                      ),*/
-                    ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          /*
-          bottomNavigationBar:
-          PersistentTabView(
 
-            context,
-            controller: _controller,
-            screens: _buildScreens(),
-            items: _navBarsItems(),
-            confineInSafeArea: true,
-
-            backgroundColor: Colors.white, // Default is Colors.white.
-            handleAndroidBackButtonPress: true, // Default is true.
-            resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-            stateManagement: true, // Default is true.
-            hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-            decoration: NavBarDecoration(
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(15),
-                topLeft: Radius.circular(15),),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.black54,
-                    blurRadius: 15.0,
-                    offset: Offset(0.0, 0.75)
-                )
-              ],
-              colorBehindNavBar: Colors.white,
+            /*   Container(
+              height: SizeConfig.screenHeight * 0.0003,
+              width: 160,
+              color: Colors.grey[500]!,
+            ),*/
+            Padding(
+              padding: EdgeInsets.only(top: 30, left: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Wrap(
+                      spacing: 13,
+                      children: [
+                        SizedBox(width: 03),
+                        Image(
+                          image: AssetImage('assets/images/userprofile.png'),
+                          height: 22,
+                          //color: CommonColor.gray,
+                        ),
+                        Text(
+                            // the text of the row.
+                            "My Profile",
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.9,
+                                fontFamily: "okra_Regular",
+                                color: CommonColor.Black,
+                                fontWeight: FontWeight.w400)),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Wrap(
+                      spacing: 13,
+                      children: [
+                        SizedBox(width: 01),
+                        Image(
+                          image: AssetImage('assets/images/myads.png'),
+                          height: 22,
+                        ),
+                        Text(
+                            // the text of the row.
+                            "My Collection",
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.9,
+                                fontFamily: "okra_Regular",
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400)),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Wrap(
+                      spacing: 13,
+                      children: [
+                        SizedBox(width: 02),
+                        Image(
+                          image: AssetImage('assets/images/like.png'),
+                          height: 20,
+                          color: Colors.black54,
+                        ),
+                        Text(
+                            // the text of the row.
+                            "My Favorites",
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.9,
+                                fontFamily: "okra_Regular",
+                                color: CommonColor.Black,
+                                fontWeight: FontWeight.w400)),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Wrap(
+                      spacing: 10,
+                      children: [
+                        SizedBox(width: 0),
+                        const Image(
+                          image: AssetImage('assets/images/transaction.png'),
+                          height: 27,
+                        ),
+                        Container(
+                          width: 180,
+                          //  color: Colors.red,
+                          child: Text(
+                              // the text of the row.
+                              "My Transaction History",
+                              style: TextStyle(
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  fontFamily: "okra_Regular",
+                                  color: CommonColor.Black,
+                                  fontWeight: FontWeight.w400),
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Wrap(
+                      spacing: 11,
+                      children: [
+                        SizedBox(height: 10),
+                        const Image(
+                          image: AssetImage('assets/images/rating.png'),
+                          height: 27,
+                        ),
+                        Container(
+                          width: 108,
+                          //  color: Colors.red,
+                          child: Text(
+                              // the text of the row.
+                              "My Ratings",
+                              style: TextStyle(
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  fontFamily: "okra_Regular",
+                                  color: CommonColor.Black,
+                                  fontWeight: FontWeight.w400),
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Wrap(
+                      spacing: 13,
+                      children: [
+                        SizedBox(width: 0),
+                        const Image(
+                          image: AssetImage('assets/images/chat.png'),
+                          height: 20,
+                        ),
+                        Container(
+                          width: 108,
+                          //  color: Colors.red,
+                          child: Text(
+                              // the text of the row.
+                              "Chat",
+                              style: TextStyle(
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  fontFamily: "okra_Regular",
+                                  color: CommonColor.Black,
+                                  fontWeight: FontWeight.w400),
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                        SizedBox(width: 50),
+                        Container(
+                          height: 23,
+                          width: 23,
+                          decoration: BoxDecoration(
+                            color: Color(0xffF8C5C2),
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "12",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: "okra_Medium",
+                                  color: CommonColor.Black,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Wrap(
+                      spacing: 12,
+                      children: [
+                        SizedBox(width: 02),
+                        const Image(
+                          image: AssetImage('assets/images/terms.png'),
+                          height: 20,
+                          color: Colors.black54,
+                        ),
+                        Container(
+                          width: 108,
+                          //  color: Colors.red,
+                          child: Text(
+                              // the text of the row.
+                              "Help",
+                              style: TextStyle(
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  fontFamily: "okra_Regular",
+                                  color: CommonColor.Black,
+                                  fontWeight: FontWeight.w400),
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Wrap(
+                      spacing: 09,
+                      children: [
+                        SizedBox(width: 03),
+                        const Image(
+                          image: AssetImage('assets/images/setting.png'),
+                          height: 20,
+                        ),
+                        Container(
+                          width: 108,
+                          //  color: Colors.red,
+                          child: Text(
+                              // the text of the row.
+                              "Setting",
+                              style: TextStyle(
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  fontFamily: "okra_Regular",
+                                  color: CommonColor.Black,
+                                  fontWeight: FontWeight.w400),
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 25),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Myprofiledetails()));
+                    },
+                    child: Expanded(
+                      child: Row(
+                        children: [
+                          //  Spacer(),
+                          Container(
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Row(
+                                children: [
+                                  Image(
+                                    image:
+                                        AssetImage('assets/images/logout.png'),
+                                    height: 20,
+                                    color: Colors.pink,
+                                  ),
+                                  Text(
+                                    "    Logout    ",
+                                    style: TextStyle(
+                                        color: Colors.pink,
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal *
+                                                3.9),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Spacer()
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                ],
+              ),
             ),
-            popAllScreensOnTapOfSelectedTab: true,
-            popActionScreens: PopActionScreensType.all,
-            itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
-            ),
-            screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
-              animateTabTransition: true,
-              curve: Curves.ease,
-
-              duration: Duration(milliseconds: 200),
-            ),
-            navBarStyle: NavBarStyle.style9, // Choose the nav bar style with this property.
-          ),*/
+          ],
         ),
       ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: FloatingActionButton(
+          backgroundColor: Colors.transparent,
+          onPressed: () {
+            showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.white,
+                elevation: 2,
+                isScrollControlled: true,
+                isDismissible: true,
+                builder: (BuildContext bc) {
+                  return CreateProductService();
+                });
+          },
+          tooltip: 'Cool FAB',
+          elevation: 009,
+          child: Container(
+            width: 56,
+            height: 56,
+            child: Center(
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [Color(0xffFE7F64), Color(0xffFE7F64)],
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      /*  floatingActionButton: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Container(
+          height: 60,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              stops: [0.8, 0.9],
+              colors: [ Color(0xffFEBA69),
+                Color(0xffFE7F64)],
+            ),
+          ),
+          child: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  context: context,
+                  backgroundColor: Colors.white,
+                  elevation: 2,
+                  isScrollControlled: true,
+                  isDismissible: true,
+                  builder: (BuildContext bc) {
+                    return CreateProductService();
+                  });
+            },
+            shape: CircleBorder(),
+            foregroundColor: Color.fromARGB(200, 255, 255, 255),
+
+            backgroundColor: Colors.transparent,
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),*/
+
+      body: ScrollConfiguration(
+        behavior: MyBehavior(),
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: NeverScrollableScrollPhysics(),
+          children: [
+            /*  Container(
+                height: SizeConfig.screenHeight * 0.17,
+                child: Column(
+
+                  children: [
+                    getAddMainHeadingLayout(
+                        SizeConfig.screenHeight, SizeConfig.screenWidth),
+                    HomeSearchBar(
+                        SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  ],
+                )),*/
+            Container(
+              height: SizeConfig.screenHeight * 0.90,
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  HomeSearchBar(
+                      SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  AddPostButton(
+                      SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  PopularCategories(
+                      SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  Padding(
+                    padding:
+                        EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03),
+                    child: getAddGameTabLayout(
+                        SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  ),
+                  /* Stack(
+                    children: [
+                   Padding(
+                    padding: EdgeInsets.only(
+                        left: SizeConfig.screenWidth * 0.68, top: 200),
+                    child: Image(
+                      image: AssetImage('assets/images/home.png'),
+                      height: SizeConfig.screenHeight * 0.280,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.30),
+                    child: Image(
+                      image: AssetImage('assets/images/homecircle.png'),
+                      height: SizeConfig.screenHeight * 0.120,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.40),
+                    child: Image(
+                      image: AssetImage('assets/images/homecircle.png'),
+                      height: SizeConfig.screenHeight * 0.120,
+                    ),
+                  ),
+
+
+                      // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                    ],
+                  ),*/
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      /*
+      bottomNavigationBar:
+      PersistentTabView(
+
+        context,
+        controller: _controller,
+        screens: _buildScreens(),
+        items: _navBarsItems(),
+        confineInSafeArea: true,
+
+        backgroundColor: Colors.white, // Default is Colors.white.
+        handleAndroidBackButtonPress: true, // Default is true.
+        resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+        stateManagement: true, // Default is true.
+        hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
+        decoration: NavBarDecoration(
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(15),
+            topLeft: Radius.circular(15),),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.black54,
+                blurRadius: 15.0,
+                offset: Offset(0.0, 0.75)
+            )
+          ],
+          colorBehindNavBar: Colors.white,
+        ),
+        popAllScreensOnTapOfSelectedTab: true,
+        popActionScreens: PopActionScreensType.all,
+        itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
+          duration: Duration(milliseconds: 200),
+          curve: Curves.ease,
+        ),
+        screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
+          animateTabTransition: true,
+          curve: Curves.ease,
+
+          duration: Duration(milliseconds: 200),
+        ),
+        navBarStyle: NavBarStyle.style9, // Choose the nav bar style with this property.
+      ),*/
     );
   }
 
@@ -930,12 +891,15 @@ class MainHomeState extends State<MainHome>
                           image: AssetImage("assets/images/search.png"),
                           height: SizeConfig.screenWidth * 0.07,
                         ),
-                        Text(" Search Product/Service", style:  TextStyle(
-                          fontFamily: "Roboto_Regular",
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                          color: CommonColor.SearchBar,
-                          fontWeight: FontWeight.w300,
-                        ),),
+                        Text(
+                          " Search Product/Service",
+                          style: TextStyle(
+                            fontFamily: "Roboto_Regular",
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                            color: CommonColor.SearchBar,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
                       ],
                     )),
               ),
@@ -1102,7 +1066,7 @@ class MainHomeState extends State<MainHome>
               ),
               GestureDetector(
                 onTap: () {
-                 /* Navigator.push(context,
+                  /* Navigator.push(context,
                       MaterialPageRoute(builder: (context) => searchbarrr()));*/
                 },
                 child: Center(
@@ -1122,15 +1086,17 @@ class MainHomeState extends State<MainHome>
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(left: parentWidth * 0.02),
+            padding: EdgeInsets.only(left: parentWidth * 0.03),
             child: SizedBox(
               height: 200, // Set a fixed height for the GridView
               child: GridView.builder(
-                scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+                scrollDirection: Axis.horizontal,
+                physics:
+                    NeverScrollableScrollPhysics(), // Enable horizontal scrolling
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // Number of rows
-                  crossAxisSpacing: 2, // Space between columns
-                  mainAxisSpacing: 20, // Space between rows
+                  crossAxisSpacing: 1, // Space between columns
+                  mainAxisSpacing: 10, // Space between rows
                   childAspectRatio: 3 / 2,
                 ),
                 itemCount: catagriesItemList.length,
@@ -1175,6 +1141,48 @@ class MainHomeState extends State<MainHome>
               ),
             ),
           ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Scaffold(body: Container(
+                              height: SizeConfig.screenHeight,
+
+                              child: CatagriesList()))));
+            },
+            child: Padding(
+              padding: EdgeInsets.only(left: parentWidth * 0.72, top: 10),
+              child: Container(
+                height: parentHeight * 0.03,
+                width: parentWidth * 0.22,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xff3684F0), width: 0.5),
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      " More",
+                      style: TextStyle(
+                        fontFamily: "okra_Medium",
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                        color: Color(0xff3684F0),
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                    Image(
+                      image: AssetImage('assets/images/arrow.png'),
+                      height: 20,
+                      width: 15,
+                      color: Color(0xff3684F0),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -1271,7 +1279,7 @@ class MainHomeState extends State<MainHome>
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
     return Padding(
-      padding: EdgeInsets.only(top: parentHeight * 0.04),
+      padding: EdgeInsets.only(top: parentHeight * 0.02),
       child: Column(
         children: [
           Row(
@@ -2084,5 +2092,3 @@ class MainHomeState extends State<MainHome>
     );
   }
 }
-
-
