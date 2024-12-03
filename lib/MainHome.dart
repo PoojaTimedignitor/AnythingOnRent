@@ -9,13 +9,21 @@ import 'ConstantData/Constant_data.dart';
 import 'Home_screens.dart';
 import 'MyBehavior.dart';
 import 'SearchCatagries.dart';
+import 'SideBar/AppImprovment.dart';
+import 'SideBar/My Collection.dart';
+import 'SideBar/My Ratings.dart';
+import 'SideBar/My Transaction History.dart';
+import 'SideBar/MyFevorites.dart';
 import 'SideBar/MyProfileDetails.dart';
+import 'SideBar/chat.dart';
 import 'addProductService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 
 import 'package:get_storage/get_storage.dart';
+
+import 'dummyData.dart';
 
 class MainHome extends StatefulWidget {
   @override
@@ -24,6 +32,8 @@ class MainHome extends StatefulWidget {
 
 class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
+  String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
+
   @override
   void initState() {
     // TODO: implement initState
@@ -85,6 +95,172 @@ class MainHomeState extends State<MainHome>
     'assets/images/catone.png',
     'assets/images/catfour.png'
   ];
+
+
+
+  void LogoutDialogBox(BuildContext context) {
+    SizeConfig().init(context);
+    showDialog(
+      context: context,
+      builder: (BuildContext context,) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Column(
+            children: [
+                Padding(
+                padding: EdgeInsets.only(top: 6),
+                child: Text(
+                  "Logout",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "okra_Medium",
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  )
+                ),
+              ),
+
+
+              Padding(
+                padding:  EdgeInsets.only(top: 12),
+                child: Stack(
+                  children: [
+                    Image(
+                      image: AssetImage('assets/images/logone.png'),
+                      height: SizeConfig.screenHeight * 0.09,
+                    ),
+                    Image(
+                      image: AssetImage('assets/images/logthree.png'),
+                      height: SizeConfig.screenHeight * 0.1,
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: (){
+                  Navigator.of(context).pop();
+                 // _pickImage(ImageSource.camera);
+                },
+                child:Row(
+                  children: [
+
+                    Expanded(
+                      child: Container(
+                        height: SizeConfig.screenHeight * 0.1, // Adjust height as needed
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Are You Sure you want to Logout?",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: "Montserrat-Medium",
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 2, // Ensures text spans at most two lines
+                          overflow: TextOverflow.ellipsis, // Adds ellipsis if text overflows
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+
+
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      /* AppPreferences.clearAppPreference();
+                      Get.to(() => const SignIn());*/
+                    },
+                    child: Padding(
+                      padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.0),
+                      child: Container(
+                        width: SizeConfig.screenWidth*0.3,
+                        decoration: BoxDecoration(
+
+                          borderRadius: BorderRadius.circular(10),
+                          // color: Colors.white,
+
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffFEBA69),
+                              Color(0xffFE7F64),
+                            ],
+                          ),
+
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Yes",
+                            style: TextStyle(
+                                height: 2,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Medium',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      /* AppPreferences.clearAppPreference();
+                      Get.to(() => const SignIn());*/
+                    },
+                    child: Padding(
+                      padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.0),
+                      child: Container(
+                        width: SizeConfig.screenWidth*0.3,
+                        decoration: BoxDecoration(
+
+                          borderRadius: BorderRadius.circular(10),
+                          // color: Colors.white,
+
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffFEBA69),
+                              Color(0xffFE7F64),
+                            ],
+                          ),
+
+                        ),
+                        child: Center(
+                          child: Text(
+                            "No",
+                            style: TextStyle(
+                                height: 2,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Medium',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +339,7 @@ class MainHomeState extends State<MainHome>
           children: <Widget>[
             Container(
               height: 160,
-              color: Color(0xfff69c9c),
+              color: Color(0xfff1f2fd),
               child: Stack(
                 children: [
                   Align(
@@ -174,7 +350,7 @@ class MainHomeState extends State<MainHome>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
                             bottomRight: Radius.circular(100)),
-                        color: Color(0xffFBB3B3),
+                        color: Color(0xffffffff),
                       ),
                     ),
                   ),
@@ -186,23 +362,33 @@ class MainHomeState extends State<MainHome>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
                             bottomRight: Radius.circular(100)),
-                        color: Color(0xffF48A8A),
+                        color: Color(0xfff1f2fd),
                       ),
                     ),
                   ),
                   Container(
                     child: Padding(
                       padding: EdgeInsets.only(
-                          top: SizeConfig.screenHeight * 0.09, left: 23),
+                          top: SizeConfig.screenHeight * 0.08, left: 23),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(4.0),
-                            child: CircleAvatar(
-                              radius: 26,
-                              backgroundImage:
-                                  AssetImage("assets/images/profile.png"),
+                            child:CircleAvatar(
+                              radius: 29.0,
+                              backgroundColor: Colors.white,
+                              child: CircleAvatar(
+                                radius: 25.0,
+                                backgroundColor: Colors.transparent,
+                                backgroundImage: (profileImage != null &&
+                                    profileImage!.isNotEmpty)
+                                    ? NetworkImage(
+                                    profileImage!) // Display image from URL
+                                    : AssetImage('assets/images/profiless.png')
+                                as ImageProvider,
+                                // Profile image
+                              ),
                             ),
                           ),
 
@@ -305,12 +491,11 @@ class MainHomeState extends State<MainHome>
                   ),
                   SizedBox(height: 30),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
-                    },
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyCollection()));},
                     child: Wrap(
                       spacing: 13,
                       children: [
@@ -336,7 +521,7 @@ class MainHomeState extends State<MainHome>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
+                              builder: (context) => Myfevorites()));
                     },
                     child: Wrap(
                       spacing: 13,
@@ -364,7 +549,7 @@ class MainHomeState extends State<MainHome>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
+                              builder: (context) => MyTransaction()));
                     },
                     child: Wrap(
                       spacing: 10,
@@ -373,6 +558,8 @@ class MainHomeState extends State<MainHome>
                         const Image(
                           image: AssetImage('assets/images/transaction.png'),
                           height: 27,
+
+
                         ),
                         Container(
                           width: 180,
@@ -397,7 +584,7 @@ class MainHomeState extends State<MainHome>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
+                              builder: (context) => MyRatings()));
                     },
                     child: Wrap(
                       spacing: 11,
@@ -430,7 +617,7 @@ class MainHomeState extends State<MainHome>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
+                              builder: (context) => chat()));
                     },
                     child: Wrap(
                       spacing: 13,
@@ -482,7 +669,42 @@ class MainHomeState extends State<MainHome>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
+                              builder: (context) => AppImprov()));
+                    },
+                    child: Wrap(
+                      spacing: 13,
+                      children: [
+                        SizedBox(width: 0),
+                        const Image(
+                          image: AssetImage('assets/images/chat.png'),
+                          height: 20,
+                        ),
+                        Container(
+                          width: 130,
+                          //  color: Colors.red,
+                          child: Text(
+                            // the text of the row.
+                              "App Improvement",
+                              style: TextStyle(
+                                  fontSize:
+                                  SizeConfig.blockSizeHorizontal * 3.9,
+                                  fontFamily: "okra_Regular",
+                                  color: CommonColor.Black,
+                                  fontWeight: FontWeight.w400),
+                              overflow: TextOverflow.ellipsis),
+                        ),
+
+
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                     /* Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AppImprov()));*/
                     },
                     child: Wrap(
                       spacing: 12,
@@ -513,10 +735,10 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
+                     /* Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
+                              builder: (context) => Myprofiledetails()));*/
                     },
                     child: Wrap(
                       spacing: 09,
@@ -546,10 +768,7 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 25),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
+                      LogoutDialogBox(context);
                     },
                     child: Expanded(
                       child: Row(

@@ -1,4 +1,5 @@
 import 'package:anything/ConstantData/Constant_data.dart';
+import 'package:anything/MainScreen/register_screen.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -318,23 +319,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           GestureDetector(
             onTap: () {
-              /* showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent, // Keeps the transparency, but handles background in Container
-                builder: (context) =>
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.38,
-                      decoration: BoxDecoration(
-                        color: Colors.red, // Set your custom color here
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25.0),
-                          topRight: Radius.circular(25.0),
-                        ),
-                      ),
-                      child: ForgetPassword(),
-                    ),
-              );*/
+
 
               showModalBottomSheet(
                   shape: RoundedRectangleBorder(
@@ -392,12 +377,42 @@ class _LoginScreenState extends State<LoginScreen> {
           if (value['success'] == true) {
             print("UserId: ${ value['user']?['userId']}");
 
+            print(
+                "phone number stored successfully: ${value['user']?['phoneNumber']}");
+            GetStorage()
+                .write(ConstantData.UserId, value['user']?['userId']);
+            GetStorage()
+                .write(ConstantData.Useremail, value['user']?['email']);
+            GetStorage()
+                .write(ConstantData.Userpassword, passwordController.text);
+
+
+            GetStorage().write(ConstantData.UserParmanentAddress,
+                value['user']?['permanentAddress']);
+            GetStorage().write(
+                ConstantData.UserMobile, value['user']?['phoneNumber']);
+            GetStorage().write(
+                ConstantData.UserFirstName, value['user']?['firstName']);
+            GetStorage().write(
+                ConstantData.UserLastName, value['user']?['lastName']);
+            GetStorage().write(ConstantData.UserFrontImage,
+                value['user']?['frontImages']);
+            GetStorage().write(ConstantData.UserBackImage,
+                value['user']?['backImages']);
+            GetStorage().write(ConstantData.UserProfileImage,
+                value['user']?['profilePicture']?['url']);
+            GetStorage().write(
+                ConstantData.Userlatitude, value['user']?['latitude']);
+            GetStorage().write(
+                ConstantData.Userlongitude, value['user']?['longitude']);
+
+
             // Store credentials in GetStorage
 
-            GetStorage().write(ConstantData.Useremail, value['user']?['email']);
+           /* GetStorage().write(ConstantData.Useremail, value['user']?['email']);
             GetStorage().write(ConstantData.UserId, value['user']?['userId']);
             GetStorage().write(
-                ConstantData.Userpassword, passwordController.text);
+                ConstantData.Userpassword, passwordController.text);*/
 
             // Navigate to the home screen upon successful login
             Navigator.pushReplacement(context,
@@ -524,8 +539,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 14),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            Navigator.pop(context);
-                          },
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (context) => RegisterScreen(address: '', lat: '', long: '', ProfilePicture: '', firstName: '', lastname: '', email: '', password: '', cpassword: '', permanetAddress: '', mobileNumber: '', FrontImage: '', BackImage: '')));                          },
                       ),
                     ])),
               ),
