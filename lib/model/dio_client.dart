@@ -10,23 +10,24 @@ import '../ConstantData/Constant_data.dart';
 class ApiClients {
   final Dio _dio = Dio();
 
-  Future<Map<String, dynamic>> registerDio(String firstName,
-      String lastName,
-      String phoneNumber,
-      String email,
-      String password,
-      String cpassword,
-      File? profilePicture,
-      File? frontImages,
-      File? backImages,
-      String permanentAddress,
-      String latitude,
-      String longitude,) async
-  {
+  Future<Map<String, dynamic>> registerDio(
+    String firstName,
+    String lastName,
+    String phoneNumber,
+    String email,
+    String password,
+    String cpassword,
+    File? profilePicture,
+    File? frontImages,
+    File? backImages,
+    String permanentAddress,
+    String latitude,
+    String longitude,
+  ) async {
     String url = ApiConstant().BaseUrl + ApiConstant().registerss;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     print("Session Token: $sessionToken");
 
     try {
@@ -43,23 +44,17 @@ class ApiClients {
         if (profilePicture != null)
           'profilePicture': await MultipartFile.fromFile(
             profilePicture.path,
-            filename: profilePicture.path
-                .split('/')
-                .last,
+            filename: profilePicture.path.split('/').last,
           ),
         if (frontImages != null)
           'frontImages': await MultipartFile.fromFile(
             frontImages.path,
-            filename: frontImages.path
-                .split('/')
-                .last,
+            filename: frontImages.path.split('/').last,
           ),
         if (backImages != null)
           'backImages': await MultipartFile.fromFile(
             backImages.path,
-            filename: backImages.path
-                .split('/')
-                .last,
+            filename: backImages.path.split('/').last,
           ),
       });
 
@@ -96,13 +91,14 @@ class ApiClients {
     }
   }
 
-  Future<Map<String, dynamic>> loginDio(String email,
-      String password,) async
-  {
+  Future<Map<String, dynamic>> loginDio(
+    String email,
+    String password,
+  ) async {
     String url = ApiConstant().BaseUrlLogin + ApiConstant().login;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     print("Session Token: $sessionToken");
 
     var dataa = jsonEncode({
@@ -134,7 +130,7 @@ class ApiClients {
         ApiConstant().BaseUrlgetAllCatagries + ApiConstant().getAllCatagries;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     try {
       Response response = await _dio.get(
@@ -156,22 +152,22 @@ class ApiClients {
     }
   }
 
-
   Future<Map<String, dynamic>> PostCreateProductApi(
-      String name,
-      String description,
-      String categoryName,
-      int quantity,
-      List<File> images, // List of selected images
-      double rating,
-      String productCurrentAddress,
-      String price,
-
-      ) async
+    String name,
+    String description,
+    String categoryName,
+    int quantity,
+    List<File> images, // List of selected images
+    double rating,
+    String productCurrentAddress,
+    String price,
+  ) async
   {
-    String url = ApiConstant().BaseUrlCreateProdcut + ApiConstant().createProduct;
+    String url =
+        ApiConstant().BaseUrlCreateProdcut + ApiConstant().createProduct;
 
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     print("Session Token: $sessionToken");
 
     try {
@@ -236,4 +232,72 @@ class ApiClients {
     }
   }
 
+  Future<Map<String, dynamic>> getLogoutUser(
+      String email, String password) async
+  {
+    String url = "${ApiConstant().BaseUrlLogout}${ApiConstant().logout}";
+
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    print("UserAccessToken --> $sessionToken");
+
+    try {
+      Response response = await _dio.post(
+        url,
+        data: {
+          "email": email,
+          "password": password,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("Logout Status Code --> ${response.statusCode}");
+      print("Logout Response Data --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print("Dio Error --> ${e.response}");
+      print("Dio Error Message --> ${e.message}");
+
+      return e.response?.data ??
+          {'success': false, 'message': 'Failed to logout'};
+    }
+  }
+
+  Future<Map<String, dynamic>> getAllProductList() async {
+    String url =
+        ApiConstant().BaseUrlgetAllCatagries + ApiConstant().getDisplayProductList;
+
+    String? sessionToken =
+    GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("getCatList Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print("Dio Error: ${e.response}");
+      return e.response!.data;
+    }
+  }
+
+
 }
+
+
+

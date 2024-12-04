@@ -1,11 +1,12 @@
 import 'package:anything/Common_File/SizeConfig.dart';
+import 'package:anything/model/dio_client.dart';
 import 'package:flutter/material.dart';
-import 'package:another_carousel_pro/another_carousel_pro.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 import 'Common_File/common_color.dart';
 
 import 'MyBehavior.dart';
+import 'ResponseModule/getAllProductList.dart';
 
 class AllProductList extends StatefulWidget {
   const AllProductList({super.key});
@@ -18,381 +19,531 @@ class _AllProductListState extends State<AllProductList> {
 
 
 
+  List<Data1> filteredItems = [];
+  bool isLoading = true;
+  bool isSearchingData = false;
+  List<Data1> items = [];
+  List<Images> imagesList = [];
+  int currentIndex = 0;
+
+  Future<void> fetchImages(BuildContext context) async {
+
+
+  }
+
+  @override
+  void initState() {
+    fetchSlideImages();
+   // fetchCategories();
+    super.initState();
+
+    // Initially display all items
+  }
+
+  void fetchSlideImages() async {
+    try {
+      // Fetch data from API
+      Map<String, dynamic> response = await ApiClients().getAllProductList();
+
+      // Parse the response into getAllProductList object
+      var jsonList = getAllProductList.fromJson(response);
+
+      // Extract Images objects from the response
+      List<Images> fetchedImages = [];
+      for (var data in jsonList.data1 ?? []) {
+        if (data.images != null) {
+          for (var image in data.images!) {
+            fetchedImages.add(image); // Add Images object to the list
+          }
+        }
+      }
+
+      setState(() {
+        items = jsonList.data1 ?? [];
+
+        filteredItems = List.from(items);
+        isLoading = false;
+        imagesList = fetchedImages; // Update the imagesList
+        isLoading = false; // Stop loading
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching images: $e");
+    }
+  }
+  void fetchCategories() async {
+    try {
+      Map<String, dynamic> response = await ApiClients().getAllProductList();
+      var jsonList = getAllProductList.fromJson(response);
+      setState(() {
+        items = jsonList.data1 ?? [];
+
+        filteredItems = List.from(items);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false; // Stop loading in case of error
+      });
+      print("Error fetching categories: $e");
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
+
+    final List<String> imageUrls = [
+      "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg",
+      "https://pune.accordequips.com/images/products/15ccb1ae241836.png",
+      "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg",
+      "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg",
+      "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg",
+    ];
+
+
    // ScreenUtil.init(context, designSize: const Size(360, 690));
-    return Container(
-      color: Color(0xfff69c9c),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          body: Container(
-            child: Column(
-              children: [
-                SizedBox(height: 10,),
-
-                //appbar dynamic Create
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Container(
+        child: Column(
+          children: [
 
 
-
-                //search box
-                Expanded(
-                  child: ScrollConfiguration(
-                    behavior: MyBehavior(),
-                    child: ListView(
-                      children: [
-                        SizedBox(height: 10,),
-                      /*  Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(child: Divider()),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              Center(child: Text("CURATED COLLECTIONS",style: TextStyle(color: Colors.grey[500]!),)),
-                              SizedBox(
-                                width: 10.w,
-
-                              ),
-                              Expanded(child: Divider()),
-                            ],
-                          ),
-                        ),*/
-                       /* Container(
-                          height: 120.h,
-                          child: ListView.builder(
-                            itemCount: 2,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal:10.w),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(20.r),
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                            height:120.h,width: 100.w,
-                                            child: Image.asset("assets/images/img_dining${index+1}.jpeg",fit: BoxFit.fill,)),
-                                        Positioned(
-                                            left: 5.w,
-                                            bottom: 20.h,
-                                            child: Text("Collection 1",style: TextStyle(fontSize:18,color: Colors.white),))
-                                      ],
-                                    )),
-                              );
-                            },
-                          ),
+            Padding(
+              padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.03,left: SizeConfig.screenWidth*0.05),
+              child: Row(
+                children: [
+                  GestureDetector(
+                      onTap: (){
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.arrow_back)),
+                  Expanded(
+                    child: Center(
+                      child: !isSearchingData
+                          ? Text(
+                        "Popular Categories",
+                        style: TextStyle(
+                          fontFamily: "Montserrat-Medium",
+                          fontSize: SizeConfig.blockSizeHorizontal * 4.5,
+                          color: CommonColor.TextBlack,
+                          fontWeight: FontWeight.w600,
                         ),
-                        SizedBox(height: 10.h,),*/
-                       /* Row(
-                          children: [
-                            Spacer(),
-                            Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  border: Border.all(color: Colors.grey[300]!)
-                              ),
-                              child: Padding(
-                                padding:  EdgeInsets.all(5.h),
-                                child: Row(children: [
-                                  Text("Explore More",style: TextStyle(color: Colors.pink),),Icon(Icons.arrow_forward,color: Colors.pink,)
-                                ],),
-                              ),
+                      )
+                          : Padding(
+                        padding:  EdgeInsets.only(left: 14),
+                        child: TextField(
+                          onChanged: (String query) {
+                            setState(() {
+                              filteredItems = items
+                                  .where((item) =>
+                              item.name != null &&
+                                  item.name!
+                                      .toLowerCase()
+                                      .contains(query.toLowerCase()))
+                                  .toList();
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: "Search...",
+                            border: InputBorder.none,
+                          ),
+                          autofocus: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(13.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        print("list...$filteredItems");
+                        setState(() {
+                          isSearchingData = !isSearchingData;
+                          if (!isSearchingData) {
+                            filteredItems = items;
+                          }
+                        });
+                      },
+                      child: Icon(
+                        isSearchingData ? Icons.close : Icons.search_rounded,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: SizeConfig.screenHeight * 0.0005,
+              color: CommonColor.SearchBar,
+            ),
+
+            //appbar dynamic Create
+
+
+
+            //search box
+            Expanded(
+              child: ScrollConfiguration(
+                behavior: MyBehavior(),
+                child: ListView(
+                  children: [
+
+
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(child: Divider()),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Center(child: Text("ALL PRODUCT LIST CHOOSE YOUR LOCATION",style: TextStyle(color: Colors.grey[500]!),)),
+                          SizedBox(
+                            width: 10,
+
+                          ),
+                          Expanded(child: Divider()),
+                        ],
+                      ),
+                    ),
+                    filteredItems.isNotEmpty? ListView.builder(
+                      itemCount: filteredItems.length,
+                      physics: ClampingScrollPhysics(),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical, itemBuilder: (BuildContext context, int index) {
+
+                      print( "ddddddd  ${filteredItems[index].name.toString()}");
+
+                      return GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context, filteredItems [index].name.toString());
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal:15,vertical: 10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Color(0xfff1f2fd),
+                                borderRadius: BorderRadius.circular(7),
+                              border: Border.all(
+                                  color: CommonColor.grayText,
+                                  width: 0.3),
                             ),
-                            Spacer()
-                          ],
-                        ),*/
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(child: Divider()),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Center(child: Text("POPULAR RESTAURANT AROUND YOU",style: TextStyle(color: Colors.grey[500]!),)),
-                              SizedBox(
-                                width: 10,
-
-                              ),
-                              Expanded(child: Divider()),
-                            ],
-                          ),
-                        ),
-                        ListView.builder(
-                          itemCount: 12,
-                          physics: ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical, itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 11,vertical: 10),
-                            child: Card(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(7)
-                                ),
-                                child: Stack(
+                            child: Stack(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                            height:150,width: double.infinity,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(4.0),
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(7),
-                                                  topRight: Radius.circular(7),
-                                                ),
-                                                child: AnotherCarousel(
-                                                  images: const [
-                                                    NetworkImage(
-                                                        "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
-                                                    NetworkImage(
-                                                        "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
-                                                    NetworkImage(
-                                                        "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
-                                                    // we have display image from netwrok as well
-                                                    NetworkImage(
-                                                        "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
-                                                  ],
-                                                  dotSize: 6,
-                                                  dotSpacing: 10,
-                                                  dotColor: Colors.white70,
-                                                  dotIncreasedColor: Colors.black45,
-                                                  indicatorBgPadding: 5.0,
-                                                ),
-                                              ),
-                                            )),
-                                        Padding(
-                                          padding:  EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(height: 5),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    'HD Camera (black & white) dfgdf',
-                                                   style: TextStyle(
-                                                      color: Colors.black,
-                                                      letterSpacing: 0.0,
-                                                      fontFamily: "okra_medium",
-                                                      fontSize: SizeConfig.blockSizeHorizontal * 4.1,
-                                                      fontWeight: FontWeight.w500,
-                                                    ),overflow: TextOverflow.ellipsis,
-                                                  ),
-                                                  Spacer(),
-                                                /*  Container(
-                                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.r),
-                                                        color: Colors.green[900]!
-                                                    ),
-                                                    child: Padding(
-                                                      padding:  EdgeInsets.symmetric(horizontal:5.w),
-                                                      child: Text("4.9★",style: TextStyle(color: Colors.white),),
-                                                    ),
-                                                  )*/
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.location_on,
-                                                    size: SizeConfig.screenHeight *
-                                                        0.019,
-                                                    color: Color(0xff3684F0),
-                                                  ),
-                                                  Flexible(
-                                                    child: Text(
-                                                      ' Park Street,pune banner 20023',
-                                                      style: TextStyle(
-                                                        color: Color(0xff3684F0),
-                                                        letterSpacing: 0.0,
-                                                        fontFamily: "okra_Regular",
-                                                        fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                                                        fontWeight: FontWeight.w400,
-                                                      ),
-                                                      overflow:
-                                                      TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 5,),
-                                              Container(
-                                                height: 33,
-                                                decoration:
-                                                BoxDecoration(
-                                                  color: Color(
-                                                      0xfff8e8e8),
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      4),
-                                                ),
-                                                child: Row(
-                                                  // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
-                                                    children: [
+                                        CarouselSlider.builder(
+                                            itemCount: imagesList.length,
+                                            options: CarouselOptions(
+                                              onPageChanged: (index, reason) {
+                                                setState(() {
+                                                  currentIndex = index;
+                                                });
+                                              },
+                                              initialPage: 1,
+                                              height: MediaQuery.of(context).size.height * .19,
+                                              viewportFraction: 1.0,
+                                              enableInfiniteScroll: false,
+                                              autoPlay: true,
+                                              enlargeStrategy: CenterPageEnlargeStrategy.height,
+                                            ),
+                                            itemBuilder: (BuildContext context, int itemIndex, int index1) {
+                                              print("object    ${imagesList}");
+                                              final img = imagesList.isNotEmpty
+                                                  ? NetworkImage(imagesList[index1].url ?? '')
+                                                  : NetworkImage("");
 
-                                                      Text(
-                                                        '   Posted By:  ',
-                                                        style:
-                                                        TextStyle(
-                                                          fontFamily:
-                                                          "Montserrat-Regular",
-                                                          fontSize:
-                                                          SizeConfig.blockSizeHorizontal * 3.0,
-                                                          color:
-                                                          Colors.black87,
-                                                          fontWeight:
-                                                          FontWeight.w400,
+                                              return Container(
+                                                  margin: EdgeInsets.all(0),
+                                                  height: MediaQuery.of(context).size.height * 0.17,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey.shade200,
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    boxShadow: <BoxShadow>[
+                                                      BoxShadow(
+                                                        color: Colors.grey.shade300,
+                                                        spreadRadius: 0,
+                                                        blurRadius: 1,
+                                                        offset: const Offset(4, 4),
+                                                      ),
+                                                      BoxShadow(
+                                                        color: Colors.grey.shade50,
+                                                        offset: const Offset(-2, 0),
+                                                      ),
+                                                      BoxShadow(
+                                                        color: Colors.grey.shade50,
+                                                        offset: const Offset(1, 0),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: Center(
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          image: DecorationImage(
+                                                            image: img,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ));
+                                            }),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            for (int i = 0; i < imageUrls.length; i++)
+                                              currentIndex == i
+                                                  ? Container(
+                                                width: 25,
+                                                height: 7,
+                                                margin: EdgeInsets.all(2),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  gradient: LinearGradient(
+                                                      begin: Alignment.topRight,
+                                                      end: Alignment.bottomLeft,
+                                                      colors: [
+                                                        Color(0xff6a83da),
+                                                        Color(0xff665365B7),
+                                                      ]),
+                                                ),
+                                              )
+                                                  : Container(
+                                                width: 7,
+                                                height: 7,
+                                                margin: EdgeInsets.all(2),
+                                                decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                        begin: Alignment.topRight,
+                                                        end: Alignment.bottomLeft,
+                                                        colors: [
+                                                          Color(0xff7F9ED4),
+                                                          Color(0xff999999),
+                                                        ]),
+                                                    shape: BoxShape.circle),
+                                              )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding:  EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+
+                                          Text(
+                                            filteredItems[index].name.toString(),
+                                           style: TextStyle(
+                                              color: Colors.black,
+                                              letterSpacing: 0.2,
+                                              fontFamily: "okra_medium",
+                                              fontSize: SizeConfig.blockSizeHorizontal * 4.1,
+                                              fontWeight: FontWeight.w500,
+                                            ),overflow: TextOverflow.ellipsis,
+                                          ),
+                                          SizedBox(height: 2),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.location_on,
+                                                size: SizeConfig.screenHeight *
+                                                    0.019,
+                                                color: Color(0xff3684F0),
+                                              ),
+                                              Flexible(
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 250,
+
+                                                      child: Text(
+                                                        ' Park Street,pune banner 20023',
+                                                        style: TextStyle(
+                                                          color: Color(0xff3684F0),
+                                                          letterSpacing: 0.0,
+                                                          fontFamily: "okra_Regular",
+                                                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                                                          fontWeight: FontWeight.w400,
                                                         ),
                                                         overflow:
                                                         TextOverflow.ellipsis,
+                                                        maxLines: 1,
                                                       ),
-                                                      Text(
-                                                        'Aaysha',
-                                                        style:
-                                                        TextStyle(
-                                                          fontFamily:
-                                                          "Montserrat-Regular",
-                                                          fontSize:
-                                                          SizeConfig.blockSizeHorizontal * 3.1,
-                                                          color:
-                                                          Color(0xffC56262),
-                                                          fontWeight:
-                                                          FontWeight.w400,
-                                                        ),
-                                                        overflow:
-                                                        TextOverflow.ellipsis,
-                                                      ),
-                                                      SizedBox(width: 163),
-                                                      Container(
+                                                    ),
+                                                    Padding(
+                                                      padding:  EdgeInsets.only(left: 12),
+                                                      child: Container(
                                                         width: SizeConfig.screenWidth *
                                                             0.14,
                                                         height: 22,
                                                         decoration: BoxDecoration(
-                                                            color: Colors.green[900]!,
+                                                            color: Colors.white,
                                                             borderRadius:
                                                             BorderRadius.circular(
                                                                 10)),
-                                                        child: Padding(
-                                                          padding:  EdgeInsets.only(left: 7),
-                                                          child: Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons.star,
-                                                                size: SizeConfig
-                                                                    .screenHeight *
-                                                                    0.018,
-                                                                color:   CommonColor.white,
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                          children: [
+                                                            Icon(
+                                                              Icons.star,
+                                                              size: SizeConfig
+                                                                  .screenHeight *
+                                                                  0.018,
+                                                              color: CommonColor.Black,
+                                                            ),
+                                                            Text(
+                                                              filteredItems[index].rating.toString(),
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                "Roboto-Regular",
+                                                                fontSize: SizeConfig
+                                                                    .blockSizeHorizontal *
+                                                                    3.1,
+                                                                color:
+                                                                CommonColor.Black,
+                                                                fontWeight:
+                                                                FontWeight.w400,
                                                               ),
-                                                              Text(
-                                                                "  4.5",
-                                                                style: TextStyle(
-                                                                  fontFamily:
-                                                                  "Roboto-Regular",
-                                                                  fontSize: SizeConfig
-                                                                      .blockSizeHorizontal *
-                                                                      3.1,
-                                                                  color:
-                                                                  CommonColor.white,
-                                                                  fontWeight:
-                                                                  FontWeight.w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-
-
-
-                                                    ]),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              //Text("Kothi Compound ,Rajkot"),
                                             ],
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                    Positioned(
-                                        right: 10,
-                                        top: 10,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(50)
-                                          ),
-                                          child: IconButton(
-                                            color: Colors.white,
-                                            onPressed: (){},icon: Icon(Icons.favorite_outline,color: Colors.pink,),),
-                                        )
-                                    ),
-                                    Positioned(
-                                        right: 10,
-                                        top: 120,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey[200]!,
-                                              borderRadius: BorderRadius.circular(10)
-                                          ),
-                                          child:Padding(
-                                            padding: const EdgeInsets.all(5),
-                                            child: Center(child:Row(
-                                              // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
-                                                children: [
-                                                  Icon(
-                                                    Icons.location_on,
-                                                    size: SizeConfig
-                                                        .screenHeight *
-                                                        0.019,
-                                                    color: Colors.black87,
-                                                  ),
-                                                  Text(
-                                                    '1.2 Km   ',
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                      "Montserrat-Regular",
-                                                      fontSize: SizeConfig
-                                                          .blockSizeHorizontal *
-                                                          2.9,
-                                                      color: Colors.black87,
-                                                      fontWeight:
-                                                      FontWeight.w500,
-                                                    ),
-                                                    overflow: TextOverflow
-                                                        .ellipsis,
-                                                  ),
-                                                ]),),
-                                          ),
-                                        )
+                                          SizedBox(height: 10),
+
+
+                                          //Text("Kothi Compound ,Rajkot"),
+                                        ],
+                                      ),
                                     )
                                   ],
                                 ),
-                              ),
+                                Positioned(
+                                    right: 10,
+                                    top: 10,
+                                    child: Container(
+                                      height: 40,
+                                      width: 40,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(50),
+                                        border: Border.all(color: CommonColor.grayText,width: 0.5),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black
+                                                .withOpacity(0.1), // Shadow color
+                                            blurRadius: 5, // Shadow blur
+                                            offset:
+                                            Offset(0, 2), // Shadow position (x, y)
+                                          ),
+                                        ],
+                                      ),
+                                      child: IconButton(
+                                        color: Colors.white,
+                                        onPressed: (){},icon: Icon(Icons.favorite_outline,color: Colors.pink,size: 20,),),
+                                    )
+                                ),
+                                Positioned(
+                                    left: 10,
+                                    top: 118,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.4),
+                                          borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child:Padding(
+                                        padding: const EdgeInsets.all(5),
+                                        child: Center(child:Row(
+                                          // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                            children: [
+                                              Icon(
+                                                Icons.location_on,
+                                                size: SizeConfig
+                                                    .screenHeight *
+                                                    0.019,
+                                                color: Colors.white,
+                                              ),
+                                              Text(
+                                                '1.2 Km   ',
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                  "Montserrat-Regular",
+                                                  fontSize: SizeConfig
+                                                      .blockSizeHorizontal *
+                                                      2.9,
+                                                  color: Colors.white,
+                                                  fontWeight:
+                                                  FontWeight.w500,
+                                                ),
+                                                overflow: TextOverflow
+                                                    .ellipsis,
+                                              ),
+                                            ]),),
+                                      ),
+                                    )
+                                )
+                              ],
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                      );
+                    },
 
+                    ):  Column(
+                      children: [
+                        Icon(Icons.search_sharp,  color: CommonColor.noResult,size: 50,),
+                        Text("No results found",  style: TextStyle(
+                          color: CommonColor.Black,
+                          fontFamily: "Roboto_Regular",
+                          fontSize:
+                          SizeConfig.blockSizeHorizontal *
+                              4.0,
+                          fontWeight: FontWeight.w600,
+
+                        )),SizedBox(height: 10) ,Container(
+                          width: SizeConfig.screenWidth*0.6,
+                          child: Text("We couldn't find what you searched for try searching again",  style: TextStyle(
+                            color: CommonColor.gray,
+                            fontFamily: "Roboto_Regular",
+                            fontSize:
+                            SizeConfig.blockSizeHorizontal *
+                                3.3,
+                            fontWeight: FontWeight.w400,
+
+                          ),
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                          ),
                         )
                       ],
                     ),
-                  ),
+                  ]
                 ),
-
-
-              ],
+              ),
             ),
-          ),
+
+
+          ],
         ),
       ),
     );
@@ -452,6 +603,8 @@ class _AllProductListState extends State<AllProductList> {
       ),
     );*/
   }
+
+
 
   /*Widget AllProduct(double parentHeight, double parentWidth) {
     return Column(
@@ -720,4 +873,9 @@ class _AllProductListState extends State<AllProductList> {
       ],
     );
   }*/
+
+
+
+
+
 }

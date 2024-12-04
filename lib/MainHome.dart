@@ -1,5 +1,7 @@
 import 'package:anything/All_Product_List.dart';
 import 'package:anything/CatagrioesList.dart';
+import 'package:anything/MainScreen/login_screen.dart';
+import 'package:anything/model/dio_client.dart';
 import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +25,7 @@ import 'package:buttons_tabbar/buttons_tabbar.dart';
 
 import 'package:get_storage/get_storage.dart';
 
-import 'dummyData.dart';
+
 
 class MainHome extends StatefulWidget {
   @override
@@ -96,94 +98,92 @@ class MainHomeState extends State<MainHome>
     'assets/images/catfour.png'
   ];
 
-
-
   void LogoutDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
       context: context,
-      builder: (BuildContext context,) {
+      builder: (
+        BuildContext context,
+      ) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           title: Column(
             children: [
-                Padding(
+              Padding(
                 padding: EdgeInsets.only(top: 6),
+                child: Text("Logout",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "okra_Medium",
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    )),
+              ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image(
+                    image: AssetImage('assets/images/logthree.png'),
+                    height: SizeConfig.screenHeight * 0.07,
+                  ),
+                ),
+              ),
+              Container(
+                height:
+                    SizeConfig.screenHeight * 0.03, // Adjust height as needed
+
                 child: Text(
-                  "Logout",
+                  " Are You Sure you want to Logout?",
                   style: TextStyle(
                     color: Colors.black,
-                    fontFamily: "okra_Medium",
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  )
+                    fontFamily: "Montserrat-Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 2, // Ensures text spans at most two lines
+                  overflow:
+                      TextOverflow.ellipsis, // Adds ellipsis if text overflows
                 ),
               ),
-
-
-              Padding(
-                padding:  EdgeInsets.only(top: 12),
-                child: Stack(
-                  children: [
-                    Image(
-                      image: AssetImage('assets/images/logone.png'),
-                      height: SizeConfig.screenHeight * 0.09,
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/logthree.png'),
-                      height: SizeConfig.screenHeight * 0.1,
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: (){
-                  Navigator.of(context).pop();
-                 // _pickImage(ImageSource.camera);
-                },
-                child:Row(
-                  children: [
-
-                    Expanded(
-                      child: Container(
-                        height: SizeConfig.screenHeight * 0.1, // Adjust height as needed
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Are You Sure you want to Logout?",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Montserrat-Medium",
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 2, // Ensures text spans at most two lines
-                          overflow: TextOverflow.ellipsis, // Adds ellipsis if text overflows
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-
-
-              ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                      /* AppPreferences.clearAppPreference();
-                      Get.to(() => const SignIn());*/
+                    onTap: () async {
+                      String email =
+                          GetStorage().read<String>(ConstantData.Useremail) ??
+                              "";
+                      String password = GetStorage()
+                              .read<String>(ConstantData.Userpassword) ??
+                          "";
+
+                      final response =
+                          await ApiClients().getLogoutUser(email, password);
+                      if (response['success'] == true) {
+                        print("Logout Successful");
+
+                        // Remove user data from storage
+                        GetStorage().remove(ConstantData.UserAccessToken);
+                        GetStorage().remove(ConstantData.Useremail);
+                        GetStorage().remove(ConstantData.Userpassword);
+
+
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+
+                          (route) => false,
+                        );
+                      }
                     },
                     child: Padding(
-                      padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.0),
+                      padding:
+                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                       child: Container(
-                        width: SizeConfig.screenWidth*0.3,
+                        width: SizeConfig.screenWidth * 0.3,
                         decoration: BoxDecoration(
-
                           borderRadius: BorderRadius.circular(10),
                           // color: Colors.white,
 
@@ -195,7 +195,6 @@ class MainHomeState extends State<MainHome>
                               Color(0xffFE7F64),
                             ],
                           ),
-
                         ),
                         child: Center(
                           child: Text(
@@ -218,11 +217,11 @@ class MainHomeState extends State<MainHome>
                       Get.to(() => const SignIn());*/
                     },
                     child: Padding(
-                      padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.0),
+                      padding:
+                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                       child: Container(
-                        width: SizeConfig.screenWidth*0.3,
+                        width: SizeConfig.screenWidth * 0.3,
                         decoration: BoxDecoration(
-
                           borderRadius: BorderRadius.circular(10),
                           // color: Colors.white,
 
@@ -234,7 +233,6 @@ class MainHomeState extends State<MainHome>
                               Color(0xffFE7F64),
                             ],
                           ),
-
                         ),
                         child: Center(
                           child: Text(
@@ -258,9 +256,6 @@ class MainHomeState extends State<MainHome>
       },
     );
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -336,6 +331,7 @@ class MainHomeState extends State<MainHome>
         backgroundColor: Color(0xffffffff),
         child: ListView(
           padding: EdgeInsets.zero,
+          physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             Container(
               height: 160,
@@ -375,18 +371,18 @@ class MainHomeState extends State<MainHome>
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(4.0),
-                            child:CircleAvatar(
+                            child: CircleAvatar(
                               radius: 29.0,
                               backgroundColor: Colors.white,
                               child: CircleAvatar(
                                 radius: 25.0,
                                 backgroundColor: Colors.transparent,
                                 backgroundImage: (profileImage != null &&
-                                    profileImage!.isNotEmpty)
+                                        profileImage!.isNotEmpty)
                                     ? NetworkImage(
-                                    profileImage!) // Display image from URL
+                                        profileImage!) // Display image from URL
                                     : AssetImage('assets/images/profiless.png')
-                                as ImageProvider,
+                                        as ImageProvider,
                                 // Profile image
                               ),
                             ),
@@ -491,11 +487,12 @@ class MainHomeState extends State<MainHome>
                   ),
                   SizedBox(height: 30),
                   GestureDetector(
-                      onTap: (){
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MyCollection()));},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyCollection()));
+                    },
                     child: Wrap(
                       spacing: 13,
                       children: [
@@ -558,8 +555,6 @@ class MainHomeState extends State<MainHome>
                         const Image(
                           image: AssetImage('assets/images/transaction.png'),
                           height: 27,
-
-
                         ),
                         Container(
                           width: 180,
@@ -581,10 +576,8 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyRatings()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MyRatings()));
                     },
                     child: Wrap(
                       spacing: 11,
@@ -614,10 +607,8 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => chat()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => chat()));
                     },
                     child: Wrap(
                       spacing: 13,
@@ -666,10 +657,8 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AppImprov()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => AppImprov()));
                     },
                     child: Wrap(
                       spacing: 13,
@@ -683,25 +672,23 @@ class MainHomeState extends State<MainHome>
                           width: 130,
                           //  color: Colors.red,
                           child: Text(
-                            // the text of the row.
+                              // the text of the row.
                               "App Improvement",
                               style: TextStyle(
                                   fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.9,
+                                      SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
                               overflow: TextOverflow.ellipsis),
                         ),
-
-
                       ],
                     ),
                   ),
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                     /* Navigator.push(
+                      /* Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => AppImprov()));*/
@@ -735,7 +722,7 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                     /* Navigator.push(
+                      /* Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Myprofiledetails()));*/
@@ -1365,10 +1352,9 @@ class MainHomeState extends State<MainHome>
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          Scaffold(body: Container(
+                      builder: (context) => Scaffold(
+                          body: Container(
                               height: SizeConfig.screenHeight,
-
                               child: CatagriesList()))));
             },
             child: Padding(
@@ -1607,9 +1593,10 @@ class MainHomeState extends State<MainHome>
 
                   Container(
                     //child: Container(
-                    height: SizeConfig.screenHeight * 0.91,
+                    height: SizeConfig.screenHeight * 0.90,
                     //color: Colors.blue,
                     child: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1619,11 +1606,10 @@ class MainHomeState extends State<MainHome>
                               children: [
                                 Text(
                                   "  Near by Location",
-                                  style: TextStyle(
-                                    fontFamily: "Montserrat-Medium",
-                                    fontSize:
-                                        SizeConfig.blockSizeHorizontal * 4.1,
+                                  style:  TextStyle(
                                     color: Colors.black,
+                                    fontFamily: "Montserrat-Medium",
+                                    fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -1676,9 +1662,9 @@ class MainHomeState extends State<MainHome>
                             Text(
                               "   Near by place",
                               style: TextStyle(
-                                fontFamily: "okra_Regular",
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.5,
                                 color: CommonColor.grayText,
+                                fontFamily: "Montserrat-Medium",
+                                fontSize: 13,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -1728,36 +1714,101 @@ class MainHomeState extends State<MainHome>
                                         children: [
                                           Container(
                                             height:
-                                                SizeConfig.screenHeight * 0.1,
+                                                SizeConfig.screenHeight * 0.2,
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(7),
-                                                topRight: Radius.circular(7),
+                                              borderRadius: BorderRadius.all(Radius.circular(10)
                                               ),
                                               child: AnotherCarousel(
                                                 images: const [
                                                   NetworkImage(
-                                                      "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
+                                                      "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
                                                   NetworkImage(
-                                                      "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
+                                                      "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
                                                   NetworkImage(
-                                                      "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
-                                                  // we have display image from netwrok as well
+                                                      "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
                                                   NetworkImage(
-                                                      "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
+                                                      "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
+                                                  NetworkImage(
+                                                      "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
+
                                                 ],
+                                                autoplay:false,
                                                 dotSize: 6,
                                                 dotSpacing: 10,
                                                 dotColor: Colors.white70,
+                                               // overlayShadow: false,
+
                                                 dotIncreasedColor:
                                                     Colors.black45,
-                                                indicatorBgPadding: 5.0,
+                                                indicatorBgPadding: 3.0,
                                               ),
                                             ),
                                           ),
+
+
                                           Padding(
                                               padding: EdgeInsets.only(
-                                                  top: 67, left: 111),
+                                                  top: parentHeight*0.125),
+                                              child: Align(
+                                                alignment: Alignment.bottomLeft,
+                                                child: Container(
+                                                  height: parentHeight*0.055,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black.withOpacity(0.3),
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        0),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:  EdgeInsets.only(left: 8,right: 10,top: 2),
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          'HD Camera (black & white) dfgdf',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontFamily: "okra_Medium",
+                                                            fontSize: 13,
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                        Padding(
+                                                          padding:  EdgeInsets.only(top: 2),
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.location_on,
+                                                                size:
+                                                                SizeConfig.screenHeight *
+                                                                    0.019,
+                                                                color: Color(0xffffffff).withOpacity(0.8),
+                                                              ),
+                                                              Flexible(
+                                                                child: Text(
+                                                                  ' Park Street,pune banner 20023',
+                                                                  style: TextStyle(
+                                                                    color: Colors.white.withOpacity(0.8),
+                                                                    fontFamily: "Montserrat-Medium",
+                                                                    fontSize: 11,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                  overflow:
+                                                                  TextOverflow.ellipsis,
+                                                                  maxLines: 1,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              )),
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 0, left: 110),
                                               child: Align(
                                                 alignment: Alignment.bottomLeft,
                                                 child: Container(
@@ -1766,7 +1817,7 @@ class MainHomeState extends State<MainHome>
                                                     color: Color(0xff5095f1),
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            0),
+                                                            5),
                                                   ),
                                                   child: Row(
                                                       // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
@@ -1796,42 +1847,10 @@ class MainHomeState extends State<MainHome>
                                                       ]),
                                                 ),
                                               )),
-                                          Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 65, left: 2),
-                                              child: Align(
-                                                alignment:
-                                                    Alignment.bottomRight,
-                                                child: Row(
-                                                    // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.star,
-                                                        size: SizeConfig
-                                                                .screenHeight *
-                                                            0.02,
-                                                        color:
-                                                            Color(0xffFFB905),
-                                                      ),
-                                                      Text(
-                                                        " 4.5",
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              "Roboto-Regular",
-                                                          fontSize: SizeConfig
-                                                                  .blockSizeHorizontal *
-                                                              2.8,
-                                                          color:
-                                                              CommonColor.white,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ),
-                                                    ]),
-                                              ))
+
                                         ],
                                       ),
-                                      SizedBox(height: 4),
+                                    /*  SizedBox(height: 4),
                                       Container(
                                         width: SizeConfig.screenWidth * 0.42,
                                         child: Column(
@@ -1881,7 +1900,8 @@ class MainHomeState extends State<MainHome>
                                                 ),
                                               ],
                                             ),
-                                            SizedBox(height: 5),
+                                         */
+                                      /*   SizedBox(height: 5),
                                             Row(
                                               children: [
                                                 // color: Color(0xff3684F0),
@@ -1943,10 +1963,11 @@ class MainHomeState extends State<MainHome>
                                                   ),
                                                 ),
                                               ],
-                                            ),
+                                            ),*/
+                                      /*
                                           ],
                                         ),
-                                      ),
+                                      ),*/
                                     ],
                                   ),
                                 );
@@ -2010,13 +2031,21 @@ class MainHomeState extends State<MainHome>
                                 )
                               ],
                             ),
-                            Text(
-                              "   Display All rental product options in your choose location",
-                              style: TextStyle(
-                                fontFamily: "okra_Regular",
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                                color: CommonColor.grayText,
-                                fontWeight: FontWeight.w500,
+                            Padding(
+                              padding:  EdgeInsets.only(top: 3,left: 10),
+                              child: Container(
+                                width: 350,
+                                child: Text(
+                                  "Display All rental product options in your choose location",
+                                  style: TextStyle(
+                                    color: CommonColor.grayText,
+                                    fontFamily: "Montserrat-Medium",
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 2,  // Limit to 2 lines
+                                  overflow: TextOverflow.ellipsis,  // Add ellipsis if text overflows
+                                ),
                               ),
                             ),
                             SizedBox(height: 10),
@@ -2040,18 +2069,7 @@ class MainHomeState extends State<MainHome>
                                           border: Border.all(
                                               color: CommonColor.grayText,
                                               width: 0.3),
-                                          //  color: Color(0xffFFE5E3),
-                                          //  borderRadius:
-                                          //  BorderRadius.circular(12.0),
-/*
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Color(0xff000000)
-                                                      .withOpacity(0.2),
-                                                  blurRadius: 2,
-                                                  spreadRadius: 0,
-                                                  offset: Offset(0, 1)),
-                                            ],*/
+
                                         ),
                                         child: ListView(
                                           physics:
@@ -2063,7 +2081,7 @@ class MainHomeState extends State<MainHome>
                                               child: Container(
                                                 height:
                                                     SizeConfig.screenHeight *
-                                                        0.13,
+                                                        0.16,
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -2074,14 +2092,16 @@ class MainHomeState extends State<MainHome>
                                                   child: AnotherCarousel(
                                                     images: const [
                                                       NetworkImage(
-                                                          "https://media.istockphoto.com/id/1269776313/photo/suburban-house.jpg?s=1024x1024&w=is&k=20&c=xIwaYa1oKX9jnEnlsObNYDrljAkEsjOLlE66Eg2fDco="),
+                                                          "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
                                                       NetworkImage(
-                                                          "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
+                                                          "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
                                                       NetworkImage(
-                                                          "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
-                                                      // we have display image from netwrok as well
+                                                          "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
                                                       NetworkImage(
-                                                          "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
+                                                          "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
+                                                      NetworkImage(
+                                                          "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
+
                                                     ],
                                                     dotSize: 6,
                                                     dotSpacing: 10,
@@ -2156,7 +2176,7 @@ class MainHomeState extends State<MainHome>
                                                           ),
                                                         ],
                                                       ),
-                                                      SizedBox(height: 5),
+                                                    /*  SizedBox(height: 5),
                                                       Container(
                                                         height: 25,
                                                         decoration:
@@ -2282,7 +2302,7 @@ class MainHomeState extends State<MainHome>
                                                                   'assets/images/share.png'),
                                                               height: 15),
                                                         ],
-                                                      ),
+                                                      ),*/
                                                     ],
                                                   ),
                                                 ],

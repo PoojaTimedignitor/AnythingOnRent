@@ -310,7 +310,9 @@ class _CatagriesListState extends State<CatagriesList> {
                         ),
                       );
                     },
-                  ):  Column(
+                  ):
+
+                  Column(
                     children: [
                        Icon(Icons.search_sharp,  color: CommonColor.noResult,size: 50,),
                       Text("No results found",  style: TextStyle(
