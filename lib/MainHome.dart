@@ -5,13 +5,13 @@ import 'package:anything/model/dio_client.dart';
 import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'Admin/UserFeedback.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 import 'ConstantData/Constant_data.dart';
 import 'Home_screens.dart';
 import 'MyBehavior.dart';
 import 'SearchCatagries.dart';
-import 'SideBar/AppImprovment.dart';
 import 'SideBar/My Collection.dart';
 import 'SideBar/My Ratings.dart';
 import 'SideBar/My Transaction History.dart';
@@ -97,6 +97,9 @@ class MainHomeState extends State<MainHome>
     'assets/images/catone.png',
     'assets/images/catfour.png'
   ];
+
+
+
 
   void LogoutDialogBox(BuildContext context) {
     SizeConfig().init(context);
@@ -657,8 +660,23 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => AppImprov()));
+                      showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(20)),
+                          ),
+                          context: context,
+                          backgroundColor: Colors.white,
+                          elevation: 10,
+                          isScrollControlled: true,
+                          isDismissible: true,
+                          builder: (BuildContext bc) {
+                            return Userfeedback(
+                            );
+                          });
+
+                   /*   Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => AppImprov()));*/
                     },
                     child: Wrap(
                       spacing: 13,
@@ -673,7 +691,7 @@ class MainHomeState extends State<MainHome>
                           //  color: Colors.red,
                           child: Text(
                               // the text of the row.
-                              "App Improvement",
+                              "Feedback",
                               style: TextStyle(
                                   fontSize:
                                       SizeConfig.blockSizeHorizontal * 3.9,
@@ -1622,35 +1640,30 @@ class MainHomeState extends State<MainHome>
                                                 PopularCatagoriesData()));
                                   },
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: parentWidth * 0.35),
+                                    padding: EdgeInsets.only(left: parentWidth * 0.38, top: 5),
                                     child: Container(
-                                      height: parentHeight * 0.035,
+                                      height: parentHeight * 0.03,
                                       width: parentWidth * 0.22,
                                       decoration: BoxDecoration(
-                                          color: CommonColor.ViewAll,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5))),
+                                          border: Border.all(color: Color(0xff3684F0), width: 0.5),
+                                          borderRadius: BorderRadius.all(Radius.circular(5))),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: [
-                                          Text("View All",
-                                              style: TextStyle(
-                                                fontFamily:
-                                                    "Montserrat-Regular",
-                                                fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                    2.8,
-                                                color: CommonColor.TextBlack,
-                                                fontWeight: FontWeight.w400,
-                                              )),
+                                          Text(
+                                            " View All",
+                                            style: TextStyle(
+                                              fontFamily: "okra_Medium",
+                                              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                                              color: Color(0xff3684F0),
+                                              fontWeight: FontWeight.w200,
+                                            ),
+                                          ),
                                           Image(
-                                            image: AssetImage(
-                                                'assets/images/arrow.png'),
+                                            image: AssetImage('assets/images/arrow.png'),
                                             height: 20,
                                             width: 15,
-                                            color: Colors.black54,
+                                            color: Color(0xff3684F0),
                                           )
                                         ],
                                       ),
@@ -1993,36 +2006,31 @@ class MainHomeState extends State<MainHome>
                                             builder: (context) =>
                                                 AllProductList()));
                                   },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: parentWidth * 0.38),
+                                  child:Padding(
+                                    padding: EdgeInsets.only(left: parentWidth * 0.38, top: 3),
                                     child: Container(
-                                      height: parentHeight * 0.035,
+                                      height: parentHeight * 0.03,
                                       width: parentWidth * 0.22,
                                       decoration: BoxDecoration(
-                                          color: CommonColor.ViewAll,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5))),
+                                          border: Border.all(color: Color(0xff3684F0), width: 0.5),
+                                          borderRadius: BorderRadius.all(Radius.circular(5))),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: [
-                                          Text("View All",
-                                              style: TextStyle(
-                                                fontFamily:
-                                                    "Montserrat-Regular",
-                                                fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                    2.8,
-                                                color: CommonColor.TextBlack,
-                                                fontWeight: FontWeight.w400,
-                                              )),
+                                          Text(
+                                            " View All",
+                                            style: TextStyle(
+                                              fontFamily: "okra_Medium",
+                                              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                                              color: Color(0xff3684F0),
+                                              fontWeight: FontWeight.w200,
+                                            ),
+                                          ),
                                           Image(
-                                            image: AssetImage(
-                                                'assets/images/arrow.png'),
+                                            image: AssetImage('assets/images/arrow.png'),
                                             height: 20,
                                             width: 15,
-                                            color: Colors.black54,
+                                            color: Color(0xff3684F0),
                                           )
                                         ],
                                       ),

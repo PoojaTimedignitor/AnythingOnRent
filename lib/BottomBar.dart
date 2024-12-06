@@ -75,8 +75,6 @@ class BottomBarState extends State<BottomBar>
   final _searchFocus = FocusNode();
   final searchController = TextEditingController();
   int currentIndex = 0;
-  int _currentIndex = 0;
-  int _counter = 0;
   late TabController _tabController;
 
   final List<String> images = [

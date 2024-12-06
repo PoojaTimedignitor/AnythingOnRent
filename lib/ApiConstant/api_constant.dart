@@ -16,6 +16,11 @@ String logout = "logout";
 String getDisplayProductList = "/display/ProductList  ";
 
 
+String AdminBaseUrl = "https://admin-fyu1.onrender.com/api/app";
+
+String UserFeedback = "/app-improment";
+
+
 
 
 

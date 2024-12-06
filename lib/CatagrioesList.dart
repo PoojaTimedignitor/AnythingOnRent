@@ -102,7 +102,11 @@ class _CatagriesListState extends State<CatagriesList> {
           padding: EdgeInsets.zero,
           physics: NeverScrollableScrollPhysics(),
           children: [
-            Container(
+            isLoading
+                ? Padding(
+                  padding:  EdgeInsets.only(top:SizeConfig.screenHeight*0.4),
+                  child: Image(image: AssetImage("assets/images/logo.gif"),height: SizeConfig.screenHeight*0.15),
+                ):  SizedBox(
                 height: SizeConfig.screenHeight*0.9,
 
                 child: AllCatagriesList(SizeConfig.screenHeight,SizeConfig.screenWidth))
@@ -114,9 +118,7 @@ class _CatagriesListState extends State<CatagriesList> {
 
  Widget AllCatagriesList(double parentheight,double parentWidth){
 
-   return  isLoading
-       ? Center(child: CircularProgressIndicator())
-       : Center(
+   return   Center(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9, // Set the width of the bottom sheet
         child: Padding(
