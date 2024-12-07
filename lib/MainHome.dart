@@ -662,8 +662,10 @@ class MainHomeState extends State<MainHome>
                     onTap: () {
                       showModalBottomSheet(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(20)),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
                           ),
                           context: context,
                           backgroundColor: Colors.white,
@@ -775,36 +777,34 @@ class MainHomeState extends State<MainHome>
                     onTap: () {
                       LogoutDialogBox(context);
                     },
-                    child: Expanded(
-                      child: Row(
-                        children: [
-                          //  Spacer(),
-                          Container(
-                            child: Padding(
-                              padding: EdgeInsets.all(5),
-                              child: Row(
-                                children: [
-                                  Image(
-                                    image:
-                                        AssetImage('assets/images/logout.png'),
-                                    height: 20,
-                                    color: Colors.pink,
-                                  ),
-                                  Text(
-                                    "    Logout    ",
-                                    style: TextStyle(
-                                        color: Colors.pink,
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal *
-                                                3.9),
-                                  )
-                                ],
-                              ),
+                    child: Row(
+                      children: [
+                        //  Spacer(),
+                        Container(
+                          child: Padding(
+                            padding: EdgeInsets.all(5),
+                            child: Row(
+                              children: [
+                                Image(
+                                  image:
+                                      AssetImage('assets/images/logout.png'),
+                                  height: 20,
+                                  color: Colors.pink,
+                                ),
+                                Text(
+                                  "    Logout    ",
+                                  style: TextStyle(
+                                      color: Colors.pink,
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal *
+                                              3.9),
+                                )
+                              ],
                             ),
                           ),
-                          Spacer()
-                        ],
-                      ),
+                        ),
+                        Spacer()
+                      ],
                     ),
                   ),
                   SizedBox(height: 30),

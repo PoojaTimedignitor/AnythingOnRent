@@ -378,9 +378,11 @@ class _LoginScreenState extends State<LoginScreen> {
             print("UserId: ${ value['user']?['userId']}");
 
             print(
-                "phone number stored successfully: ${value['user']?['phoneNumber']}");
+                "toekn: ${value['token']}");
             GetStorage()
                 .write(ConstantData.UserId, value['user']?['userId']);
+            GetStorage()
+                .write(ConstantData.UserAccessToken, value['token']);
             GetStorage()
                 .write(ConstantData.Useremail, value['user']?['email']);
             GetStorage()

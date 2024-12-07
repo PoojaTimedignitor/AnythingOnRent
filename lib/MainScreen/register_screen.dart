@@ -1894,6 +1894,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 GetStorage()
                     .write(ConstantData.UserId, value['newUser']?['userId']);
                 GetStorage()
+                    .write(ConstantData.UserAccessToken, value['token']);
+                GetStorage()
                     .write(ConstantData.Useremail, value['newUser']?['email']);
                 GetStorage()
                     .write(ConstantData.Userpassword, passwordController.text);

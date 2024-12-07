@@ -296,6 +296,43 @@ class ApiClients {
     }
   }
 
+  Future<Map<String, dynamic>> PostfeedbackUser(
+      String suggest,
+
+      ) async
+  {
+    String url = ApiConstant().AdminBaseUrl + ApiConstant().UserFeedback;
+
+    String? sessionToken =
+    GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    String? userId = GetStorage().read<String>(ConstantData.UserId);
+
+
+    var datas = jsonEncode({
+      'user': userId,
+      'suggest': suggest,
+    });
+    print("data....> $sessionToken");
+    try {
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: datas,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+      print("statusCode --> ${response.statusCode}");
+      print("dateeeee --> ${response.data}");
+      return response.data;
+    } on DioError catch (e) {
+      return e.response!.data;
+    }
+  }
+
+
 
 }
 
