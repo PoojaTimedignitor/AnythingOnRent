@@ -41,6 +41,7 @@ class _PopularCatagoriesDataState extends State<PopularCatagoriesData> {
     'assets/images/catthree.png',
     'assets/images/catfour.png',
     'assets/images/catfour.png',
+    'assets/images/cattwo.png',
     'assets/images/cattwo.png'
   ];
   final Map<String, int> productCountList = {

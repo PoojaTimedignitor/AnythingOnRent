@@ -49,6 +49,8 @@ class _CatagriesListState extends State<CatagriesList> {
     'assets/images/catthree.png',
     'assets/images/catfour.png',
     'assets/images/catfour.png',
+    'assets/images/cattwo.png',
+    'assets/images/cattwo.png'
     'assets/images/cattwo.png'
   ];
 

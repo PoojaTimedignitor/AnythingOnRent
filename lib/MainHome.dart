@@ -25,8 +25,6 @@ import 'package:buttons_tabbar/buttons_tabbar.dart';
 
 import 'package:get_storage/get_storage.dart';
 
-
-
 class MainHome extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => MainHomeState();
@@ -82,24 +80,28 @@ class MainHomeState extends State<MainHome>
     "Party Bus",
     "Car",
     "Camera",
-    "Bike",
-    "Sports Equipment"
+  ];
+  List<String> catagriesDiscription = [
+    "Lorem Ipsum is dummy text used as a placeholder text since 1870",
+    "Lorem Ipsum is dummy text used as a placeholder text since 1870",
+    "Lorem Ipsum is dummy text used as a placeholder text since 1870",
+    "Lorem Ipsum is dummy text used as a placeholder text since 1870",
+    "Lorem Ipsum is dummy text used as a placeholder text since 1870",
+    "Lorem Ipsum is dummy text used as a placeholder text since 1870",
+    "Lorem Ipsum is dummy text used as a placeholder text since 1870",
+    "Lorem Ipsum is dummy text used as a placeholder text since 1870",
   ];
   final List<String> catagriesImage = [
-    'assets/images/catsaven.png',
-    'assets/images/catthree.png',
-    'assets/images/catfour.png',
-    'assets/images/catone.png',
-    'assets/images/catthree.png',
-    'assets/images/catsix.png',
-    'assets/images/catfive.png',
-    'assets/images/catsix.png',
-    'assets/images/catone.png',
-    'assets/images/catfour.png'
+    'assets/images/vehicle.png',
+    'assets/images/fashion.png',
+    'assets/images/homeApp.png',
+    'assets/images/events.png',
+    'assets/images/furnitures.png',
+    'assets/images/party.png',
+    'assets/images/events.png',
+    'assets/images/homeApp.png',
+
   ];
-
-
-
 
   void LogoutDialogBox(BuildContext context) {
     SizeConfig().init(context);
@@ -172,11 +174,9 @@ class MainHomeState extends State<MainHome>
                         GetStorage().remove(ConstantData.Useremail);
                         GetStorage().remove(ConstantData.Userpassword);
 
-
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (context) => const LoginScreen()),
-
                           (route) => false,
                         );
                       }
@@ -673,11 +673,10 @@ class MainHomeState extends State<MainHome>
                           isScrollControlled: true,
                           isDismissible: true,
                           builder: (BuildContext bc) {
-                            return Userfeedback(
-                            );
+                            return Userfeedback();
                           });
 
-                   /*   Navigator.push(context,
+                      /*   Navigator.push(context,
                           MaterialPageRoute(builder: (context) => AppImprov()));*/
                     },
                     child: Wrap(
@@ -786,8 +785,7 @@ class MainHomeState extends State<MainHome>
                             child: Row(
                               children: [
                                 Image(
-                                  image:
-                                      AssetImage('assets/images/logout.png'),
+                                  image: AssetImage('assets/images/logout.png'),
                                   height: 20,
                                   color: Colors.pink,
                                 ),
@@ -796,8 +794,7 @@ class MainHomeState extends State<MainHome>
                                   style: TextStyle(
                                       color: Colors.pink,
                                       fontSize:
-                                          SizeConfig.blockSizeHorizontal *
-                                              3.9),
+                                          SizeConfig.blockSizeHorizontal * 3.9),
                                 )
                               ],
                             ),
@@ -1309,62 +1306,160 @@ class MainHomeState extends State<MainHome>
               const Expanded(child: Divider()),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(left: parentWidth * 0.03),
-            child: SizedBox(
-              height: 200, // Set a fixed height for the GridView
-              child: GridView.builder(
-                scrollDirection: Axis.horizontal,
-                physics:
-                    NeverScrollableScrollPhysics(), // Enable horizontal scrolling
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Number of rows
-                  crossAxisSpacing: 1, // Space between columns
-                  mainAxisSpacing: 10, // Space between rows
-                  childAspectRatio: 3 / 2,
-                ),
-                itemCount: catagriesItemList.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.00),
-                          child: Image.asset(
-                            catagriesImage[index],
-                            height: 78,
-                            width: 45,
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          catagriesItemList[index],
-                          style: TextStyle(
-                            color: Colors.black,
-                            letterSpacing: 0.0,
-                            fontFamily: "okra_Normal",
-                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          /* style: TextStyle(
-                        color: CommonColor.Black,
-                        fontFamily: "Roboto_Regular",
-                        fontSize: SizeConfig.blockSizeHorizontal * 2.7,
-                        fontWeight: FontWeight.w500,
-                      ),*/
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
+          SizedBox(
+            height: 10,
           ),
+          /*    Padding(
+              padding: EdgeInsets.only(left: parentWidth * 0.05),
+              child: Container(
+
+
+                height: 100, // Set a fixed height for the GridView
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: GridView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics:
+                        AlwaysScrollableScrollPhysics(), // Disable scrolling
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1, // Number of rows
+                      crossAxisSpacing: 13, // Space between columns
+                      mainAxisSpacing: 30, // Space between rows
+                      childAspectRatio:
+                          4 / 3, // Adjust the width-to-height ratio
+                    ),
+                    itemCount: catagriesItemList.length,
+                    itemBuilder: (context, index) {
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Container(
+
+                            width: constraints
+                                .maxWidth, // Dynamically adjust width
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+
+                                colors: [Color(0xffFFFFFF), Color(0xffF1F1F1)],
+                              ),
+                              border:
+
+                                  Border.all(width: 0.4,  color: Colors.grey[400]!,),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding:  EdgeInsets.only(top: 10,left: 3,right: 2),
+                                  child: Text(
+                                    catagriesItemList[index],
+                                    style: TextStyle(
+                                      color: Colors.black,
+
+                                      fontFamily: "Arial",
+                                      fontSize: parentWidth *
+                                          0.030, // Dynamic font size
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 0),
+                                    child: Image.asset(
+                                      catagriesImage[index],
+                                      height: 40,
+                                      width: 35,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              )),*/
+          /*  Container(
+            height: 200,
+            color: Colors.red,
+            child: ListView.builder(
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.horizontal,
+                itemCount: catagriesItemList.length, // Define the number of items
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: parentWidth * 0.55,
+
+                    // Set width for each item
+                    margin: EdgeInsets.symmetric(
+                        horizontal: 10.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                      BorderRadius.circular(7),
+                      border: Border.all(
+                          color: CommonColor.grayText,
+                          width: 0.3),
+                    ),
+                    child: ListView(
+                      physics:
+                      NeverScrollableScrollPhysics(),
+                      children: [
+
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding:  EdgeInsets.only(top: 10,left: 3,right: 2),
+                              child: Text(
+                                catagriesItemList[index],
+                                style: TextStyle(
+                                  color: Colors.black,
+
+                                  fontFamily: "Arial",
+                                  fontSize: parentWidth *
+                                      0.030, // Dynamic font size
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 0),
+                                child: Image.asset(
+                                  catagriesImage[index],
+                                  height: 40,
+                                  width: 35,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+          ),*/
+
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -1381,6 +1476,7 @@ class MainHomeState extends State<MainHome>
                 height: parentHeight * 0.03,
                 width: parentWidth * 0.22,
                 decoration: BoxDecoration(
+
                     border: Border.all(color: Color(0xff3684F0), width: 0.5),
                     borderRadius: BorderRadius.all(Radius.circular(5))),
                 child: Row(
@@ -1405,7 +1501,78 @@ class MainHomeState extends State<MainHome>
                 ),
               ),
             ),
-          )
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+
+            height: 80,
+            child: ListView.builder(
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.horizontal,
+                itemCount:
+                    catagriesItemList.length, // Define the number of items
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Container(
+                        width: parentWidth * 0.20,
+height: 50,
+                        // Set width for each item
+                        margin: EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomRight,
+
+                            colors: [Color(0xffF1F1F1), Color(0xffffffff)],
+                          ),
+                       /*   color: Colors.white,*/
+                          borderRadius: BorderRadius.circular(10),
+                         /* border:
+                              Border.all(color: CommonColor.grayText, width: 0.3),*/
+                        ),
+                        child:  Padding(
+                          padding: const EdgeInsets.all(9.0),
+                          child: SizedBox(
+                            width: 10, // Define desired width
+                            height: 10,
+                            child: Image.asset(
+                              catagriesImage[index],
+
+
+
+
+                            ),
+                          ),
+                        ),
+
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                  Text(
+                  catagriesItemList[index],
+                  style: TextStyle(
+                    letterSpacing: 0.5,
+                  color: Colors.black,
+                  fontFamily: "Montserrat_Medium",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  ),
+
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  ),
+
+
+                    ],
+                  );
+                }),
+          ),
         ],
       ),
     );
@@ -1464,7 +1631,8 @@ class MainHomeState extends State<MainHome>
                     ),
                   ),
                 ),
-              )*/ /*
+              )*/
+    /*
             ],
           ),
           Padding(
@@ -1624,7 +1792,7 @@ class MainHomeState extends State<MainHome>
                               children: [
                                 Text(
                                   "  Near by Location",
-                                  style:  TextStyle(
+                                  style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: "Montserrat-Medium",
                                     fontSize: 15,
@@ -1640,27 +1808,35 @@ class MainHomeState extends State<MainHome>
                                                 PopularCatagoriesData()));
                                   },
                                   child: Padding(
-                                    padding: EdgeInsets.only(left: parentWidth * 0.38, top: 5),
+                                    padding: EdgeInsets.only(
+                                        left: parentWidth * 0.38, top: 5),
                                     child: Container(
                                       height: parentHeight * 0.03,
                                       width: parentWidth * 0.22,
                                       decoration: BoxDecoration(
-                                          border: Border.all(color: Color(0xff3684F0), width: 0.5),
-                                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                                          border: Border.all(
+                                              color: Color(0xff3684F0),
+                                              width: 0.5),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5))),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
                                         children: [
                                           Text(
                                             " View All",
                                             style: TextStyle(
                                               fontFamily: "okra_Medium",
-                                              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                                              fontSize: SizeConfig
+                                                      .blockSizeHorizontal *
+                                                  3.1,
                                               color: Color(0xff3684F0),
                                               fontWeight: FontWeight.w200,
                                             ),
                                           ),
                                           Image(
-                                            image: AssetImage('assets/images/arrow.png'),
+                                            image: AssetImage(
+                                                'assets/images/arrow.png'),
                                             height: 20,
                                             width: 15,
                                             color: Color(0xff3684F0),
@@ -1729,8 +1905,8 @@ class MainHomeState extends State<MainHome>
                                             height:
                                                 SizeConfig.screenHeight * 0.2,
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.all(Radius.circular(10)
-                                              ),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)),
                                               child: AnotherCarousel(
                                                 images: const [
                                                   NetworkImage(
@@ -1743,13 +1919,12 @@ class MainHomeState extends State<MainHome>
                                                       "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
                                                   NetworkImage(
                                                       "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
-
                                                 ],
-                                                autoplay:false,
+                                                autoplay: false,
                                                 dotSize: 6,
                                                 dotSpacing: 10,
                                                 dotColor: Colors.white70,
-                                               // overlayShadow: false,
+                                                // overlayShadow: false,
 
                                                 dotIncreasedColor:
                                                     Colors.black45,
@@ -1757,57 +1932,77 @@ class MainHomeState extends State<MainHome>
                                               ),
                                             ),
                                           ),
-
-
                                           Padding(
                                               padding: EdgeInsets.only(
-                                                  top: parentHeight*0.125),
+                                                  top: parentHeight * 0.125),
                                               child: Align(
                                                 alignment: Alignment.bottomLeft,
                                                 child: Container(
-                                                  height: parentHeight*0.055,
+                                                  height: parentHeight * 0.055,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.black.withOpacity(0.3),
+                                                    color: Colors.black
+                                                        .withOpacity(0.3),
                                                     borderRadius:
-                                                    BorderRadius.circular(
-                                                        0),
+                                                        BorderRadius.circular(
+                                                            0),
                                                   ),
                                                   child: Padding(
-                                                    padding:  EdgeInsets.only(left: 8,right: 10,top: 2),
+                                                    padding: EdgeInsets.only(
+                                                        left: 8,
+                                                        right: 10,
+                                                        top: 2),
                                                     child: Column(
                                                       children: [
                                                         Text(
                                                           'HD Camera (black & white) dfgdf',
                                                           style: TextStyle(
                                                             color: Colors.white,
-                                                            fontFamily: "okra_Medium",
+                                                            fontFamily:
+                                                                "okra_Medium",
                                                             fontSize: 13,
-                                                            fontWeight: FontWeight.w600,
+                                                            fontWeight:
+                                                                FontWeight.w600,
                                                           ),
-                                                          overflow: TextOverflow.ellipsis,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
                                                         Padding(
-                                                          padding:  EdgeInsets.only(top: 2),
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 2),
                                                           child: Row(
                                                             children: [
                                                               Icon(
-                                                                Icons.location_on,
-                                                                size:
-                                                                SizeConfig.screenHeight *
+                                                                Icons
+                                                                    .location_on,
+                                                                size: SizeConfig
+                                                                        .screenHeight *
                                                                     0.019,
-                                                                color: Color(0xffffffff).withOpacity(0.8),
+                                                                color: Color(
+                                                                        0xffffffff)
+                                                                    .withOpacity(
+                                                                        0.8),
                                                               ),
                                                               Flexible(
                                                                 child: Text(
                                                                   ' Park Street,pune banner 20023',
-                                                                  style: TextStyle(
-                                                                    color: Colors.white.withOpacity(0.8),
-                                                                    fontFamily: "Montserrat-Medium",
-                                                                    fontSize: 11,
-                                                                    fontWeight: FontWeight.w500,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white
+                                                                        .withOpacity(
+                                                                            0.8),
+                                                                    fontFamily:
+                                                                        "Montserrat-Medium",
+                                                                    fontSize:
+                                                                        11,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
                                                                   ),
                                                                   overflow:
-                                                                  TextOverflow.ellipsis,
+                                                                      TextOverflow
+                                                                          .ellipsis,
                                                                   maxLines: 1,
                                                                 ),
                                                               ),
@@ -1860,10 +2055,9 @@ class MainHomeState extends State<MainHome>
                                                       ]),
                                                 ),
                                               )),
-
                                         ],
                                       ),
-                                    /*  SizedBox(height: 4),
+                                      /*  SizedBox(height: 4),
                                       Container(
                                         width: SizeConfig.screenWidth * 0.42,
                                         child: Column(
@@ -2006,28 +2200,36 @@ class MainHomeState extends State<MainHome>
                                             builder: (context) =>
                                                 AllProductList()));
                                   },
-                                  child:Padding(
-                                    padding: EdgeInsets.only(left: parentWidth * 0.38, top: 3),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: parentWidth * 0.38, top: 3),
                                     child: Container(
                                       height: parentHeight * 0.03,
                                       width: parentWidth * 0.22,
                                       decoration: BoxDecoration(
-                                          border: Border.all(color: Color(0xff3684F0), width: 0.5),
-                                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                                          border: Border.all(
+                                              color: Color(0xff3684F0),
+                                              width: 0.5),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5))),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
                                         children: [
                                           Text(
                                             " View All",
                                             style: TextStyle(
                                               fontFamily: "okra_Medium",
-                                              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                                              fontSize: SizeConfig
+                                                      .blockSizeHorizontal *
+                                                  3.1,
                                               color: Color(0xff3684F0),
                                               fontWeight: FontWeight.w200,
                                             ),
                                           ),
                                           Image(
-                                            image: AssetImage('assets/images/arrow.png'),
+                                            image: AssetImage(
+                                                'assets/images/arrow.png'),
                                             height: 20,
                                             width: 15,
                                             color: Color(0xff3684F0),
@@ -2040,7 +2242,7 @@ class MainHomeState extends State<MainHome>
                               ],
                             ),
                             Padding(
-                              padding:  EdgeInsets.only(top: 3,left: 10),
+                              padding: EdgeInsets.only(top: 3, left: 10),
                               child: Container(
                                 width: 350,
                                 child: Text(
@@ -2051,127 +2253,155 @@ class MainHomeState extends State<MainHome>
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                  maxLines: 2,  // Limit to 2 lines
-                                  overflow: TextOverflow.ellipsis,  // Add ellipsis if text overflows
+                                  maxLines: 2, // Limit to 2 lines
+                                  overflow: TextOverflow
+                                      .ellipsis, // Add ellipsis if text overflows
                                 ),
                               ),
                             ),
                             SizedBox(height: 10),
                             Expanded(
-                              child: Container(
-                                child: ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: 10, // Define the number of items
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                        width: parentWidth * 0.55,
+                              child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: 10, // Define the number of items
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      width: parentWidth * 0.55,
 
-                                        // Set width for each item
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 10.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                          border: Border.all(
-                                              color: CommonColor.grayText,
-                                              width: 0.3),
-
-                                        ),
-                                        child: ListView(
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(3.0),
-                                              child: Container(
-                                                height:
-                                                    SizeConfig.screenHeight *
-                                                        0.16,
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft: Radius.circular(7),
-                                                    topRight:
-                                                        Radius.circular(7),
-                                                  ),
-                                                  child: AnotherCarousel(
-                                                    images: const [
-                                                      NetworkImage(
-                                                          "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
-                                                      NetworkImage(
-                                                          "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
-                                                      NetworkImage(
-                                                          "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
-                                                      NetworkImage(
-                                                          "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
-                                                      NetworkImage(
-                                                          "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
-
-                                                    ],
-                                                    dotSize: 6,
-                                                    dotSpacing: 10,
-                                                    dotColor: Colors.white70,
-                                                    dotIncreasedColor:
-                                                        Colors.black45,
-                                                    indicatorBgPadding: 5.0,
-                                                  ),
+                                      // Set width for each item
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(7),
+                                        border: Border.all(
+                                            color: CommonColor.grayText,
+                                            width: 0.3),
+                                      ),
+                                      child: ListView(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(3.0),
+                                            child: Container(
+                                              height: SizeConfig.screenHeight *
+                                                  0.16,
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(7),
+                                                  topRight: Radius.circular(7),
+                                                ),
+                                                child: AnotherCarousel(
+                                                  images: const [
+                                                    NetworkImage(
+                                                        "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
+                                                    NetworkImage(
+                                                        "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
+                                                    NetworkImage(
+                                                        "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
+                                                    NetworkImage(
+                                                        "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
+                                                    NetworkImage(
+                                                        "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
+                                                  ],
+                                                  dotSize: 6,
+                                                  dotSpacing: 10,
+                                                  dotColor: Colors.white70,
+                                                  dotIncreasedColor:
+                                                      Colors.black45,
+                                                  indicatorBgPadding: 5.0,
                                                 ),
                                               ),
                                             ),
-                                            Container(
-                                              width:
-                                                  SizeConfig.screenWidth * 0.5,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(height: 7),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        ' HD Camera (black & white) dfgdf',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              "Montserrat-Regular",
-                                                          fontSize: SizeConfig
-                                                                  .blockSizeHorizontal *
-                                                              3.7,
-                                                          color:
-                                                              CommonColor.Black,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                          ),
+                                          Container(
+                                            width: SizeConfig.screenWidth * 0.5,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(height: 7),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      ' HD Camera (black & white) dfgdf',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            "Montserrat-Regular",
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            3.7,
+                                                        color:
+                                                            CommonColor.Black,
+                                                        fontWeight:
+                                                            FontWeight.w400,
                                                       ),
-                                                      SizedBox(height: 3),
-                                                      Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.location_on,
-                                                            size: SizeConfig
-                                                                    .screenHeight *
-                                                                0.019,
-                                                            color: Color(
-                                                                0xff3684F0),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    SizedBox(height: 3),
+                                                    Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.location_on,
+                                                          size: SizeConfig
+                                                                  .screenHeight *
+                                                              0.019,
+                                                          color:
+                                                              Color(0xff3684F0),
+                                                        ),
+                                                        Flexible(
+                                                          child: Text(
+                                                            ' Park Street,pune banner 20023',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  "Montserrat-Regular",
+                                                              fontSize: SizeConfig
+                                                                      .blockSizeHorizontal *
+                                                                  3.0,
+                                                              color: Color(
+                                                                  0xff3684F0),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
                                                           ),
-                                                          Flexible(
-                                                            child: Text(
-                                                              ' Park Street,pune banner 20023',
-                                                              style: TextStyle(
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    /*  SizedBox(height: 5),
+                                                    Container(
+                                                      height: 25,
+                                                      decoration:
+                                                          BoxDecoration(
+                                                        color:
+                                                            Color(0xfff8e8e8),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(4),
+                                                      ),
+                                                      child: Row(
+                                                          // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                                          children: [
+                                                            Text(
+                                                              '   Posted By:  ',
+                                                              style:
+                                                                  TextStyle(
                                                                 fontFamily:
                                                                     "Montserrat-Regular",
-                                                                fontSize: SizeConfig
-                                                                        .blockSizeHorizontal *
-                                                                    3.0,
-                                                                color: Color(
-                                                                    0xff3684F0),
+                                                                fontSize:
+                                                                    SizeConfig
+                                                                            .blockSizeHorizontal *
+                                                                        2.8,
+                                                                color: Colors
+                                                                    .black87,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400,
@@ -2179,148 +2409,109 @@ class MainHomeState extends State<MainHome>
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,
-                                                              maxLines: 1,
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    /*  SizedBox(height: 5),
-                                                      Container(
-                                                        height: 25,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color:
-                                                              Color(0xfff8e8e8),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4),
-                                                        ),
-                                                        child: Row(
-                                                            // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
-                                                            children: [
-                                                              Text(
-                                                                '   Posted By:  ',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      "Montserrat-Regular",
-                                                                  fontSize:
-                                                                      SizeConfig
-                                                                              .blockSizeHorizontal *
-                                                                          2.8,
-                                                                  color: Colors
-                                                                      .black87,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
+                                                            Text(
+                                                              'Aaysha',
+                                                              style:
+                                                                  TextStyle(
+                                                                fontFamily:
+                                                                    "Montserrat-Regular",
+                                                                fontSize:
+                                                                    SizeConfig
+                                                                            .blockSizeHorizontal *
+                                                                        2.8,
+                                                                color: Color(
+                                                                    0xffC56262),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
                                                               ),
-                                                              Text(
-                                                                'Aaysha',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      "Montserrat-Regular",
-                                                                  fontSize:
-                                                                      SizeConfig
-                                                                              .blockSizeHorizontal *
-                                                                          2.8,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                            SizedBox(
+                                                                width: 38),
+                                                            Container(
+                                                              width: SizeConfig
+                                                                      .screenWidth *
+                                                                  0.1,
+                                                              decoration: BoxDecoration(
                                                                   color: Color(
-                                                                      0xffC56262),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                              SizedBox(
-                                                                  width: 38),
-                                                              Container(
-                                                                width: SizeConfig
-                                                                        .screenWidth *
-                                                                    0.1,
-                                                                decoration: BoxDecoration(
+                                                                      0xffffffff),
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                          3)),
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .star,
+                                                                    size: SizeConfig
+                                                                            .screenHeight *
+                                                                        0.016,
                                                                     color: Color(
-                                                                        0xffffffff),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            3)),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .star,
-                                                                      size: SizeConfig
-                                                                              .screenHeight *
-                                                                          0.016,
-                                                                      color: Color(
-                                                                          0xffFFB905),
+                                                                        0xffFFB905),
+                                                                  ),
+                                                                  Text(
+                                                                    "  4.5",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontFamily:
+                                                                          "Roboto-Regular",
+                                                                      fontSize:
+                                                                          SizeConfig.blockSizeHorizontal *
+                                                                              2.5,
+                                                                      color: CommonColor
+                                                                          .Black,
+                                                                      fontWeight:
+                                                                          FontWeight.w400,
                                                                     ),
-                                                                    Text(
-                                                                      "  4.5",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontFamily:
-                                                                            "Roboto-Regular",
-                                                                        fontSize:
-                                                                            SizeConfig.blockSizeHorizontal *
-                                                                                2.5,
-                                                                        color: CommonColor
-                                                                            .Black,
-                                                                        fontWeight:
-                                                                            FontWeight.w400,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ]),
-                                                      ),
-                                                      SizedBox(height: 10),
-                                                      Row(
-                                                        children: [
-                                                          // color: Color(0xff3684F0),
-
-                                                          Text(
-                                                            "  Share",
-                                                            style: TextStyle(
-                                                              color: CommonColor
-                                                                  .grayText,
-                                                              fontFamily:
-                                                                  "Roboto_Regular",
-                                                              fontSize: SizeConfig
-                                                                      .blockSizeHorizontal *
-                                                                  3.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
                                                             ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                          ]),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      children: [
+                                                        // color: Color(0xff3684F0),
+
+                                                        Text(
+                                                          "  Share",
+                                                          style: TextStyle(
+                                                            color: CommonColor
+                                                                .grayText,
+                                                            fontFamily:
+                                                                "Roboto_Regular",
+                                                            fontSize: SizeConfig
+                                                                    .blockSizeHorizontal *
+                                                                3.0,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500,
                                                           ),
-                                                          SizedBox(width: 17),
-                                                          Image(
-                                                              image: AssetImage(
-                                                                  'assets/images/share.png'),
-                                                              height: 15),
-                                                        ],
-                                                      ),*/
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                        ),
+                                                        SizedBox(width: 17),
+                                                        Image(
+                                                            image: AssetImage(
+                                                                'assets/images/share.png'),
+                                                            height: 15),
+                                                      ],
+                                                    ),*/
+                                                  ],
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
                             )
                           ],
                         ),
@@ -2338,4 +2529,28 @@ class MainHomeState extends State<MainHome>
       ),
     );
   }
+}
+
+//   https://images.pexels.com/photos/3757226/pexels-photo-3757226.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2
+
+class CustomImageClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    // Create a curve at the top of the image
+    path.lineTo(0, size.height - 50);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height - 100,
+      size.width,
+      size.height - 50,
+    );
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

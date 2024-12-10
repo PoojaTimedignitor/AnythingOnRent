@@ -5,10 +5,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import 'Common_File/common_color.dart';
 
+import 'DetailScreen.dart';
 import 'MyBehavior.dart';
 import 'ResponseModule/getAllProductList.dart';
+import 'homeList.dart';
 
 class AllProductList extends StatefulWidget {
+
   const AllProductList({super.key});
 
   @override
@@ -64,7 +67,8 @@ class _AllProductListState extends State<AllProductList> {
     print("Data has been refreshed!");
     /*  page = 1;
       isPagination = true;
-      getInternetCheck(page);*/
+      getInternetCheck(page);
+      */
     //  callGetReplyComment(page);
     return;
   }
@@ -160,105 +164,115 @@ class _AllProductListState extends State<AllProductList> {
             height: SizeConfig.screenHeight * 0.0005,
             color: CommonColor.SearchBar,
           ),
-          Padding(
-            padding:  EdgeInsets.all(18.0),
-            child: Container(
-              height: 120,
-              width: 600,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
+          GestureDetector(
+          onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BlinkitAnimationApp(
+          )),
+      );
+          },
+            child: Padding(
+              padding:  EdgeInsets.all(18.0),
+              child: Container(
+                height: 120,
+                width: 600,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
 
-              ),child: Padding(
-                padding:  EdgeInsets.only(top: 14,left: 20),
-                child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Accessories",
-                        style: TextStyle(
-                       //   color: Color(0xffFE7F64),
-                          color: Colors.black,
-                          letterSpacing: 0.7,
-                          fontFamily: "okra_Medium",
-                          fontSize: SizeConfig.blockSizeHorizontal * 4.7,
-                          fontWeight: FontWeight.w600,
-                        ),overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(width: 50),
-                      Container(
-                        height: 30,
-                        width: 170,
-
-                        child: Row(
-                          children: [
-                            Image(image: AssetImage('assets/images/sort.png'),height: 20,color: Color(0xffFE7F64),),
-                            SizedBox(width: 10),
-                            Text("Sort",style: TextStyle(
-                              color: Colors.black,
-                              letterSpacing: 0.0,
-                              fontFamily: "okra_Medium",
-                              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                              fontWeight: FontWeight.w400,
-                            ),),
-                            SizedBox(width: 20),
-                            Image(image: AssetImage('assets/images/filter.png'),height: 20,color: Color(0xffFE7F64),),
-                            SizedBox(width: 9),
-                            Text("Filters",style: TextStyle(
-                              color: Colors.black,
-                              letterSpacing: 0.0,
-                              fontFamily: "okra_Medium",
-                              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                              fontWeight: FontWeight.w400,
-                            ),)
-                          ],
+                ),child: Padding(
+                  padding:  EdgeInsets.only(top: 14,left: 20),
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Accessories",
+                          style: TextStyle(
+                         //   color: Color(0xffFE7F64),
+                            color: Colors.black,
+                            letterSpacing: 0.7,
+                            fontFamily: "okra_Medium",
+                            fontSize: SizeConfig.blockSizeHorizontal * 4.7,
+                            fontWeight: FontWeight.w600,
+                          ),overflow: TextOverflow.ellipsis,
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 3),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        size: SizeConfig.screenHeight *
-                            0.018,
-                        color: Color(0xffFE7F64),
-                      ),
-                      Flexible(
-                        child: Container(
-                          width: 120,
+                        SizedBox(width: 50),
+                        Container(
+                          height: 30,
+                          width: 170,
 
-                          child: Text(
-                            " Mumbai",
-                            style: TextStyle(
-                              color: Color(0xffFE7F64),
-                              letterSpacing: 0.0,
-                              fontFamily: "okra_Medium",
-                              fontSize: SizeConfig.blockSizeHorizontal * 3.4,
-                              fontWeight: FontWeight.w400,
+                          child: Row(
+                            children: [
+                              Image(image: AssetImage('assets/images/sort.png'),height: 20,color: Color(0xffFE7F64),),
+                              SizedBox(width: 10),
+                              Text("Sort",style: TextStyle(
+                                color: Colors.black,
+                                letterSpacing: 0.0,
+                                fontFamily: "okra_Medium",
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                                fontWeight: FontWeight.w400,
+                              ),),
+                              SizedBox(width: 20),
+                              Image(image: AssetImage('assets/images/filter.png'),height: 20,color: Color(0xffFE7F64),),
+                              SizedBox(width: 9),
+                              Text("Filters",style: TextStyle(
+                                color: Colors.black,
+                                letterSpacing: 0.0,
+                                fontFamily: "okra_Medium",
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                                fontWeight: FontWeight.w400,
+                              ),)
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: SizeConfig.screenHeight *
+                              0.018,
+                          color: Color(0xffFE7F64),
+                        ),
+                        Flexible(
+                          child: Container(
+                            width: 120,
+
+                            child: Text(
+                              " Mumbai",
+                              style: TextStyle(
+                                color: Color(0xffFE7F64),
+                                letterSpacing: 0.0,
+                                fontFamily: "okra_Medium",
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.4,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              overflow:
+                              TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
-                            overflow:
-                            TextOverflow.ellipsis,
-                            maxLines: 1,
                           ),
                         ),
-                      ),
 
-                    ],
-                  ),
-                  SizedBox(height: 13),
-                  Text("1 - 3,324 Results",style: TextStyle(
-                      color: Colors.grey[500]!,
+                      ],
+                    ),
+                    SizedBox(height: 13),
+                    Text("1 - 3,324 Results",style: TextStyle(
+                        color: Colors.grey[500]!,
 
-                    fontFamily: "okra_Regular",
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                    fontWeight: FontWeight.w400,
-                  ))
-                ],
-                          ),
+                      fontFamily: "okra_Regular",
+                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      fontWeight: FontWeight.w400,
+                    ))
+                  ],
+                            ),
+                ),
               ),
             ),
           ),
@@ -313,12 +327,37 @@ class _AllProductListState extends State<AllProductList> {
 
                        print( "ddddddd  ${filteredItems[index].name.toString()}");
 
-                       final product = filteredItems[index];
+                       final  product = filteredItems[index];
                        final productImages = product.images ?? [];
 
                        return GestureDetector(
                          onTap: (){
-                           Navigator.pop(context, filteredItems [index].name.toString());
+
+
+                           Navigator.push(
+                             context,
+                             PageRouteBuilder(
+                               transitionDuration: Duration(milliseconds: 600),
+                               reverseTransitionDuration: Duration(milliseconds: 400),
+                               pageBuilder: (_, __, ___) => DetailScreen(product: product),
+                               transitionsBuilder:
+                                   (_, animation, secondaryAnimation, child) {
+                                 var curve = Curves.easeInOut;
+                                 var tween = Tween(begin: 0.0, end: 1.0)
+                                     .chain(CurveTween(curve: curve));
+                                 return FadeTransition(
+                                   opacity: animation.drive(tween),
+                                   child: ScaleTransition(
+                                     scale: animation.drive(tween),
+                                     child: child,
+                                   ),
+                                 );
+                               },
+                             ),
+                           );
+
+
+                         //  Navigator.pop(context, filteredItems [index].name.toString());
 
                          },
                          child: Padding(
@@ -336,104 +375,107 @@ class _AllProductListState extends State<AllProductList> {
                                  Column(
                                    crossAxisAlignment: CrossAxisAlignment.start,
                                    children: [
-                                     Column(
-                                       children: [
-                                         CarouselSlider.builder(
-                                             itemCount: productImages.length,
-                                             options: CarouselOptions(
-                                               onPageChanged: (index, reason) {
-                                                 setState(() {
-                                                   currentIndex = index;
-                                                 });
-                                               },
-                                               initialPage: 1,
-                                               height: MediaQuery.of(context).size.height * .19,
-                                               viewportFraction: 1.0,
-                                               enableInfiniteScroll: false,
-                                               autoPlay: true,
-                                               enlargeStrategy: CenterPageEnlargeStrategy.height,
-                                             ),
-                                             itemBuilder: (BuildContext context, int itemIndex, int index1) {
-                                               print("object....${productImages}");
-                                               final img = productImages.isNotEmpty
-                                                   ? NetworkImage( productImages[itemIndex].url ?? "")
-                                                   : NetworkImage("");
+                                     Hero(
+                                       tag: product.sId.toString(),  // Use the same tag here
+                                       child: Column(
+                                         children: [
+                                           CarouselSlider.builder(
+                                               itemCount: productImages.length,
+                                               options: CarouselOptions(
+                                                 onPageChanged: (index, reason) {
+                                                   setState(() {
+                                                     currentIndex = index;
+                                                   });
+                                                 },
+                                                 initialPage: 1,
+                                                 height: MediaQuery.of(context).size.height * .19,
+                                                 viewportFraction: 1.0,
+                                                 enableInfiniteScroll: false,
+                                                 autoPlay: true,
+                                                 enlargeStrategy: CenterPageEnlargeStrategy.height,
+                                               ),
+                                               itemBuilder: (BuildContext context, int itemIndex, int index1) {
+                                                 print("object....${productImages}");
+                                                 final img = productImages.isNotEmpty
+                                                     ? NetworkImage( productImages[itemIndex].url ?? "")
+                                                     : NetworkImage("");
 
-                                               return Container(
-                                                   margin: EdgeInsets.all(0),
-                                                   height: MediaQuery.of(context).size.height * 0.17,
-                                                   decoration: BoxDecoration(
-                                                     color: Colors.grey.shade200,
-                                                     borderRadius: BorderRadius.circular(10),
-                                                     boxShadow: <BoxShadow>[
-                                                       BoxShadow(
-                                                         color: Colors.grey.shade300,
-                                                         spreadRadius: 0,
-                                                         blurRadius: 1,
-                                                         offset: const Offset(4, 4),
-                                                       ),
-                                                       BoxShadow(
-                                                         color: Colors.grey.shade50,
-                                                         offset: const Offset(-2, 0),
-                                                       ),
-                                                       BoxShadow(
-                                                         color: Colors.grey.shade50,
-                                                         offset: const Offset(1, 0),
-                                                       )
-                                                     ],
-                                                   ),
-                                                   child: Center(
-                                                     child: ClipRRect(
+                                                 return Container(
+                                                     margin: EdgeInsets.all(0),
+                                                     height: MediaQuery.of(context).size.height * 0.17,
+                                                     decoration: BoxDecoration(
+                                                       color: Colors.grey.shade200,
                                                        borderRadius: BorderRadius.circular(10),
-                                                       child: Container(
-                                                         decoration: BoxDecoration(
-                                                           image: DecorationImage(
-                                                             image: img,
-                                                             fit: BoxFit.cover,
+                                                       boxShadow: <BoxShadow>[
+                                                         BoxShadow(
+                                                           color: Colors.grey.shade300,
+                                                           spreadRadius: 0,
+                                                           blurRadius: 1,
+                                                           offset: const Offset(4, 4),
+                                                         ),
+                                                         BoxShadow(
+                                                           color: Colors.grey.shade50,
+                                                           offset: const Offset(-2, 0),
+                                                         ),
+                                                         BoxShadow(
+                                                           color: Colors.grey.shade50,
+                                                           offset: const Offset(1, 0),
+                                                         )
+                                                       ],
+                                                     ),
+                                                     child: Center(
+                                                       child: ClipRRect(
+                                                         borderRadius: BorderRadius.circular(10),
+                                                         child: Container(
+                                                           decoration: BoxDecoration(
+                                                             image: DecorationImage(
+                                                               image: img,
+                                                               fit: BoxFit.cover,
+                                                             ),
                                                            ),
                                                          ),
                                                        ),
-                                                     ),
-                                                   ));
-                                             }),
-                                         Row(
-                                           mainAxisAlignment: MainAxisAlignment.center,
-                                           crossAxisAlignment: CrossAxisAlignment.center,
-                                           children: [
-                                             for (int i = 0; i < productImages.length; i++)
-                                               currentIndex == i
-                                                   ? Container(
-                                                 width: 25,
-                                                 height: 7,
-                                                 margin: EdgeInsets.all(2),
-                                                 decoration: BoxDecoration(
-                                                   borderRadius: BorderRadius.circular(10),
-                                                   gradient: LinearGradient(
-                                                       begin: Alignment.topRight,
-                                                       end: Alignment.bottomLeft,
-                                                       colors: [
-                                                         Color(0xff6a83da),
-                                                         Color(0xff665365B7),
-                                                       ]),
-                                                 ),
-                                               )
-                                                   : Container(
-                                                 width: 7,
-                                                 height: 7,
-                                                 margin: EdgeInsets.all(2),
-                                                 decoration: BoxDecoration(
+                                                     ));
+                                               }),
+                                           Row  (
+                                             mainAxisAlignment: MainAxisAlignment.center,
+                                             crossAxisAlignment: CrossAxisAlignment.center,
+                                             children: [
+                                               for (int i = 0; i < productImages.length; i++)
+                                                 currentIndex == i
+                                                     ? Container(
+                                                   width: 25,
+                                                   height: 7,
+                                                   margin: EdgeInsets.all(2),
+                                                   decoration: BoxDecoration(
+                                                     borderRadius: BorderRadius.circular(10),
                                                      gradient: LinearGradient(
                                                          begin: Alignment.topRight,
                                                          end: Alignment.bottomLeft,
                                                          colors: [
-                                                           Color(0xff7F9ED4),
-                                                           Color(0xff999999),
+                                                           Color(0xff6a83da),
+                                                           Color(0xff665365B7),
                                                          ]),
-                                                     shape: BoxShape.circle),
-                                               )
-                                           ],
-                                         ),
-                                       ],
+                                                   ),
+                                                 )
+                                                     : Container(
+                                                   width: 7,
+                                                   height: 7,
+                                                   margin: EdgeInsets.all(2),
+                                                   decoration: BoxDecoration(
+                                                       gradient: LinearGradient(
+                                                           begin: Alignment.topRight,
+                                                           end: Alignment.bottomLeft,
+                                                           colors: [
+                                                             Color(0xff7F9ED4),
+                                                             Color(0xff999999),
+                                                           ]),
+                                                       shape: BoxShape.circle),
+                                                 )
+                                             ],
+                                           ),
+                                         ],
+                                       ),
                                      ),
                                      Padding(
                                        padding:  EdgeInsets.symmetric(vertical: 5,horizontal: 10),

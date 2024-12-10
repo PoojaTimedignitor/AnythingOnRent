@@ -99,6 +99,13 @@ class ApiClients {
 
     String? sessionToken =
         GetStorage().read<String>(ConstantData.UserAccessToken);
+
+
+    if (sessionToken == null) {
+      print("Error: Session Token is null!");
+      return {"success": false, "message": "User is not logged in."};
+    }
+
     print("Session Token: $sessionToken");
 
     var dataa = jsonEncode({
