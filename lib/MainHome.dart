@@ -33,7 +33,8 @@ class MainHome extends StatefulWidget {
 class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
-
+  bool isSearchExpanded = false; // Tracks if search bar is expanded
+ // final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -62,13 +63,11 @@ class MainHomeState extends State<MainHome>
   late TabController _tabController;
 
   final List<String> images = [
-    "https://img.freepik.com/free-vector/gradient-car-rental-twitch-background_23-2149238538.jpg?w=1380&t=st=1724674607~exp=1724675207~hmac=0ab319f9d9411c32c9d26508151d51f62139e048ac598796c8463dac3ef0aad7"
-        'https://img.freepik.com/free-vector/real-estate-landing-page_23-2148686374.jpg?w=1380&t=st=1724741972~exp=1724742572~hmac=e21195893cb55e204d9618c983abd7d4d1dc18402402af3dbe0420bd08d6ad33',
-    "https://img.freepik.com/free-vector/hand-drawn-real-estate-poster-template_23-2149845735.jpg?w=740&t=st=1724742124~exp=1724742724~hmac=3920ca483a7e7dc65a3006016da9687799d3d72e35d5a70af985ce681bbdfc49"
-        'https://images.pexels.com/photos/3757226/pexels-photo-3757226.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    'https://images.pexels.com/photos/13065690/pexels-photo-13065690.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    'https://images.pexels.com/photos/372810/pexels-photo-372810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    'https://images.pexels.com/photos/4489702/pexels-photo-4489702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
+    'https://img.freepik.com/free-photo/discount-water-bottle-podium_23-2150165468.jpg?t=st=1733893283~exp=1733896883~hmac=181b5b2cd91c367d66c157a610ab35f260b45aa7281a97beb1532f5ccc404027&w=1060',
+    'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/ice-cream-ad-poster-flyer-template-design-04ba11b55ba8e6f441e21ca17698dffb_screen.jpg?ts=1637008762',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQURaEKy1ytMBVSWU6DG4axIX8JYYV1NKhkaX4oTrf5QGoeLlWHR4tGRPoxzd19RQboe8&usqp=CAU',
+    'https://img.freepik.com/free-photo/discount-water-bottle-podium_23-2150165468.jpg?t=st=1733893283~exp=1733896883~hmac=181b5b2cd91c367d66c157a610ab35f260b45aa7281a97beb1532f5ccc404027&w=1060',
+    'https://study.com/cimages/multimages/16/burgerad15179945781952220614.png'
   ];
 
   List<String> catagriesItemList = [
@@ -95,7 +94,7 @@ class MainHomeState extends State<MainHome>
     'assets/images/vehicle.png',
     'assets/images/fashion.png',
     'assets/images/homeApp.png',
-    'assets/images/events.png',
+    'assets/images/vehicle.png',
     'assets/images/furnitures.png',
     'assets/images/party.png',
     'assets/images/events.png',
@@ -269,8 +268,9 @@ class MainHomeState extends State<MainHome>
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(55.0),
         child: AppBar(
-          title: Container(
-            width: 300,
+
+          flexibleSpace: Padding(
+            padding:  EdgeInsets.only(top: 34,left: 50),
             child: Row(
               children: [
                 Flexible(
@@ -917,9 +917,15 @@ class MainHomeState extends State<MainHome>
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
                 children: <Widget>[
-                  HomeSearchBar(
-                      SizeConfig.screenHeight, SizeConfig.screenWidth),
-                  sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+
+                  Column(
+                    children: [
+                      HomeSearchBar(
+                          SizeConfig.screenHeight, SizeConfig.screenWidth),
+                      sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                    ],
+                  ),
+
                   AddPostButton(
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
                   PopularCategories(
@@ -1096,12 +1102,13 @@ class MainHomeState extends State<MainHome>
                 left: SizeConfig.screenWidth * .05,
                 top: SizeConfig.screenHeight * 0.0),
             child: SizedBox(
-              height: SizeConfig.screenHeight * .055,
+              height: SizeConfig.screenHeight * .053,
               width: SizeConfig.screenWidth * .95,
               child: Padding(
                 padding: EdgeInsets.only(right: parentWidth * 0.04),
                 child: Container(
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       border: Border.all(color: Colors.black26),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -1143,7 +1150,7 @@ class MainHomeState extends State<MainHome>
                 });
               },
               initialPage: 1,
-              height: MediaQuery.of(context).size.height * .19,
+              height: MediaQuery.of(context).size.height * .24,
               viewportFraction: 1.0,
               enableInfiniteScroll: false,
               autoPlay: true,
@@ -1156,34 +1163,14 @@ class MainHomeState extends State<MainHome>
 
               return Container(
                   margin: EdgeInsets.all(16),
-                  height: MediaQuery.of(context).size.height * 0.17,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        spreadRadius: 0,
-                        blurRadius: 1,
-                        offset: const Offset(4, 4),
-                      ),
-                      BoxShadow(
-                        color: Colors.grey.shade50,
-                        offset: const Offset(-2, 0),
-                      ),
-                      BoxShadow(
-                        color: Colors.grey.shade50,
-                        offset: const Offset(1, 0),
-                      )
-                    ],
-                  ),
+
                   child: Center(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(15),
                       child: Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: img,
+                            image: NetworkImage(img.url),
                             fit: BoxFit.cover,
                           ),
                         ),

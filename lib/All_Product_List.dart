@@ -8,7 +8,6 @@ import 'Common_File/common_color.dart';
 import 'DetailScreen.dart';
 import 'MyBehavior.dart';
 import 'ResponseModule/getAllProductList.dart';
-import 'homeList.dart';
 
 class AllProductList extends StatefulWidget {
 
@@ -89,7 +88,7 @@ class _AllProductListState extends State<AllProductList> {
         Container(
           height: 230,
           decoration: BoxDecoration(
-            color: Color(0xffFFEEEB),
+            color: Color(0xffffe6e3),
             borderRadius: BorderRadius.circular(27),
 
           ),
@@ -166,12 +165,12 @@ class _AllProductListState extends State<AllProductList> {
           ),
           GestureDetector(
           onTap: () {
-      Navigator.push(
+      /*Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => BlinkitAnimationApp(
           )),
-      );
+      );*/
           },
             child: Padding(
               padding:  EdgeInsets.all(18.0),
@@ -262,6 +261,9 @@ class _AllProductListState extends State<AllProductList> {
 
                       ],
                     ),
+
+
+
                     SizedBox(height: 13),
                     Text("1 - 3,324 Results",style: TextStyle(
                         color: Colors.grey[500]!,
