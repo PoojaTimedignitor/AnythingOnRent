@@ -918,11 +918,16 @@ class MainHomeState extends State<MainHome>
                 padding: EdgeInsets.zero,
                 children: <Widget>[
 
-                  Column(
+                  Stack(
                     children: [
-                      HomeSearchBar(
-                          SizeConfig.screenHeight, SizeConfig.screenWidth),
-                      sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+
+                      Column(
+                        children: [
+                          HomeSearchBar(
+                              SizeConfig.screenHeight, SizeConfig.screenWidth),
+                          sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                        ],
+                      ),
                     ],
                   ),
 
