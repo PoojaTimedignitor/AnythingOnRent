@@ -47,12 +47,23 @@ class _CreateCityState extends State<CreateCity> {
   ];
 
   List<String> filteredItems = [];
+  bool isSearchingData = false;
+  String searchQuery = "";
 
   @override
   void initState() {
     super.initState();
-    filteredItems = List.from(itemsCity);
+    filteredItems = itemsCity;
     // Initially display all items
+  }
+
+  void searchUpdateMethod(String query) {
+    setState(() {
+      searchQuery = query;
+      filteredItems = itemsCity
+          .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
   }
   @override
   Widget build(BuildContext context) {

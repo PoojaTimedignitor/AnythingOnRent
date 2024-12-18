@@ -34,7 +34,7 @@ class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
   bool isSearchExpanded = false; // Tracks if search bar is expanded
- // final TextEditingController searchController = TextEditingController();
+  // final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -107,8 +107,8 @@ class MainHomeState extends State<MainHome>
     showDialog(
       context: context,
       builder: (
-        BuildContext context,
-      ) {
+          BuildContext context,
+          ) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -136,7 +136,7 @@ class MainHomeState extends State<MainHome>
               ),
               Container(
                 height:
-                    SizeConfig.screenHeight * 0.03, // Adjust height as needed
+                SizeConfig.screenHeight * 0.03, // Adjust height as needed
 
                 child: Text(
                   " Are You Sure you want to Logout?",
@@ -148,7 +148,7 @@ class MainHomeState extends State<MainHome>
                   ),
                   maxLines: 2, // Ensures text spans at most two lines
                   overflow:
-                      TextOverflow.ellipsis, // Adds ellipsis if text overflows
+                  TextOverflow.ellipsis, // Adds ellipsis if text overflows
                 ),
               ),
               Row(
@@ -160,11 +160,11 @@ class MainHomeState extends State<MainHome>
                           GetStorage().read<String>(ConstantData.Useremail) ??
                               "";
                       String password = GetStorage()
-                              .read<String>(ConstantData.Userpassword) ??
+                          .read<String>(ConstantData.Userpassword) ??
                           "";
 
                       final response =
-                          await ApiClients().getLogoutUser(email, password);
+                      await ApiClients().getLogoutUser(email, password);
                       if (response['success'] == true) {
                         print("Logout Successful");
 
@@ -176,13 +176,13 @@ class MainHomeState extends State<MainHome>
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (context) => const LoginScreen()),
-                          (route) => false,
+                              (route) => false,
                         );
                       }
                     },
                     child: Padding(
                       padding:
-                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                      EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                       child: Container(
                         width: SizeConfig.screenWidth * 0.3,
                         decoration: BoxDecoration(
@@ -220,7 +220,7 @@ class MainHomeState extends State<MainHome>
                     },
                     child: Padding(
                       padding:
-                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                      EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                       child: Container(
                         width: SizeConfig.screenWidth * 0.3,
                         decoration: BoxDecoration(
@@ -381,11 +381,11 @@ class MainHomeState extends State<MainHome>
                                 radius: 25.0,
                                 backgroundColor: Colors.transparent,
                                 backgroundImage: (profileImage != null &&
-                                        profileImage!.isNotEmpty)
+                                    profileImage!.isNotEmpty)
                                     ? NetworkImage(
-                                        profileImage!) // Display image from URL
+                                    profileImage!) // Display image from URL
                                     : AssetImage('assets/images/profiless.png')
-                                        as ImageProvider,
+                                as ImageProvider,
                                 // Profile image
                               ),
                             ),
@@ -478,7 +478,7 @@ class MainHomeState extends State<MainHome>
                           //color: CommonColor.gray,
                         ),
                         Text(
-                            // the text of the row.
+                          // the text of the row.
                             "My Profile",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
@@ -505,7 +505,7 @@ class MainHomeState extends State<MainHome>
                           height: 22,
                         ),
                         Text(
-                            // the text of the row.
+                          // the text of the row.
                             "My Collection",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
@@ -533,7 +533,7 @@ class MainHomeState extends State<MainHome>
                           color: Colors.black54,
                         ),
                         Text(
-                            // the text of the row.
+                          // the text of the row.
                             "My Favorites",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
@@ -563,11 +563,11 @@ class MainHomeState extends State<MainHome>
                           width: 180,
                           //  color: Colors.red,
                           child: Text(
-                              // the text of the row.
+                            // the text of the row.
                               "My Transaction History",
                               style: TextStyle(
                                   fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -594,11 +594,11 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                              // the text of the row.
+                            // the text of the row.
                               "My Ratings",
                               style: TextStyle(
                                   fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -625,11 +625,11 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                              // the text of the row.
+                            // the text of the row.
                               "Chat",
                               style: TextStyle(
                                   fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -691,11 +691,11 @@ class MainHomeState extends State<MainHome>
                           width: 130,
                           //  color: Colors.red,
                           child: Text(
-                              // the text of the row.
+                            // the text of the row.
                               "Feedback",
                               style: TextStyle(
                                   fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -725,11 +725,11 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                              // the text of the row.
+                            // the text of the row.
                               "Help",
                               style: TextStyle(
                                   fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -758,11 +758,11 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                              // the text of the row.
+                            // the text of the row.
                               "Setting",
                               style: TextStyle(
                                   fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
+                                  SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -794,7 +794,7 @@ class MainHomeState extends State<MainHome>
                                   style: TextStyle(
                                       color: Colors.pink,
                                       fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.9),
+                                      SizeConfig.blockSizeHorizontal * 3.9),
                                 )
                               ],
                             ),
@@ -937,7 +937,7 @@ class MainHomeState extends State<MainHome>
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
                   Padding(
                     padding:
-                        EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03),
+                    EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03),
                     child: getAddGameTabLayout(
                         SizeConfig.screenHeight, SizeConfig.screenWidth),
                   ),
@@ -1190,34 +1190,34 @@ class MainHomeState extends State<MainHome>
             for (int i = 0; i < images.length; i++)
               currentIndex == i
                   ? Container(
-                      width: 25,
-                      height: 7,
-                      margin: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              Color(0xff6a83da),
-                              Color(0xff665365B7),
-                            ]),
-                      ),
-                    )
+                width: 25,
+                height: 7,
+                margin: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        Color(0xff6a83da),
+                        Color(0xff665365B7),
+                      ]),
+                ),
+              )
                   : Container(
-                      width: 7,
-                      height: 7,
-                      margin: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                Color(0xff7F9ED4),
-                                Color(0xff999999),
-                              ]),
-                          shape: BoxShape.circle),
-                    )
+                width: 7,
+                height: 7,
+                margin: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          Color(0xff7F9ED4),
+                          Color(0xff999999),
+                        ]),
+                    shape: BoxShape.circle),
+              )
           ],
         ),
       ],
@@ -1251,14 +1251,14 @@ class MainHomeState extends State<MainHome>
           ),
           child: Center(
               child: Text(
-            "Create Post +",
-            style: TextStyle(
-              fontFamily: "okra_Medium",
-              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
-              color: Color(0xff3684F0),
-              fontWeight: FontWeight.w200,
-            ),
-          )),
+                "Create Post +",
+                style: TextStyle(
+                  fontFamily: "okra_Medium",
+                  fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                  color: Color(0xff3684F0),
+                  fontWeight: FontWeight.w200,
+                ),
+              )),
         ),
       ),
     );
@@ -1504,13 +1504,13 @@ class MainHomeState extends State<MainHome>
                 padding: EdgeInsets.zero,
                 scrollDirection: Axis.horizontal,
                 itemCount:
-                    catagriesItemList.length, // Define the number of items
+                catagriesItemList.length, // Define the number of items
                 itemBuilder: (context, index) {
                   return Column(
                     children: [
                       Container(
                         width: parentWidth * 0.20,
-height: 50,
+                        height: 50,
                         // Set width for each item
                         margin: EdgeInsets.symmetric(horizontal: 10.0),
                         decoration: BoxDecoration(
@@ -1521,9 +1521,9 @@ height: 50,
 
                             colors: [Color(0xffF1F1F1), Color(0xffffffff)],
                           ),
-                       /*   color: Colors.white,*/
+                          /*   color: Colors.white,*/
                           borderRadius: BorderRadius.circular(10),
-                         /* border:
+                          /* border:
                               Border.all(color: CommonColor.grayText, width: 0.3),*/
                         ),
                         child:  Padding(
@@ -1545,20 +1545,20 @@ height: 50,
                       SizedBox(
                         height: 5,
                       ),
-                  Text(
-                  catagriesItemList[index],
-                  style: TextStyle(
-                    letterSpacing: 0.5,
-                  color: Colors.black,
-                  fontFamily: "Montserrat_Medium",
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  ),
+                      Text(
+                        catagriesItemList[index],
+                        style: TextStyle(
+                          letterSpacing: 0.5,
+                          color: Colors.black,
+                          fontFamily: "Montserrat_Medium",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
 
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  ),
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
 
 
                     ],
@@ -1733,7 +1733,7 @@ height: 50,
                                   color: Colors.black,
                                   fontFamily: "Roboto-Medium",
                                   fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.6,
+                                  SizeConfig.blockSizeHorizontal * 3.6,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -1753,15 +1753,15 @@ height: 50,
                               alignment: Alignment.center,
                               child: Center(
                                   child: Text(
-                                "Service",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Roboto-Medium",
-                                  fontSize:
+                                    "Service",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "Roboto-Medium",
+                                      fontSize:
                                       SizeConfig.blockSizeHorizontal * 3.6,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              )),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  )),
                             ),
                           ),
                         ),
@@ -1813,14 +1813,14 @@ height: 50,
                                               Radius.circular(5))),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceAround,
                                         children: [
                                           Text(
                                             " View All",
                                             style: TextStyle(
                                               fontFamily: "okra_Medium",
                                               fontSize: SizeConfig
-                                                      .blockSizeHorizontal *
+                                                  .blockSizeHorizontal *
                                                   3.1,
                                               color: Color(0xff3684F0),
                                               fontWeight: FontWeight.w200,
@@ -1852,12 +1852,12 @@ height: 50,
                             GridView.builder(
                               padding: EdgeInsets.only(top: 15),
                               physics:
-                                  NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                              NeverScrollableScrollPhysics(), // Disable GridView's scrolling
                               shrinkWrap: true, // Take only the space it needs
                               gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
+                              SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount:
-                                    2, // Number of columns in the grid
+                                2, // Number of columns in the grid
                                 crossAxisSpacing: 1.0,
                                 mainAxisSpacing: 0.0,
                                 childAspectRatio: 1.0, // Adjust as needed
@@ -1884,7 +1884,7 @@ height: 50,
                                       /*       border: Border.all(
                                             color: Colors.black38, width: 0.9),*/
                                       borderRadius:
-                                          BorderRadius.all(Radius.circular(7))),
+                                      BorderRadius.all(Radius.circular(7))),
 
                                   // alignment: Alignment.center,
 
@@ -1895,7 +1895,7 @@ height: 50,
                                         children: [
                                           Container(
                                             height:
-                                                SizeConfig.screenHeight * 0.2,
+                                            SizeConfig.screenHeight * 0.19,
                                             child: ClipRRect(
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(10)),
@@ -1919,7 +1919,7 @@ height: 50,
                                                 // overlayShadow: false,
 
                                                 dotIncreasedColor:
-                                                    Colors.black45,
+                                                Colors.black45,
                                                 indicatorBgPadding: 3.0,
                                               ),
                                             ),
@@ -1935,8 +1935,8 @@ height: 50,
                                                     color: Colors.black
                                                         .withOpacity(0.3),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            0),
+                                                    BorderRadius.circular(
+                                                        0),
                                                   ),
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
@@ -1950,51 +1950,51 @@ height: 50,
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontFamily:
-                                                                "okra_Medium",
+                                                            "okra_Medium",
                                                             fontSize: 13,
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                            FontWeight.w600,
                                                           ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsets.only(
-                                                                  top: 2),
+                                                          EdgeInsets.only(
+                                                              top: 2),
                                                           child: Row(
                                                             children: [
                                                               Icon(
                                                                 Icons
                                                                     .location_on,
                                                                 size: SizeConfig
-                                                                        .screenHeight *
+                                                                    .screenHeight *
                                                                     0.019,
                                                                 color: Color(
-                                                                        0xffffffff)
+                                                                    0xffffffff)
                                                                     .withOpacity(
-                                                                        0.8),
+                                                                    0.8),
                                                               ),
                                                               Flexible(
                                                                 child: Text(
                                                                   ' Park Street,pune banner 20023',
                                                                   style:
-                                                                      TextStyle(
+                                                                  TextStyle(
                                                                     color: Colors
                                                                         .white
                                                                         .withOpacity(
-                                                                            0.8),
+                                                                        0.8),
                                                                     fontFamily:
-                                                                        "Montserrat-Medium",
+                                                                    "Montserrat-Medium",
                                                                     fontSize:
-                                                                        11,
+                                                                    11,
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
+                                                                    FontWeight
+                                                                        .w500,
                                                                   ),
                                                                   overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                                   maxLines: 1,
                                                                 ),
                                                               ),
@@ -2016,16 +2016,16 @@ height: 50,
                                                   decoration: BoxDecoration(
                                                     color: Color(0xff5095f1),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
+                                                    BorderRadius.circular(
+                                                        5),
                                                   ),
                                                   child: Row(
-                                                      // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                                    // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
                                                       children: [
                                                         Icon(
                                                           Icons.location_on,
                                                           size: SizeConfig
-                                                                  .screenHeight *
+                                                              .screenHeight *
                                                               0.019,
                                                           color: Colors.white,
                                                         ),
@@ -2033,13 +2033,13 @@ height: 50,
                                                           '1.2 Km   ',
                                                           style: TextStyle(
                                                             fontFamily:
-                                                                "Montserrat-Regular",
+                                                            "Montserrat-Regular",
                                                             fontSize: SizeConfig
-                                                                    .blockSizeHorizontal *
+                                                                .blockSizeHorizontal *
                                                                 2.5,
                                                             color: Colors.white,
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                            FontWeight.w600,
                                                           ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
@@ -2179,7 +2179,7 @@ height: 50,
                                   style: TextStyle(
                                     fontFamily: "Montserrat-Medium",
                                     fontSize:
-                                        SizeConfig.blockSizeHorizontal * 4.1,
+                                    SizeConfig.blockSizeHorizontal * 4.1,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -2206,14 +2206,14 @@ height: 50,
                                               Radius.circular(5))),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceAround,
                                         children: [
                                           Text(
                                             " View All",
                                             style: TextStyle(
                                               fontFamily: "okra_Medium",
                                               fontSize: SizeConfig
-                                                      .blockSizeHorizontal *
+                                                  .blockSizeHorizontal *
                                                   3.1,
                                               color: Color(0xff3684F0),
                                               fontWeight: FontWeight.w200,
@@ -2301,7 +2301,7 @@ height: 50,
                                                   dotSpacing: 10,
                                                   dotColor: Colors.white70,
                                                   dotIncreasedColor:
-                                                      Colors.black45,
+                                                  Colors.black45,
                                                   indicatorBgPadding: 5.0,
                                                 ),
                                               ),
@@ -2311,28 +2311,28 @@ height: 50,
                                             width: SizeConfig.screenWidth * 0.5,
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(height: 7),
                                                 Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                       ' HD Camera (black & white) dfgdf',
                                                       style: TextStyle(
                                                         fontFamily:
-                                                            "Montserrat-Regular",
+                                                        "Montserrat-Regular",
                                                         fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
+                                                            .blockSizeHorizontal *
                                                             3.7,
                                                         color:
-                                                            CommonColor.Black,
+                                                        CommonColor.Black,
                                                         fontWeight:
-                                                            FontWeight.w400,
+                                                        FontWeight.w400,
                                                       ),
                                                       overflow:
-                                                          TextOverflow.ellipsis,
+                                                      TextOverflow.ellipsis,
                                                     ),
                                                     SizedBox(height: 3),
                                                     Row(
@@ -2340,29 +2340,29 @@ height: 50,
                                                         Icon(
                                                           Icons.location_on,
                                                           size: SizeConfig
-                                                                  .screenHeight *
+                                                              .screenHeight *
                                                               0.019,
                                                           color:
-                                                              Color(0xff3684F0),
+                                                          Color(0xff3684F0),
                                                         ),
                                                         Flexible(
                                                           child: Text(
                                                             ' Park Street,pune banner 20023',
                                                             style: TextStyle(
                                                               fontFamily:
-                                                                  "Montserrat-Regular",
+                                                              "Montserrat-Regular",
                                                               fontSize: SizeConfig
-                                                                      .blockSizeHorizontal *
+                                                                  .blockSizeHorizontal *
                                                                   3.0,
                                                               color: Color(
                                                                   0xff3684F0),
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
+                                                              FontWeight
+                                                                  .w400,
                                                             ),
                                                             overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                            TextOverflow
+                                                                .ellipsis,
                                                             maxLines: 1,
                                                           ),
                                                         ),

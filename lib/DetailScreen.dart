@@ -8,6 +8,12 @@ import 'MyBehavior.dart';
 import 'ResponseModule/getAllProductList.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import 'dummytwo.dart';
+import 'package:simple_gradient_text/simple_gradient_text.dart';
+
+import 'dart:ui' as ui;
+import 'dart:ui';
+
 class DetailScreen extends StatefulWidget {
   final Data1 product;
 
@@ -17,10 +23,29 @@ class DetailScreen extends StatefulWidget {
   _DetailScreenState createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _DetailScreenState extends State<DetailScreen>
+    with TickerProviderStateMixin {
   int currentIndex = 0;
   final PageStorageBucket bucket = PageStorageBucket();
   final cs.CarouselSliderController _controller = cs.CarouselSliderController();
+
+  late Animation<double> _animation;
+  late AnimationController _controllerss;
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
+  bool _isVisible = true;
+
+
+
+  final List<String> imageUrls = [
+    'https://img.freepik.com/free-psd/shoes-sale-social-media-post-square-banner-template-design_505751-2862.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/premium-vector/black-friday-sale-social-media-post-banner-home-appliance-product-instagram-post-banner-design_755018-930.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/free-vector/drink-ad-nature-pear-juice_52683-34246.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/premium-psd/ironing-machine-brand-product-social-media-banner_154386-123.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/free-vector/sports-drink-advertisement_52683-430.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/premium-vector/cosmetics-realistic-package-ads-template_1268-2880.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid'
+  ];
+
 
   final List<String> Price = [
     "100",
@@ -34,11 +59,56 @@ class _DetailScreenState extends State<DetailScreen> {
     "/Per Week",
     "/Per Month"
   ];
-  bool isOpen = false;
+  // bool isOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controllerss = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..forward(); // Start the animation
+
+    // Define scaling animation from 0 to 1
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controllerss, curve: Curves.easeOutBack),
+    );
+
+    // Animation Controller
+    _controllerss = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+      upperBound: 2.0, // Loop exactly 2 times
+    );
+
+    _controllerss.forward().whenComplete(() {
+      // Hide animation after 2 loops
+      setState(() {
+        _isVisible = false;
+      });
+    });
+    _scaleController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..forward();
+
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controllerss.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final productImages = widget.product.images ?? [];
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return PageStorage(
       bucket: bucket,
       child: Scaffold(
@@ -96,16 +166,57 @@ class _DetailScreenState extends State<DetailScreen> {
                                       final imgUrl =
                                           productImages[index1].url ?? "";
 
-                                      return Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.3,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          image: DecorationImage(
-                                            image: NetworkImage(imgUrl),
-                                            fit: BoxFit.cover,
+                                      return GestureDetector(
+                                        onTap: () {
+                                          // Show image in a dialog on tap
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => Dialog(
+                                              child: Stack(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () => Navigator.pop(context),
+                                                    child: Container(
+                                                      height: SizeConfig.screenHeight * 0.5,
+                                                      width: screenWidth ,// 80% of the screen height
+
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius.circular(2),
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(imgUrl),
+                                                          fit: BoxFit.contain,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+
+                                                    right: 16,
+                                                    child: IconButton(
+                                                      icon: Icon(
+                                                        Icons.close,
+                                                        color: Colors.white,
+                                                      ),
+                                                      onPressed: () => Navigator.pop(context),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          height:
+                                              MediaQuery.of(context).size.height *
+                                                  0.3,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                              image: NetworkImage(imgUrl),
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                       );
@@ -325,100 +436,261 @@ class _DetailScreenState extends State<DetailScreen> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 18, top: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "HD Camera (black & white) or all Color",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "okra_Medium",
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SnakeBorderAnimationApp(),
+                                ));
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 18, top: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "HD Camera (black & white) or all Color",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Icon(Icons.location_on,
-                                      size: SizeConfig.screenHeight * 0.019,
-                                      color: CommonColor.Blue),
-                                  Flexible(
-                                    child: Text(
-                                      ' Park Street,pune banner 20023',
-                                      style: TextStyle(
-                                        color: CommonColor.Blue,
-                                        fontFamily: "Montserrat-Medium",
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                  SizedBox(width: 66),
-                                ],
-                              ),
-                              SizedBox(height: 5),
-                              RichText(
-                                  text: TextSpan(
-                                      text: "Last updated on  ",
-                                      style: TextStyle(
-                                          color: Colors.black38,
-                                          fontWeight: FontWeight.w400,
-                                          fontFamily: 'Roboto-Regular',
-                                          fontSize: 14),
-                                      children: [
-                                    TextSpan(
-                                      text: "10 Jun '24",
-                                      style: TextStyle(
-                                          color: Color(0xffFE7F64),
+                                SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_on,
+                                        size: SizeConfig.screenHeight * 0.019,
+                                        color: CommonColor.Blue),
+                                    Flexible(
+                                      child: Text(
+                                        ' Park Street,pune banner 20023',
+                                        style: TextStyle(
+                                          color: CommonColor.Blue,
+                                          fontFamily: "Montserrat-Medium",
+                                          fontSize: 13,
                                           fontWeight: FontWeight.w500,
-                                          decoration: TextDecoration.underline,
-                                          decorationColor: Color(0xffFE7F64),
-                                          fontFamily: 'Roboto-Regular',
-                                          fontSize: 15),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {},
-                                    )
-                                  ])),
-                              SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Text("Share",
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontFamily: "Montserrat-Medium",
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      )),
-                                  SizedBox(width: 9),
-                                  Container(
-                                    height: 35,
-                                    width: 35,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(50),
-                                      border: Border.all(
-                                          color: CommonColor.grayText,
-                                          width: 0.3),
-                                    ),
-                                    child: IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.share,
-                                        color: CommonColor.grayText,
-                                        size: 18,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                       ),
                                     ),
+                                    SizedBox(width: 66),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                RichText(
+                                    text: TextSpan(
+                                        text: "Last updated on  ",
+                                        style: TextStyle(
+                                            color: Colors.black38,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: 'Roboto-Regular',
+                                            fontSize: 14),
+                                        children: [
+                                      TextSpan(
+                                        text: "10 Jun '24",
+                                        style: TextStyle(
+                                            color: Color(0xffFE7F64),
+                                            fontWeight: FontWeight.w500,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            decorationColor: Color(0xffFE7F64),
+                                            fontFamily: 'Roboto-Regular',
+                                            fontSize: 15),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {},
+                                      )
+                                    ])),
+                                SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    Text("Share",
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontFamily: "Montserrat-Medium",
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        )),
+                                    SizedBox(width: 9),
+                                    Container(
+                                      height: 35,
+                                      width: 35,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        border: Border.all(
+                                            color: CommonColor.grayText,
+                                            width: 0.3),
+                                      ),
+                                      child: IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.share,
+                                          color: CommonColor.grayText,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 18),
+                                Padding(
+                                  padding:  EdgeInsets.only(right: 10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                        height: 30,
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                                color: Color(0xffFE7F64)
+                                                    .withOpacity(0.3),
+                                                width: 1.7),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10))),
+                                        child: Stack(
+                                          alignment: Alignment
+                                              .center, // Align content in the center
+                                          children: [
+                                            // Border Animation
+                                            Visibility(
+                                              visible: _isVisible,
+                                              child: AnimatedBuilder(
+                                                animation: _controllerss,
+                                                builder: (context, child) {
+                                                  return CustomPaint(
+                                                    painter: SnakeBorderPainter(
+                                                        progress:
+                                                            _controllerss.value %
+                                                                1),
+                                                    size: Size(150, 50), // Ensure the CustomPaint matches the Container
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            // Text always visible
+                                            ScaleTransition(
+                                              scale: _scaleAnimation,
+                                              child: Center(
+                                                  child:
+
+                                                  GradientText(
+                                                    "TO RENT",
+                                                      style: TextStyle(
+
+                                                        fontFamily:
+                                                        "poppins_Regular",
+                                                        fontSize: SizeConfig
+                                                            .blockSizeHorizontal *
+                                                          2.9 ,
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                      ),
+                                                    colors: [
+                                                      Color(0xffFD6848),
+
+                                                      Color(0xffFF8E76),
+
+                                                    ],
+                                                  ),
+
+
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child:     Container(
+                                          height: 30,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                  color: Color(0xffFE7F64)
+                                                      .withOpacity(0.3),
+                                                  width: 1.7),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10))),
+                                          child: Stack(
+                                            alignment: Alignment
+                                                .center, // Align content in the center
+                                            children: [
+                                              // Border Animation
+                                              Visibility(
+                                                visible: _isVisible,
+                                                child: AnimatedBuilder(
+                                                  animation: _controllerss,
+                                                  builder: (context, child) {
+                                                    return CustomPaint(
+                                                      painter: SnakeBorderPainter(
+                                                          progress:
+                                                          _controllerss.value %
+                                                              1),
+                                                      size: Size(150, 50), // Ensure the CustomPaint matches the Container
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              // Text always visible
+                                              ScaleTransition(
+                                                scale: _scaleAnimation,
+                                                child: Center(
+                                                  child:
+
+                                                  GradientText(
+                                                    "TO SELL",
+                                                    style: TextStyle(
+
+                                                      fontFamily:
+                                                      "poppins_Regular",
+                                                      fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                          2.9 ,
+                                                      fontWeight:
+                                                      FontWeight.w600,
+                                                    ),
+                                                    colors: [
+                                                      Color(0xffFD6848),
+
+                                                      Color(0xffFF8E76),
+
+                                                    ],
+                                                  ),
+
+
+                                                  /* Text("TO RENT",
+                                                      style: TextStyle(
+                                                        color: CommonColor.Black,
+                                                        fontFamily:
+                                                            "poppins_Regular",
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            2.6,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ))
+                                              */
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              )
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        SizedBox(height: 15),
+                        SizedBox(height: 1),
                         Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Container(
@@ -428,7 +700,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 color: Color(0xffF5F6FB),
                               ),
                               child: Container(
-                                height: 139,
+                                height: 129,
                                 margin: EdgeInsets.symmetric(vertical: 12.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -541,6 +813,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                                                       TextStyle(
                                                                     color: CommonColor
                                                                         .Black,
+                                                                    fontFamily:
+                                                                        "okra_Medium",
                                                                     fontSize:
                                                                         19,
                                                                     fontWeight:
@@ -605,14 +879,13 @@ class _DetailScreenState extends State<DetailScreen> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                isOpen = !isOpen; // Toggle the dropdown state
+                                //isOpen = !isOpen; // Toggle the dropdown state
                               });
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: isOpen
-                                    ? Color(0xffffffff)
-                                    : Color(0xffF1E7FB),
+                                color: Color(0xffffffff),
+                                // : Color(0xffF1E7FB),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               width: 366,
@@ -634,51 +907,91 @@ class _DetailScreenState extends State<DetailScreen> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        Icon(
+                                        /*  Icon(
                                           isOpen
                                               ? Icons.arrow_drop_up
                                               : Icons.arrow_drop_down,
                                           color: Color(0xff675397),
-                                        ),
+                                        ),*/
                                       ],
                                     ),
                                   ),
-                                  if (isOpen)
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          color: Color(0xffF5F6FB),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(13.0),
-                                          child: Text(
-                                            "This is the detailed information about this item. "
-                                            "You can customize this text as needed."
-                                            "A product description is a piece of marketing copy that explains a product's features and benefits, and why it's worth buying.",
-                                            style: TextStyle(
-                                              fontFamily: "poppins_Regular",
-                                              color: Color(0xff7D7B7B),
-                                              fontSize: SizeConfig
-                                                      .blockSizeHorizontal *
-                                                  3.5,
-                                            ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Color(0xffF5F6FB),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(13.0),
+                                        child: Text(
+                                          " Model :  Honda 12056 "
+                                          "This is the detailed information about this item. "
+                                          "You can customize this text as needed."
+                                          "A product description is a piece of marketing copy that explains a product's features and benefits, and why it's worth buying."
+                                          "You can customize this text as needed",
+                                          style: TextStyle(
+                                            fontFamily: "poppins_Regular",
+                                            color: Color(0xff7D7B7B),
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    3.5,
                                           ),
                                         ),
                                       ),
                                     ),
+                                  ),
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 40),
+
+
+
+            Center(
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  height: 100.0,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  aspectRatio: 10 / 9,
+                  autoPlayInterval: const Duration(seconds: 2),
+                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                  viewportFraction: 0.7,
+                ),
+                items:
+                imageUrls.map((url) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        decoration: BoxDecoration(
+                          color: Colors.amber,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child:  Image.network(
+                            url,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+            ),   SizedBox(height: 30),
+
                         Stack(
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(top: 18, left: 15, right: 15),
+                              padding:
+                                  EdgeInsets.only(top: 18, left: 15, right: 15),
                               child: Container(
                                 width: double.infinity,
                                 height: 160,
@@ -686,13 +999,14 @@ class _DetailScreenState extends State<DetailScreen> {
                                   gradient: LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomCenter,
+                                    stops: [0.2, 0.9],
                                     colors: [
-                                      Color(0xffFFF0EE),
-                                      Color(0xffFFF0EE),
+                                      Color(0xffFFFfff),
+                                      Color(0xffffe9e9),
                                     ],
                                   ),
                                   border: Border.all(
-                                      color: Color(0xffA3A3A3), width: 0.3),
+                                      color: Color(0xffFFA194), width: 0.9),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Row(
@@ -700,24 +1014,25 @@ class _DetailScreenState extends State<DetailScreen> {
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.all(12.0),
-                                      child: Text("SELLER Details",
+                                      child: Text("SELLER DETALIS",
                                           style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: "okra_Medium",
+                                            color: Color(0xffFF553E),
+                                            fontFamily: "okra_extrabold",
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
                                           )),
                                     ),
                                     Image(
-                                        image: AssetImage('assets/images/seller.png'),
+                                        image: AssetImage(
+                                            'assets/images/seller.png'),
                                         height: 30),
                                   ],
                                 ),
                               ),
                             ),
-
                             Padding(
-                              padding: EdgeInsets.only(top: 60, left: 20, right: 20),
+                              padding:
+                                  EdgeInsets.only(top: 60, left: 20, right: 20),
                               child: Container(
                                 height: 90,
                                 decoration: BoxDecoration(
@@ -727,15 +1042,19 @@ class _DetailScreenState extends State<DetailScreen> {
                                 child: Row(
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.only(left: SizeConfig.screenHeight * 0.015),
+                                      padding: EdgeInsets.only(
+                                          left:
+                                              SizeConfig.screenHeight * 0.015),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withOpacity(0.1), // Shadow color
+                                              color: Colors.black.withOpacity(
+                                                  0.1), // Shadow color
                                               blurRadius: 5, // Shadow blur
-                                              offset: Offset(0, 2), // Shadow position (x, y)
+                                              offset: Offset(0,
+                                                  2), // Shadow position (x, y)
                                             ),
                                           ],
                                         ),
@@ -744,17 +1063,21 @@ class _DetailScreenState extends State<DetailScreen> {
                                           backgroundColor: Colors.white,
                                           child: CircleAvatar(
                                               radius: 20.0,
-                                              backgroundColor: Colors.transparent,
-                                              backgroundImage: AssetImage('assets/images/profiless.png')
-                                            // Profile image
-                                          ),
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              backgroundImage: AssetImage(
+                                                  'assets/images/profiless.png')
+                                              // Profile image
+                                              ),
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.only(top: 25, left: 10),
+                                      padding:
+                                          EdgeInsets.only(top: 25, left: 10),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
@@ -786,13 +1109,17 @@ class _DetailScreenState extends State<DetailScreen> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.only(top: 5, left: 16),
+                                      padding:
+                                          EdgeInsets.only(top: 5, left: 16),
                                       child: Container(
                                         height: 45,
                                         width: 50,
                                         decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                            border: Border.all(color: Color(0xffF8C5C2), width: 0.5)),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            border: Border.all(
+                                                color: Color(0xffF8C5C2),
+                                                width: 0.5)),
                                         child: Padding(
                                           padding: EdgeInsets.only(top: 3),
                                           child: Column(
@@ -807,7 +1134,9 @@ class _DetailScreenState extends State<DetailScreen> {
                                                 style: TextStyle(
                                                   color: Color(0xffFE7F64),
                                                   fontFamily: "okra_Medium",
-                                                  fontSize: SizeConfig.blockSizeHorizontal * 2.8,
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      2.8,
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               )
@@ -817,13 +1146,17 @@ class _DetailScreenState extends State<DetailScreen> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.only(left: 13, top: 5),
+                                      padding:
+                                          EdgeInsets.only(left: 13, top: 5),
                                       child: Container(
                                         height: 45,
                                         width: 50,
                                         decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                            border: Border.all(color: Color(0xffF8C5C2), width: 0.5)),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            border: Border.all(
+                                                color: Color(0xffF8C5C2),
+                                                width: 0.5)),
                                         child: Padding(
                                           padding: EdgeInsets.only(top: 3),
                                           child: Column(
@@ -838,7 +1171,9 @@ class _DetailScreenState extends State<DetailScreen> {
                                                 style: TextStyle(
                                                   color: Color(0xffFE7F64),
                                                   fontFamily: "okra_Medium",
-                                                  fontSize: SizeConfig.blockSizeHorizontal * 2.8,
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      2.8,
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               )
@@ -851,19 +1186,24 @@ class _DetailScreenState extends State<DetailScreen> {
                                 ),
                               ),
                             ),
-
                             Padding(
-                              padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.19,left: SizeConfig.screenWidth*0.3),
+                              padding: EdgeInsets.only(
+                                  top: SizeConfig.screenHeight * 0.20,
+                                  left: SizeConfig.screenWidth * 0.3),
                               child: Container(
                                 height: 40,
                                 width: 130,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey, width: 0.3),
+                                  border: Border.all(
+                                      color: Colors.grey, width: 0.3),
                                   borderRadius: BorderRadius.circular(10),
                                   gradient: LinearGradient(
                                     begin: Alignment.bottomCenter,
                                     end: Alignment.bottomLeft,
-                                    colors: [Color(0xfff3f3f3), Color(0xffffffff)],
+                                    colors: [
+                                      Color(0xfff3f3f3),
+                                      Color(0xffffffff)
+                                    ],
                                   ),
                                 ),
                                 child: Center(
@@ -872,7 +1212,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                     style: TextStyle(
                                       color: CommonColor.Blue,
                                       fontFamily: "okra_Medium",
-                                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal * 3.5,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -881,7 +1222,6 @@ class _DetailScreenState extends State<DetailScreen> {
                             ),
                           ],
                         )
-
                       ],
                     ),
                   )
@@ -892,5 +1232,48 @@ class _DetailScreenState extends State<DetailScreen> {
         ),
       ),
     );
+  }
+}
+
+class SnakeBorderPainter extends CustomPainter {
+  final double progress;
+  SnakeBorderPainter({required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..shader = ui.Gradient.linear(
+        Offset(0, 0),
+        Offset(size.width, size.height),
+        [
+          Color(0xffFD6848),
+          Color(0xffFEBA69),
+        ],
+      );
+
+    // Define path for rounded rectangle
+    final Path path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        const Radius.circular(10),
+      ));
+
+    // Animate the path using dash effect
+    final PathMetrics pathMetrics = path.computeMetrics();
+    for (var metric in pathMetrics) {
+      final double pathLength = metric.length;
+      final double start = (progress * pathLength) % pathLength;
+      final double end = start + pathLength * 0.9;
+
+      final Path extractPath = metric.extractPath(start, end);
+      canvas.drawPath(extractPath, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(SnakeBorderPainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }

@@ -6,8 +6,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
-import 'Home_screens.dart';
-import 'MyBehavior.dart';
+
 import 'addProductService.dart';
 import 'dummy.dart';
 import 'package:carousel_slider/carousel_slider.dart';
