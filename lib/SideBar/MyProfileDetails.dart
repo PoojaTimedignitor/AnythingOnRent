@@ -60,12 +60,12 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   @override
   void initState() {
     setState(() {
-      print("Saved image: ${GetStorage().read(ConstantData.UserProfileImage)}");
+      print("Saved image: ${GetStorage().read(ConstantData.UserMobile)}");
 
       firstname = GetStorage().read(ConstantData.UserFirstName) ?? "Guest";
       phoneNumber = GetStorage().read(ConstantData.UserMobile) ?? "Guest";
       email = GetStorage().read(ConstantData.Useremail) ?? "Guest";
-      //profileImage = GetStorage().read(ConstantData.UserProfileImage);
+      profileImage = GetStorage().read(ConstantData.UserProfileImage);
 
       // profileImage = GetStorage().read(ConstantData.UserProfileImage)?['image'] ;
     });

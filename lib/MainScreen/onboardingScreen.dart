@@ -1,15 +1,10 @@
-import 'package:anything/Home_screen.dart';
-import 'package:anything/Home_screens.dart';
-import 'package:anything/MainScreen/login_screen.dart';
+
 import 'package:anything/MainScreen/register_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../BottomBar.dart';
 import '../Common_File/SizeConfig.dart';
-import '../MainHome.dart';
-import '../ddd.dart';
-import '../drop.dart';
-import '../imageApiHit.dart';
+import 'package:get_storage/get_storage.dart';
+
 import 'onBoardingContent.dart';
 
 class onboardingScreen extends StatefulWidget {
@@ -145,11 +140,12 @@ class _onboardingScreenState extends State<onboardingScreen> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
+                                  GetStorage().write('isFirstTime', false);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => LoginScreen(
-                                        /*  address: '',
+                                        builder: (context) => RegisterScreen(
+                                          address: '',
                                           lat: '',
                                           long: '',
                                           ProfilePicture: '' ,
@@ -161,7 +157,7 @@ class _onboardingScreenState extends State<onboardingScreen> {
                                           permanetAddress: '',
                                           mobileNumber: '',
                                           FrontImage: '',
-                                          BackImage: '',*/
+                                          BackImage: '',
                                         )
                                     ),
                                   );

@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
+import 'package:anything/MainHome.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -27,14 +28,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isFirstTime = GetStorage().read('isFirstTime') ?? true;
+
+
     return MaterialApp(
+
+        initialRoute: '/',
       home:  const MyHomePage(title: '',),
     debugShowCheckedModeBanner: false,
 
         routes: <String, WidgetBuilder>{
           '/frame': (BuildContext context) =>  onboardingScreen(),
-        /*  '/registration': (BuildContext context) => RegisterScreen(),*/
-          '/homeScreen': (BuildContext context) =>  RegisterScreen(address: '', lat: '', long: '', ProfilePicture: '',  firstName: '', lastname: '', email: '', password: '', cpassword: '', permanetAddress: '', mobileNumber: '', FrontImage: '', BackImage: '',),
+          '/homeScreen': (BuildContext context) => MainHome(),
+          '/register': (BuildContext context) =>  RegisterScreen(
+
+
+            address: '', lat: '', long: '', ProfilePicture: '',  firstName: '', lastname: '', email: '', password: '', cpassword: '', permanetAddress: '', mobileNumber: '', FrontImage: '', BackImage: '',
+          ),
          /* '/rec_dashboard': (BuildContext context) => const ReceiverDashboard(),*/
         }
 
@@ -58,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    resetSplashFlag();
     startTimer();
 
   }
@@ -164,6 +174,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void navigateParentPage() {
     Navigator.of(context).pushReplacementNamed('/frame');
   }
+
+  void resetSplashFlag() {
+    // Set the flag to false if it's there in GetStorage
+    GetStorage().write('isFirstTimesss', false);
+  }
  /* void navigateRegistration() {
     Navigator.of(context).pushReplacementNamed('/registration');
   }*/
@@ -174,26 +189,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
-     startTimer() {
-      var duration = const Duration(seconds: 3);
-      try {
-        String accessToken = GetStorage().read(ConstantData.UserAccessToken);
 
-        print("-----> $accessToken");
+  startTimer() {
+    var duration = const Duration(seconds: 3); // Splash screen time duration
+    try {
+      String accessToken = GetStorage().read(ConstantData.UserAccessToken);
 
-        if (accessToken.isEmpty) {
-          return Timer(duration, navigateParentPage);
-        } else if (accessToken.isNotEmpty) {
-          return Timer(duration, navigateHomePage);
-        }
-      } catch (e) {
+      print("-----> $accessToken");
 
-        print("eeeeeeee  $e");
+      if (accessToken.isEmpty) {
+        return Timer(duration, navigateParentPage); // Navigate to onboarding if token is empty
+      } else if (accessToken.isNotEmpty) {
+        return Timer(duration, navigateHomePage); // Navigate to home screen if token is not empty
       }
-      return Timer(duration, navigateParentPage);
+    } catch (e) {
+      print("Error: $e");
     }
-
-
-
-
+    return Timer(duration, navigateParentPage); // Default navigate to onboarding if any error occurs
+  }
 }
+
+
+
+

@@ -14,23 +14,7 @@ class CatagriesList extends StatefulWidget {
 }
 
 class _CatagriesListState extends State<CatagriesList> {
-/*  final List<String> items = [
-    "Vehicle",
-    "Fashion",
-    "Home Appliances",
-    "Event",
-    "Furniture",
-    "Party Bus",
-    "Car",
-    "Camera",
-    "Bike",
-    "Sports Equipment",
-    "Clothing",
-    "Electronics",
-    "Kitchenware",
-    "Office Equipment",
-  ];*/
-  //final items = <Data>[];
+
   List<Data> items = [];
 
 
@@ -194,52 +178,7 @@ class _CatagriesListState extends State<CatagriesList> {
                 height: SizeConfig.screenHeight * 0.0005,
                 color: CommonColor.SearchBar,
               ),
-        /*  TextFormField(
-          keyboardType: TextInputType.text,
-              autocorrect: true,
 
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                prefixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Image(
-                      image: AssetImage("assets/images/search.png"),
-                      height: SizeConfig.screenWidth * 0.07,
-                    )),
-                hintText: "Search Product / Service",
-                hintStyle: TextStyle(
-                  fontFamily: "Roboto_Regular",
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                  color: CommonColor.SearchBar,
-                  fontWeight: FontWeight.w300,
-                ),
-                contentPadding: EdgeInsets.only(
-                  top: parentWidth * 0.05,
-                ),
-                border: OutlineInputBorder(),
-                fillColor: Colors.white,
-                hoverColor: Colors.white,
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                    borderSide:
-                    BorderSide(color: Colors.black12, width: 1),
-                    borderRadius: BorderRadius.circular(10.0)),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                  BorderSide(color: Colors.black12, width: 1),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-                onChanged: (String query) {
-                  setState(() {
-                    filteredItems = items
-                        .where((item) =>
-                    item.categoryName != null &&
-                        item.categoryName!.toLowerCase().contains(query.toLowerCase()))
-                        .toList();
-                  });
-                },
-              ),*/
               SizedBox(height: 15),
               // ListView to show filtered items
 

@@ -2,6 +2,9 @@ import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:flutter/material.dart';
 
 import 'Common_File/common_color.dart';
+import 'ResponseModule/getAllCityResponseModel.dart';
+import 'model/dio_client.dart';
+
 class CreateCity extends StatefulWidget {
   const CreateCity({super.key});
 
@@ -10,66 +13,67 @@ class CreateCity extends StatefulWidget {
 }
 
 class _CreateCityState extends State<CreateCity> {
-  final List<String> itemsCity = [
+  final List<String> cityName = [
     "Mumbai",
-    "Delhi",
-    "Bangalore",
     "Pune",
-    "Jaipur",
-    "Lucknow",
-    "Bhopal",
-    "Patna",
-    "Vadodara",
-    "Ghaziabad",
-    "Ludhiana",
-    "Thāne",
-    "Nāsik",
-    "Kalyān",
-    "Nāgpur",
+    "Nashik",
+    "Aurangabad",
+    "Nagpur",
+    "Dhule",
+    "Jalgaon",
+    "Nanded",
+    "Latur",
+    "Solapur"
   ];
 
   final List<String> CityImage = [
-    'assets/images/cattwo.png',
-    'assets/images/catthree.png',
-    'assets/images/catfour.png',
-    'assets/images/catone.png',
-    'assets/images/catthree.png',
-    'assets/images/cattwo.png',
-    'assets/images/catone.png',
-    'assets/images/cattwo.png',
-    'assets/images/catthree.png',
-    'assets/images/catthree.png',
-    'assets/images/catthree.png',
-    'assets/images/catfour.png',
-    'assets/images/catfour.png',
-    'assets/images/catone.png',
-    'assets/images/cattwo.png'
+    'assets/images/mumbai.png',
+    'assets/images/pune.png',
+    'assets/images/nashik.png',
+    'assets/images/aurangabad.png',
+    'assets/images/nagpur.png',
+    'assets/images/dhule.png',
+    'assets/images/jalgav.png',
+    'assets/images/nanded.png',
+    'assets/images/latur.png',
+    'assets/images/solapur.png',
   ];
 
   List<String> filteredItems = [];
+  List<String> city = [];
   bool isSearchingData = false;
   String searchQuery = "";
+  bool isLoading = true;
 
   @override
   void initState() {
+    print("ggggg");
+      fetchCity();
     super.initState();
-    filteredItems = itemsCity;
-    // Initially display all items
+
   }
 
-  void searchUpdateMethod(String query) {
-    setState(() {
-      searchQuery = query;
-      filteredItems = itemsCity
-          .where((item) => item.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
+  void fetchCity() async {
+    try {
+      Map<String, dynamic> response = await ApiClients().getAllCity();
+      var jsonList = getAllCityResponse.fromJson(response);
+      setState(() {
+        city = jsonList.data ?? [];
+        filteredItems = List.from(city);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false; // Stop loading in case of error
+      });
+      print("Error fetching city: $e");
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-      EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
         height: SizeConfig.screenHeight * 0.96,
         decoration: const BoxDecoration(
@@ -79,160 +83,89 @@ class _CreateCityState extends State<CreateCity> {
             topRight: Radius.circular(30),
           ),
         ),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          physics: NeverScrollableScrollPhysics(),
+        child: Column(
           children: [
-            Container(
-                height: SizeConfig.screenHeight*0.9,
-
-                child: AllCityList(SizeConfig.screenHeight,SizeConfig.screenWidth))
+            AllCityList(SizeConfig.screenHeight, SizeConfig.screenWidth),
+            // MainCityData will be the only part that scrolls
+            Expanded(child: MainCityData(SizeConfig.screenHeight, SizeConfig.screenWidth)),
           ],
         ),
       ),
     );
   }
-  Widget AllCityList(double parentheight,double parentWidth){
-    return Center(
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9, // Set the width of the bottom sheet
-        child: Padding(
-          padding:  EdgeInsets.only(top: parentheight*0.07),
+
+  Widget AllCityList(double parentheight, double parentWidth) {
+    return Padding(
+      padding: EdgeInsets.only(top: 13),
+      child: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9, // Set the width of the bottom sheet
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               // Search bar to filter items
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: Icon(Icons.search),
-                ),
-                onChanged: (query) {
-                  setState(() {
-                    filteredItems = itemsCity
-                        .where((item) =>
-                        item.toLowerCase().contains(query.toLowerCase()))
-                        .toList();
-                  });
-                },
-              ),
-              SizedBox(height: 10),
-              // ListView to show filtered items
-              Expanded(
-                  child:
-
-
-                  Padding(
-                    padding: const EdgeInsets.all(1.0),
-                    child:  filteredItems.isNotEmpty
-                        ? GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, // Number of columns
-                        crossAxisSpacing: 11.0, // Space between columns
-                        mainAxisSpacing: 1.0, // Space between rows
-                        childAspectRatio: 1,
-                        // Aspect ratio of each grid item
-                      ),
-                      itemCount: filteredItems.length,
-                      // Total number of items
-                      itemBuilder: (context, index) {
-
-
-                        return GestureDetector(
-                          onTap: (){
-                            Navigator.pop(context, filteredItems [index]);                          },
-                          child: Container(
-                            // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                            margin: EdgeInsets.only(
-                                left: 0.0, right: 5.0, top: 10.0, bottom: 10.0),
-                            //  height: SizeConfig.screenHeight * 0,
-                     /*       decoration: BoxDecoration(
-                                border: Border.all(color: Color(0xff9584D6), width: 0.5),
-                                borderRadius: BorderRadius.all(Radius.circular(10))),*/
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: Image.asset(
-                                    CityImage[index],
-
-                                    width: 35,
-                                  ),
-                                ),
-                                Container(
-                                  width: 120,
-                                  margin: EdgeInsets.only(bottom: 5),
-                                  // bottom: 10, // Position the text at the bottom
-                                  child: Text(
-                                    filteredItems [index],
-                                    style: TextStyle(
-                                      color: Color(0xff675397),
-
-                                      fontFamily: "Poppins-Medium",
-                                      fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ):  Column(
-                      children: [
-                        Icon(Icons.search_sharp,  color: CommonColor.noResult,size: 50,),
-                        Text("No results found",  style: TextStyle(
-                          color: CommonColor.Black,
-                          fontFamily: "Roboto_Regular",
-                          fontSize:
-                          SizeConfig.blockSizeHorizontal *
-                              4.0,
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: !isSearchingData
+                          ? Text(
+                        "Popular City",
+                        style: TextStyle(
+                          fontFamily: "Montserrat-Medium",
+                          fontSize: SizeConfig.blockSizeHorizontal * 4.5,
+                          color: CommonColor.TextBlack,
                           fontWeight: FontWeight.w600,
-
-                        )),SizedBox(height: 10) ,Container(
-                          width: SizeConfig.screenWidth*0.6,
-                          child: Text("We couldn't find what you searched for try searching again",  style: TextStyle(
-                            color: CommonColor.gray,
-                            fontFamily: "Roboto_Regular",
-                            fontSize:
-                            SizeConfig.blockSizeHorizontal *
-                                3.3,
-                            fontWeight: FontWeight.w400,
-
+                        ),
+                      )
+                          : Padding(
+                        padding: EdgeInsets.only(left: 14),
+                        child: TextField(
+                          onChanged: (String query) {
+                            setState(() {
+                              filteredItems = city
+                                  .where((item) => item
+                                  .toLowerCase()
+                                  .contains(query.toLowerCase()))
+                                  .toList();
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: "Search...",
+                            border: InputBorder.none,
                           ),
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      ],
+                          autofocus: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(13.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isSearchingData = !isSearchingData;
+                          if (!isSearchingData) {
+                            filteredItems = city;
+                          }
+                        });
+                      },
+                      child: Icon(
+                        isSearchingData ? Icons.close : Icons.search_rounded,
+                      ),
                     ),
                   )
-
-
-
-
-
-
-                /*ListView.builder(
-                  itemCount: filteredItems.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(filteredItems[index]),
-                      onTap: () {
-                        Navigator.pop(context, filteredItems[index]);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('You selected: ${filteredItems[index]}'),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                )
-                    : Center(child: Text('No items found')),*/
-              )
+                ],
+              ),
+              Container(
+                height: SizeConfig.screenHeight * 0.0005,
+                color: CommonColor.SearchBar,
+              ),
             ],
           ),
         ),
@@ -240,6 +173,134 @@ class _CreateCityState extends State<CreateCity> {
     );
   }
 
+  Widget MainCityData(double parentHeight, double parentWidth) {
+    return filteredItems.isNotEmpty
+        ? Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          // GridView inside a SizedBox to ensure it has constraints
+          SizedBox(
+            height: 370, // Ensure GridView has a fixed height
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 50.0,
+                  childAspectRatio: 1,
+                ),
+                itemCount: cityName.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context, cityName[index].toString());
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(right: 3.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            CityImage[index],
+                            color: Color(0xff6EC6F9),
+                            width: 42,
+                          ),
+                          Container(
+                            width: 120,
+                            margin: EdgeInsets.only(bottom: 5),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                cityName[index],
+                                style: TextStyle(
+                                  color: CommonColor.Black,
+                                  fontFamily: "Roboto_Regular",
+                                  fontSize: SizeConfig.blockSizeHorizontal * 3.2,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
 
+          // ListView to show filtered items
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredItems.length,
+              physics: AlwaysScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 15.0),
+                      child: Padding(
+                        padding:  EdgeInsets.only(left: 10),
+                        child: Text(
+                          filteredItems[index].toString(),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: SizeConfig.screenHeight * 0.0005,
+                      color: CommonColor.SearchBar,
+                    ),
+
+                  ],
+                );
+
+
+              },
+            ),
+          ),
+        ],
+      ),
+    )
+        : Column(
+      children: [
+        Icon(
+          Icons.search_sharp,
+          color: CommonColor.noResult,
+          size: 50,
+        ),
+        Text(
+          "No results found",
+          style: TextStyle(
+            color: CommonColor.Black,
+            fontFamily: "Roboto_Regular",
+            fontSize: SizeConfig.blockSizeHorizontal * 4.0,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          width: SizeConfig.screenWidth * 0.6,
+          child: Text(
+            "We couldn't find what you searched for. Try searching again.",
+            style: TextStyle(
+              color: CommonColor.gray,
+              fontFamily: "Roboto_Regular",
+              fontSize: SizeConfig.blockSizeHorizontal * 3.3,
+              fontWeight: FontWeight.w400,
+            ),
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
 
 }

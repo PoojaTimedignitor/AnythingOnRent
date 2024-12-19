@@ -21,9 +21,8 @@ class ApiClients {
     File? frontImages,
     File? backImages,
     String permanentAddress,
-    String latitude,
-    String longitude,
-  ) async {
+  ) async
+  {
     String url = ApiConstant().BaseUrl + ApiConstant().registerss;
 
     String? sessionToken =
@@ -39,12 +38,11 @@ class ApiClients {
         'password': password,
         'cpassword': cpassword,
         'permanentAddress': permanentAddress,
-        'latitude': latitude,
-        'longitude': longitude,
         if (profilePicture != null)
           'profilePicture': await MultipartFile.fromFile(
             profilePicture.path,
             filename: profilePicture.path.split('/').last,
+
           ),
         if (frontImages != null)
           'frontImages': await MultipartFile.fromFile(
@@ -75,16 +73,15 @@ class ApiClients {
       print("Response: ${response.data}");
       return response.data!;
     } on DioError catch (e) {
-      // Handle Dio errors and log details
       if (e.response != null) {
-        print("DioError Response: ${e.response!.data}");
       } else {
-        print("DioError Message: ${e.message}");
+        print("Dio Error Message: ${e.message}");
       }
 
-      // Return error response if available
-      return e.response?.data ?? {'error': 'Unknown error'};
-    } catch (e) {
+      // Handle error gracefully
+      return e.response?.data ?? {'error': 'Server error occurred'};
+    }
+    catch (e) {
       // Catch any other errors
       print("Error: $e");
       return {'error': e.toString()};
@@ -95,16 +92,16 @@ class ApiClients {
     String email,
     String password,
   ) async {
-    String url = ApiConstant().BaseUrlLogin + ApiConstant().login;
+    String url = ApiConstant().BaseUrl + ApiConstant().login;
 
     String? sessionToken =
         GetStorage().read<String>(ConstantData.UserAccessToken);
 
 
-    if (sessionToken == null) {
+   /* if (sessionToken == null) {
       print("Error: Session Token is null!");
       return {"success": false, "message": "User is not logged in."};
-    }
+    }*/
 
     print("Session Token: $sessionToken");
 
@@ -339,6 +336,36 @@ class ApiClients {
     }
   }
 
+
+
+
+
+  Future<Map<String, dynamic>> getAllCity() async {
+    String url =
+        ApiConstant().BaseUrlCity + ApiConstant().getCityUrl;
+
+    String? sessionToken =
+    GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("getCatList Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print("Dio Error: ${e.response}");
+      return e.response!.data;
+    }
+  }
 
 
 }

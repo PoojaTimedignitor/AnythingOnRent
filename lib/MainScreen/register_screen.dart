@@ -656,17 +656,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     mobileNumberController = TextEditingController(text: widget.mobileNumber);
   }
 
-/*
-  void _saveData() {
-    // Save the data to GetStorage
-    box.write('name', firstNameController.text);
 
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Data saved successfully!')),
-    );
-  }
-*/
 
   @override
   void dispose() {
@@ -710,121 +700,119 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget NameData(double parentHeight, double parentWidth) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-                left: parentWidth * 0.49, top: parentHeight * 0.03),
-            child: PhysicalShape(
-              color: Color(0xffd2ddf4),
-              shadowColor: Colors.black.withOpacity(0.6),
-              elevation: 10,
-              clipper: ShapeBorderClipper(shape: CircleBorder()),
-              child: Container(
-                height: 150,
-                width: 150,
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.topRight,
+    return Stack(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+              left: parentWidth * 0.49, top: parentHeight * 0.03),
+          child: PhysicalShape(
+            color: Color(0xffd2ddf4),
+            shadowColor: Colors.black.withOpacity(0.6),
+            elevation: 10,
+            clipper: ShapeBorderClipper(shape: CircleBorder()),
             child: Container(
-              width: SizeConfig.screenWidth * 0.35,
-              height: SizeConfig.screenHeight * 0.12,
-              decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.only(bottomLeft: Radius.circular(100)),
-                  color: Color(0xff87A2FC)),
+              height: 150,
+              width: 150,
             ),
           ),
-          Padding(
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: Container(
+            width: SizeConfig.screenWidth * 0.35,
+            height: SizeConfig.screenHeight * 0.12,
+            decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.only(bottomLeft: Radius.circular(100)),
+                color: Color(0xff87A2FC)),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+              left: parentWidth * 0.7, top: parentHeight * 0.03),
+          child: Image(
+            image: AssetImage('assets/images/register.png'),
+            height: parentHeight * 0.25,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+              top: parentHeight * 0.05, left: parentHeight * 0.02),
+          child: Text(
+            "Welcome Back",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: SizeConfig.blockSizeHorizontal * 5.5,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Montserrat-Medium',
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+              top: parentHeight * 0.09, left: parentHeight * 0.02),
+          child: Text(
+            "Create Account",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: SizeConfig.blockSizeHorizontal * 5.0,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'Montserrat-Regular',
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            _showProfileGallaryDialogBox(context);
+          },
+          child: Padding(
             padding: EdgeInsets.only(
-                left: parentWidth * 0.7, top: parentHeight * 0.03),
-            child: Image(
-              image: AssetImage('assets/images/register.png'),
-              height: parentHeight * 0.25,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: parentHeight * 0.05, left: parentHeight * 0.02),
-            child: Text(
-              "Welcome Back",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: SizeConfig.blockSizeHorizontal * 5.5,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Montserrat-Medium',
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: parentHeight * 0.09, left: parentHeight * 0.02),
-            child: Text(
-              "Create Account",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: SizeConfig.blockSizeHorizontal * 5.0,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Montserrat-Regular',
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              _showProfileGallaryDialogBox(context);
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                  top: parentHeight * 0.20, left: parentWidth * 0.0),
-              child: Stack(children: [
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: SizedBox(
-                        child: CircleAvatar(
-                            radius: 35.0,
-                            backgroundColor: Colors.white,
-                            child: CircleAvatar(
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 10.0,
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    size: 14.0,
-                                    color: Color(0xFF404040),
-                                  ),
+                top: parentHeight * 0.20),
+            child: Stack(children: [
+              Align(
+                  alignment: Alignment.topCenter,
+                  child: SizedBox(
+                      child: CircleAvatar(
+                          radius: 35.0,
+                          backgroundColor: Colors.white,
+                          child: CircleAvatar(
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 10.0,
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  size: 14.0,
+                                  color: Color(0xFF404040),
                                 ),
                               ),
-                              radius: 32.0,
-                              backgroundColor: Colors.transparent,
-                              backgroundImage: _imageProfile != null
-                                  ? FileImage(_imageProfile!)
-                                  : AssetImage('assets/images/profiless.png')
-                                      as ImageProvider,
-                            )
-                            /* Container(
-                                width: parentWidth*0.45,
+                            ),
+                            radius: 32.0,
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: _imageProfile != null
+                                ? FileImage(_imageProfile!)
+                                : AssetImage('assets/images/profiless.png')
+                                    as ImageProvider,
+                          )
+                          /* Container(
+                              width: parentWidth*0.45,
 
 
-                                child:
+                              child:
 
-                                Image.file(_image!)),*/
-                            ))),
-              ]),
-            ),
-          )
-        ],
-      ),
+                              Image.file(_image!)),*/
+                          ))),
+            ]),
+          ),
+        )
+      ],
     );
   }
 
   Widget RegisterContent(double parentHeight, double parentWidth) {
     return Padding(
-        padding: EdgeInsets.only(top: parentHeight * 0.28),
+        padding: EdgeInsets.only(top: parentHeight * 0.25),
         child: Container(
           //height: parentHeight * 0.82,
           width: double.infinity,
@@ -1155,7 +1143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SizedBox(
             height: parentHeight * 0.025,
           ),
-          Text(
+       /*   Text(
             "Current Address",
             style: TextStyle(
               color: CommonColor.RegisterText,
@@ -1296,7 +1284,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           SizedBox(
             height: parentHeight * 0.025,
-          ),
+          ),*/
           Text(
             "Permanent Address",
             style: TextStyle(
@@ -1855,7 +1843,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             print("email: ${emailController.text}");
             print("password: ${passwordController.text}");
             print("cpassword: ${confirmPasswordController.text}");
-            print("currentLocation: ${widget.lat}");
+          //  print("currentLocation: ${widget.lat}");
             print("PermanentAdd: ${permanentAddressController.text}");
             print("profileImage: ${_imageProfile}");
             print("frountImage: ${_imageFront}");
@@ -1873,12 +1861,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _imageFront,
               _imageBack,
               permanentAddressController.text,
-              widget.lat,
-              widget.long,
+             // widget.lat,
+            //  widget.long,
             )
                 .then((value) {
               //  if (value.isEmpty) return;
-              print("token...${value['token']}");
               print(value['data']);
               print("Loading: $isLoading");
               if (mounted) {
@@ -1916,10 +1903,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     value['newUser']?['backImages']);
                 GetStorage().write(ConstantData.UserProfileImage,
                     value['newUser']?['profilePicture']?['url']);
-                GetStorage().write(
-                    ConstantData.Userlatitude, value['newUser']?['latitude']);
-                GetStorage().write(
-                    ConstantData.Userlongitude, value['newUser']?['longitude']);
+
 
                 Navigator.pushReplacement(
                     context,
