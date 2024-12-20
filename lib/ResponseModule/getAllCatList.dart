@@ -1,25 +1,22 @@
 class GetAllCategoriesList {
   bool? success;
-  String? message;
   List<Data>? data;
 
-  GetAllCategoriesList({this.success, this.message, this.data});
+  GetAllCategoriesList({this.success, this.data});
 
   GetAllCategoriesList.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    message = json['message'];
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data!.add(new Data.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
-    data['message'] = message;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['success'] = this.success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -29,49 +26,41 @@ class GetAllCategoriesList {
 
 class Data {
   String? sId;
-  String? categoryName;
-  String? description;
-  String? type;
-  List<dynamic>? itemIDs; // Use dynamic since itemIDs can hold various data types
+  String? name;
+  List<String>? subCategories;
   String? createdAt;
   String? updatedAt;
   int? iV;
+  String? desc;
 
-  Data({
-    this.sId,
-    this.categoryName,
-    this.description,
-    this.type,
-    this.itemIDs,
-    this.createdAt,
-    this.updatedAt,
-    this.iV,
-  });
+  Data(
+      {this.sId,
+        this.name,
+        this.subCategories,
+        this.createdAt,
+        this.updatedAt,
+        this.iV,
+        this.desc});
 
   Data.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
-    categoryName = json['categoryName'];
-    description = json['description'];
-    type = json['type'];
-    // Handle itemIDs as a list of dynamic
-    itemIDs = json['itemIDs'] != null ? List<dynamic>.from(json['itemIDs']) : [];
+    name = json['name'];
+    subCategories = json['subCategories'].cast<String>();
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     iV = json['__v'];
+    desc = json['desc'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = sId;
-    data['categoryName'] = categoryName;
-    data['description'] = description;
-    data['type'] = type;
-    if (itemIDs != null) {
-      data['itemIDs'] = itemIDs;
-    }
-    data['createdAt'] = createdAt;
-    data['updatedAt'] = updatedAt;
-    data['__v'] = iV;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['name'] = this.name;
+    data['subCategories'] = this.subCategories;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
+    data['__v'] = this.iV;
+    data['desc'] = this.desc;
     return data;
   }
 }

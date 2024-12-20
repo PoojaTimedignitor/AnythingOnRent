@@ -25,6 +25,8 @@ import 'package:buttons_tabbar/buttons_tabbar.dart';
 
 import 'package:get_storage/get_storage.dart';
 
+import 'dummytwo.dart';
+
 class MainHome extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => MainHomeState();
@@ -34,6 +36,8 @@ class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
   bool isSearchExpanded = false; // Tracks if search bar is expanded
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   // final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
@@ -63,11 +67,11 @@ class MainHomeState extends State<MainHome>
   late TabController _tabController;
 
   final List<String> images = [
-    'https://img.freepik.com/free-photo/discount-water-bottle-podium_23-2150165468.jpg?t=st=1733893283~exp=1733896883~hmac=181b5b2cd91c367d66c157a610ab35f260b45aa7281a97beb1532f5ccc404027&w=1060',
-    'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/ice-cream-ad-poster-flyer-template-design-04ba11b55ba8e6f441e21ca17698dffb_screen.jpg?ts=1637008762',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQURaEKy1ytMBVSWU6DG4axIX8JYYV1NKhkaX4oTrf5QGoeLlWHR4tGRPoxzd19RQboe8&usqp=CAU',
-    'https://img.freepik.com/free-photo/discount-water-bottle-podium_23-2150165468.jpg?t=st=1733893283~exp=1733896883~hmac=181b5b2cd91c367d66c157a610ab35f260b45aa7281a97beb1532f5ccc404027&w=1060',
-    'https://study.com/cimages/multimages/16/burgerad15179945781952220614.png'
+    'https://img.freepik.com/free-psd/shoes-sale-social-media-post-square-banner-template-design_505751-2862.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/premium-vector/black-friday-sale-social-media-post-banner-home-appliance-product-instagram-post-banner-design_755018-930.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/free-vector/drink-ad-nature-pear-juice_52683-34246.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/premium-psd/ironing-machine-brand-product-social-media-banner_154386-123.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+    'https://img.freepik.com/free-vector/sports-drink-advertisement_52683-430.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
   ];
 
   List<String> catagriesItemList = [
@@ -99,7 +103,6 @@ class MainHomeState extends State<MainHome>
     'assets/images/party.png',
     'assets/images/events.png',
     'assets/images/homeApp.png',
-
   ];
 
   void LogoutDialogBox(BuildContext context) {
@@ -107,8 +110,8 @@ class MainHomeState extends State<MainHome>
     showDialog(
       context: context,
       builder: (
-          BuildContext context,
-          ) {
+        BuildContext context,
+      ) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -136,7 +139,7 @@ class MainHomeState extends State<MainHome>
               ),
               Container(
                 height:
-                SizeConfig.screenHeight * 0.03, // Adjust height as needed
+                    SizeConfig.screenHeight * 0.03, // Adjust height as needed
 
                 child: Text(
                   " Are You Sure you want to Logout?",
@@ -148,7 +151,7 @@ class MainHomeState extends State<MainHome>
                   ),
                   maxLines: 2, // Ensures text spans at most two lines
                   overflow:
-                  TextOverflow.ellipsis, // Adds ellipsis if text overflows
+                      TextOverflow.ellipsis, // Adds ellipsis if text overflows
                 ),
               ),
               Row(
@@ -160,11 +163,11 @@ class MainHomeState extends State<MainHome>
                           GetStorage().read<String>(ConstantData.Useremail) ??
                               "";
                       String password = GetStorage()
-                          .read<String>(ConstantData.Userpassword) ??
+                              .read<String>(ConstantData.Userpassword) ??
                           "";
 
                       final response =
-                      await ApiClients().getLogoutUser(email, password);
+                          await ApiClients().getLogoutUser(email, password);
                       if (response['success'] == true) {
                         print("Logout Successful");
 
@@ -176,13 +179,13 @@ class MainHomeState extends State<MainHome>
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (context) => const LoginScreen()),
-                              (route) => false,
+                          (route) => false,
                         );
                       }
                     },
                     child: Padding(
                       padding:
-                      EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                       child: Container(
                         width: SizeConfig.screenWidth * 0.3,
                         decoration: BoxDecoration(
@@ -220,7 +223,7 @@ class MainHomeState extends State<MainHome>
                     },
                     child: Padding(
                       padding:
-                      EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                       child: Container(
                         width: SizeConfig.screenWidth * 0.3,
                         decoration: BoxDecoration(
@@ -262,74 +265,10 @@ class MainHomeState extends State<MainHome>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      // extendBody: true,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(55.0),
-        child: AppBar(
 
-          flexibleSpace: Padding(
-            padding:  EdgeInsets.only(top: 34,left: 50),
-            child: Row(
-              children: [
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Hi, $firstname",
-                        style: TextStyle(
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                          fontFamily: 'Roboto_Medium',
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Image(
-                            image: AssetImage('assets/images/location.png'),
-                            height: SizeConfig.screenHeight * 0.017,
-                            color: Color(0xff7993f3),
-                          ),
-                          Expanded(
-                            child: Text(
-                              " Park Street, Kolkata, 700021",
-                              style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.4,
-                                fontFamily: 'Poppins_Medium',
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.5,
-                                color: Color(0xff7F96F0),
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: SizeConfig.screenWidth * .0),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: SizeConfig.screenHeight * 0.0,
-                    ),
-                    child: Image(
-                      image: AssetImage('assets/images/notification.png'),
-                      height: SizeConfig.screenHeight * 0.025,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
       drawer: Drawer(
         backgroundColor: Color(0xffffffff),
         child: ListView(
@@ -381,11 +320,11 @@ class MainHomeState extends State<MainHome>
                                 radius: 25.0,
                                 backgroundColor: Colors.transparent,
                                 backgroundImage: (profileImage != null &&
-                                    profileImage!.isNotEmpty)
+                                        profileImage!.isNotEmpty)
                                     ? NetworkImage(
-                                    profileImage!) // Display image from URL
+                                        profileImage!) // Display image from URL
                                     : AssetImage('assets/images/profiless.png')
-                                as ImageProvider,
+                                        as ImageProvider,
                                 // Profile image
                               ),
                             ),
@@ -478,7 +417,7 @@ class MainHomeState extends State<MainHome>
                           //color: CommonColor.gray,
                         ),
                         Text(
-                          // the text of the row.
+                            // the text of the row.
                             "My Profile",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
@@ -505,7 +444,7 @@ class MainHomeState extends State<MainHome>
                           height: 22,
                         ),
                         Text(
-                          // the text of the row.
+                            // the text of the row.
                             "My Collection",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
@@ -533,7 +472,7 @@ class MainHomeState extends State<MainHome>
                           color: Colors.black54,
                         ),
                         Text(
-                          // the text of the row.
+                            // the text of the row.
                             "My Favorites",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
@@ -563,11 +502,11 @@ class MainHomeState extends State<MainHome>
                           width: 180,
                           //  color: Colors.red,
                           child: Text(
-                            // the text of the row.
+                              // the text of the row.
                               "My Transaction History",
                               style: TextStyle(
                                   fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.9,
+                                      SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -594,11 +533,11 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                            // the text of the row.
+                              // the text of the row.
                               "My Ratings",
                               style: TextStyle(
                                   fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.9,
+                                      SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -625,11 +564,11 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                            // the text of the row.
+                              // the text of the row.
                               "Chat",
                               style: TextStyle(
                                   fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.9,
+                                      SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -691,11 +630,11 @@ class MainHomeState extends State<MainHome>
                           width: 130,
                           //  color: Colors.red,
                           child: Text(
-                            // the text of the row.
+                              // the text of the row.
                               "Feedback",
                               style: TextStyle(
                                   fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.9,
+                                      SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -725,11 +664,11 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                            // the text of the row.
+                              // the text of the row.
                               "Help",
                               style: TextStyle(
                                   fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.9,
+                                      SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -758,11 +697,11 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                            // the text of the row.
+                              // the text of the row.
                               "Setting",
                               style: TextStyle(
                                   fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.9,
+                                      SizeConfig.blockSizeHorizontal * 3.9,
                                   fontFamily: "okra_Regular",
                                   color: CommonColor.Black,
                                   fontWeight: FontWeight.w400),
@@ -794,7 +733,7 @@ class MainHomeState extends State<MainHome>
                                   style: TextStyle(
                                       color: Colors.pink,
                                       fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9),
+                                          SizeConfig.blockSizeHorizontal * 3.9),
                                 )
                               ],
                             ),
@@ -811,11 +750,9 @@ class MainHomeState extends State<MainHome>
           ],
         ),
       ),
-
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
+     /* floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(6.0),
         child: FloatingActionButton(
           backgroundColor: Colors.transparent,
           onPressed: () {
@@ -837,7 +774,7 @@ class MainHomeState extends State<MainHome>
             child: Center(
               child: Icon(
                 Icons.add,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             decoration: BoxDecoration(
@@ -845,54 +782,15 @@ class MainHomeState extends State<MainHome>
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
-                colors: [Color(0xffFE7F64), Color(0xffFE7F64)],
+                colors: [
+                  Color(0xfff44343),
+                  Color(0xffFEA3A3),
+                ],
               ),
             ),
           ),
         ),
-      ),
-
-      /*  floatingActionButton: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Container(
-          height: 60,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              stops: [0.8, 0.9],
-              colors: [ Color(0xffFEBA69),
-                Color(0xffFE7F64)],
-            ),
-          ),
-          child: FloatingActionButton(
-            onPressed: () {
-              showModalBottomSheet(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  context: context,
-                  backgroundColor: Colors.white,
-                  elevation: 2,
-                  isScrollControlled: true,
-                  isDismissible: true,
-                  builder: (BuildContext bc) {
-                    return CreateProductService();
-                  });
-            },
-            shape: CircleBorder(),
-            foregroundColor: Color.fromARGB(200, 255, 255, 255),
-
-            backgroundColor: Colors.transparent,
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-          ),
-        ),
       ),*/
-
       body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView(
@@ -900,47 +798,156 @@ class MainHomeState extends State<MainHome>
           padding: EdgeInsets.zero,
           physics: NeverScrollableScrollPhysics(),
           children: [
-            /*  Container(
-                height: SizeConfig.screenHeight * 0.17,
-                child: Column(
-
-                  children: [
-                    getAddMainHeadingLayout(
-                        SizeConfig.screenHeight, SizeConfig.screenWidth),
-                    HomeSearchBar(
-                        SizeConfig.screenHeight, SizeConfig.screenWidth),
-                  ],
-                )),*/
             Container(
-              height: SizeConfig.screenHeight * 0.90,
+              height: SizeConfig.screenHeight * 0.99,
               child: ListView(
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
                 children: <Widget>[
-
                   Stack(
                     children: [
+                      Container(
+                        height: 250,
 
-                      Column(
-                        children: [
-                          HomeSearchBar(
-                              SizeConfig.screenHeight, SizeConfig.screenWidth),
-                          sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
-                        ],
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/dashtwo.png'), // Replace with your image path
+                            fit: BoxFit.cover, // You can use BoxFit.cover, BoxFit.fill, etc. based on your need
+                          ),borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 36, left: 20),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  _scaffoldKey.currentState?.openDrawer();
+                                },
+                                child: Icon(Icons.dehaze_rounded),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      " Hi, $firstname",
+                                      style: TextStyle(
+                                        fontSize: 15, // Adjusted for clarity
+                                        fontFamily: 'okra_extrabold',
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 2,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/location.png',
+                                          height: 16, // Adjusted for clarity
+                                          color: CupertinoColors.black,
+                                        ),
+                                        SizedBox(width: 7),
+                                        Text(
+                                          "Park Street, Kolkata, 700021",
+                                          style: TextStyle(
+                                            fontSize:
+                                                13, // Adjusted for clarity
+                                            fontFamily: 'Poppins_Bold',
+                                            fontWeight: FontWeight.w400,
+                                            letterSpacing: 0.5,
+                                            color: CupertinoColors.black,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
+                      HomeSearchBar(
+                          SizeConfig.screenHeight, SizeConfig.screenWidth),
+
+Padding(
+  padding:  EdgeInsets.only(top:SizeConfig.screenHeight * 0.2),
+  child: Text("     ANYTING ON RENT",style: TextStyle(
+    fontFamily: "okra_extrabold",
+    fontSize: SizeConfig.blockSizeHorizontal * 5.1,
+    color: CupertinoColors.black,
+    fontWeight: FontWeight.w200,
+  ),),
+),
+                      Center(
+                        child: Padding(
+                          padding:  EdgeInsets.only(top:SizeConfig.screenHeight * 0.26),
+                          child: Container(
+                            height: SizeConfig.screenHeight * 0.07,
+                            width: SizeConfig.screenWidth * 0.9,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                                border: Border.all(width: 0.2, color: CommonColor.Black),
+
+                                borderRadius: BorderRadius.all(Radius.circular(15))),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.285,left: 30),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: SizeConfig.screenHeight * 0.025,
+                              color: Color(0xfff44343),
+                            ),
+                            Flexible(
+                              child: Container(
+                                width: 120,
+                                child: Text(
+                                  " Mumbai",
+                                  style: TextStyle(
+                                    color: Color(0xfff44343),
+                                    letterSpacing: 0.0,
+                                    fontFamily: "okra_Medium",
+                                    fontSize:
+                                    SizeConfig.blockSizeHorizontal *
+                                        3.7,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      AddPostButton(
+                          SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ],
                   ),
 
-                  AddPostButton(
-                      SizeConfig.screenHeight, SizeConfig.screenWidth),
+
                   PopularCategories(
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
                   Padding(
                     padding:
-                    EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03),
+                        EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03),
                     child: getAddGameTabLayout(
                         SizeConfig.screenHeight, SizeConfig.screenWidth),
                   ),
+
+
+
                   /* Stack(
                     children: [
                    Padding(
@@ -976,48 +983,6 @@ class MainHomeState extends State<MainHome>
           ],
         ),
       ),
-      /*
-      bottomNavigationBar:
-      PersistentTabView(
-
-        context,
-        controller: _controller,
-        screens: _buildScreens(),
-        items: _navBarsItems(),
-        confineInSafeArea: true,
-
-        backgroundColor: Colors.white, // Default is Colors.white.
-        handleAndroidBackButtonPress: true, // Default is true.
-        resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-        stateManagement: true, // Default is true.
-        hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-        decoration: NavBarDecoration(
-          borderRadius: const BorderRadius.only(
-            topRight: Radius.circular(15),
-            topLeft: Radius.circular(15),),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.black54,
-                blurRadius: 15.0,
-                offset: Offset(0.0, 0.75)
-            )
-          ],
-          colorBehindNavBar: Colors.white,
-        ),
-        popAllScreensOnTapOfSelectedTab: true,
-        popActionScreens: PopActionScreensType.all,
-        itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
-          duration: Duration(milliseconds: 200),
-          curve: Curves.ease,
-        ),
-        screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
-          animateTabTransition: true,
-          curve: Curves.ease,
-
-          duration: Duration(milliseconds: 200),
-        ),
-        navBarStyle: NavBarStyle.style9, // Choose the nav bar style with this property.
-      ),*/
     );
   }
 
@@ -1105,7 +1070,7 @@ class MainHomeState extends State<MainHome>
           Padding(
             padding: EdgeInsets.only(
                 left: SizeConfig.screenWidth * .05,
-                top: SizeConfig.screenHeight * 0.0),
+                top: SizeConfig.screenHeight * 0.11),
             child: SizedBox(
               height: SizeConfig.screenHeight * .053,
               width: SizeConfig.screenWidth * .95,
@@ -1114,7 +1079,7 @@ class MainHomeState extends State<MainHome>
                 child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(color: Colors.black26),
+                      border: Border.all(color: Colors.black26,width: 0.5),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -1155,7 +1120,7 @@ class MainHomeState extends State<MainHome>
                 });
               },
               initialPage: 1,
-              height: MediaQuery.of(context).size.height * .24,
+              height: MediaQuery.of(context).size.height * .2,
               viewportFraction: 1.0,
               enableInfiniteScroll: false,
               autoPlay: true,
@@ -1168,7 +1133,6 @@ class MainHomeState extends State<MainHome>
 
               return Container(
                   margin: EdgeInsets.all(16),
-
                   child: Center(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
@@ -1190,34 +1154,34 @@ class MainHomeState extends State<MainHome>
             for (int i = 0; i < images.length; i++)
               currentIndex == i
                   ? Container(
-                width: 25,
-                height: 7,
-                margin: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Color(0xff6a83da),
-                        Color(0xff665365B7),
-                      ]),
-                ),
-              )
+                      width: 25,
+                      height: 7,
+                      margin: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xff6a83da),
+                              Color(0xff665365B7),
+                            ]),
+                      ),
+                    )
                   : Container(
-                width: 7,
-                height: 7,
-                margin: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                          Color(0xff7F9ED4),
-                          Color(0xff999999),
-                        ]),
-                    shape: BoxShape.circle),
-              )
+                      width: 7,
+                      height: 7,
+                      margin: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                Color(0xff7F9ED4),
+                                Color(0xff999999),
+                              ]),
+                          shape: BoxShape.circle),
+                    )
           ],
         ),
       ],
@@ -1239,26 +1203,35 @@ class MainHomeState extends State<MainHome>
       },
       child: Padding(
         padding: EdgeInsets.only(
-            left: parentWidth * 0.67, right: parentWidth * 0.05),
+            left: parentWidth * 0.62, right: parentWidth * 0.09,top: SizeConfig.screenHeight*0.275),
         child: Container(
           //alignment: Alignment.,
-          height: parentHeight * 0.030,
+          height: parentHeight * 0.040,
           decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: CommonColor.Blue),
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Color(0xfff44343),
+                  Color(0xffFEA3A3),
+
+                ],
+              ),
+         //   border: Border.all(width: 0.5, color: CommonColor.Black),
             borderRadius: BorderRadius.all(
               Radius.circular(5),
             ),
           ),
           child: Center(
               child: Text(
-                "Create Post +",
-                style: TextStyle(
-                  fontFamily: "okra_Medium",
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.1,
-                  color: Color(0xff3684F0),
-                  fontWeight: FontWeight.w200,
-                ),
-              )),
+            "Create Post +",
+            style: TextStyle(
+              fontFamily: "okra_Medium",
+              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+              color: CupertinoColors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          )),
         ),
       ),
     );
@@ -1266,7 +1239,7 @@ class MainHomeState extends State<MainHome>
 
   Widget PopularCategories(double parentHeight, double parentWidth) {
     return Padding(
-      padding: EdgeInsets.only(top: parentHeight * 0.01),
+      padding: EdgeInsets.only(top: parentHeight * 0.03),
       child: Column(
         children: [
           Row(
@@ -1286,7 +1259,7 @@ class MainHomeState extends State<MainHome>
                     child: Text(" POPULAR CATEGORIES",
                         style: TextStyle(
                             color: Colors.grey[500]!,
-                            fontFamily: "okra_Regular",
+                            fontFamily: "okra_Medium",
                             fontSize: SizeConfig.blockSizeHorizontal * 3.8,
                             fontWeight: FontWeight.w400,
                             letterSpacing: 0.9),
@@ -1299,7 +1272,7 @@ class MainHomeState extends State<MainHome>
             ],
           ),
           SizedBox(
-            height: 10,
+            height: 15,
           ),
           /*    Padding(
               padding: EdgeInsets.only(left: parentWidth * 0.05),
@@ -1452,6 +1425,68 @@ class MainHomeState extends State<MainHome>
                 }),
           ),*/
 
+
+
+          Container(
+            height: 80,
+            child: ListView.builder(
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.horizontal,
+                itemCount:
+                    catagriesItemList.length, // Define the number of items
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Container(
+                        width: parentWidth * 0.20,
+                        height: 50,
+                        // Set width for each item
+                        margin: EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomRight,
+                            colors: [Color(0xffF1F1F1), Color(0xffffffff)],
+                          ),
+                          /*   color: Colors.white,*/
+                          borderRadius: BorderRadius.circular(10),
+                          /* border:
+                              Border.all(color: CommonColor.grayText, width: 0.3),*/
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(9.0),
+                          child: SizedBox(
+                            width: 10, // Define desired width
+                            height: 10,
+                            child: Image.asset(
+                              catagriesImage[index],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        catagriesItemList[index],
+                        style: TextStyle(
+                          letterSpacing: 0.5,
+                          color: Colors.black,
+                          fontFamily: "Montserrat_Medium",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  );
+                }),
+          ),
+          SizedBox(
+            height: 10,
+          ),
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -1463,12 +1498,11 @@ class MainHomeState extends State<MainHome>
                               child: CatagriesList()))));
             },
             child: Padding(
-              padding: EdgeInsets.only(left: parentWidth * 0.72, top: 10),
+              padding: EdgeInsets.only(left: parentWidth * 0.72),
               child: Container(
                 height: parentHeight * 0.03,
                 width: parentWidth * 0.22,
                 decoration: BoxDecoration(
-
                     border: Border.all(color: Color(0xff3684F0), width: 0.5),
                     borderRadius: BorderRadius.all(Radius.circular(5))),
                 child: Row(
@@ -1494,175 +1528,16 @@ class MainHomeState extends State<MainHome>
               ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-
-            height: 80,
-            child: ListView.builder(
-                padding: EdgeInsets.zero,
-                scrollDirection: Axis.horizontal,
-                itemCount:
-                catagriesItemList.length, // Define the number of items
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Container(
-                        width: parentWidth * 0.20,
-                        height: 50,
-                        // Set width for each item
-                        margin: EdgeInsets.symmetric(horizontal: 10.0),
-                        decoration: BoxDecoration(
-
-                          gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomRight,
-
-                            colors: [Color(0xffF1F1F1), Color(0xffffffff)],
-                          ),
-                          /*   color: Colors.white,*/
-                          borderRadius: BorderRadius.circular(10),
-                          /* border:
-                              Border.all(color: CommonColor.grayText, width: 0.3),*/
-                        ),
-                        child:  Padding(
-                          padding: const EdgeInsets.all(9.0),
-                          child: SizedBox(
-                            width: 10, // Define desired width
-                            height: 10,
-                            child: Image.asset(
-                              catagriesImage[index],
-
-
-
-
-                            ),
-                          ),
-                        ),
-
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        catagriesItemList[index],
-                        style: TextStyle(
-                          letterSpacing: 0.5,
-                          color: Colors.black,
-                          fontFamily: "Montserrat_Medium",
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                        ),
-
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-
-
-                    ],
-                  );
-                }),
-          ),
         ],
       ),
     );
 
-    /* Padding(
-      padding: EdgeInsets.only(top: parentHeight * 0.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                "   Popular Categories",
-                style: TextStyle(
-                  fontFamily: "Montserrat-Medium",
-                  fontSize: SizeConfig.blockSizeHorizontal * 4.1,
-                  color: CommonColor.TextBlack,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              */
-    /*GestureDetector(
-                onTap: (){
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                      builder: (context) => PopularCatagoriesData(
-                  )));
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left: parentWidth * 0.3, top: parentWidth * 0.0),
-                  child: Container(
-                    height: parentHeight * 0.025,
-                    width: parentWidth * 0.2,
-                    decoration: BoxDecoration(
-                        color: CommonColor.ViewAll,
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text("View All",
-                            style: TextStyle(
-                              fontFamily: "Montserrat-Regular",
-                              fontSize: SizeConfig.blockSizeHorizontal * 2.4,
-                              color: CommonColor.TextBlack,
-                              fontWeight: FontWeight.w400,
-                            )),
-                        Image(
-                          image: AssetImage('assets/images/arrow.png'),
-                          height: 20,
-                          width: 15,
-                          color: Colors.black54,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              )*/
-    /*
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: parentHeight * 0.009,
-                left: parentWidth * 0.04,
-                right: parentWidth * 0.04),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: ClampingScrollPhysics(),
-              // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
 
-              child: CommonWidget(
-                text: "Electronics",
-                texttwo: 'Mobiles & Tab',
-                textthree: 'Furniture',
-                textfour: 'Events',
-                textfive: 'Events',
-                textsix: 'More',
-              ),
-            ),
-          ),
-          SizedBox(height: 13),
-          Center(
-            child: Container(
-              height: parentHeight * 0.0005,
-              width: parentWidth * 0.95,
-              color: CommonColor.SearchBar,
-            ),
-          )
-        ],
-      ),
-    );*/
   }
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
     return Padding(
-      padding: EdgeInsets.only(top: parentHeight * 0.02),
+      padding: EdgeInsets.only(top: parentHeight * 0.0),
       child: Column(
         children: [
           Row(
@@ -1677,7 +1552,7 @@ class MainHomeState extends State<MainHome>
                   child: Text("WHAT'S ON YOUR RENTAL MATERIALS?",
                       style: TextStyle(
                           color: Colors.grey[500]!,
-                          fontFamily: "okra_Regular",
+                          fontFamily: "okra_Medium",
                           fontSize: SizeConfig.blockSizeHorizontal * 3.8,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.9),
@@ -1688,9 +1563,7 @@ class MainHomeState extends State<MainHome>
               const Expanded(child: Divider()),
             ],
           ),
-          SizedBox(
-            height: 25,
-          ),
+
           SafeArea(
             child: DefaultTabController(
               length: 2,
@@ -1698,7 +1571,7 @@ class MainHomeState extends State<MainHome>
                 children: [
                   Container(
                     height: 60,
-                    padding: EdgeInsets.only(left: 0, bottom: 20, right: 0),
+                    padding: EdgeInsets.only( bottom: 20),
                     child: ButtonsTabBar(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
@@ -1706,11 +1579,15 @@ class MainHomeState extends State<MainHome>
                             begin: Alignment.topRight,
                             end: Alignment.bottomLeft,
                             colors: [
-                              Color(0xffFEBA69),
-                              Color(0xffFE7F64),
+                              Color(0xff7AA2FD),
+
+
+
+
+                              Color(0xffD3D6FF),
                             ],
                           )),
-                      buttonMargin: EdgeInsets.symmetric(horizontal: 18),
+                      buttonMargin: EdgeInsets.symmetric(horizontal: 15),
                       unselectedDecoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -1726,14 +1603,16 @@ class MainHomeState extends State<MainHome>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Center(
+                            child: Align(
+                              alignment: Alignment.center,
+
                               child: Text(
                                 "Product",
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontFamily: "Roboto-Medium",
+                                  fontFamily: "okra_Medium",
                                   fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.6,
+                                      SizeConfig.blockSizeHorizontal * 3.6,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -1744,24 +1623,23 @@ class MainHomeState extends State<MainHome>
                           child: Container(
                             height: 40,
                             width: 165,
-                            padding: EdgeInsets.only(left: 28, right: 20),
+
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   20), /* border: Border.all(color: Colors.black, width: 0.5)*/
                             ),
                             child: Align(
                               alignment: Alignment.center,
-                              child: Center(
-                                  child: Text(
-                                    "Service",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "Roboto-Medium",
-                                      fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.6,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  )),
+                              child: Text(
+                                                              "Service",
+                                                              style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Roboto-Medium",
+                              fontSize:
+                                  SizeConfig.blockSizeHorizontal * 3.6,
+                              fontWeight: FontWeight.w400,
+                                                              ),
+                                                            ),
                             ),
                           ),
                         ),
@@ -1813,14 +1691,14 @@ class MainHomeState extends State<MainHome>
                                               Radius.circular(5))),
                                       child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                            MainAxisAlignment.spaceAround,
                                         children: [
                                           Text(
                                             " View All",
                                             style: TextStyle(
                                               fontFamily: "okra_Medium",
                                               fontSize: SizeConfig
-                                                  .blockSizeHorizontal *
+                                                      .blockSizeHorizontal *
                                                   3.1,
                                               color: Color(0xff3684F0),
                                               fontWeight: FontWeight.w200,
@@ -1852,12 +1730,12 @@ class MainHomeState extends State<MainHome>
                             GridView.builder(
                               padding: EdgeInsets.only(top: 15),
                               physics:
-                              NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                                  NeverScrollableScrollPhysics(), // Disable GridView's scrolling
                               shrinkWrap: true, // Take only the space it needs
                               gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount:
-                                2, // Number of columns in the grid
+                                    2, // Number of columns in the grid
                                 crossAxisSpacing: 1.0,
                                 mainAxisSpacing: 0.0,
                                 childAspectRatio: 1.0, // Adjust as needed
@@ -1884,7 +1762,7 @@ class MainHomeState extends State<MainHome>
                                       /*       border: Border.all(
                                             color: Colors.black38, width: 0.9),*/
                                       borderRadius:
-                                      BorderRadius.all(Radius.circular(7))),
+                                          BorderRadius.all(Radius.circular(7))),
 
                                   // alignment: Alignment.center,
 
@@ -1895,7 +1773,7 @@ class MainHomeState extends State<MainHome>
                                         children: [
                                           Container(
                                             height:
-                                            SizeConfig.screenHeight * 0.19,
+                                                SizeConfig.screenHeight * 0.19,
                                             child: ClipRRect(
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(10)),
@@ -1919,7 +1797,7 @@ class MainHomeState extends State<MainHome>
                                                 // overlayShadow: false,
 
                                                 dotIncreasedColor:
-                                                Colors.black45,
+                                                    Colors.black45,
                                                 indicatorBgPadding: 3.0,
                                               ),
                                             ),
@@ -1935,8 +1813,8 @@ class MainHomeState extends State<MainHome>
                                                     color: Colors.black
                                                         .withOpacity(0.3),
                                                     borderRadius:
-                                                    BorderRadius.circular(
-                                                        0),
+                                                        BorderRadius.circular(
+                                                            0),
                                                   ),
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
@@ -1950,51 +1828,51 @@ class MainHomeState extends State<MainHome>
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontFamily:
-                                                            "okra_Medium",
+                                                                "okra_Medium",
                                                             fontSize: 13,
                                                             fontWeight:
-                                                            FontWeight.w600,
+                                                                FontWeight.w600,
                                                           ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                         ),
                                                         Padding(
                                                           padding:
-                                                          EdgeInsets.only(
-                                                              top: 2),
+                                                              EdgeInsets.only(
+                                                                  top: 2),
                                                           child: Row(
                                                             children: [
                                                               Icon(
                                                                 Icons
                                                                     .location_on,
                                                                 size: SizeConfig
-                                                                    .screenHeight *
+                                                                        .screenHeight *
                                                                     0.019,
                                                                 color: Color(
-                                                                    0xffffffff)
+                                                                        0xffffffff)
                                                                     .withOpacity(
-                                                                    0.8),
+                                                                        0.8),
                                                               ),
                                                               Flexible(
                                                                 child: Text(
                                                                   ' Park Street,pune banner 20023',
                                                                   style:
-                                                                  TextStyle(
+                                                                      TextStyle(
                                                                     color: Colors
                                                                         .white
                                                                         .withOpacity(
-                                                                        0.8),
+                                                                            0.8),
                                                                     fontFamily:
-                                                                    "Montserrat-Medium",
+                                                                        "Montserrat-Medium",
                                                                     fontSize:
-                                                                    11,
+                                                                        11,
                                                                     fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
+                                                                        FontWeight
+                                                                            .w500,
                                                                   ),
                                                                   overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                                      TextOverflow
+                                                                          .ellipsis,
                                                                   maxLines: 1,
                                                                 ),
                                                               ),
@@ -2016,16 +1894,16 @@ class MainHomeState extends State<MainHome>
                                                   decoration: BoxDecoration(
                                                     color: Color(0xff5095f1),
                                                     borderRadius:
-                                                    BorderRadius.circular(
-                                                        5),
+                                                        BorderRadius.circular(
+                                                            5),
                                                   ),
                                                   child: Row(
-                                                    // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+                                                      // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
                                                       children: [
                                                         Icon(
                                                           Icons.location_on,
                                                           size: SizeConfig
-                                                              .screenHeight *
+                                                                  .screenHeight *
                                                               0.019,
                                                           color: Colors.white,
                                                         ),
@@ -2033,13 +1911,13 @@ class MainHomeState extends State<MainHome>
                                                           '1.2 Km   ',
                                                           style: TextStyle(
                                                             fontFamily:
-                                                            "Montserrat-Regular",
+                                                                "Montserrat-Regular",
                                                             fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
+                                                                    .blockSizeHorizontal *
                                                                 2.5,
                                                             color: Colors.white,
                                                             fontWeight:
-                                                            FontWeight.w600,
+                                                                FontWeight.w600,
                                                           ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
@@ -2179,7 +2057,7 @@ class MainHomeState extends State<MainHome>
                                   style: TextStyle(
                                     fontFamily: "Montserrat-Medium",
                                     fontSize:
-                                    SizeConfig.blockSizeHorizontal * 4.1,
+                                        SizeConfig.blockSizeHorizontal * 4.1,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -2206,14 +2084,14 @@ class MainHomeState extends State<MainHome>
                                               Radius.circular(5))),
                                       child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                            MainAxisAlignment.spaceAround,
                                         children: [
                                           Text(
                                             " View All",
                                             style: TextStyle(
                                               fontFamily: "okra_Medium",
                                               fontSize: SizeConfig
-                                                  .blockSizeHorizontal *
+                                                      .blockSizeHorizontal *
                                                   3.1,
                                               color: Color(0xff3684F0),
                                               fontWeight: FontWeight.w200,
@@ -2301,7 +2179,7 @@ class MainHomeState extends State<MainHome>
                                                   dotSpacing: 10,
                                                   dotColor: Colors.white70,
                                                   dotIncreasedColor:
-                                                  Colors.black45,
+                                                      Colors.black45,
                                                   indicatorBgPadding: 5.0,
                                                 ),
                                               ),
@@ -2311,28 +2189,28 @@ class MainHomeState extends State<MainHome>
                                             width: SizeConfig.screenWidth * 0.5,
                                             child: Column(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(height: 7),
                                                 Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                       ' HD Camera (black & white) dfgdf',
                                                       style: TextStyle(
                                                         fontFamily:
-                                                        "Montserrat-Regular",
+                                                            "Montserrat-Regular",
                                                         fontSize: SizeConfig
-                                                            .blockSizeHorizontal *
+                                                                .blockSizeHorizontal *
                                                             3.7,
                                                         color:
-                                                        CommonColor.Black,
+                                                            CommonColor.Black,
                                                         fontWeight:
-                                                        FontWeight.w400,
+                                                            FontWeight.w400,
                                                       ),
                                                       overflow:
-                                                      TextOverflow.ellipsis,
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                     SizedBox(height: 3),
                                                     Row(
@@ -2340,29 +2218,29 @@ class MainHomeState extends State<MainHome>
                                                         Icon(
                                                           Icons.location_on,
                                                           size: SizeConfig
-                                                              .screenHeight *
+                                                                  .screenHeight *
                                                               0.019,
                                                           color:
-                                                          Color(0xff3684F0),
+                                                              Color(0xff3684F0),
                                                         ),
                                                         Flexible(
                                                           child: Text(
                                                             ' Park Street,pune banner 20023',
                                                             style: TextStyle(
                                                               fontFamily:
-                                                              "Montserrat-Regular",
+                                                                  "Montserrat-Regular",
                                                               fontSize: SizeConfig
-                                                                  .blockSizeHorizontal *
+                                                                      .blockSizeHorizontal *
                                                                   3.0,
                                                               color: Color(
                                                                   0xff3684F0),
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .w400,
+                                                                  FontWeight
+                                                                      .w400,
                                                             ),
                                                             overflow:
-                                                            TextOverflow
-                                                                .ellipsis,
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             maxLines: 1,
                                                           ),
                                                         ),

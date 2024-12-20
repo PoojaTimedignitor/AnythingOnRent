@@ -139,8 +139,8 @@ class _CatagriesListState extends State<CatagriesList> {
                             setState(() {
                               filteredItems = items
                                   .where((item) =>
-                              item.categoryName != null &&
-                                  item.categoryName!
+                              item.name != null &&
+                                  item.name!
                                       .toLowerCase()
                                       .contains(query.toLowerCase()))
                                   .toList();
@@ -200,7 +200,7 @@ class _CatagriesListState extends State<CatagriesList> {
                     itemCount: filteredItems.length,
                     // Total number of items
                     itemBuilder: (context, index) {
-                      print( "ddddd  ${filteredItems[index].categoryName.toString()}");
+                      print( "ddddd  ${filteredItems[index].name.toString()}");
 
                       /* String categoryName = filteredItems[index];
                       int productCount = productCountList[categoryName] ?? 0;*/
@@ -208,16 +208,16 @@ class _CatagriesListState extends State<CatagriesList> {
 
                         onTap: (){
 
-                          Navigator.pop(context, filteredItems [index].categoryName.toString());
+                          Navigator.pop(context, filteredItems [index].name.toString());
                         },
                         child: Container(
                           // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                           margin: EdgeInsets.only(
                               left: 0.0, right: 5.0, top: 10.0, bottom: 10.0),
                           //  height: SizeConfig.screenHeight * 0,
-                          decoration: BoxDecoration(
+                         /* decoration: BoxDecoration(
                               border: Border.all(color: Color(0xff9584D6), width: 0.5),
-                              borderRadius: BorderRadius.all(Radius.circular(10))),
+                              borderRadius: BorderRadius.all(Radius.circular(10))),*/
                           child: Column(
                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -236,7 +236,7 @@ class _CatagriesListState extends State<CatagriesList> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Text(
-                                    filteredItems[index].categoryName.toString(),
+                                    filteredItems[index].name.toString(),
                                     style: TextStyle(
                                       color: CommonColor.Black,
                                       fontFamily: "Roboto_Regular",

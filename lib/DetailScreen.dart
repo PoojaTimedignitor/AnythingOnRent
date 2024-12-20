@@ -442,7 +442,7 @@ class _DetailScreenState extends State<DetailScreen>
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      SnakeBorderAnimationApp(),
+                                      MyScreen(),
                                 ));
                           },
                           child: Padding(

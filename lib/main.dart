@@ -11,6 +11,7 @@ import 'package:get_storage/get_storage.dart';
 import 'ConstantData/Constant_data.dart';
 import 'Home_screen.dart';
 import 'Home_screens.dart';
+import 'MainScreen/login_screen.dart';
 import 'MainScreen/onboardingScreen.dart';
 import 'MainScreen/register_screen.dart';
 import 'drop.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
 
         routes: <String, WidgetBuilder>{
           '/frame': (BuildContext context) =>  onboardingScreen(),
-          '/homeScreen': (BuildContext context) => MainHome(),
+          '/login': (BuildContext context) => LoginScreen(),
           '/register': (BuildContext context) =>  RegisterScreen(
 
 
@@ -179,12 +180,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // Set the flag to false if it's there in GetStorage
     GetStorage().write('isFirstTimesss', false);
   }
- /* void navigateRegistration() {
+  void navigateRegistration() {
     Navigator.of(context).pushReplacementNamed('/registration');
-  }*/
+  }
 
   void navigateHomePage() {
-    Navigator.of(context).pushReplacementNamed('/homeScreen');
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
 

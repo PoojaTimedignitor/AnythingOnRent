@@ -1,171 +1,185 @@
-import 'dart:ui' as ui;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
+void main() {
+  runApp(MyApp());
+}
 
-
-class SnakeBorderAnimationApp extends StatelessWidget {
-
-     SnakeBorderAnimationApp({Key? key}) : super(key: key);
-
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: AnimatedSnakeBorder(text: 'hello',),
-        ),
-      ),
+      home: MyScreen(),
     );
   }
 }
 
-class AnimatedSnakeBorder extends StatefulWidget {
-  final String text;
-  const AnimatedSnakeBorder({Key? key, required this.text}) : super(key: key);
-
+class MyScreen extends StatefulWidget {
   @override
-  _AnimatedSnakeBorderState createState() => _AnimatedSnakeBorderState();
+  _MyScreenState createState() => _MyScreenState();
 }
 
-class _AnimatedSnakeBorderState extends State<AnimatedSnakeBorder>
-    with TickerProviderStateMixin   {
-  late Animation<double> _animation;
-  late AnimationController _controller;
-  late AnimationController _scaleController;
-  late Animation<double> _scaleAnimation;
-  bool _isVisible = true; // Tracks visibility of the border
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..forward(); // Start the animation
-
-    // Define scaling animation from 0 to 1
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-
-    // Animation Controller
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds:3),
-      upperBound: 2.0, // Loop exactly 2 times
-    );
-
-    _controller.forward().whenComplete(() {
-      // Hide animation after 2 loops
-      setState(() {
-        _isVisible = false;
-      });
-    });
-    _scaleController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds:3),
-    )..forward();
-
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+class _MyScreenState extends State<MyScreen> {
+  // 1. Create a GlobalKey to control the Scaffold
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 50,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blueGrey, width: 0.5),
-        borderRadius:  BorderRadius.all(Radius.circular(20)),
-      ),
-      child:Stack(
-        alignment: Alignment.center, // Align content in the center
-        children: [
-          // Border Animation
-          Visibility(
-            visible: _isVisible,
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                return CustomPaint(
-                  painter: SnakeBorderPainter(progress: _controller.value % 1),
-                  size: Size(150, 50), // Ensure the CustomPaint matches the Container
-                );
-              },
-            ),
-          ),
-          // Text always visible
-          ScaleTransition(
-            scale: _scaleAnimation,
-            child: Text(
-              widget.text,
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
+    return Scaffold(
+      key: _scaffoldKey, // 2. Assign the key to the Scaffold
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      extendBody: true,
+      drawer: Drawer(
+        backgroundColor: Color(0xffffffff),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: 160,
+              color: Color(0xfff1f2fd),
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      width: 108,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(100)),
+                        color: Color(0xffffffff),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      width: 85,
+                      height: 95,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(100)),
+                        color: Color(0xfff1f2fd),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 30, left: 23),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: CircleAvatar(
+                              radius: 29.0,
+                              backgroundColor: Colors.white,
+                              child: CircleAvatar(
+                                radius: 25.0,
+                                backgroundColor: Colors.transparent,
+                                backgroundImage: AssetImage('assets/images/profiless.png'),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Hii, User",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Wrap(
+                                    spacing: 4,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 3),
+                                        child: const Image(
+                                          image: AssetImage('assets/images/location.png'),
+                                          height: 13,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 170,
+                                        child: Text(
+                                          "Location info here",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontFamily: 'Montserrat_Medium',
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black54,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(top: 30, left: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      // Handle tap
+                    },
+                    child: Wrap(
+                      spacing: 13,
+                      children: [
+                        SizedBox(width: 03),
+                        Image(
+                          image: AssetImage('assets/images/userprofile.png'),
+                          height: 22,
+                        ),
+                        Text(
+                          "My Profile",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: "okra_Regular",
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Add more drawer items as needed...
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
+      // 3. Button to open the drawer manually
+      body: GestureDetector(
+        onTap: () {
+          // 4. Open the Drawer manually using the GlobalKey
+          _scaffoldKey.currentState?.openDrawer();
+        },
+        child: Center(child: Icon(Icons.dehaze_rounded)),
+      ),
+     // No AppBar
     );
-  }
-}
-
-class SnakeBorderPainter extends CustomPainter {
-  final double progress;
-  SnakeBorderPainter({required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
-
-      ..shader = ui.Gradient.linear(
-        Offset(0, 0),
-        Offset(size.width, size.height),
-        [
-        
-          Color(0xffD5E2FE).withOpacity(0.1),
-          Color(0xff155AEE),
-        ],
-      );
-
-    // Define path for rounded rectangle
-    final Path path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        const Radius.circular(20),
-      ));
-
-    // Animate the path using dash effect
-    final PathMetrics pathMetrics = path.computeMetrics();
-    for (var metric in pathMetrics) {
-      final double pathLength = metric.length;
-      final double start = (progress * pathLength) % pathLength;
-      final double end = start + pathLength * 0.9;
-
-      final Path extractPath = metric.extractPath(start, end);
-      canvas.drawPath(extractPath, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(SnakeBorderPainter oldDelegate) {
-    return oldDelegate.progress != progress;
   }
 }

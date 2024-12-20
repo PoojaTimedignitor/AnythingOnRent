@@ -412,7 +412,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                             child: Text(
                               "Service",
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Colors.white38,
                                 fontFamily: "Montserrat-Medium",
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.6,
                                 fontWeight: FontWeight.w400,

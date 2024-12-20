@@ -131,7 +131,7 @@ class ApiClients {
 
   Future<Map<String, dynamic>> getAllCat() async {
     String url =
-        ApiConstant().BaseUrlgetAllCatagries + ApiConstant().getAllCatagries;
+        ApiConstant().BaseUrl + ApiConstant().getAllCatagries;
 
     String? sessionToken =
         GetStorage().read<String>(ConstantData.UserAccessToken);
@@ -236,15 +236,10 @@ class ApiClients {
     }
   }
 
-  Future<Map<String, dynamic>> getLogoutUser(
-      String email, String password) async
-  {
-    String url = "${ApiConstant().BaseUrlLogout}${ApiConstant().logout}";
+  Future<Map<String, dynamic>> getLogoutUser(String email, String password) async {
+    String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
 
-    String? sessionToken =
-        GetStorage().read<String>(ConstantData.UserAccessToken);
-
-    print("UserAccessToken --> $sessionToken");
 
     try {
       Response response = await _dio.post(
@@ -260,22 +255,30 @@ class ApiClients {
         ),
       );
 
-      print("Logout Status Code --> ${response.statusCode}");
-      print("Logout Response Data --> ${response.data}");
 
-      return response.data;
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+
+        return response.data;
+      } else {
+
+        return {"error": response.data['message'] ?? "Logout failed"};
+      }
     } on DioError catch (e) {
-      print("Dio Error --> ${e.response}");
-      print("Dio Error Message --> ${e.message}");
+      if (e.response != null) {
 
-      return e.response?.data ??
-          {'success': false, 'message': 'Failed to logout'};
+        return {"error": e.response!.data['message'] ?? 'Unknown error'};
+      } else {
+        return {"error": e.message};
+      }
     }
+
   }
+
 
   Future<Map<String, dynamic>> getAllProductList() async {
     String url =
-        ApiConstant().BaseUrlgetAllCatagries + ApiConstant().getDisplayProductList;
+        ApiConstant().BaseUrl + ApiConstant().getDisplayProductList;
 
     String? sessionToken =
     GetStorage().read<String>(ConstantData.UserAccessToken);
