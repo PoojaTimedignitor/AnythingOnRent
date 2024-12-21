@@ -6,6 +6,7 @@ import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Admin/UserFeedback.dart';
+import 'City_Create.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 import 'ConstantData/Constant_data.dart';
@@ -25,7 +26,6 @@ import 'package:buttons_tabbar/buttons_tabbar.dart';
 
 import 'package:get_storage/get_storage.dart';
 
-import 'dummytwo.dart';
 
 class MainHome extends StatefulWidget {
   @override
@@ -47,6 +47,7 @@ class MainHomeState extends State<MainHome>
       firstname = GetStorage().read(ConstantData.UserFirstName) ?? "Guest";
 
       _tabController = TabController(length: 2, vsync: this);
+      updatedCity = GetStorage().read('selectedCity') ?? "No city selected";
     });
   }
 
@@ -169,12 +170,12 @@ class MainHomeState extends State<MainHome>
                       final response =
                           await ApiClients().getLogoutUser(email, password);
                       if (response['success'] == true) {
+
                         print("Logout Successful");
 
-                        // Remove user data from storage
                         GetStorage().remove(ConstantData.UserAccessToken);
                         GetStorage().remove(ConstantData.Useremail);
-                        GetStorage().remove(ConstantData.Userpassword);
+                        GetStorage().remove(ConstantData.UserCpassword);
 
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
@@ -261,6 +262,18 @@ class MainHomeState extends State<MainHome>
       },
     );
   }
+  String updatedCity = "No city selected"; // Default city
+
+
+  void updateCity(String newCity) {
+    setState(() {
+      updatedCity = newCity;
+      GetStorage().write('selectedCity', newCity); // Store the selected city
+    });
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -899,35 +912,47 @@ Padding(
                           ),
                         ),
                       ),
-                      Padding(
-                        padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.285,left: 30),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              size: SizeConfig.screenHeight * 0.025,
-                              color: Color(0xfff44343),
-                            ),
-                            Flexible(
-                              child: Container(
-                                width: 120,
-                                child: Text(
-                                  " Mumbai",
-                                  style: TextStyle(
-                                    color: Color(0xfff44343),
-                                    letterSpacing: 0.0,
-                                    fontFamily: "okra_Medium",
-                                    fontSize:
-                                    SizeConfig.blockSizeHorizontal *
-                                        3.7,
-                                    fontWeight: FontWeight.w400,
+                      GestureDetector(
+                        onTap: () async {
+
+                          final String? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CreateCity()),
+                          );
+                          if (result != null) {
+                            updateCity(result); // Update city if selected
+                          }
+                        },
+                        child: Padding(
+                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.285,left: 30),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                size: SizeConfig.screenHeight * 0.025,
+                                color: Color(0xfff44343),
+                              ),
+                              Flexible(
+                                child: Container(
+                                  width: 120,
+                                  child: Text(
+                                    (updatedCity),
+                                    style: TextStyle(
+                                      color: Color(0xfff44343),
+                                      letterSpacing: 0.0,
+                                      fontFamily: "okra_Medium",
+                                      fontSize:
+                                      SizeConfig.blockSizeHorizontal *
+                                          3.7,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       AddPostButton(

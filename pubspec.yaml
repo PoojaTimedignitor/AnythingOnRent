@@ -120,6 +120,11 @@ flutter:
     - family: Roboto_Black
       fonts:
         - asset: assets/fonts/Roboto-Black.ttf
+
+    - family: Montserrat-Bold
+      fonts:
+        - asset: assets/fonts/Montserrat-Bold.ttf
+
     - family: Montserrat-Medium
       fonts:
         - asset: assets/fonts/Montserrat-Medium.ttf
@@ -129,6 +134,10 @@ flutter:
     - family: Poppins-Medium
       fonts:
         - asset: assets/fonts/Poppins-Medium.ttf
+    - family:  Poppins-SemiBold
+      fonts:
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+
     - family: Poppins-Regular
       fonts:
         - asset: assets/fonts/Poppins-Regular.ttf

@@ -1,5 +1,6 @@
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'Common_File/common_color.dart';
 import 'ResponseModule/getAllCityResponseModel.dart';
@@ -72,38 +73,28 @@ class _CreateCityState extends State<CreateCity> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Container(
-        height: SizeConfig.screenHeight * 0.96,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-        ),
-        child: Column(
-          children: [
-            AllCityList(SizeConfig.screenHeight, SizeConfig.screenWidth),
-            // MainCityData will be the only part that scrolls
-            Expanded(child: MainCityData(SizeConfig.screenHeight, SizeConfig.screenWidth)),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          AllCityList(SizeConfig.screenHeight, SizeConfig.screenWidth),
+          // MainCityData will be the only part that scrolls
+          Expanded(child: MainCityData(SizeConfig.screenHeight, SizeConfig.screenWidth)),
+        ],
       ),
     );
   }
 
   Widget AllCityList(double parentheight, double parentWidth) {
     return Padding(
-      padding: EdgeInsets.only(top: 13),
+      padding: EdgeInsets.only(top: 23),
       child: Center(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9, // Set the width of the bottom sheet
-          child: Column(
-            children: [
-              // Search bar to filter items
-              Row(
+        child: Column(
+          children: [
+
+            Padding(
+              padding:  EdgeInsets.only(left: 10,right: 10),
+              child: Row(
                 children: [
                   GestureDetector(
                     onTap: () {
@@ -115,12 +106,13 @@ class _CreateCityState extends State<CreateCity> {
                     child: Center(
                       child: !isSearchingData
                           ? Text(
-                        "Popular City",
+                        "  Popular City",
                         style: TextStyle(
-                          fontFamily: "Montserrat-Medium",
+                          fontFamily: "Poppins-Medium",
+                          letterSpacing: 1,
                           fontSize: SizeConfig.blockSizeHorizontal * 4.5,
                           color: CommonColor.TextBlack,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                       )
                           : Padding(
@@ -162,12 +154,12 @@ class _CreateCityState extends State<CreateCity> {
                   )
                 ],
               ),
-              Container(
-                height: SizeConfig.screenHeight * 0.0005,
-                color: CommonColor.SearchBar,
-              ),
-            ],
-          ),
+            ),
+            Container(
+              height: SizeConfig.screenHeight * 0.0005,
+              color: CommonColor.SearchBar,
+            ),
+          ],
         ),
       ),
     );
@@ -175,16 +167,18 @@ class _CreateCityState extends State<CreateCity> {
 
   Widget MainCityData(double parentHeight, double parentWidth) {
     return filteredItems.isNotEmpty
-        ? Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          // GridView inside a SizedBox to ensure it has constraints
-          SizedBox(
-            height: 370, // Ensure GridView has a fixed height
-            child: Padding(
+        ? SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            if (!isSearchingData)
+            Padding(
               padding: EdgeInsets.all(10.0),
               child: GridView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 50.0,
@@ -194,7 +188,11 @@ class _CreateCityState extends State<CreateCity> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.pop(context, cityName[index].toString());
+                      print("object");
+                      GetStorage().write('selectedCity', cityName[index]);
+                      Navigator.pushReplacementNamed(context, '/dashboard');
+
+                      // Navigator.pop(context, cityName[index].toString());
                     },
                     child: Container(
                       margin: EdgeInsets.only(right: 3.0),
@@ -215,9 +213,9 @@ class _CreateCityState extends State<CreateCity> {
                                 cityName[index],
                                 style: TextStyle(
                                   color: CommonColor.Black,
-                                  fontFamily: "Roboto_Regular",
-                                  fontSize: SizeConfig.blockSizeHorizontal * 3.2,
-                                  fontWeight: FontWeight.w400,
+                                  fontFamily: "Roboto_Medium",
+                                  fontSize:
+                                  SizeConfig.blockSizeHorizontal * 3.2,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
@@ -231,25 +229,36 @@ class _CreateCityState extends State<CreateCity> {
                 },
               ),
             ),
-          ),
 
-          // ListView to show filtered items
-          Expanded(
-            child: ListView.builder(
+
+
+            ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true, // Ensures ListView adjusts to its content
+              physics: NeverScrollableScrollPhysics(), // Disable ListView scrolling
               itemCount: filteredItems.length,
-              physics: AlwaysScrollableScrollPhysics(),
-              scrollDirection: Axis.vertical,
               itemBuilder: (BuildContext context, int index) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 15.0),
-                      child: Padding(
-                        padding:  EdgeInsets.only(left: 10),
-                        child: Text(
-                          filteredItems[index].toString(),
-                          style: TextStyle(color: Colors.black),
+                    GestureDetector(
+                      onTap: () {
+                        GetStorage().write('selectedCity', city[index]);
+                        Navigator.pushReplacementNamed(context, '/dashboard');
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 15.0),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text(
+                            filteredItems[index].toString(),
+                            style: TextStyle(
+                              fontFamily: "Roboto_Medium",
+                              color: Colors.black,
+                              fontSize: SizeConfig.blockSizeHorizontal *
+                                  3.6,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -257,15 +266,12 @@ class _CreateCityState extends State<CreateCity> {
                       height: SizeConfig.screenHeight * 0.0005,
                       color: CommonColor.SearchBar,
                     ),
-
                   ],
                 );
-
-
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     )
         : Column(

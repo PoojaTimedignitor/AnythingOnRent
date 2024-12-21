@@ -1,7 +1,6 @@
-
-
 import 'dart:async';
 
+import 'package:anything/City_Create.dart';
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/MainHome.dart';
@@ -9,12 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'ConstantData/Constant_data.dart';
-import 'Home_screen.dart';
-import 'Home_screens.dart';
+
 import 'MainScreen/login_screen.dart';
 import 'MainScreen/onboardingScreen.dart';
 import 'MainScreen/register_screen.dart';
-import 'drop.dart';
 
 
 
@@ -35,18 +32,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 
         initialRoute: '/',
-      home:  const MyHomePage(title: '',),
-    debugShowCheckedModeBanner: false,
+        home:  const MyHomePage(title: '',),
+        debugShowCheckedModeBanner: false,
 
         routes: <String, WidgetBuilder>{
           '/frame': (BuildContext context) =>  onboardingScreen(),
-          '/login': (BuildContext context) => LoginScreen(),
+         // '/login': (BuildContext context) => LoginScreen(),
+          '/dashboard': (BuildContext context) => MainHome(),
+
+
           '/register': (BuildContext context) =>  RegisterScreen(
-
-
             address: '', lat: '', long: '', ProfilePicture: '',  firstName: '', lastname: '', email: '', password: '', cpassword: '', permanetAddress: '', mobileNumber: '', FrontImage: '', BackImage: '',
           ),
-         /* '/rec_dashboard': (BuildContext context) => const ReceiverDashboard(),*/
+
         }
 
     );
@@ -71,7 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     resetSplashFlag();
     startTimer();
-
   }
 
 
@@ -180,15 +177,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // Set the flag to false if it's there in GetStorage
     GetStorage().write('isFirstTimesss', false);
   }
-  void navigateRegistration() {
-    Navigator.of(context).pushReplacementNamed('/registration');
-  }
+
+
 
   void navigateHomePage() {
-    Navigator.of(context).pushReplacementNamed('/login');
+    Navigator.of(context).pushReplacementNamed('/dashboard');
   }
-
-
 
 
   startTimer() {
@@ -209,6 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Timer(duration, navigateParentPage); // Default navigate to onboarding if any error occurs
   }
 }
+
 
 
 

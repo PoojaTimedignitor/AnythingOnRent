@@ -885,23 +885,12 @@ class _CreateProductServiceState extends State<CreateProductService>
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    // Navigate to the second screen and await the result
-                                    final String? result =
-                                        await showModalBottomSheet<String>(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20)),
-                                      ),
-                                      context: context,
-                                      backgroundColor: Colors.white,
-                                      elevation: 10,
-                                      isScrollControlled: true,
-                                      isDismissible: true,
-                                      builder: (BuildContext bc) {
-                                        return CreateCity();
-                                      },
-                                    );
 
+                                    final String? result =
+                                    await  Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                        builder: (context) =>  CreateCity()));
                                     // If a result is received (i.e., category was selected), update the text
                                     if (result != null) {
                                       updateTextCity(result);

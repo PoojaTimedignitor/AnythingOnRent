@@ -240,6 +240,8 @@ class ApiClients {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
     String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
 
+    print("Final API URL: $url");
+    print("Session Token: $sessionToken");
 
     try {
       Response response = await _dio.post(
@@ -255,25 +257,26 @@ class ApiClients {
         ),
       );
 
-
-
-      if (response.statusCode == 200 && response.data['success'] == true) {
-
-        return response.data;
+      if (response.statusCode == 200) {
+        if (response.data is Map && response.data['success'] == true) {
+          return response.data;
+        } else {
+          return {"error": response.data['message'] ?? "Logout failed"};
+        }
       } else {
-
-        return {"error": response.data['message'] ?? "Logout failed"};
+        return {"error": "Unexpected response code: ${response.statusCode}"};
       }
     } on DioError catch (e) {
       if (e.response != null) {
-
-        return {"error": e.response!.data['message'] ?? 'Unknown error'};
+        print("DioError Response: ${e.response?.data}");
+        print("Error Status Code: ${e.response?.statusCode}");
       } else {
-        return {"error": e.message};
+        print("DioError Message: ${e.message}");
       }
+      return {"error": "Exception: ${e.message}"};
     }
-
   }
+
 
 
   Future<Map<String, dynamic>> getAllProductList() async {

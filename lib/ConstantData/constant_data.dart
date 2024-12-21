@@ -14,5 +14,6 @@ class ConstantData{
   static const String UserProfileImage = "profilePicture";
   static const String Userlatitude = "latitude";
   static const String Userlongitude = "longitude";
+  static const String UserCity = "longitude";
 
 }

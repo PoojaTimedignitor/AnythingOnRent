@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:anything/City_Create.dart';
+import 'package:anything/MainHome.dart';
 import 'package:google_ml_kit/google_ml_kit.dart'; // For text recognition
 
 import 'package:anything/Common_File/common_color.dart';
@@ -74,6 +76,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   var chosenValue;
   final GlobalKey _tooltipKey = GlobalKey();
   bool showTooltip = true;
+  String? selectedCity;
+
 
   void _validateAndShowTooltip() {
     if (emailController.text.isEmpty) {
@@ -600,7 +604,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-
+    selectedCity = GetStorage().read('selectedCity');
     if (mounted) {
       setState(() {
         firstNameController = TextEditingController(text: widget.firstName);
@@ -656,6 +660,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     mobileNumberController = TextEditingController(text: widget.mobileNumber);
   }
 
+  void registerUser() {
+    // Here, perform the registration logic (e.g., API call)
+
+    // After registration, check if city is selected, otherwise show city selection screen
+    if (selectedCity == null || selectedCity!.isEmpty) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => CreateCity()),
+      );
+    } else {
+      // Proceed to dashboard if city is selected
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    }
+  }
 
 
   @override
@@ -1876,6 +1894,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               if (value['success'] == true) {
                 if (value['newUser']?['email'] != null) {}
+                //GetStorage().remov('selectedCity');
+
+                // Now navigate to city selection screen
+               // GetStorage().write('isFirstTime', false); // Mark user as not first time
+
+
                 print(
                     "phone number stored successfully: ${value['newUser']?['phoneNumber']}");
                 GetStorage()
@@ -1905,18 +1929,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     value['newUser']?['profilePicture']?['url']);
 
 
-                Navigator.pushReplacement(
+                String? selectedCity = GetStorage().read('selectedCity');
+
+                  Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
-                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KYCVerifyScreen()));
+                    MaterialPageRoute(builder: (context) => CreateCity()),
+                  );
+                }
 
                 if (mounted) {
                   setState(() {
                     isLoading = false;
                   });
                 }
-              }
+
             });
             // }
           },

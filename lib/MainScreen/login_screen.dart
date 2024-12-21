@@ -417,6 +417,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ConstantData.Userpassword, passwordController.text);*/
 
             // Navigate to the home screen upon successful login
+
+
+
+
             Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => MainHome()),
             );
