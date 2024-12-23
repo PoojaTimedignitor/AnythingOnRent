@@ -13,7 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'CatagrioesList.dart';
 import 'MyBehavior.dart';
-import 'hsdfgshd.dart';
+import 'dummytwo.dart';
 
 class CreateProductService extends StatefulWidget {
   const CreateProductService({super.key});
@@ -39,12 +39,14 @@ class _CreateProductServiceState extends State<CreateProductService>
   TextEditingController productPriceController = TextEditingController();
   TextEditingController productRatingController = TextEditingController();
   late TabController _tabController;
-  String updatedTexts = "Original Text";
+  String updatedTexts = "Choose Categories";
   String productType = "Product";
   String updatedCitys = "Choose City";
   final box = GetStorage();
   final ImagePicker _picker = ImagePicker();
   List<File> _selectedImages = [];
+  String? selectedCategory;
+
   int quantity = 0;
 
   bool perDay = false;
@@ -52,14 +54,7 @@ class _CreateProductServiceState extends State<CreateProductService>
   bool perMonth = false;
   bool perWeek = false;
 
-  void _loadSavedImages() {
-    List<dynamic>? savedImages = box.read('selectedImages');
-    if (savedImages != null) {
-      setState(() {
-        _selectedImages = savedImages.map((path) => File(path)).toList();
-      });
-    }
-  }
+
 
   void _saveImagePath(List<File> images) {
     List<String> paths = images.map((image) => image.path).toList();
@@ -127,24 +122,6 @@ class _CreateProductServiceState extends State<CreateProductService>
     });
   }
 
-  void _loadSavedTextCat() {
-    String? savedTextCat = box.read('updatedTextCat'); // Retrieve saved text
-    if (savedTextCat != null) {
-      setState(() {
-        updatedTexts = savedTextCat; // Update the U I with the saved text
-      });
-    }
-  }
-
-  void _loadSavedTextCity() {
-    String? savedTextCity =
-        box.read('updatedTextCit  y'); // Retrieve saved text
-    if (savedTextCity != null) {
-      setState(() {
-        updatedCitys = savedTextCity; // Update the UI with the saved text
-      });
-    }
-  }
 
   void updateTextCity(String newText) {
     box.write('updatedTextCity', newText); // Save the new text
@@ -164,12 +141,150 @@ class _CreateProductServiceState extends State<CreateProductService>
     });
   }
 
+
+
+
+  Future<bool?> _discardDialogBox() async {
+    SizeConfig().init(context);
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false, // Dialog ko dismiss nahi hone denge tap se
+      builder: (context) => AlertDialog(
+
+        title:
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Discard Changes?",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "okra_Medium",
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                )),
+            SizedBox(height: 10),
+            Container(
+
+
+              child: Text(
+                "Are you sure you want to discard chnages?",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Roboto-Medium",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 2,
+                overflow:
+                TextOverflow.ellipsis,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+
+                    Navigator.pop(context, false);
+
+                  },
+                  child: Padding(
+                    padding:
+                    EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                    child: Container(
+                      width: SizeConfig.screenWidth * 0.3,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        // color: Colors.white,
+
+                 border: Border.all(color: CommonColor.SearchBar,width: 0.3)
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Continue",
+                          style: TextStyle(
+
+                              fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                              fontFamily: 'Roboto_Medium',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context, true);
+
+                  },
+                  child: Padding(
+                    padding:
+                    EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                    child: Container(
+                      width: SizeConfig.screenWidth * 0.3,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        // color: Colors.white,
+
+                       color:  Color(0xfffb8a60),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Discard",
+                          style: TextStyle(
+                              height: 2,
+                              fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                              fontFamily: 'Roboto_Medium',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+
+
+        /*Text("Discard Changes?"),
+        content: Text("Are you sure you want to discard chnages?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("Continue editing"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text("Discard changes"),
+          ),
+        ],*/
+      ),
+    );
+
+  }
+
+  Future<bool> _onWillPop() async {
+    if (selectedCategory != null) {
+      // Show discard dialog if no category is selected
+      bool? discard = await _discardDialogBox();
+      return discard ?? false; // If discard is null, return false (do nothing)
+    }
+    return true; // Allow back navigation if category is selected
+  }
+
+
+
+
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
-    _loadSavedTextCat();
-    _loadSavedTextCity();
-    _loadSavedImages();
+
 
     quantity = box.read<int>('quantity') ?? 0;
     super.initState();
@@ -177,171 +292,167 @@ class _CreateProductServiceState extends State<CreateProductService>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Container(
-        height: SizeConfig.screenHeight * 0.90,
-        decoration: BoxDecoration(
-          color: Color(0xffF5F6FB),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Container(
+
+          decoration: BoxDecoration(
+            color: Color(0xffF5F6FB),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+
           ),
-          //  borderRadius: BorderRadius.circular(15)
-        ),
-        child: ScrollConfiguration(
-          behavior: MyBehavior(),
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: SizeConfig.screenHeight * 0.23,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: SizeConfig.screenWidth * 0.4),
-                                child: Container(
-                                  color: CommonColor.showBottombar
-                                      .withOpacity(0.2),
-                                  height: SizeConfig.screenHeight * 0.004,
-                                  width: SizeConfig.screenHeight * 0.1,
+          child: ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: SizeConfig.screenHeight * 0.27,
+
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                     SizedBox(height: 50),
+
+                          Center(
+                            child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (selectedCategory == null) {
+                                      Navigator.pop(context); // Agar category select ho, toh back navigate karein
+                                    } else {
+                                      _discardDialogBox(); // Agar category select nahi hui hai, toh dialog dikhayein
+                                    }
+                                  },
+                                  child: Icon(Icons.arrow_back),
                                 ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: SizeConfig.screenWidth * 0.25),
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      top: SizeConfig.screenHeight * 0.01),
-                                  child: Icon(
-                                    Icons.close,
-                                    size: SizeConfig.screenHeight * .03,
-                                    color: CommonColor.Black,
+                                Text(
+                                  "  Create Product / Service",
+                                  style: TextStyle(
+                                    fontFamily: "Poppins-Medium",
+                                    fontSize: SizeConfig.blockSizeHorizontal * 4.4,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Center(
-                          child: Text(
-                            "  Create Product / Service",
-                            style: TextStyle(
-                              fontFamily: "Montserrat-Medium",
-                              fontSize: SizeConfig.blockSizeHorizontal * 4.4,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Icon(Icons.arrow_back,color: Colors.transparent),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        Padding(
-                          padding: EdgeInsets.only(left: 13, right: 12),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xffF1E7FB),
-                                borderRadius: BorderRadius.circular(10)),
-                            height: SizeConfig.screenHeight * 0.1,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 13),
-                              child: Row(
-                                //  crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 23,
-                                    backgroundImage:
-                                        AssetImage("assets/images/profile.png"),
-                                  ),
+                          SizedBox(height: 10),
+                          Container(
+                            height: SizeConfig.screenHeight * 0.0005,
+                            color: CommonColor.SearchBar,
+                          ),
+                          SizedBox(height: 13),
+                          Padding(
+                            padding: EdgeInsets.only(left: 13, right: 12),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xffeee9ff),
+                                  borderRadius: BorderRadius.circular(10)),
+                              height: SizeConfig.screenHeight * 0.12,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 13),
+                                child: Row(
+                                  //  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 23,
+                                      backgroundImage:
+                                          AssetImage("assets/images/profile.png"),
+                                    ),
 
-                                  SizedBox(
-                                      width:
-                                          08), // Add some space between the avatar and the column
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: 12),
-                                      Text(
-                                        "  Hii, Aaysha",
-                                        style: TextStyle(
-                                          color: Color(0xff675397),
-                                          fontFamily: "okra_Medium",
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(left: 9, top: 2),
-                                        child: Container(
-                                          height: 38,
-                                          width: 270,
-                                          child: Text(
-                                            "Generating ideas for new products or services",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "okra_Regular",
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
+                                    SizedBox(
+                                        width:
+                                            08), // Add some space between the avatar and the column
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: 12),
+                                        Text(
+                                          "  Hii, Aaysha",
+                                          style: TextStyle(
+                                            color: Color(0xff000000),
+                                            fontFamily: "okra_Medium",
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 2),
-                                  // Adds space between the icon and text
-                                ],
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.only(left: 9, top: 2),
+                                          child: Container(
+                                            height: 38,
+                                            width: 270,
+                                            child: Text(
+                                              "Generating ideas for new products or services",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "okra_Regular",
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                
+                                    // Adds space between the icon and text
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+
+
+
+                        ],
+                      ),
                     ),
-                  ),
-                  ScrollConfiguration(
-                    behavior: MyBehavior(),
-                    child: ListView(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      children: [
-                        Container(
-                            height: SizeConfig.screenHeight * 0.77,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  bottom: SizeConfig.screenHeight * 0.04),
-                              child: getAddGameTabLayout(
-                                  SizeConfig.screenHeight,
-                                  SizeConfig.screenWidth),
-                            )),
-                      ],
+                    ScrollConfiguration(
+                      behavior: MyBehavior(),
+                      child: ListView(
+                        shrinkWrap: true,
+
+                        children: [
+                          Container(
+
+                              height: SizeConfig.screenHeight * 0.77,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: SizeConfig.screenHeight * 0.04),
+                                child: getAddGameTabLayout(
+                                    SizeConfig.screenHeight,
+                                    SizeConfig.screenWidth),
+                              )),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -365,8 +476,11 @@ class _CreateProductServiceState extends State<CreateProductService>
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
                         colors: [
-                          Color(0xffC0B5E8),
-                          Color(0xff9584D6),
+                       /*   Color(0xff8c66ff),
+                          Color(0xff9877ff),*/
+                            Color(0xff9f83f7),
+                          Color(0xff9f83f7),
+
                         ],
                       )),
                   buttonMargin: EdgeInsets.symmetric(horizontal: 18),
@@ -392,7 +506,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                   : 'Unknown Type';
                             }(),
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontFamily: "Montserrat-Medium",
                               fontSize: SizeConfig.blockSizeHorizontal * 3.6,
                               fontWeight: FontWeight.w600,
@@ -412,7 +526,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                             child: Text(
                               "Service",
                               style: TextStyle(
-                                color: Colors.white38,
+                                color: Colors.black,
                                 fontFamily: "Montserrat-Medium",
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.6,
                                 fontWeight: FontWeight.w400,
@@ -427,7 +541,6 @@ class _CreateProductServiceState extends State<CreateProductService>
               ),
             ),
 
-            // Remove fixed height here and use an Expanded widget
             Container(
               height: SizeConfig.screenHeight * 0.6,
               child: TabBarView(
@@ -437,135 +550,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 10),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            height: SizeConfig.screenHeight * 0.16,
-                            width: SizeConfig.screenWidth * 0.94,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 12),
-                                Text(
-                                  "    Product Name",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: "okra_Medium",
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 10, right: 10, top: 10),
-                                  child: TextFormField(
-                                      textAlign: TextAlign.start,
-                                      maxLines: 2,
 
-                                      keyboardType: TextInputType.text,
-                                      controller: productNameController,
-                                      autocorrect: true,
-                                      textInputAction: TextInputAction.next,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        hintText:
-                                            'Ex.HD Camera (black & white)',
-                                        contentPadding: EdgeInsets.all(10.0),
-                                        hintStyle: TextStyle(
-                                          fontFamily: "Roboto_Regular",
-                                          color: Color(0xff7D7B7B),
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal *
-                                                  3.5,
-                                        ),
-                                        fillColor: Color(0xffF5F6FB),
-                                        hoverColor: Colors.white,
-                                        filled: true,
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Color(0xffebd7fb),
-                                              width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                      )),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 27),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            height: SizeConfig.screenHeight * 0.28,
-                            width: SizeConfig.screenWidth * 0.94,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 12),
-                                Text(
-                                  "    Product Description",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: "okra_Medium",
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 10, right: 10, top: 10),
-                                  child: TextFormField(
-                                      textAlign: TextAlign.start,
-                                      maxLines: 6,
-                                      focusNode: _productDiscriptionFocus,
-                                      keyboardType: TextInputType.text,
-                                      controller: productDiscriptionController,
-                                      autocorrect: true,
-                                      textInputAction: TextInputAction.next,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        hintText:
-                                            'HD cameras capture images and videos in 1920x1080 pixels and a resolution of 1080p. 4K cameras, on the other hand',
-                                        contentPadding: EdgeInsets.all(10.0),
-                                        hintStyle: TextStyle(
-                                          fontFamily: "Roboto_Regular",
-                                          color: Color(0xff7D7B7B),
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal *
-                                                  3.5,
-                                        ),
-                                        fillColor: Color(0xffF5F6FB),
-                                        hoverColor: Colors.white,
-                                        filled: true,
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.black12, width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                      )),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 27),
                         Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Container(
@@ -584,7 +569,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                ImagePickerCarousel()));
+                                                FaintContainerAndTextField()));
                                   },
                                   child: Text(
                                     "    Select Categories",
@@ -598,9 +583,8 @@ class _CreateProductServiceState extends State<CreateProductService>
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    // Navigate to the second screen and await the result
                                     final String? result =
-                                        await showModalBottomSheet<String>(
+                                    await showModalBottomSheet<String>(
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(20)),
@@ -611,13 +595,24 @@ class _CreateProductServiceState extends State<CreateProductService>
                                       isScrollControlled: true,
                                       isDismissible: true,
                                       builder: (BuildContext bc) {
-                                        return CatagriesList();
+                                        return CatagriesList(
+                                          onChanged: (value) {
+                                            setState(() {
+                                              selectedCategory = value;
+                                            });
+                                          },
+
+                                        );
+
                                       },
                                     );
 
                                     // If a result is received (i.e., category was selected), update the text
                                     if (result != null) {
-                                      updateText(result);
+                                      setState(() {
+                                        selectedCategory = result;
+                                        updatedTexts = result; // Update text to the selected category
+                                      });
                                     }
                                   },
                                   child: Padding(
@@ -636,11 +631,11 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         child: Text(
                                           (updatedTexts),
                                           style: TextStyle(
-                                            color: Color(0xff7D7B7B),
-                                            fontFamily: "Roboto_Regular",
+                                            color: selectedCategory != null ? Colors.black :  Color(0xff7D7B7B),
+                                            fontFamily: "Roboto_Medium",
                                             fontSize:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    3.5,
+                                            SizeConfig.blockSizeHorizontal *
+                                                3.6,
                                           ),
                                         ),
                                       ),
@@ -651,6 +646,145 @@ class _CreateProductServiceState extends State<CreateProductService>
                             ),
                           ),
                         ),
+                        SizedBox(height: 27),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Opacity(
+                            opacity: selectedCategory == null ? 0.3 : 1.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              height: SizeConfig.screenHeight * 0.16,
+                              width: SizeConfig.screenWidth * 0.94,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 12),
+                                  Text(
+                                    "    Product Name",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 10, right: 10, top: 10),
+                                    child:  TextFormField(
+                                            enabled: selectedCategory != null,
+                                        textAlign: TextAlign.start,
+                                        maxLines: 2,
+                            
+                                        keyboardType: TextInputType.text,
+                                        controller: productNameController,
+                                        autocorrect: true,
+                                        textInputAction: TextInputAction.next,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          hintText:
+                                              'Ex.HD Camera (black & white)',
+                                          contentPadding: EdgeInsets.all(10.0),
+                                          hintStyle: TextStyle(
+                                            fontFamily: "Roboto_Regular",
+                                            color: Color(0xff7D7B7B),
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    3.5,
+                                          ),
+                                          fillColor: selectedCategory != null ? Color(0xffF5F6FB) : Color(0xffF1F1F1),
+                                          hoverColor: Colors.white,
+                                          filled: true,
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0)),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: selectedCategory != null ? Color(0xffebd7fb) : Color(0xffD9D9D9),
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                        )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 27),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Opacity(
+                              opacity: selectedCategory == null ? 0.3 : 1.0,
+
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              height: SizeConfig.screenHeight * 0.28,
+                              width: SizeConfig.screenWidth * 0.94,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 12),
+                                  Text(
+                                    "    Product Description",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 10, right: 10, top: 10),
+                                    child: TextFormField(
+                                            enabled: selectedCategory != null,
+                                        textAlign: TextAlign.start,
+                                        maxLines: 6,
+                                        focusNode: _productDiscriptionFocus,
+                                        keyboardType: TextInputType.text,
+                                        controller: productDiscriptionController,
+                                        autocorrect: true,
+                                        textInputAction: TextInputAction.next,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          hintText:
+                                              'HD cameras capture images and videos in 1920x1080 pixels and a resolution of 1080p. 4K cameras, on the other hand',
+                                          contentPadding: EdgeInsets.all(10.0),
+                                          hintStyle: TextStyle(
+                                            fontFamily: "Roboto_Regular",
+                                            color: Color(0xff7D7B7B),
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    3.5,
+                                          ),
+                                          fillColor: selectedCategory != null ? Color(0xffF5F6FB) : Color(0xffF1F1F1),
+                                          hoverColor: Colors.white,
+                                          filled: true,
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0)),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: selectedCategory != null ? Color(0xffebd7fb) : Color(0xffD9D9D9), width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                        )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
                         SizedBox(height: 27),
                         Padding(
                           padding: EdgeInsets.only(left: 10),

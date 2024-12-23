@@ -829,7 +829,7 @@ class MainHomeState extends State<MainHome>
                           ),borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.only(top: 36, left: 20),
+                          padding: EdgeInsets.only(top: 40, left: 20),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -1011,75 +1011,6 @@ Padding(
     );
   }
 
-  Widget getAddMainHeadingLayout(double parentHeight, double parentWidth) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: () {
-            z.toggle!();
-            z.open!();
-          },
-          onDoubleTap: () {},
-          child: Padding(
-            padding: EdgeInsets.only(left: parentWidth * .02),
-            child: Padding(
-              padding: EdgeInsets.only(top: parentHeight * 0.04),
-              child: Image(
-                image: AssetImage('assets/images/sidebar.png'),
-                height: parentHeight * 0.045,
-              ),
-            ),
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: parentHeight * 0.05),
-              child: Text(
-                "    Hi,Aaysha",
-                style: TextStyle(
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                    fontFamily: 'Roboto_Medium',
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black),
-              ),
-            ),
-            SizedBox(height: 4),
-            Padding(
-              padding: EdgeInsets.only(left: parentWidth * 0.03),
-              child: Row(
-                children: [
-                  Image(
-                    image: AssetImage('assets/images/location.png'),
-                    height: parentHeight * 0.017,
-                  ),
-                  Text(
-                    "  Park Street, Kolkata, 700021",
-                    style: TextStyle(
-                        fontSize: SizeConfig.blockSizeHorizontal * 3.0,
-                        fontFamily: 'Poppins_Medium',
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: parentWidth * .29),
-          child: Padding(
-            padding: EdgeInsets.only(top: parentHeight * 0.04),
-            child: Image(
-              image: AssetImage('assets/images/notification.png'),
-              height: parentHeight * 0.025,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget HomeSearchBar(double parentHeight, double parentWidth) {
     return GestureDetector(
@@ -1216,7 +1147,7 @@ Padding(
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(
+        /*showModalBottomSheet(
             context: context,
             backgroundColor: Colors.white,
             elevation: 2,
@@ -1224,7 +1155,12 @@ Padding(
             isDismissible: true,
             builder: (BuildContext bc) {
               return CreateProductService();
-            });
+            });*/
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>  CreateProductService()));
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -1471,7 +1407,7 @@ Padding(
                           gradient: LinearGradient(
                             begin: Alignment.topRight,
                             end: Alignment.bottomRight,
-                            colors: [Color(0xffF1F1F1), Color(0xffffffff)],
+                            colors: [Color(0xffeaeaea), Color(0xffffffff)],
                           ),
                           /*   color: Colors.white,*/
                           borderRadius: BorderRadius.circular(10),
@@ -1520,7 +1456,7 @@ Padding(
                       builder: (context) => Scaffold(
                           body: Container(
                               height: SizeConfig.screenHeight,
-                              child: CatagriesList()))));
+                              child: CatagriesList(onChanged: (value) {  },)))));
             },
             child: Padding(
               padding: EdgeInsets.only(left: parentWidth * 0.72),

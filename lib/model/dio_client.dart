@@ -184,7 +184,6 @@ class ApiClients {
         'productCurrentAddress': productCurrentAddress,
         'price': price,
         'rating': rating,
-        // Rent data can be adjusted as needed
         'rent': {
           'perHour': 0,
           'perDay': 0,
@@ -192,7 +191,7 @@ class ApiClients {
           'perMonth': 0,
         },
         'type': 'Product',
-        // Mapping images to MultipartFile for file upload
+
         'images': images.map((file) {
           return MultipartFile.fromFileSync(
             file.path,
@@ -201,11 +200,9 @@ class ApiClients {
         }).toList(),
       });
 
-      // Debug: Print the URL and the form data
       print("URL: $url");
       print("FormData: $formData");
 
-      // Make the POST request with the FormData
       Response response = await _dio.post<Map<String, dynamic>>(
         url,
         data: formData,

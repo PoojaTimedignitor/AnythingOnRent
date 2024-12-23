@@ -436,113 +436,169 @@ class _DetailScreenState extends State<DetailScreen>
                             ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      MyScreen(),
-                                ));
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 18, top: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "HD Camera (black & white) or all Color",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: "okra_Medium",
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
+                        Padding(
+                          padding: EdgeInsets.only(left: 18, top: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "HD Camera (black & white) or all Color",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "okra_Medium",
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Icon(Icons.location_on,
+                                      size: SizeConfig.screenHeight * 0.019,
+                                      color: CommonColor.Blue),
+                                  Flexible(
+                                    child: Text(
+                                      ' Park Street,pune banner 20023',
+                                      style: TextStyle(
+                                        color: CommonColor.Blue,
+                                        fontFamily: "Montserrat-Medium",
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    Icon(Icons.location_on,
-                                        size: SizeConfig.screenHeight * 0.019,
-                                        color: CommonColor.Blue),
-                                    Flexible(
-                                      child: Text(
-                                        ' Park Street,pune banner 20023',
-                                        style: TextStyle(
-                                          color: CommonColor.Blue,
-                                          fontFamily: "Montserrat-Medium",
-                                          fontSize: 13,
+                                  SizedBox(width: 66),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              RichText(
+                                  text: TextSpan(
+                                      text: "Last updated on  ",
+                                      style: TextStyle(
+                                          color: Colors.black38,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'Roboto-Regular',
+                                          fontSize: 14),
+                                      children: [
+                                    TextSpan(
+                                      text: "10 Jun '24",
+                                      style: TextStyle(
+                                          color: Color(0xffFE7F64),
                                           fontWeight: FontWeight.w500,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    ),
-                                    SizedBox(width: 66),
-                                  ],
-                                ),
-                                SizedBox(height: 5),
-                                RichText(
-                                    text: TextSpan(
-                                        text: "Last updated on  ",
-                                        style: TextStyle(
-                                            color: Colors.black38,
-                                            fontWeight: FontWeight.w400,
-                                            fontFamily: 'Roboto-Regular',
-                                            fontSize: 14),
-                                        children: [
-                                      TextSpan(
-                                        text: "10 Jun '24",
-                                        style: TextStyle(
-                                            color: Color(0xffFE7F64),
-                                            fontWeight: FontWeight.w500,
-                                            decoration:
-                                                TextDecoration.underline,
-                                            decorationColor: Color(0xffFE7F64),
-                                            fontFamily: 'Roboto-Regular',
-                                            fontSize: 15),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = () {},
-                                      )
-                                    ])),
-                                SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    Text("Share",
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontFamily: "Montserrat-Medium",
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                        )),
-                                    SizedBox(width: 9),
-                                    Container(
-                                      height: 35,
-                                      width: 35,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        border: Border.all(
-                                            color: CommonColor.grayText,
-                                            width: 0.3),
-                                      ),
-                                      child: IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(
-                                          Icons.share,
+                                          decoration:
+                                              TextDecoration.underline,
+                                          decorationColor: Color(0xffFE7F64),
+                                          fontFamily: 'Roboto-Regular',
+                                          fontSize: 15),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {},
+                                    )
+                                  ])),
+                              SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Text("Share",
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontFamily: "Montserrat-Medium",
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      )),
+                                  SizedBox(width: 9),
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(
                                           color: CommonColor.grayText,
-                                          size: 18,
-                                        ),
+                                          width: 0.3),
+                                    ),
+                                    child: IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.share,
+                                        color: CommonColor.grayText,
+                                        size: 18,
                                       ),
                                     ),
-                                  ],
-                                ),
-                                SizedBox(height: 18),
-                                Padding(
-                                  padding:  EdgeInsets.only(right: 10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Container(
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 18),
+                              Padding(
+                                padding:  EdgeInsets.only(right: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      height: 30,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: Color(0xffFE7F64)
+                                                  .withOpacity(0.3),
+                                              width: 1.7),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: Stack(
+                                        alignment: Alignment
+                                            .center, // Align content in the center
+                                        children: [
+                                          // Border Animation
+                                          Visibility(
+                                            visible: _isVisible,
+                                            child: AnimatedBuilder(
+                                              animation: _controllerss,
+                                              builder: (context, child) {
+                                                return CustomPaint(
+                                                  painter: SnakeBorderPainter(
+                                                      progress:
+                                                          _controllerss.value %
+                                                              1),
+                                                  size: Size(150, 50), // Ensure the CustomPaint matches the Container
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          // Text always visible
+                                          ScaleTransition(
+                                            scale: _scaleAnimation,
+                                            child: Center(
+                                                child:
+
+                                                GradientText(
+                                                  "TO RENT",
+                                                    style: TextStyle(
+
+                                                      fontFamily:
+                                                      "poppins_Regular",
+                                                      fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                        2.9 ,
+                                                      fontWeight:
+                                                      FontWeight.w600,
+                                                    ),
+                                                  colors: [
+                                                    Color(0xffFD6848),
+
+                                                    Color(0xffFF8E76),
+
+                                                  ],
+                                                ),
+
+
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 10),
+                                      child:     Container(
                                         height: 30,
                                         width: 100,
                                         decoration: BoxDecoration(
@@ -566,8 +622,8 @@ class _DetailScreenState extends State<DetailScreen>
                                                   return CustomPaint(
                                                     painter: SnakeBorderPainter(
                                                         progress:
-                                                            _controllerss.value %
-                                                                1),
+                                                        _controllerss.value %
+                                                            1),
                                                     size: Size(150, 50), // Ensure the CustomPaint matches the Container
                                                   );
                                                 },
@@ -577,117 +633,51 @@ class _DetailScreenState extends State<DetailScreen>
                                             ScaleTransition(
                                               scale: _scaleAnimation,
                                               child: Center(
-                                                  child:
+                                                child:
 
-                                                  GradientText(
-                                                    "TO RENT",
-                                                      style: TextStyle(
+                                                GradientText(
+                                                  "TO SELL",
+                                                  style: TextStyle(
 
-                                                        fontFamily:
-                                                        "poppins_Regular",
-                                                        fontSize: SizeConfig
-                                                            .blockSizeHorizontal *
-                                                          2.9 ,
-                                                        fontWeight:
-                                                        FontWeight.w600,
-                                                      ),
-                                                    colors: [
-                                                      Color(0xffFD6848),
-
-                                                      Color(0xffFF8E76),
-
-                                                    ],
+                                                    fontFamily:
+                                                    "poppins_Regular",
+                                                    fontSize: SizeConfig
+                                                        .blockSizeHorizontal *
+                                                        2.9 ,
+                                                    fontWeight:
+                                                    FontWeight.w600,
                                                   ),
+                                                  colors: [
+                                                    Color(0xffFD6848),
+
+                                                    Color(0xffFF8E76),
+
+                                                  ],
+                                                ),
 
 
+                                                /* Text("TO RENT",
+                                                    style: TextStyle(
+                                                      color: CommonColor.Black,
+                                                      fontFamily:
+                                                          "poppins_Regular",
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          2.6,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ))
+                                            */
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child:     Container(
-                                          height: 30,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              border: Border.all(
-                                                  color: Color(0xffFE7F64)
-                                                      .withOpacity(0.3),
-                                                  width: 1.7),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10))),
-                                          child: Stack(
-                                            alignment: Alignment
-                                                .center, // Align content in the center
-                                            children: [
-                                              // Border Animation
-                                              Visibility(
-                                                visible: _isVisible,
-                                                child: AnimatedBuilder(
-                                                  animation: _controllerss,
-                                                  builder: (context, child) {
-                                                    return CustomPaint(
-                                                      painter: SnakeBorderPainter(
-                                                          progress:
-                                                          _controllerss.value %
-                                                              1),
-                                                      size: Size(150, 50), // Ensure the CustomPaint matches the Container
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              // Text always visible
-                                              ScaleTransition(
-                                                scale: _scaleAnimation,
-                                                child: Center(
-                                                  child:
-
-                                                  GradientText(
-                                                    "TO SELL",
-                                                    style: TextStyle(
-
-                                                      fontFamily:
-                                                      "poppins_Regular",
-                                                      fontSize: SizeConfig
-                                                          .blockSizeHorizontal *
-                                                          2.9 ,
-                                                      fontWeight:
-                                                      FontWeight.w600,
-                                                    ),
-                                                    colors: [
-                                                      Color(0xffFD6848),
-
-                                                      Color(0xffFF8E76),
-
-                                                    ],
-                                                  ),
-
-
-                                                  /* Text("TO RENT",
-                                                      style: TextStyle(
-                                                        color: CommonColor.Black,
-                                                        fontFamily:
-                                                            "poppins_Regular",
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            2.6,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ))
-                                              */
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                         SizedBox(height: 1),

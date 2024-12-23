@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 
+import 'MyBehavior.dart';
 import 'model/dio_client.dart';
 class CatagriesList extends StatefulWidget {
-  const CatagriesList({super.key});
+  final Function(String) onChanged;
+
+  const CatagriesList({super.key, required this.onChanged});
 
   @override
   State<CatagriesList> createState() => _CatagriesListState();
@@ -20,22 +23,22 @@ class _CatagriesListState extends State<CatagriesList> {
 
 
   final List<String> catagriesImage = [
-    'assets/images/cattwo.png',
-    'assets/images/catthree.png',
-    'assets/images/catfour.png',
-    'assets/images/catone.png',
-    'assets/images/catthree.png',
-    'assets/images/cattwo.png',
-    'assets/images/catone.png',
-    'assets/images/cattwo.png',
-    'assets/images/catthree.png',
-    'assets/images/catthree.png',
-    'assets/images/catthree.png',
-    'assets/images/catfour.png',
-    'assets/images/catfour.png',
-    'assets/images/cattwo.png',
-    'assets/images/cattwo.png'
-    'assets/images/cattwo.png'
+    'assets/images/fashion.png',
+    'assets/images/furniture.png',
+    'assets/images/vehicle.png',
+    'assets/images/electronics.png',
+    'assets/images/cosmatics.png',
+    'assets/images/stationery.png',
+    'assets/images/books.png',
+    'assets/images/sports.png',
+    'assets/images/agriculture.png',
+    'assets/images/health.png',
+    'assets/images/property.png',
+    'assets/images/party.png',
+    'assets/images/home.png',
+    'assets/images/weddingdress.png',
+    'assets/images/art.png',
+    'assets/images/other.png',
   ];
 
   List<Data> filteredItems = [];
@@ -78,25 +81,28 @@ class _CatagriesListState extends State<CatagriesList> {
       child: Container(
         height: SizeConfig.screenHeight * 0.93,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: Color(0xffF5F6FB),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
           ),
         ),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            isLoading
-                ? Padding(
-                  padding:  EdgeInsets.only(top:SizeConfig.screenHeight*0.4),
-                  child: Image(image: AssetImage("assets/images/logo.gif"),height: SizeConfig.screenHeight*0.15),
-                ):  SizedBox(
-                height: SizeConfig.screenHeight*0.9,
+        child: ScrollConfiguration(
+          behavior: MyBehavior(),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              isLoading
+                  ? Padding(
+                    padding:  EdgeInsets.only(top:SizeConfig.screenHeight*0.4),
+                    child: Image(image: AssetImage("assets/images/logo.gif"),height: SizeConfig.screenHeight*0.15),
+                  ):  SizedBox(
+                  height: SizeConfig.screenHeight*0.9,
 
-                child: AllCatagriesList(SizeConfig.screenHeight,SizeConfig.screenWidth))
-          ],
+                  child: AllCatagriesList(SizeConfig.screenHeight,SizeConfig.screenWidth))
+            ],
+          ),
         ),
       ),
     );
@@ -207,17 +213,18 @@ class _CatagriesListState extends State<CatagriesList> {
                       return GestureDetector(
 
                         onTap: (){
-
+                          widget.onChanged(filteredItems [index].name.toString());
                           Navigator.pop(context, filteredItems [index].name.toString());
                         },
                         child: Container(
                           // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                           margin: EdgeInsets.only(
-                              left: 0.0, right: 5.0, top: 10.0, bottom: 10.0),
+                              left: 8.0, right: 5.0, top: 14.0, bottom: 10.0),
                           //  height: SizeConfig.screenHeight * 0,
-                         /* decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xff9584D6), width: 0.5),
-                              borderRadius: BorderRadius.all(Radius.circular(10))),*/
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+
+                              borderRadius: BorderRadius.all(Radius.circular(15))),
                           child: Column(
                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -225,7 +232,7 @@ class _CatagriesListState extends State<CatagriesList> {
                                 child:  Image.asset(
                                   catagriesImage[index],
 
-                                  width: 45,
+                                  width: 35,
                                 ),
                               ),
                               Container(
@@ -314,4 +321,5 @@ class _CatagriesListState extends State<CatagriesList> {
       ),
     );
  }
+
 }

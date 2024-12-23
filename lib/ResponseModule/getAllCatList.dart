@@ -6,24 +6,18 @@ class GetAllCategoriesList {
 
   GetAllCategoriesList.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
-      });
-    }
+    data = (json['data'] as List<dynamic>?)
+        ?.map((item) => Data.fromJson(item))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    data['data'] = this.data?.map((v) => v.toJson()).toList();
     return data;
   }
 }
-
 class Data {
   String? sId;
   String? name;
