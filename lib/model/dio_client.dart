@@ -131,7 +131,7 @@ class ApiClients {
 
   Future<Map<String, dynamic>> getAllCat() async {
     String url =
-        ApiConstant().BaseUrl + ApiConstant().getAllCatagries;
+        ApiConstant().BaseUrlGetAllCat + ApiConstant().getAllCatagries;
 
     String? sessionToken =
         GetStorage().read<String>(ConstantData.UserAccessToken);

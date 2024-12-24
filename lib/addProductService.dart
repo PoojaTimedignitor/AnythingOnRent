@@ -27,6 +27,8 @@ class _CreateProductServiceState extends State<CreateProductService>
   TextEditingController emailController = TextEditingController();
   final _productcurrentAddFocus = FocusNode();
   final _productDiscriptionFocus = FocusNode();
+  final _subCatControllerFocus = FocusNode();
+
   TextEditingController productNameController = TextEditingController();
   TextEditingController productCurrentAddressController =
       TextEditingController();
@@ -38,6 +40,28 @@ class _CreateProductServiceState extends State<CreateProductService>
   TextEditingController productDiscriptionController = TextEditingController();
   TextEditingController productPriceController = TextEditingController();
   TextEditingController productRatingController = TextEditingController();
+
+
+
+  TextEditingController SubCatController = TextEditingController();
+
+
+
+  List<String> _suggestions = [
+    'Apple',
+    'Banana',
+    'Orange',
+    'Grapes',
+    'Watermelon',
+    'Pineapple',
+    'Mango',
+    'Peach',
+  ];
+
+  List<String> _filteredSuggestions = [];
+
+
+
   late TabController _tabController;
   String updatedTexts = "Choose Categories";
   String productType = "Product";
@@ -53,8 +77,6 @@ class _CreateProductServiceState extends State<CreateProductService>
   bool perHour = false;
   bool perMonth = false;
   bool perWeek = false;
-
-
 
   void _saveImagePath(List<File> images) {
     List<String> paths = images.map((image) => image.path).toList();
@@ -115,13 +137,6 @@ class _CreateProductServiceState extends State<CreateProductService>
     }
   }
 
-  void updateText(String newText) {
-    box.write('updatedTextCat', newText); // Save the new text
-    setState(() {
-      updatedTexts = newText; // Update the state to show the new text
-    });
-  }
-
 
   void updateTextCity(String newText) {
     box.write('updatedTextCity', newText); // Save the new text
@@ -141,18 +156,13 @@ class _CreateProductServiceState extends State<CreateProductService>
     });
   }
 
-
-
-
   Future<bool?> _discardDialogBox() async {
     SizeConfig().init(context);
     return showDialog<bool>(
       context: context,
       barrierDismissible: false, // Dialog ko dismiss nahi hone denge tap se
       builder: (context) => AlertDialog(
-
-        title:
-        Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Discard Changes?",
@@ -164,8 +174,6 @@ class _CreateProductServiceState extends State<CreateProductService>
                 )),
             SizedBox(height: 10),
             Container(
-
-
               child: Text(
                 "Are you sure you want to discard chnages?",
                 style: TextStyle(
@@ -175,8 +183,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                   fontWeight: FontWeight.w400,
                 ),
                 maxLines: 2,
-                overflow:
-                TextOverflow.ellipsis,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Row(
@@ -184,27 +191,24 @@ class _CreateProductServiceState extends State<CreateProductService>
               children: [
                 GestureDetector(
                   onTap: () async {
-
                     Navigator.pop(context, false);
-
                   },
                   child: Padding(
                     padding:
-                    EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                        EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                     child: Container(
                       width: SizeConfig.screenWidth * 0.3,
                       height: 38,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        // color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          // color: Colors.white,
 
-                 border: Border.all(color: CommonColor.SearchBar,width: 0.3)
-                      ),
+                          border: Border.all(
+                              color: CommonColor.SearchBar, width: 0.3)),
                       child: Center(
                         child: Text(
                           "Continue",
                           style: TextStyle(
-
                               fontSize: SizeConfig.blockSizeHorizontal * 3.5,
                               fontFamily: 'Roboto_Medium',
                               fontWeight: FontWeight.w400,
@@ -217,11 +221,10 @@ class _CreateProductServiceState extends State<CreateProductService>
                 GestureDetector(
                   onTap: () {
                     Navigator.pop(context, true);
-
                   },
                   child: Padding(
                     padding:
-                    EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                        EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                     child: Container(
                       width: SizeConfig.screenWidth * 0.3,
                       height: 38,
@@ -229,7 +232,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                         borderRadius: BorderRadius.circular(5),
                         // color: Colors.white,
 
-                       color:  Color(0xfffb8a60),
+                        color: Color(0xfffb8a60),
                       ),
                       child: Center(
                         child: Text(
@@ -250,7 +253,6 @@ class _CreateProductServiceState extends State<CreateProductService>
           ],
         ),
 
-
         /*Text("Discard Changes?"),
         content: Text("Are you sure you want to discard chnages?"),
         actions: [
@@ -265,7 +267,6 @@ class _CreateProductServiceState extends State<CreateProductService>
         ],*/
       ),
     );
-
   }
 
   Future<bool> _onWillPop() async {
@@ -279,14 +280,24 @@ class _CreateProductServiceState extends State<CreateProductService>
 
 
 
+  void _filterSuggestions(String query) {
+    final suggestions = _suggestions.where((suggestion) {
+      return suggestion.toLowerCase().contains(query.toLowerCase());
+    }).toList();
 
+    setState(() {
+      _filteredSuggestions = suggestions;
+    });
+  }
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
 
-
     quantity = box.read<int>('quantity') ?? 0;
+
+  //  _filteredSuggestions = _suggestions;
+
     super.initState();
   }
 
@@ -296,14 +307,12 @@ class _CreateProductServiceState extends State<CreateProductService>
       onWillPop: _onWillPop,
       child: Scaffold(
         body: Container(
-
           decoration: BoxDecoration(
             color: Color(0xffF5F6FB),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
             ),
-
           ),
           child: ScrollConfiguration(
             behavior: MyBehavior(),
@@ -317,20 +326,19 @@ class _CreateProductServiceState extends State<CreateProductService>
                   children: [
                     Container(
                       height: SizeConfig.screenHeight * 0.27,
-
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                     SizedBox(height: 50),
-
+                          SizedBox(height: 50),
                           Center(
                             child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 GestureDetector(
                                   onTap: () {
                                     if (selectedCategory == null) {
-                                      Navigator.pop(context); // Agar category select ho, toh back navigate karein
+                                      Navigator.pop(
+                                          context); // Agar category select ho, toh back navigate karein
                                     } else {
                                       _discardDialogBox(); // Agar category select nahi hui hai, toh dialog dikhayein
                                     }
@@ -341,7 +349,8 @@ class _CreateProductServiceState extends State<CreateProductService>
                                   "  Create Product / Service",
                                   style: TextStyle(
                                     fontFamily: "Poppins-Medium",
-                                    fontSize: SizeConfig.blockSizeHorizontal * 4.4,
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal * 4.4,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -350,7 +359,8 @@ class _CreateProductServiceState extends State<CreateProductService>
                                   onTap: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Icon(Icons.arrow_back,color: Colors.transparent),
+                                  child: Icon(Icons.arrow_back,
+                                      color: Colors.transparent),
                                 ),
                               ],
                             ),
@@ -365,7 +375,15 @@ class _CreateProductServiceState extends State<CreateProductService>
                             padding: EdgeInsets.only(left: 13, right: 12),
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: Color(0xffeee9ff),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color:
+                                            Color(0xff3E3E3E).withOpacity(0.2),
+                                        blurRadius: 2,
+                                        spreadRadius: 0,
+                                        offset: Offset(-0, 0)),
+                                  ],
+                                  color: Color(0xfff1e9ff),
                                   borderRadius: BorderRadius.circular(10)),
                               height: SizeConfig.screenHeight * 0.12,
                               child: Padding(
@@ -374,9 +392,9 @@ class _CreateProductServiceState extends State<CreateProductService>
                                   //  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     CircleAvatar(
-                                      radius: 23,
-                                      backgroundImage:
-                                          AssetImage("assets/images/profile.png"),
+                                      radius: 24,
+                                      backgroundImage: AssetImage(
+                                          "assets/images/profile.png"),
                                     ),
 
                                     SizedBox(
@@ -390,9 +408,9 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         Text(
                                           "  Hii, Aaysha",
                                           style: TextStyle(
-                                            color: Color(0xff000000),
+                                            color: Color(0xfff000000),
                                             fontFamily: "okra_Medium",
-                                            fontSize: 16,
+                                            fontSize: 17,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -417,16 +435,13 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         ),
                                       ],
                                     ),
-                                
+
                                     // Adds space between the icon and text
                                   ],
                                 ),
                               ),
                             ),
                           ),
-
-
-
                         ],
                       ),
                     ),
@@ -434,10 +449,8 @@ class _CreateProductServiceState extends State<CreateProductService>
                       behavior: MyBehavior(),
                       child: ListView(
                         shrinkWrap: true,
-
                         children: [
                           Container(
-
                               height: SizeConfig.screenHeight * 0.77,
                               child: Padding(
                                 padding: EdgeInsets.only(
@@ -460,333 +473,446 @@ class _CreateProductServiceState extends State<CreateProductService>
   }
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
-    return SafeArea(
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            SingleChildScrollView(
-              child: Container(
-                height: 60,
-                padding: EdgeInsets.only(left: 0, bottom: 20, right: 0),
-                child: ButtonsTabBar(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                       /*   Color(0xff8c66ff),
-                          Color(0xff9877ff),*/
-                            Color(0xff9f83f7),
-                          Color(0xff9f83f7),
-
-                        ],
-                      )),
-                  buttonMargin: EdgeInsets.symmetric(horizontal: 18),
-                  unselectedDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              height: 60,
+              padding: EdgeInsets.only(left: 0, bottom: 20, right: 0),
+              child: ButtonsTabBar(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      Color(0xff9f83f7),
+                      Color(0xff9f83f7),
+                    ],
                   ),
-                  unselectedBorderColor: Color(0xffFE7F64),
-                  physics: NeverScrollableScrollPhysics(),
-                  labelStyle: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                  tabs: [
-                    Tab(
-                      child: Container(
-                        height: 40,
-                        width: 165,
+                ),
+                buttonMargin: EdgeInsets.symmetric(horizontal: 18),
+                unselectedDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                unselectedBorderColor: Color(0xffFE7F64),
+                physics: NeverScrollableScrollPhysics(),
+                labelStyle:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                tabs: [
+                  Tab(
+                    child: Container(
+                      height: 40,
+                      width: 165,
+                      child: Center(
+                        child: Text(
+                          () {
+                            print(
+                                "Rendering productType: $productType"); // Debug print
+                            return productType.isNotEmpty
+                                ? productType
+                                : 'Unknown Type';
+                          }(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Montserrat-Medium",
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.6,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      height: 40,
+                      width: 165,
+                      padding: EdgeInsets.only(left: 28, right: 20),
+                      child: Align(
+                        alignment: Alignment.center,
                         child: Center(
                           child: Text(
-                            () {
-                              print(
-                                  "Rendering productType: $productType"); // Debug print
-                              return productType.isNotEmpty
-                                  ? productType
-                                  : 'Unknown Type';
-                            }(),
+                            "Service",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontFamily: "Montserrat-Medium",
                               fontSize: SizeConfig.blockSizeHorizontal * 3.6,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
                       ),
                     ),
-                    Tab(
-                      child: Container(
-                        height: 40,
-                        width: 165,
-                        padding: EdgeInsets.only(left: 28, right: 20),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Center(
-                            child: Text(
-                              "Service",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Montserrat-Medium",
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.6,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
+          Container(
+            height: SizeConfig.screenHeight * 0.6,
+            child: TabBarView(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Color(0xff3E3E3E).withOpacity(0.2),
+                                    blurRadius: 2,
+                                    spreadRadius: 0,
+                                    offset: Offset(0, 1)),
+                              ],
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)),
+                          height: SizeConfig.screenHeight * 0.14,
+                          width: SizeConfig.screenWidth * 0.94,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 12),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              FaintContainerAndTextField()));
+                                },
+                                child: Text(
+                                  "    SELECT CATAGORIES",
+                                  style: TextStyle(
+                                    color: Color(0xff9e43f4),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
 
-            Container(
-              height: SizeConfig.screenHeight * 0.6,
-              child: TabBarView(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10),
+                              GestureDetector(
+                                onTap: () async {
+                                  final String? result =
+                                      await showModalBottomSheet<String>(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    context: context,
+                                    backgroundColor: Colors.white,
+                                    elevation: 10,
+                                    isScrollControlled: true,
+                                    isDismissible: true,
+                                    builder: (BuildContext bc) {
+                                      return CatagriesList(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedCategory = value;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  );
 
-                        Padding(
+                                  if (result != null) {
+                                    setState(() {
+                                      selectedCategory = result;
+                                      updatedTexts =
+                                          result; // Update text to the selected category
+                                    });
+                                  }
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 7),
+                                  child: Container(
+                                    height: 60,
+                                    width: SizeConfig.screenWidth * 0.9,
+                                    decoration: BoxDecoration(
+                                      //   color: Color(0xffF5F6FB),
+
+                                      gradient: LinearGradient(
+                                        begin: Alignment.bottomLeft,
+                                        end: Alignment.topRight,
+                                        colors: [
+                                          Color(0xffECE7FF),
+                                          Color(0xfff9f6ff),
+                                        ],
+                                      ),
+
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(7)),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(18.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            (updatedTexts),/*.isNotEmpty
+                                                ? updatedTexts == "Fashion"
+                                                ? "Types of Fashion Categories"
+                                                : "Types of ${updatedTexts} Categories"
+                                                : "Select a Category",*/
+
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: "Roboto_Medium",
+                                              fontSize: SizeConfig
+                                                      .blockSizeHorizontal *
+                                                  3.9,
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.arrow_drop_down,
+                                            color: Color(0xff675397),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 37),
+
+
+
+
+                                            Visibility(
+                                              visible: selectedCategory != null,
+                                              child: Padding(
+                                                padding: EdgeInsets.only(left: 10),
+                                                child: Container(
+                                              
+                                                                        height: SizeConfig.screenHeight * 0.15,
+                                                                        width: SizeConfig.screenWidth * 0.94,
+                                                                        child: Column(
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            SizedBox(height: 10),
+                                                                          Text(
+                                                                                 "    Types of ${updatedTexts} categories",
+                                                                              style: TextStyle(
+                                                                                color: Colors.black,
+                                                                                fontFamily: "okra_Medium",
+                                                                                fontSize: 16,
+                                                                                fontWeight: FontWeight.w600,
+                                                                              ),
+                                                                            ),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.only(
+                                                                                  left: 10, right: 10, top: 10),
+                                                                              child: TextFormField(
+
+                                                                                onChanged: (value) {
+                                                                                  _filterSuggestions(value);
+                                                                                },
+                                                                                textAlign: TextAlign.start,
+                                                                                maxLines: 1,
+                                                                                focusNode: _subCatControllerFocus,
+                                                                                keyboardType: TextInputType.text,
+                                                                                controller: SubCatController,
+                                                                                autocorrect: true,
+                                                                                textInputAction: TextInputAction.next,
+                                                                                decoration: InputDecoration(
+                                                                                  isDense: true,
+                                                                                  hintText: 'SubCategories',
+                                                                                  contentPadding: EdgeInsets.all(10.0),
+                                                                                  hintStyle: TextStyle(
+                                                                                    fontFamily: "Roboto_Regular",
+                                                                                    color: Color(0xff7D7B7B),
+                                                                                    fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                                                                                  ),
+                                                                                  fillColor: Colors.white,
+                                                                                  filled: true,
+                                                                                  border: UnderlineInputBorder(
+                                                                                    borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
+                                                                                  ),
+                                                                                  focusedBorder: UnderlineInputBorder(
+                                                                                    borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0), // Focused underline color and width
+                                                                                  ),
+                                                                                  enabledBorder: UnderlineInputBorder(
+                                                                                    borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0), // Normal state underline
+                                                                                  ),
+                                                                                ),
+                                                                              )
+                                              
+                                                                            ),
+                                                  Expanded(
+                                                    child: ListView.builder(
+                                                      itemCount: _filteredSuggestions.length,
+                                                      itemBuilder: (context, index) {
+                                                        return ListTile(
+                                                          title: Text(_filteredSuggestions[index]),
+                                                          onTap: () {
+                                                            SubCatController.text = _filteredSuggestions[index];
+                                                            setState(() {
+                                                              _filteredSuggestions = [];
+                                                            });
+                                                          },
+                                                        );
+                                                      },
+                                                    ),),
+
+                                                                       ] ),
+                                                                      ),
+                                              ),
+                                            ),
+
+
+
+                      Opacity(
+                        opacity: selectedCategory == null ? 0.3 : 1.0,
+                        child: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10)),
-                            height: SizeConfig.screenHeight * 0.14,
+                            height: SizeConfig.screenHeight * 0.16,
                             width: SizeConfig.screenWidth * 0.94,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: 12),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                FaintContainerAndTextField()));
-                                  },
-                                  child: Text(
-                                    "    Select Categories",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "okra_Medium",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                Text(
+                                  "    Product Name",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    final String? result =
-                                    await showModalBottomSheet<String>(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20)),
-                                      ),
-                                      context: context,
-                                      backgroundColor: Colors.white,
-                                      elevation: 10,
-                                      isScrollControlled: true,
-                                      isDismissible: true,
-                                      builder: (BuildContext bc) {
-                                        return CatagriesList(
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedCategory = value;
-                                            });
-                                          },
-
-                                        );
-
-                                      },
-                                    );
-
-                                    // If a result is received (i.e., category was selected), update the text
-                                    if (result != null) {
-                                      setState(() {
-                                        selectedCategory = result;
-                                        updatedTexts = result; // Update text to the selected category
-                                      });
-                                    }
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 10, right: 10, top: 7),
-                                    child: Container(
-                                      height: 60,
-                                      width: SizeConfig.screenWidth * 0.9,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffF5F6FB),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(7)),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(18.0),
-                                        child: Text(
-                                          (updatedTexts),
-                                          style: TextStyle(
-                                            color: selectedCategory != null ? Colors.black :  Color(0xff7D7B7B),
-                                            fontFamily: "Roboto_Medium",
-                                            fontSize:
-                                            SizeConfig.blockSizeHorizontal *
-                                                3.6,
-                                          ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 10),
+                                  child: TextFormField(
+                                      enabled: selectedCategory != null,
+                                      textAlign: TextAlign.start,
+                                      maxLines: 2,
+                                      keyboardType: TextInputType.text,
+                                      controller: productNameController,
+                                      autocorrect: true,
+                                      textInputAction: TextInputAction.next,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        hintText:
+                                            'Ex.HD Camera (black & white)',
+                                        contentPadding: EdgeInsets.all(10.0),
+                                        hintStyle: TextStyle(
+                                          fontFamily: "Roboto_Regular",
+                                          color: Color(0xff7D7B7B),
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  3.5,
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                )
+                                        fillColor: Color(0xffF5F6FB),
+                                        hoverColor: Colors.white,
+                                        filled: true,
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius:
+                                                BorderRadius.circular(10.0)),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color(0xffD9D9D9),
+                                              width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                      )),
+                                ),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 27),
-                        Padding(
+                      ),
+                      SizedBox(height: 27),
+                      Opacity(
+                        opacity: selectedCategory == null ? 0.3 : 1.0,
+                        child: Padding(
                           padding: EdgeInsets.only(left: 10),
-                          child: Opacity(
-                            opacity: selectedCategory == null ? 0.3 : 1.0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              height: SizeConfig.screenHeight * 0.16,
-                              width: SizeConfig.screenWidth * 0.94,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: 12),
-                                  Text(
-                                    "    Product Name",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "okra_Medium",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)),
+                            height: SizeConfig.screenHeight * 0.28,
+                            width: SizeConfig.screenWidth * 0.94,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 12),
+                                Text(
+                                  "    Product Description",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 10, right: 10, top: 10),
-                                    child:  TextFormField(
-                                            enabled: selectedCategory != null,
-                                        textAlign: TextAlign.start,
-                                        maxLines: 2,
-                            
-                                        keyboardType: TextInputType.text,
-                                        controller: productNameController,
-                                        autocorrect: true,
-                                        textInputAction: TextInputAction.next,
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          hintText:
-                                              'Ex.HD Camera (black & white)',
-                                          contentPadding: EdgeInsets.all(10.0),
-                                          hintStyle: TextStyle(
-                                            fontFamily: "Roboto_Regular",
-                                            color: Color(0xff7D7B7B),
-                                            fontSize:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    3.5,
-                                          ),
-                                          fillColor: selectedCategory != null ? Color(0xffF5F6FB) : Color(0xffF1F1F1),
-                                          hoverColor: Colors.white,
-                                          filled: true,
-                                          enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide.none,
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0)),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: selectedCategory != null ? Color(0xffebd7fb) : Color(0xffD9D9D9),
-                                                width: 1),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 10),
+                                  child: TextFormField(
+                                      enabled: selectedCategory != null,
+                                      textAlign: TextAlign.start,
+                                      maxLines: 6,
+                                      focusNode: _productDiscriptionFocus,
+                                      keyboardType: TextInputType.text,
+                                      controller: productDiscriptionController,
+                                      autocorrect: true,
+                                      textInputAction: TextInputAction.next,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        hintText:
+                                            'HD cameras capture images and videos in 1920x1080 pixels and a resolution of 1080p. 4K cameras, on the other hand',
+                                        contentPadding: EdgeInsets.all(10.0),
+                                        hintStyle: TextStyle(
+                                          fontFamily: "Roboto_Regular",
+                                          color: Color(0xff7D7B7B),
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  3.5,
+                                        ),
+                                        fillColor: Color(0xffF5F6FB),
+                                        hoverColor: Colors.white,
+                                        filled: true,
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
                                             borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                        )),
-                                  ),
-                                ],
-                              ),
+                                                BorderRadius.circular(10.0)),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color(0xffebd7fb),
+                                              width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                      )),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 27),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Opacity(
-                              opacity: selectedCategory == null ? 0.3 : 1.0,
-
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              height: SizeConfig.screenHeight * 0.28,
-                              width: SizeConfig.screenWidth * 0.94,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: 12),
-                                  Text(
-                                    "    Product Description",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "okra_Medium",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 10, right: 10, top: 10),
-                                    child: TextFormField(
-                                            enabled: selectedCategory != null,
-                                        textAlign: TextAlign.start,
-                                        maxLines: 6,
-                                        focusNode: _productDiscriptionFocus,
-                                        keyboardType: TextInputType.text,
-                                        controller: productDiscriptionController,
-                                        autocorrect: true,
-                                        textInputAction: TextInputAction.next,
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          hintText:
-                                              'HD cameras capture images and videos in 1920x1080 pixels and a resolution of 1080p. 4K cameras, on the other hand',
-                                          contentPadding: EdgeInsets.all(10.0),
-                                          hintStyle: TextStyle(
-                                            fontFamily: "Roboto_Regular",
-                                            color: Color(0xff7D7B7B),
-                                            fontSize:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    3.5,
-                                          ),
-                                          fillColor: selectedCategory != null ? Color(0xffF5F6FB) : Color(0xffF1F1F1),
-                                          hoverColor: Colors.white,
-                                          filled: true,
-                                          enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide.none,
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0)),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: selectedCategory != null ? Color(0xffebd7fb) : Color(0xffD9D9D9), width: 1),
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                        )),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 27),
-                        Padding(
+                      ),
+                      SizedBox(height: 27),
+                      Opacity(
+                        opacity: selectedCategory == null ? 0.3 : 1.0,
+                        child: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Container(
                             decoration: BoxDecoration(
@@ -807,94 +933,85 @@ class _CreateProductServiceState extends State<CreateProductService>
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 13, left: 20),
-                                      child: Container(
+                                if (selectedCategory != null)
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(top: 13, left: 20),
+                                        child: Container(
                                           width: parentWidth * 0.36,
-                                          // padding: EdgeInsets.all(20), //padding of outer Container
                                           child: DottedBorder(
                                             borderType: BorderType.RRect,
                                             radius: Radius.circular(10),
-
-                                            color: CommonColor
-                                                .Blue, //color of dotted/dash line
-                                            strokeWidth:
-                                                1, //thickness of dash/dots
+                                            color: CommonColor.Blue,
+                                            strokeWidth: 1,
                                             dashPattern: [4, 5],
-                                            //dash patterns, 10 is dash width, 6 is space width
                                             child: GestureDetector(
-                                                onTap: () {
-                                                  _pickImagesFromGallery();
-                                                  // _showFrontGallaryDialogBox(context);
-                                                },
-                                                child: Container(
-                                                  //inner container
-                                                  height: parentHeight *
-                                                      0.14, //height of inner container
-                                                  width: double.infinity,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Padding(
-                                                        padding: EdgeInsets.only(
-                                                            top: parentHeight *
-                                                                0.01),
-                                                        child: Image(
-                                                            image: AssetImage(
-                                                                'assets/images/uploadpic.png'),
-                                                            height:
-                                                                parentHeight *
-                                                                    0.04),
+                                              onTap: () {
+                                                _pickImagesFromGallery();
+                                              },
+                                              child: Container(
+                                                height: parentHeight * 0.14,
+                                                width: double.infinity,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: parentHeight *
+                                                              0.01),
+                                                      child: Image(
+                                                        image: AssetImage(
+                                                            'assets/images/uploadpic.png'),
+                                                        height:
+                                                            parentHeight * 0.04,
                                                       ),
-                                                      SizedBox(height: 10),
-                                                      Container(
-                                                        height: 26,
-                                                        width: 100,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          border: Border.all(
-                                                              color: CommonColor
-                                                                  .Blue),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(7),
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                              "Browser file",
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      SizeConfig
-                                                                              .blockSizeHorizontal *
-                                                                          2.5,
-                                                                  fontFamily:
-                                                                      'Roboto_Regular',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  //overflow: TextOverflow.ellipsis,
-                                                                  color:
-                                                                      CommonColor
-                                                                          .Blue)),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Container(
+                                                      height: 26,
+                                                      width: 100,
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: CommonColor
+                                                                .Blue),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(7),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          "Browser file",
+                                                          style: TextStyle(
+                                                            fontSize: SizeConfig
+                                                                    .blockSizeHorizontal *
+                                                                2.5,
+                                                            fontFamily:
+                                                                'Roboto_Regular',
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: CommonColor
+                                                                .Blue,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ],
-                                                  ), //width to 100% match to parent container.
-                                                  // color:Colors.yellow //background color of inner container
-                                                )),
-                                          )),
-                                    ),
-                                    if (_selectedImages.isNotEmpty)
-                                      Padding(
-                                        padding: EdgeInsets.only(
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      if (_selectedImages.isNotEmpty)
+                                        Padding(
+                                          padding: EdgeInsets.only(
                                             top: parentHeight * 0.02,
-                                            left: parentWidth * 0.05),
-                                        child: Container(
+                                            left: parentWidth * 0.05,
+                                          ),
+                                          child: Container(
                                             height: 120,
                                             width: 170,
                                             child: Stack(
@@ -933,70 +1050,42 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                     ),
                                                   ),
                                                 ),
-                                                /*    Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 67, left: 111),
-                                                child: Align(
-                                                  alignment: Alignment.bottomLeft,
-                                                  child: Container(
-                                                    height: 15,
-                                                    decoration: BoxDecoration(
-                                                      color: Color(0xff5095f1),
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          0),
-                                                    ),
-                                                    child: Row(
-                                                      // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
-                                                        children: [
-                                                          Icon(
-                                                            Icons.location_on,
-                                                            size: SizeConfig
-                                                                .screenHeight *
-                                                                0.019,
-                                                            color: Colors.white,
-                                                          ),
-                                                          Text(
-                                                            '1.2 Km   ',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                              "Montserrat-Regular",
-                                                              fontSize: SizeConfig
-                                                                  .blockSizeHorizontal *
-                                                                  2.5,
-                                                              color: Colors.white,
-                                                              fontWeight:
-                                                              FontWeight.w600,
-                                                            ),
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
-                                                          ),
-                                                        ]),
-                                                  ),
-                                                )),*/
                                               ],
-                                            )),
-                                      ),
-                                    SizedBox(width: 17),
-                                    if (_selectedImages.isEmpty)
-                                      Center(
-                                        child: Container(
-                                          child: Text(
-                                            'No images selected',
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                  ],
-                                ),
+                                      SizedBox(width: 17),
+                                      if (_selectedImages.isEmpty)
+                                        Center(
+                                          child: Container(
+                                            child: Text(
+                                              'No images selected',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  )
+                                else
+                                  Padding(
+                                    padding:  EdgeInsets.only(top: 20),
+                                    child: Text(
+                                      '    Please select a category to upload images.',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.red),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 27),
-                        Padding(
+                      ),
+                      SizedBox(height: 27),
+                      Opacity(
+                        opacity: selectedCategory == null ? 0.3 : 1.0,
+                        child: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Container(
                             decoration: BoxDecoration(
@@ -1018,18 +1107,20 @@ class _CreateProductServiceState extends State<CreateProductService>
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () async {
-
-                                    final String? result =
-                                    await  Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                        builder: (context) =>  CreateCity()));
-                                    // If a result is received (i.e., category was selected), update the text
-                                    if (result != null) {
-                                      updateTextCity(result);
-                                    }
-                                  },
+                                  onTap: selectedCategory != null
+                                      ? () async {
+                                          final String? result =
+                                              await Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          CreateCity()));
+                                          // If a result is received (i.e., category was selected), update the text
+                                          if (result != null) {
+                                            updateTextCity(result);
+                                          }
+                                        }
+                                      : null,
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                         left: 10, right: 10, top: 7),
@@ -1061,8 +1152,11 @@ class _CreateProductServiceState extends State<CreateProductService>
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
-                        Padding(
+                      ),
+                      SizedBox(height: 10),
+                      Opacity(
+                        opacity: selectedCategory == null ? 0.3 : 1.0,
+                        child: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Container(
                             decoration: BoxDecoration(
@@ -1087,6 +1181,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                   padding: EdgeInsets.only(
                                       left: 10, right: 10, top: 10),
                                   child: TextFormField(
+                                          enabled: selectedCategory != null,
                                       textAlign: TextAlign.start,
                                       maxLines: 2,
                                       focusNode: _productcurrentAddFocus,
@@ -1126,8 +1221,11 @@ class _CreateProductServiceState extends State<CreateProductService>
                             ),
                           ),
                         ),
-                        SizedBox(height: 22),
-                        Padding(
+                      ),
+                      SizedBox(height: 22),
+                      Opacity(
+                        opacity: selectedCategory == null ? 0.3 : 1.0,
+                        child: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Container(
                             decoration: BoxDecoration(
@@ -1161,13 +1259,14 @@ class _CreateProductServiceState extends State<CreateProductService>
                                       children: [
                                         IconButton(
                                           icon: const Icon(Icons.remove),
-                                          onPressed: () {
-                                            setState(() {
-                                              if (quantity > 0) {
-                                                _updateQuantity(-1);
-                                              }
-                                            });
-                                          },
+                                          onPressed: selectedCategory != null &&
+                                                  quantity > 0
+                                              ? () {
+                                                  setState(() {
+                                                    _updateQuantity(-1);
+                                                  });
+                                                }
+                                              : null,
                                         ),
                                         Container(
                                             padding: EdgeInsets.symmetric(
@@ -1179,11 +1278,13 @@ class _CreateProductServiceState extends State<CreateProductService>
                                             child: Text(quantity.toString())),
                                         IconButton(
                                           icon: const Icon(Icons.add),
-                                          onPressed: () {
-                                            setState(() {
-                                              _updateQuantity(1);
-                                            });
-                                          },
+                                          onPressed: selectedCategory != null
+                                              ? () {
+                                                  setState(() {
+                                                    _updateQuantity(1);
+                                                  });
+                                                }
+                                              : null,
                                         ),
                                       ],
                                     ))
@@ -1191,8 +1292,11 @@ class _CreateProductServiceState extends State<CreateProductService>
                             ),
                           ),
                         ),
-                        SizedBox(height: 30),
-                        Padding(
+                      ),
+                      SizedBox(height: 30),
+                      Opacity(
+                        opacity: selectedCategory == null ? 0.3 : 1.0,
+                        child: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Stack(
                             children: [
@@ -1735,7 +1839,6 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                                         TextInputType
                                                                             .text,
                                                                     controller:
-
                                                                         productPriceController,
                                                                     autocorrect:
                                                                         true,
@@ -1845,7 +1948,6 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                                         TextAlign
                                                                             .start,
                                                                     maxLines: 2,
-                                                                    
                                                                     keyboardType:
                                                                         TextInputType
                                                                             .text,
@@ -1917,7 +2019,10 @@ class _CreateProductServiceState extends State<CreateProductService>
                             ],
                           ),
                         ),
-                        GestureDetector(
+                      ),
+                      Opacity(
+                        opacity: selectedCategory == null ? 0.3 : 1.0,
+                        child: GestureDetector(
                           onTap: () {
                             double? rating =
                                 double.tryParse(productRatingController.text);
@@ -2018,15 +2123,15 @@ class _CreateProductServiceState extends State<CreateProductService>
                                 ))),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Text('Service Tab'),
-                ],
-              ),
+                ),
+                Text('Service Tab'),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
