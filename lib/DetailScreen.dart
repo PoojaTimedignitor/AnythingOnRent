@@ -185,7 +185,7 @@ class _DetailScreenState extends State<DetailScreen>
                                                         BorderRadius.circular(2),
                                                         image: DecorationImage(
                                                           image: NetworkImage(imgUrl),
-                                                          fit: BoxFit.contain,
+                                                          fit: BoxFit.cover,
                                                         ),
                                                       ),
                                                     ),

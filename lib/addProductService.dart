@@ -116,7 +116,7 @@ class _CreateProductServiceState extends State<CreateProductService>
     });
   }
 
-  Future<void> _pickImagesFromGallery() async {
+/*  Future<void> _pickImagesFromGallery() async {
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
 
     if (pickedFiles != null) {
@@ -126,15 +126,19 @@ class _CreateProductServiceState extends State<CreateProductService>
         final isAlreadySelected = _selectedImages.any((image) => image.path == file.path);
 
         if (!isAlreadySelected) {
-          if (_selectedImages.length < 5) {
+          if (_selectedImages.length <  5) {
             newImages.add(File(file.path));
-          } /*else {
+          }
+
+          else {
             // Get index for replacement if the image limit is reached
             int replaceIndex = await _getReplaceIndex();
             if (replaceIndex != -1) {
               _selectedImages[replaceIndex] = File(file.path);
             }
-          }*/
+          }
+
+
         }
       }
 
@@ -143,9 +147,133 @@ class _CreateProductServiceState extends State<CreateProductService>
         _selectedImages.addAll(newImages);
       });
     }
+  }*/
+
+  Future<void> _pickImagesFromGallery() async {
+    final List<XFile>? pickedFiles = await _picker.pickMultiImage();
+
+    if (pickedFiles != null) {
+      if (_selectedImages.length + pickedFiles.length <= 5) {
+        setState(() {
+          // Add the picked images as SelectedImage objects
+          _selectedImages.addAll(
+            pickedFiles.map((file) => File(file.path)),
+          );
+        });
+      } else {
+        showTopSnackBar(context, 'You can only add up to 5 images.');
+      }
+    }
   }
 
 
+  Future<int> _getReplaceIndex() async {
+    int selectedIndex = -1;
+
+    await showDialog<int>(
+      context: context,
+      barrierDismissible: true,  // Allows closing the dialog by clicking outside
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Replace Image",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "okra_Medium",
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    // Scrollable container for displaying images
+                    Container(
+                      height: 400,
+                      width: 200,  // Set the height for the scrollable container
+                      child: ListView.builder(
+                        itemCount: _selectedImages.length,
+                        itemBuilder: (context, index) {
+                          return Stack(
+                            children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  // Update the selectedIndex before picking the new
+                                  //
+                                  //
+                                  // image
+                                  selectedIndex = index; // Set the selected index
+                                  await _pickImageForReplacement(selectedIndex);
+                                  Navigator.pop(context);// Pick new image
+                                 // setState(() {}); // Refresh the dialog to show updated image
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    width: 180,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(5),
+                                      image: DecorationImage(
+                                        image: FileImage(_selectedImages[index]),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      // Remove the image when cancel icon is pressed
+                                      _selectedImages.removeAt(index);
+                                    });
+                                    Navigator.pop(context);  // Close the dialog
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    return selectedIndex;  // Return the selected index
+  }
+
+
+
+/*
   Future<int> _getReplaceIndex() async {
     int selectedIndex = -1;
 
@@ -154,33 +282,59 @@ class _CreateProductServiceState extends State<CreateProductService>
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Replace Image"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-          //  mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              _selectedImages.length,
-                  (index) => ListTile(
-                leading: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child:Container(
-        width: 120,
-        height: 220,
-        decoration: BoxDecoration(
-      color: Colors.grey,
-        borderRadius: BorderRadius.circular(5),
-        image: DecorationImage(
-        image: FileImage(_selectedImages[index]),
-        fit: BoxFit.cover,
-        ),
-        ))
+          content: ConstrainedBox(  // Use ConstrainedBox to control the height of the dialog content
+            constraints: BoxConstraints(
+              maxHeight: 900,  // Set the maximum height for the dialog content
+            ),
+            child: SingleChildScrollView(  // Add SingleChildScrollView if content overflows
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(
+                  _selectedImages.length,
+                      (index) => ListTile(
+                    leading: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Stack(  // Use Stack to overlay the cancel icon on the image
+                        children: [
 
-
+                          Container(
+                            width: 120,
+                            height: 220,  // You can change this height if needed
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(5),
+                              image: DecorationImage(
+                                image: FileImage(_selectedImages[index]),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding:  EdgeInsets.only(bottom: 90,left: 90),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  // Remove the image when cancel icon is pressed
+                                  _selectedImages.removeAt(index);
+                                });
+                                Navigator.pop(context);  // Close the dialog
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    title: Text("Image ${index + 1}"),
+                    onTap: () {
+                      selectedIndex = index;
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
-                title: Text("Image ${index + 1}"),
-                onTap: () {
-                  selectedIndex = index;
-                  Navigator.pop(context);
-                },
               ),
             ),
           ),
@@ -190,8 +344,20 @@ class _CreateProductServiceState extends State<CreateProductService>
 
     return selectedIndex;
   }
+*/
 
+  Future<void> _pickImageForReplacement(int index) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImages[index] = File(pickedFile.path);
+      });
+
+      _getReplaceIndex();
+    }
+  }
 
   void updateTextCity(String newText) {
     box.write('updatedTextCity', newText); // Save the new text
@@ -200,7 +366,6 @@ class _CreateProductServiceState extends State<CreateProductService>
     });
   }
 
-  // Function to update text and save it using GetStorage
 
   void _updateQuantity(int change) {
     setState(() {
@@ -215,7 +380,7 @@ class _CreateProductServiceState extends State<CreateProductService>
     SizeConfig().init(context);
     return showDialog<bool>(
       context: context,
-      barrierDismissible: false, // Dialog ko dismiss nahi hone denge tap se
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,11 +491,10 @@ class _CreateProductServiceState extends State<CreateProductService>
 
   Future<bool> _onWillPop() async {
     if (selectedCategory != null) {
-      // Show discard dialog if no category is selected
       bool? discard = await _discardDialogBox();
-      return discard ?? false; // If discard is null, return false (do nothing)
+      return discard ?? false;
     }
-    return true; // Allow back navigation if category is selected
+    return true;
   }
 
 
@@ -351,7 +515,6 @@ class _CreateProductServiceState extends State<CreateProductService>
 
     quantity = box.read<int>('quantity') ?? 0;
 
-  //  _filteredSuggestions = _suggestions;
 
     super.initState();
   }
@@ -1064,58 +1227,127 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         ),
                                       ),
                                       if (_selectedImages.isNotEmpty)
-                                        GestureDetector(
-    onTap: (){
+                                        Stack(
+                                          children: [
 
-    },
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                              top: parentHeight * 0.018,
-                                              left: parentWidth * 0.05,
-                                            ),
-                                            child: Container(
-                                              height: 122,
-                                              width: 170,
-                                              child: Stack(
-                                                children: [
-                                                  Container(
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  10)),
-                                                      child: AnotherCarousel(
-                                                        images: _selectedImages
-                                                            .map((image) {
-                                                          return ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0),
-                                                            child: Image.file(
-                                                              image,
-                                                              fit: BoxFit.cover,
-                                                              width:
-                                                                  MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                top: parentHeight * 0.018,
+                                                left: parentWidth * 0.05,
+                                              ),
+                                              child: Container(
+                                                height: 122,
+                                                width: 170,
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              10)),
+                                                  child: AnotherCarousel(
+                                                    images: _selectedImages
+                                                        .map((image) {
+                                                      return GestureDetector(
+                                                        onTap: (){
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (_) => Dialog(
+                                                              child: Stack(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                    onTap: () => Navigator.pop(context),
+                                                                    child: Container(
+                                                
+                                                                      height: SizeConfig.screenHeight * 0.5,
+                                                                      width: SizeConfig.screenWidth ,// 80% of the screen height
+                                                
+                                                                      decoration: BoxDecoration(
+                                                                        color: Colors.transparent,
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(12),
+                                                                        image: DecorationImage(
+                                                                          image: FileImage(image),
+                                                                          fit: BoxFit.cover,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Positioned(
+                                                
+                                                                    right: 16,
+                                                                    child: IconButton(
+                                                                      icon: Icon(
+                                                                        Icons.close,
+                                                                        color: Colors.white,
+                                                                      ),
+                                                                      onPressed: () => Navigator.pop(context),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           );
-                                                        }).toList(),
-                                                        dotSize: 6,
-                                                        dotSpacing: 10,
-                                                        dotColor: Colors.white70,
-                                                        dotIncreasedColor:
-                                                            Colors.black45,
-                                                        indicatorBgPadding: 5.0,
+                                                        },
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10.0),
+                                                          child: Image.file(
+                                                            image,
+                                                            fit: BoxFit.cover,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                    dotSize: 6,
+                                                    dotSpacing: 10,
+                                                    dotColor: Colors.white70,
+                                                    dotIncreasedColor:
+                                                        Colors.black45,
+                                                    indicatorBgPadding: 5.0,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+
+
+                                              onTap: () async {
+                                                int replaceIndex = await _getReplaceIndex();
+                                                if (replaceIndex != -1) {
+                                                  //_pickImageForReplacement(replaceIndex);
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(left: parentWidth * 0.17),
+                                                child: Container(
+                                                  height: parentHeight * 0.04,
+                                                  width: parentWidth * 0.22,
+                                                  decoration: BoxDecoration(
+                                                      color: Color(0xffF5F6FB),
+                                              
+                                                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                  child: Center(
+                                                    child: Text(
+                                                      " Replace",
+                                                      style: TextStyle(
+                                                        fontFamily: "okra_Medium",
+                                                        fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                                                        color: Color(0xff3684F0),
+                                                        fontWeight: FontWeight.w200,
+                                              
                                                       ),
                                                     ),
                                                   ),
-                                                ],
+                                                ),
                                               ),
                                             ),
-                                          ),
+                                          ],
                                         ),
                                       SizedBox(width: 17),
                        /*               if (_selectedImages.isEmpty)
