@@ -15,7 +15,7 @@ import 'dart:ui' as ui;
 import 'dart:ui';
 
 class DetailScreen extends StatefulWidget {
-  final Data1 product;
+  final Products product;
 
   const DetailScreen({required this.product});
 

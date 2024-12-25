@@ -11,7 +11,7 @@ class ApiConstant {
 
 String logout = "/logout";
 
-String getDisplayProductList = "/display/ProductList  ";
+String getDisplayProductList = "/products";
 
 
 String AdminBaseUrl = "https://admin-fyu1.onrender.com/api/app";

@@ -117,25 +117,80 @@ class _CreateProductServiceState extends State<CreateProductService>
   }
 
   Future<void> _pickImagesFromGallery() async {
-    if (_selectedImages.length >= 5) {
-      showTopSnackBar(context, 'You can only add up to 5 images.');
-      return;
-    }
-
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
 
     if (pickedFiles != null) {
+      // Perform asynchronous work outside of setState
+      List<File> newImages = [];
+      for (var file in pickedFiles) {
+        final isAlreadySelected = _selectedImages.any((image) => image.path == file.path);
+
+        if (!isAlreadySelected) {
+          if (_selectedImages.length < 5) {
+            newImages.add(File(file.path));
+          } /*else {
+            // Get index for replacement if the image limit is reached
+            int replaceIndex = await _getReplaceIndex();
+            if (replaceIndex != -1) {
+              _selectedImages[replaceIndex] = File(file.path);
+            }
+          }*/
+        }
+      }
+
+      // Update state synchronously after the async work
       setState(() {
-        // Add selected images to the list, limit to 5
-        _selectedImages.addAll(
-          pickedFiles
-              .map((file) => File(file.path))
-              .take(5 - _selectedImages.length),
-        );
+        _selectedImages.addAll(newImages);
       });
-      _saveImagePath(_selectedImages); // Save image paths to GetStorage
     }
   }
+
+
+  Future<int> _getReplaceIndex() async {
+    int selectedIndex = -1;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Replace Image"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+          //  mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(
+              _selectedImages.length,
+                  (index) => ListTile(
+                leading: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:Container(
+        width: 120,
+        height: 220,
+        decoration: BoxDecoration(
+      color: Colors.grey,
+        borderRadius: BorderRadius.circular(5),
+        image: DecorationImage(
+        image: FileImage(_selectedImages[index]),
+        fit: BoxFit.cover,
+        ),
+        ))
+
+
+                ),
+                title: Text("Image ${index + 1}"),
+                onTap: () {
+                  selectedIndex = index;
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    return selectedIndex;
+  }
+
 
 
   void updateTextCity(String newText) {
@@ -325,7 +380,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      height: SizeConfig.screenHeight * 0.27,
+                      height: SizeConfig.screenHeight * 0.23,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -375,21 +430,21 @@ class _CreateProductServiceState extends State<CreateProductService>
                             padding: EdgeInsets.only(left: 13, right: 12),
                             child: Container(
                               decoration: BoxDecoration(
-                                  boxShadow: [
+                                 /* boxShadow: [
                                     BoxShadow(
                                         color:
                                             Color(0xff3E3E3E).withOpacity(0.2),
                                         blurRadius: 2,
                                         spreadRadius: 0,
                                         offset: Offset(-0, 0)),
-                                  ],
-                                  color: Color(0xfff1e9ff),
-                                  borderRadius: BorderRadius.circular(10)),
-                              height: SizeConfig.screenHeight * 0.12,
+                                  ],*/
+                                  color: Color(0xffffffff),
+                                  borderRadius: BorderRadius.circular(20)),
+                              height: SizeConfig.screenHeight * 0.11,
                               child: Padding(
                                 padding: EdgeInsets.only(left: 13),
                                 child: Row(
-                                  //  crossAxisAlignment: CrossAxisAlignment.center,
+
                                   children: [
                                     CircleAvatar(
                                       radius: 24,
@@ -450,8 +505,10 @@ class _CreateProductServiceState extends State<CreateProductService>
                       child: ListView(
                         shrinkWrap: true,
                         children: [
+
                           Container(
                               height: SizeConfig.screenHeight * 0.77,
+
                               child: Padding(
                                 padding: EdgeInsets.only(
                                     bottom: SizeConfig.screenHeight * 0.04),
@@ -571,7 +628,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                     offset: Offset(0, 1)),
                               ],
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(15)),
                           height: SizeConfig.screenHeight * 0.14,
                           width: SizeConfig.screenWidth * 0.94,
                           child: Column(
@@ -648,7 +705,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                       ),
 
                                       borderRadius:
-                                          BorderRadius.all(Radius.circular(7)),
+                                          BorderRadius.all(Radius.circular(12)),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(18.0),
@@ -657,7 +714,8 @@ class _CreateProductServiceState extends State<CreateProductService>
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            (updatedTexts),/*.isNotEmpty
+                                            (updatedTexts),
+                                            /*.isNotEmpty
                                                 ? updatedTexts == "Fashion"
                                                 ? "Types of Fashion Categories"
                                                 : "Types of ${updatedTexts} Categories"
@@ -695,7 +753,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                               child: Padding(
                                                 padding: EdgeInsets.only(left: 10),
                                                 child: Container(
-                                              
+
                                                                         height: SizeConfig.screenHeight * 0.15,
                                                                         width: SizeConfig.screenWidth * 0.94,
                                                                         child: Column(
@@ -748,7 +806,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                                                   ),
                                                                                 ),
                                                                               )
-                                              
+
                                                                             ),
                                                   Expanded(
                                                     child: ListView.builder(
@@ -814,7 +872,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         contentPadding: EdgeInsets.all(10.0),
                                         hintStyle: TextStyle(
                                           fontFamily: "Roboto_Regular",
-                                          color: Color(0xff7D7B7B),
+                                          color: Color(0xffa1a1a1),
                                           fontSize:
                                               SizeConfig.blockSizeHorizontal *
                                                   3.5,
@@ -883,7 +941,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         contentPadding: EdgeInsets.all(10.0),
                                         hintStyle: TextStyle(
                                           fontFamily: "Roboto_Regular",
-                                          color: Color(0xff7D7B7B),
+                                          color: Color(0xffa1a1a1),
                                           fontSize:
                                               SizeConfig.blockSizeHorizontal *
                                                   3.5,
@@ -918,7 +976,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10)),
-                            height: SizeConfig.screenHeight * 0.28,
+                            height: SizeConfig.screenHeight * 0.24,
                             width: SizeConfig.screenWidth * 0.94,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1006,56 +1064,61 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         ),
                                       ),
                                       if (_selectedImages.isNotEmpty)
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            top: parentHeight * 0.02,
-                                            left: parentWidth * 0.05,
-                                          ),
-                                          child: Container(
-                                            height: 120,
-                                            width: 170,
-                                            child: Stack(
-                                              children: [
-                                                Container(
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10)),
-                                                    child: AnotherCarousel(
-                                                      images: _selectedImages
-                                                          .map((image) {
-                                                        return ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10.0),
-                                                          child: Image.file(
-                                                            image,
-                                                            fit: BoxFit.cover,
-                                                            width:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
-                                                          ),
-                                                        );
-                                                      }).toList(),
-                                                      dotSize: 6,
-                                                      dotSpacing: 10,
-                                                      dotColor: Colors.white70,
-                                                      dotIncreasedColor:
-                                                          Colors.black45,
-                                                      indicatorBgPadding: 5.0,
+                                        GestureDetector(
+    onTap: (){
+
+    },
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                              top: parentHeight * 0.018,
+                                              left: parentWidth * 0.05,
+                                            ),
+                                            child: Container(
+                                              height: 122,
+                                              width: 170,
+                                              child: Stack(
+                                                children: [
+                                                  Container(
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  10)),
+                                                      child: AnotherCarousel(
+                                                        images: _selectedImages
+                                                            .map((image) {
+                                                          return ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0),
+                                                            child: Image.file(
+                                                              image,
+                                                              fit: BoxFit.cover,
+                                                              width:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                        dotSize: 6,
+                                                        dotSpacing: 10,
+                                                        dotColor: Colors.white70,
+                                                        dotIncreasedColor:
+                                                            Colors.black45,
+                                                        indicatorBgPadding: 5.0,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
                                       SizedBox(width: 17),
-                                      if (_selectedImages.isEmpty)
+                       /*               if (_selectedImages.isEmpty)
                                         Center(
                                           child: Container(
                                             child: Text(
@@ -1076,7 +1139,8 @@ class _CreateProductServiceState extends State<CreateProductService>
                                       style: TextStyle(
                                           fontSize: 16, color: Colors.red),
                                     ),
-                                  ),
+                                  ),*/
+    ])
                               ],
                             ),
                           ),
@@ -1196,7 +1260,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         contentPadding: EdgeInsets.all(10.0),
                                         hintStyle: TextStyle(
                                           fontFamily: "Roboto_Regular",
-                                          color: Color(0xff7D7B7B),
+                                          color: Color(0xffa1a1a1),
                                           fontSize:
                                               SizeConfig.blockSizeHorizontal *
                                                   3.5,

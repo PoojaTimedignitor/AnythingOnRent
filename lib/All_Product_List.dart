@@ -1,4 +1,5 @@
 import 'package:anything/Common_File/SizeConfig.dart';
+import 'package:anything/ResponseModule/getAllProductList.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -10,6 +11,8 @@ import 'dart:ui';
 
 import 'DetailScreen.dart';
 import 'MyBehavior.dart';
+import 'ResponseModule/getAllProductList.dart';
+import 'ResponseModule/getAllProductList.dart';
 import 'ResponseModule/getAllProductList.dart';
 import 'ff.dart';
 
@@ -25,10 +28,10 @@ class _AllProductListState extends State<AllProductList> {
 
 
 
-  List<Data1> filteredItems = [];
+  List<Products> filteredItems = [];
   bool isLoading = true;
   bool isSearchingData = false;
-  List<Data1> items = [];
+  List<Products> items = [];
   List<Images> imagesList = [];
   int currentIndex = 0;
   bool isPagination = true;
@@ -50,8 +53,8 @@ class _AllProductListState extends State<AllProductList> {
 
   @override
   void initState() {
-    fetchCategories(page);
-
+    fetchProductsList(page);
+print("hgfhdgf");
     super.initState();
 
 
@@ -61,12 +64,16 @@ class _AllProductListState extends State<AllProductList> {
 
 
 
-  void fetchCategories(int page) async {
+  void fetchProductsList(int page) async {
     try {
       Map<String, dynamic> response = await ApiClients().getAllProductList();
       var jsonList = getAllProductList.fromJson(response);
       setState(() {
-        items = jsonList.data1 ?? [];
+     /*   items = jsonList.Products ?? [];*/
+
+        items = jsonList.products ?? [];
+
+
 
         filteredItems = List.from(items);
         totalCount =  items.length;
@@ -86,7 +93,7 @@ class _AllProductListState extends State<AllProductList> {
     filteredItems.clear();
     page = 1;
     isPagination = true;
-    fetchCategories(page);
+    fetchProductsList(page);
     print("Data has been refreshed!");
     /*  page = 1;
       isPagination = true;
@@ -386,6 +393,7 @@ class _AllProductListState extends State<AllProductList> {
 
                                 final product = filteredItems[index];
                                 final productImages = product.images ?? [];
+                                final rent = product.rent;
 
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 20), // Add gap here
@@ -599,12 +607,14 @@ class _AllProductListState extends State<AllProductList> {
                                                                   BorderRadius
                                                                       .circular(10),
                                                             ),
-                                                            child: Row(children: [
+                                                            child:
+
+                                                            Row(children: [
                                                               Expanded(
                                                                 child: CarouselSlider
                                                                     .builder(
                                                                         itemCount:
-                                                                     Price.length,
+                                                                    items.length,
                                                                         options:
                                                                             CarouselOptions(
                                                                           onPageChanged:
@@ -636,24 +646,31 @@ class _AllProductListState extends State<AllProductList> {
                                                                                 context,
                                                                             int itemIndex,
                                                                             int index1) {
-                                                                        /*  print(
-                                                                              "object....${productImages}");*/
-                                                                         /* final img = productImages
-                                                                                  .isNotEmpty
-                                                                              ? NetworkImage(
-                                                                                  productImages[itemIndex].url ??
-                                                                                      "")
-                                                                              : NetworkImage(
-                                                                                  "");*/
 
+                                                                          final Rent? rent = items[itemIndex].rent;
+
+                                                                          String priceDisplay = '';
+                                                                          if (rent != null) {
+
+                                                                            if (rent.perDay != null && rent.perDay! > 0) {
+                                                                              priceDisplay = "₹${rent.perDay} (Day)";
+                                                                            } else if (rent.perWeek != null && rent.perWeek! > 0) {
+                                                                              priceDisplay = "₹${rent.perWeek} (Week)";
+                                                                            } else if (rent.perMonth != null && rent.perMonth! > 0) {
+                                                                              priceDisplay = "₹${rent.perMonth} (Month)";
+                                                                            } else if (rent.perHour != null && rent.perHour! > 0) {
+                                                                              priceDisplay = "₹${rent.perHour} (Hour)";
+                                                                            } else {
+                                                                              priceDisplay = "Price Not Available";
+                                                                            }
+                                                                          }
                                                                           return Padding(
                                                                             padding:  EdgeInsets.only(top: 7,left: 7),
                                                                             child: Row(
                                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
                                                                                 Text(
-                                                                                  "₹" +
-                                                                                      Price[index],
+                                                                                  priceDisplay,
                                                                                   style:
                                                                                       TextStyle(
                                                                                     color:
@@ -668,7 +685,7 @@ class _AllProductListState extends State<AllProductList> {
                                                                                 SizedBox(
                                                                                     width:
                                                                                         2),
-                                                                                Padding(
+                                                                              /*  Padding(
                                                                                   padding: const EdgeInsets.all(5.0),
                                                                                   child: Text(
                                                                                     Labels[
@@ -683,7 +700,7 @@ class _AllProductListState extends State<AllProductList> {
 
                                                                                     ),
                                                                                   ),
-                                                                                ),
+                                                                                ),*/
                                                                               ],
                                                                             ),
                                                                           );
@@ -697,6 +714,9 @@ class _AllProductListState extends State<AllProductList> {
 
                                                                     Text(
                                                                       "${currentIndex + 1}/${Price.length}", // Display current slide index and total slides
+
+
+
                                                                       style: TextStyle(
                                                                         color: Color(0xffFE7F64),
                                                                         letterSpacing: 0.0,
@@ -709,12 +729,7 @@ class _AllProductListState extends State<AllProductList> {
                                                                     ),
 
                                                                     Row(
-                                                                     /*   mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,*/
+
                                                                       children: [
                                                                         for (int i = 0; i < Price.length; i++)
                                                                           if (i >= currentIndex - 1 && i <= currentIndex + 1)
