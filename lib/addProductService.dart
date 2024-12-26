@@ -390,7 +390,25 @@ class _CreateProductServiceState extends State<CreateProductService>
     return true;
   }
 
-  void _filterSuggestions(String query) {
+
+  void _onTextChanged() {
+    setState(() {
+      String query = SubCatController.text;
+      if (query.isEmpty) {
+        // If the text field is cleared, show all suggestions
+        _filteredSuggestions = _suggestions;
+      } else {
+        // Filter suggestions based on query
+        _filteredSuggestions = _suggestions
+            .where((suggestion) => suggestion
+            .toLowerCase()
+            .contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+/*  void _filterSuggestions(String query) {
     setState(() {
       if (query.isEmpty) {
         // If the text field is cleared, show all suggestions
@@ -403,7 +421,7 @@ class _CreateProductServiceState extends State<CreateProductService>
             .toList();
       }
     });
-  }
+  }*/
 
   void _showSuggestions() {
     setState(() {
@@ -413,8 +431,10 @@ class _CreateProductServiceState extends State<CreateProductService>
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    //_focusNode.dispose();
     _pageController.dispose();
+    SubCatController.removeListener(_onTextChanged);
+    SubCatController.dispose();
     //SubCatController.dispose();
     super.dispose();
   }
@@ -427,6 +447,7 @@ class _CreateProductServiceState extends State<CreateProductService>
 
     _pageController = PageController(initialPage: currentIndex);
 
+    SubCatController.addListener(_onTextChanged);
 
     super.initState();
   }
@@ -827,14 +848,14 @@ class _CreateProductServiceState extends State<CreateProductService>
                                           padding: EdgeInsets.only(
                                               left: 10, right: 10, top: 10),
                                           child: TextFormField(
-                                            focusNode: _focusNode,
+
                                             onTap: () {
                                               // When the TextFormField is tapped, show all suggestions
-                                              _showSuggestions();
+                                              //_showSuggestions();
                                             },
                                             onChanged: (value) {
                                               // When the text is changed, filter suggestions based on the input value
-                                              _filterSuggestions(value);
+                                             // _onTextChanged(value);
                                             },
                                             textAlign: TextAlign.start,
                                             maxLines: 1,
