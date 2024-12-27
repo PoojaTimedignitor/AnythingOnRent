@@ -14,7 +14,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'CatagrioesList.dart';
 import 'MyBehavior.dart';
+import 'ResponseModule/getSubCatResponseModel.dart';
 import 'dummytwo.dart';
+import 'ResponseModule/getSubCatResponseModel.dart' as subCatData;
 
 class CreateProductService extends StatefulWidget {
   const CreateProductService({super.key});
@@ -44,18 +46,8 @@ class _CreateProductServiceState extends State<CreateProductService>
 
   TextEditingController SubCatController = TextEditingController();
 
-  List<String> _suggestions = [
-    'Apple',
-    'Banana',
-    'Orange',
-    'Grapes',
-    'Watermelon',
-    'Pineapple',
-    'Mango',
-    'Peach',
-  ];
 
-  List<String> _filteredSuggestions = [];
+
 
   late TabController _tabController;
   int currentIndex = 0;
@@ -75,11 +67,76 @@ class _CreateProductServiceState extends State<CreateProductService>
   bool perHour = false;
   bool perMonth = false;
   bool perWeek = false;
-  FocusNode _focusNode = FocusNode();
 
-  void _saveImagePath(List<File> images) {
-    List<String> paths = images.map((image) => image.path).toList();
-    box.write('selectedImages', paths); // Save paths to GetStorage
+  bool isLoading = true;
+
+
+  String _selectedPrimaryOption = "";
+  String _selectedSecondaryOption = "";
+  bool _showPrimarySuggestions = false;
+  bool _showSecondarySuggestions = false;
+
+  // Primary suggestions
+/*
+  List<String> _primarySuggestions = [
+    'apple',
+    'banana',
+    'cherry',
+  ];
+*/
+
+  Map<String, List<String>> _secondarySuggestions = {
+    'apple': ['Color', 'Seed', 'Type'],
+    'banana': ['Ripeness', 'Length', 'Taste'],
+    'cherry': ['Size', 'Color', 'Type'],
+  };
+
+  void _onPrimaryTap() {
+    setState(() {
+      _showPrimarySuggestions = true;
+      _showSecondarySuggestions = false; // Hide secondary list
+    });
+  }
+
+  void _onPrimaryOptionTap(String option) {
+    setState(() {
+      _selectedPrimaryOption = option;
+      SubCatController.text = option;
+      _showPrimarySuggestions = false;
+      _showSecondarySuggestions = true;
+    });
+  }
+
+  void _onSecondaryOptionTap(String option) {
+    setState(() {
+      _selectedSecondaryOption = option;
+      SubCatController.text = "$_selectedPrimaryOption -> $option";
+      _showSecondarySuggestions = false;
+    });
+  }
+
+
+
+  List<subCatData.Data> SubCat = [];
+  List<subCatData.Data> filteredSubCat = [];
+
+
+  void fetchSubCategories(String categoryId) async {
+    try {
+      Map<String, dynamic> response = await ApiClients().getAllSubCat(categoryId);
+
+      var jsonList = getSubCategories.fromJson(response);
+      setState(() {
+        SubCat = jsonList.data ?? [];
+        filteredSubCat = List.from(SubCat);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching subcategories: $e");
+    }
   }
 
   void showTopSnackBar(BuildContext context, String message) {
@@ -114,8 +171,6 @@ class _CreateProductServiceState extends State<CreateProductService>
       overlayEntry.remove();
     });
   }
-
-
 
   Future<void> _pickImagesFromGallery() async {
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
@@ -391,22 +446,6 @@ class _CreateProductServiceState extends State<CreateProductService>
   }
 
 
-  void _onTextChanged() {
-    setState(() {
-      String query = SubCatController.text;
-      if (query.isEmpty) {
-        // If the text field is cleared, show all suggestions
-        _filteredSuggestions = _suggestions;
-      } else {
-        // Filter suggestions based on query
-        _filteredSuggestions = _suggestions
-            .where((suggestion) => suggestion
-            .toLowerCase()
-            .contains(query.toLowerCase()))
-            .toList();
-      }
-    });
-  }
 
 /*  void _filterSuggestions(String query) {
     setState(() {
@@ -423,19 +462,11 @@ class _CreateProductServiceState extends State<CreateProductService>
     });
   }*/
 
-  void _showSuggestions() {
-    setState(() {
-      _filteredSuggestions = _suggestions; // Show full suggestions
-    });
-  }
 
   @override
   void dispose() {
-    //_focusNode.dispose();
     _pageController.dispose();
-    SubCatController.removeListener(_onTextChanged);
-    SubCatController.dispose();
-    //SubCatController.dispose();
+
     super.dispose();
   }
 
@@ -447,7 +478,6 @@ class _CreateProductServiceState extends State<CreateProductService>
 
     _pageController = PageController(initialPage: currentIndex);
 
-    SubCatController.addListener(_onTextChanged);
 
     super.initState();
   }
@@ -762,7 +792,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         setState(() {
                                           selectedCategory = result;
                                           updatedTexts =
-                                              result; // Update text to the selected category
+                                              result;
                                         });
                                       }
                                     },
@@ -847,34 +877,20 @@ class _CreateProductServiceState extends State<CreateProductService>
                                       Padding(
                                           padding: EdgeInsets.only(
                                               left: 10, right: 10, top: 10),
-                                          child: TextFormField(
-
-                                            onTap: () {
-                                              // When the TextFormField is tapped, show all suggestions
-                                              //_showSuggestions();
-                                            },
-                                            onChanged: (value) {
-                                              // When the text is changed, filter suggestions based on the input value
-                                             // _onTextChanged(value);
-                                            },
-                                            textAlign: TextAlign.start,
-                                            maxLines: 1,
-                                            // focusNode: _subCatControllerFocus,
-                                            keyboardType: TextInputType.text,
+                                          child: TextField(
                                             controller: SubCatController,
-                                            autocorrect: true,
-                                            textInputAction:
-                                                TextInputAction.next,
+                                            readOnly: true, // Prevent typing
+                                            onTap: _onPrimaryTap, // Show primary suggestions on tap
                                             decoration: InputDecoration(
                                               isDense: true,
                                               hintText: 'SubCategories',
                                               contentPadding:
-                                                  EdgeInsets.all(10.0),
+                                              EdgeInsets.all(10.0),
                                               hintStyle: TextStyle(
                                                 fontFamily: "Roboto_Regular",
                                                 color: Color(0xff7D7B7B),
                                                 fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
+                                                    .blockSizeHorizontal *
                                                     3.5,
                                               ),
                                               fillColor: Colors.white,
@@ -885,21 +901,21 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                     width: 1.0),
                                               ),
                                               focusedBorder:
-                                                  UnderlineInputBorder(
+                                              UnderlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: Colors.grey[400]!,
                                                     width:
-                                                        1.0), // Focused underline color and width
+                                                    1.0), // Focused underline color and width
                                               ),
                                               enabledBorder:
-                                                  UnderlineInputBorder(
+                                              UnderlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: Colors.grey[400]!,
                                                     width:
-                                                        1.0), // Normal state underline
+                                                    1.0), // Normal state underline
                                               ),
                                             ),
-                                          )),
+                                          ),),
 
                                     ]),
                               ),
@@ -2435,41 +2451,137 @@ class _CreateProductServiceState extends State<CreateProductService>
                           ),
                         ],
                       ),
-                      if (_filteredSuggestions.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(9.0),
-                          child: Container(
-                            height: 700,
 
+                       if (_showPrimarySuggestions || _showSecondarySuggestions)
+                        Container(
+                          height: 300,
+                          padding: EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(9),
 
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: ListView.builder(
-                              itemCount:
-                              _filteredSuggestions.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                      _filteredSuggestions[
-                                      index]),
-                                  onTap: () {
-                                    // Handle suggestion selection
-                                    setState(() {
-                                      SubCatController.text =
-                                      _filteredSuggestions[
-                                      index];
-                                      _filteredSuggestions
-                                          .clear(); // Clear suggestions after selection
-                                    });
-                                  },
-                                );
-                              },
-                            ),
                           ),
+                          child:   /* ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount:*//* _showPrimarySuggestions*//*
+                                 filteredSubCat.length,
+                               *//* : _secondarySuggestions[_selectedPrimaryOption]!.length +
+                                1,*//*
+                            itemBuilder: (context, index) {
+                              if (index == 0) {
+                                return Padding(
+                                  padding:  EdgeInsets.only(top: 10),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _showPrimarySuggestions ? "  Fashion Categories" : "  Fashion Categories",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      *//*  Container(
+                              height: SizeConfig.screenHeight * 0.0005,
+                              color: CommonColor.SearchBar,
+                            ),*//*
+                                    ],
+                                  ),
+                                );
+                              }
+                              final actualIndex = index - 1;
+                              if (_showPrimarySuggestions) {
+
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                                      visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                                      minVerticalPadding: 0,
+                                      title: Text(filteredSubCat[index].name.toString()[actualIndex],style: TextStyle(
+                                        letterSpacing: 0.5,
+                                        color: Colors.black,
+                                        fontFamily: "Montserrat_Medium",
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                      ),),
+                                      onTap: () => _onPrimaryOptionTap(
+                                          filteredSubCat[index].name.toString()[actualIndex]),
+                                    ),
+                                    Divider( color: CommonColor.SearchBar,thickness: 0.2,),
+                                  ],
+                                );
+                              }
+                              return null; *//*else {
+                                return ListTile(
+                                  title: Text(_secondarySuggestions[_selectedPrimaryOption]![actualIndex]),
+                                  onTap: () => _onSecondaryOptionTap(
+                                      _secondarySuggestions[_selectedPrimaryOption]![actualIndex]),
+                                );
+                              }*//*
+                            },
+                          ),*/
+
+
+                          ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: filteredSubCat.length + 1, // +1 for header
+                            itemBuilder: (context, index) {
+                              if (index == 0) {
+                                return Padding(
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Fashion Categories",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                    ],
+                                  ),
+                                );
+                              }
+
+                              final actualIndex = index - 1;
+
+                              return Column(
+                                children: [
+                                  ListTile(
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                                    minVerticalPadding: 0,
+                                    title: Text(
+                                      filteredSubCat[actualIndex].name ?? '',
+                                      style: TextStyle(
+                                        letterSpacing: 0.5,
+                                        color: Colors.black,
+                                        fontFamily: "Montserrat_Medium",
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    onTap: () => _onPrimaryOptionTap(filteredSubCat[index].name.toString()[actualIndex]),
+                                  ),
+                                  Divider(
+                                    color: CommonColor.SearchBar,
+                                    thickness: 0.2,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+
+
+
                         ),
-                    ],
-                  ),
+
+
+                  ]),
                 ),
                 Text('Service Tab'),
               ],

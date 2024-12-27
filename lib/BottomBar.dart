@@ -591,13 +591,13 @@ class BottomBarState extends State<BottomBar>
         Padding(
           padding: EdgeInsets.only(left: parentWidth * 0.02),
           child: SizedBox(
-            height: 200, // Set a fixed height for the GridView
+            height: 200,
             child: GridView.builder(
-              scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+              scrollDirection: Axis.horizontal,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Number of rows
-                crossAxisSpacing: 2, // Space between columns
-                mainAxisSpacing: 23, // Space between rows
+                crossAxisCount: 2,
+                crossAxisSpacing: 2,
+                mainAxisSpacing: 23,
                 childAspectRatio: 3 / 2,
               ),
               itemCount: catagriesItemList.length,

@@ -40,6 +40,7 @@ class _CatagriesListState extends State<CatagriesList> {
   ];
 
   List<Data> filteredItems = [];
+
   bool isLoading = true;
   bool isSearchingData = false;
 

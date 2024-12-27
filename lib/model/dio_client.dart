@@ -120,7 +120,7 @@ class ApiClients {
           },
         ),
       );
-      // print("data....>$dataa");
+
       print("statusCode --> ${response.statusCode}");
       print("dateeeee --> ${response.data}");
       return response.data;
@@ -155,6 +155,36 @@ class ApiClients {
       return e.response!.data;
     }
   }
+
+
+  Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
+    String url = "${ApiConstant().BaseUrlGetAllCat}/${ApiConstant().getAllSubCatagries.replaceAll("{categoryId}", categoryId)}";
+    print("ccccc  ${url}");
+
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("getCatList Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print("Dio Error: ${e.response}");
+      return e.response!.data;
+    }
+  }
+
+
+
 
   Future<Map<String, dynamic>> PostCreateProductApi(
     String name,

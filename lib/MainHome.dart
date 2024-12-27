@@ -10,8 +10,10 @@ import 'City_Create.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 import 'ConstantData/Constant_data.dart';
-import 'Home_screens.dart';
 import 'MyBehavior.dart';
+import 'package:anything/ResponseModule/getAllCatList.dart' as catData;
+import 'ResponseModule/getAllCatList.dart';
+import 'ResponseModule/getAllProductList.dart';
 import 'SearchCatagries.dart';
 import 'SideBar/My Collection.dart';
 import 'SideBar/My Ratings.dart';
@@ -23,9 +25,9 @@ import 'addProductService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
+import 'package:carousel_slider/carousel_slider.dart' as cs;
 
 import 'package:get_storage/get_storage.dart';
-
 
 class MainHome extends StatefulWidget {
   @override
@@ -35,15 +37,24 @@ class MainHome extends StatefulWidget {
 class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
-  bool isSearchExpanded = false; // Tracks if search bar is expanded
+  bool isSearchExpanded = false;
+  List<catData.Data> filteredItems = [];
+  List<catData.Data> items = [];
+  final cs.CarouselSliderController _controller = cs.CarouselSliderController();
+
+  bool isLoading = true;
+  bool isSearchingData = false;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     setState(() {
+      fetchCategories();
+      fetchProductsList();
+
       firstname = GetStorage().read(ConstantData.UserFirstName) ?? "Guest";
 
       _tabController = TabController(length: 2, vsync: this);
@@ -62,6 +73,8 @@ class MainHomeState extends State<MainHome>
   final _searchFocus = FocusNode();
   final searchController = TextEditingController();
   int currentIndex = 0;
+  List<Products> itemss = [];
+  List<Products> filteredItemss = [];
 
   final box = GetStorage();
 
@@ -85,6 +98,7 @@ class MainHomeState extends State<MainHome>
     "Car",
     "Camera",
   ];
+
   List<String> catagriesDiscription = [
     "Lorem Ipsum is dummy text used as a placeholder text since 1870",
     "Lorem Ipsum is dummy text used as a placeholder text since 1870",
@@ -95,16 +109,68 @@ class MainHomeState extends State<MainHome>
     "Lorem Ipsum is dummy text used as a placeholder text since 1870",
     "Lorem Ipsum is dummy text used as a placeholder text since 1870",
   ];
+
   final List<String> catagriesImage = [
-    'assets/images/vehicle.png',
     'assets/images/fashion.png',
-    'assets/images/homeApp.png',
+    'assets/images/furniture.png',
     'assets/images/vehicle.png',
-    'assets/images/furnitures.png',
-    'assets/images/party.png',
-    'assets/images/events.png',
-    'assets/images/homeApp.png',
+    'assets/images/electronics.png',
+    'assets/images/cosmatics.png',
+    'assets/images/stationery.png',
+    'assets/images/books.png',
+    'assets/images/sports.png',
+    'assets/images/agriculture.png',
+
   ];
+
+  void fetchCategories() async {
+    try {
+      Map<String, dynamic> response = await ApiClients().getAllCat();
+
+      var jsonList = GetAllCategoriesList.fromJson(response);
+      setState(() {
+        items = jsonList.data?.take(10).toList() ?? [];
+        filteredItems = List.from(items);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching categories: $e");
+    }
+  }
+
+
+
+
+  void fetchProductsList() async {
+    try {
+      Map<String, dynamic> response = await ApiClients().getAllProductList();
+      var jsonList = getAllProductList.fromJson(response);
+      setState(() {
+
+        itemss = jsonList.products?.take(10).toList() ?? [];
+        itemss = jsonList.products ?? [];
+
+
+
+        filteredItemss = List.from(itemss);
+
+
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("loder $isLoading");
+    }
+  }
+
+
+
+
 
   void LogoutDialogBox(BuildContext context) {
     SizeConfig().init(context);
@@ -150,9 +216,8 @@ class MainHomeState extends State<MainHome>
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
-                  maxLines: 2, // Ensures text spans at most two lines
-                  overflow:
-                      TextOverflow.ellipsis, // Adds ellipsis if text overflows
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Row(
@@ -170,7 +235,6 @@ class MainHomeState extends State<MainHome>
                       final response =
                           await ApiClients().getLogoutUser(email, password);
                       if (response['success'] == true) {
-
                         print("Logout Successful");
 
                         GetStorage().remove(ConstantData.UserAccessToken);
@@ -191,8 +255,6 @@ class MainHomeState extends State<MainHome>
                         width: SizeConfig.screenWidth * 0.3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          // color: Colors.white,
-
                           gradient: LinearGradient(
                             begin: Alignment.topRight,
                             end: Alignment.bottomLeft,
@@ -219,8 +281,6 @@ class MainHomeState extends State<MainHome>
                   GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
-                      /* AppPreferences.clearAppPreference();
-                      Get.to(() => const SignIn());*/
                     },
                     child: Padding(
                       padding:
@@ -262,18 +322,15 @@ class MainHomeState extends State<MainHome>
       },
     );
   }
-  String updatedCity = "No city selected"; // Default city
 
+  String updatedCity = "No city selected";
 
   void updateCity(String newCity) {
     setState(() {
       updatedCity = newCity;
-      GetStorage().write('selectedCity', newCity); // Store the selected city
+      GetStorage().write('selectedCity', newCity);
     });
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -281,7 +338,6 @@ class MainHomeState extends State<MainHome>
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-
       drawer: Drawer(
         backgroundColor: Color(0xffffffff),
         child: ListView(
@@ -342,8 +398,6 @@ class MainHomeState extends State<MainHome>
                               ),
                             ),
                           ),
-
-                          // Add some space between the avatar and the column
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -359,8 +413,6 @@ class MainHomeState extends State<MainHome>
                                   ),
                                 ),
                                 SizedBox(height: 2),
-                                // Adds space between the icon and text
-
                                 GestureDetector(
                                   onTap: () {},
                                   child: Wrap(
@@ -377,7 +429,6 @@ class MainHomeState extends State<MainHome>
                                       ),
                                       Container(
                                         width: 170,
-                                        //  color: Colors.red,
                                         child: Text(
                                           "Park pashan pune, 2004 pune pashan... ",
                                           style: TextStyle(
@@ -402,12 +453,6 @@ class MainHomeState extends State<MainHome>
                 ],
               ),
             ),
-
-            /*   Container(
-              height: SizeConfig.screenHeight * 0.0003,
-              width: 160,
-              color: Colors.grey[500]!,
-            ),*/
             Padding(
               padding: EdgeInsets.only(top: 30, left: 10),
               child: Column(
@@ -429,9 +474,7 @@ class MainHomeState extends State<MainHome>
                           height: 22,
                           //color: CommonColor.gray,
                         ),
-                        Text(
-                            // the text of the row.
-                            "My Profile",
+                        Text("My Profile",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
                                 fontFamily: "okra_Regular",
@@ -763,7 +806,7 @@ class MainHomeState extends State<MainHome>
           ],
         ),
       ),
-     /* floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      /* floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(6.0),
         child: FloatingActionButton(
@@ -821,12 +864,14 @@ class MainHomeState extends State<MainHome>
                     children: [
                       Container(
                         height: 250,
-
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage('assets/images/dashtwo.png'), // Replace with your image path
-                            fit: BoxFit.cover, // You can use BoxFit.cover, BoxFit.fill, etc. based on your need
-                          ),borderRadius: BorderRadius.all(Radius.circular(20)),
+                            image: AssetImage(
+                                'assets/images/dashtwo.png'), // Replace with your image path
+                            fit: BoxFit
+                                .cover, // You can use BoxFit.cover, BoxFit.fill, etc. based on your need
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                         child: Padding(
                           padding: EdgeInsets.only(top: 40, left: 20),
@@ -888,43 +933,49 @@ class MainHomeState extends State<MainHome>
                       ),
                       HomeSearchBar(
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
-
-Padding(
-  padding:  EdgeInsets.only(top:SizeConfig.screenHeight * 0.2),
-  child: Text("     ANYTING ON RENT",style: TextStyle(
-    fontFamily: "okra_extrabold",
-    fontSize: SizeConfig.blockSizeHorizontal * 5.1,
-    color: CupertinoColors.black,
-    fontWeight: FontWeight.w200,
-  ),),
-),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(top: SizeConfig.screenHeight * 0.2),
+                        child: Text(
+                          "     ANYTHING ON RENT",
+                          style: TextStyle(
+                            fontFamily: "okra_extrabold",
+                            fontSize: SizeConfig.blockSizeHorizontal * 5.1,
+                            color: CupertinoColors.black,
+                            fontWeight: FontWeight.w200,
+                          ),
+                        ),
+                      ),
                       Center(
                         child: Padding(
-                          padding:  EdgeInsets.only(top:SizeConfig.screenHeight * 0.26),
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.26),
                           child: Container(
                             height: SizeConfig.screenHeight * 0.07,
                             width: SizeConfig.screenWidth * 0.9,
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                                border: Border.all(width: 0.2, color: CommonColor.Black),
-
-                                borderRadius: BorderRadius.all(Radius.circular(15))),
+                                color: Colors.white,
+                                border: Border.all(
+                                    width: 0.2, color: CommonColor.Black),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15))),
                           ),
                         ),
                       ),
                       GestureDetector(
                         onTap: () async {
-
                           final String? result = await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CreateCity()),
+                            MaterialPageRoute(
+                                builder: (context) => CreateCity()),
                           );
                           if (result != null) {
                             updateCity(result); // Update city if selected
                           }
                         },
                         child: Padding(
-                          padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.285,left: 30),
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.285, left: 30),
                           child: Row(
                             children: [
                               Icon(
@@ -942,8 +993,7 @@ Padding(
                                       letterSpacing: 0.0,
                                       fontFamily: "okra_Medium",
                                       fontSize:
-                                      SizeConfig.blockSizeHorizontal *
-                                          3.7,
+                                          SizeConfig.blockSizeHorizontal * 3.7,
                                       fontWeight: FontWeight.w400,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -959,8 +1009,6 @@ Padding(
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ],
                   ),
-
-
                   PopularCategories(
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
                   sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
@@ -970,8 +1018,6 @@ Padding(
                     child: getAddGameTabLayout(
                         SizeConfig.screenHeight, SizeConfig.screenWidth),
                   ),
-
-
 
                   /* Stack(
                     children: [
@@ -1011,7 +1057,6 @@ Padding(
     );
   }
 
-
   Widget HomeSearchBar(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
@@ -1035,7 +1080,7 @@ Padding(
                 child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(color: Colors.black26,width: 0.5),
+                      border: Border.all(color: Colors.black26, width: 0.5),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -1157,28 +1202,27 @@ Padding(
               return CreateProductService();
             });*/
 
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>  CreateProductService()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CreateProductService()));
       },
       child: Padding(
         padding: EdgeInsets.only(
-            left: parentWidth * 0.62, right: parentWidth * 0.09,top: SizeConfig.screenHeight*0.275),
+            left: parentWidth * 0.62,
+            right: parentWidth * 0.09,
+            top: SizeConfig.screenHeight * 0.275),
         child: Container(
           //alignment: Alignment.,
           height: parentHeight * 0.040,
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Color(0xfff44343),
-                  Color(0xffFEA3A3),
-
-                ],
-              ),
-         //   border: Border.all(width: 0.5, color: CommonColor.Black),
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Color(0xfff44343),
+                Color(0xffFEA3A3),
+              ],
+            ),
+            //   border: Border.all(width: 0.5, color: CommonColor.Black),
             borderRadius: BorderRadius.all(
               Radius.circular(5),
             ),
@@ -1386,15 +1430,12 @@ Padding(
                 }),
           ),*/
 
-
-
           Container(
             height: 80,
             child: ListView.builder(
                 padding: EdgeInsets.zero,
                 scrollDirection: Axis.horizontal,
-                itemCount:
-                    catagriesItemList.length, // Define the number of items
+                itemCount: filteredItems.length, // Define the number of items
                 itemBuilder: (context, index) {
                   return Column(
                     children: [
@@ -1409,10 +1450,9 @@ Padding(
                             end: Alignment.bottomRight,
                             colors: [Color(0xffeaeaea), Color(0xffffffff)],
                           ),
-                          /*   color: Colors.white,*/
+
                           borderRadius: BorderRadius.circular(10),
-                          /* border:
-                              Border.all(color: CommonColor.grayText, width: 0.3),*/
+
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(9.0),
@@ -1428,18 +1468,23 @@ Padding(
                       SizedBox(
                         height: 5,
                       ),
-                      Text(
-                        catagriesItemList[index],
-                        style: TextStyle(
-                          letterSpacing: 0.5,
-                          color: Colors.black,
-                          fontFamily: "Montserrat_Medium",
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
+                      Container(
+                        height: parentHeight * 0.02,
+                        width: parentWidth * 0.2,
+
+                        child: Text(
+                          filteredItems[index].name.toString(),
+                          style: TextStyle(
+                            letterSpacing: 0.5,
+                            color: Colors.black,
+                            fontFamily: "Montserrat_Medium",
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                          ),
+
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   );
@@ -1456,7 +1501,9 @@ Padding(
                       builder: (context) => Scaffold(
                           body: Container(
                               height: SizeConfig.screenHeight,
-                              child: CatagriesList(onChanged: (value) {  },)))));
+                              child: CatagriesList(
+                                onChanged: (value) {},
+                              )))));
             },
             child: Padding(
               padding: EdgeInsets.only(left: parentWidth * 0.72),
@@ -1492,8 +1539,6 @@ Padding(
         ],
       ),
     );
-
-
   }
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
@@ -1524,7 +1569,6 @@ Padding(
               const Expanded(child: Divider()),
             ],
           ),
-
           SafeArea(
             child: DefaultTabController(
               length: 2,
@@ -1532,7 +1576,7 @@ Padding(
                 children: [
                   Container(
                     height: 60,
-                    padding: EdgeInsets.only( bottom: 20),
+                    padding: EdgeInsets.only(bottom: 20),
                     child: ButtonsTabBar(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
@@ -1541,10 +1585,6 @@ Padding(
                             end: Alignment.bottomLeft,
                             colors: [
                               Color(0xff7AA2FD),
-
-
-
-
                               Color(0xffD3D6FF),
                             ],
                           )),
@@ -1566,7 +1606,6 @@ Padding(
                             ),
                             child: Align(
                               alignment: Alignment.center,
-
                               child: Text(
                                 "Product",
                                 style: TextStyle(
@@ -1584,7 +1623,6 @@ Padding(
                           child: Container(
                             height: 40,
                             width: 165,
-
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   20), /* border: Border.all(color: Colors.black, width: 0.5)*/
@@ -1592,15 +1630,15 @@ Padding(
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                                              "Service",
-                                                              style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "Roboto-Medium",
-                              fontSize:
-                                  SizeConfig.blockSizeHorizontal * 3.6,
-                              fontWeight: FontWeight.w400,
-                                                              ),
-                                                            ),
+                                "Service",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Roboto-Medium",
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 3.6,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -2095,8 +2133,13 @@ Padding(
                               child: ListView.builder(
                                   padding: EdgeInsets.zero,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: 10, // Define the number of items
+                                  itemCount: filteredItemss.length, // Define the number of items
                                   itemBuilder: (context, index) {
+
+                                    final product = filteredItemss[index];
+
+                                    final productImages = product.images ?? [];
+
                                     return Container(
                                       width: parentWidth * 0.55,
 
@@ -2123,25 +2166,45 @@ Padding(
                                                   topLeft: Radius.circular(7),
                                                   topRight: Radius.circular(7),
                                                 ),
-                                                child: AnotherCarousel(
-                                                  images: const [
-                                                    NetworkImage(
-                                                        "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
-                                                    NetworkImage(
-                                                        "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
-                                                    NetworkImage(
-                                                        "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
-                                                    NetworkImage(
-                                                        "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
-                                                    NetworkImage(
-                                                        "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
-                                                  ],
-                                                  dotSize: 6,
-                                                  dotSpacing: 10,
-                                                  dotColor: Colors.white70,
-                                                  dotIncreasedColor:
-                                                      Colors.black45,
-                                                  indicatorBgPadding: 5.0,
+                                                child: CarouselSlider.builder(
+                                                  key: PageStorageKey('carouselKey'),
+                                                  carouselController: _controller,
+                                                  itemCount: productImages.length,
+                                                  options: CarouselOptions(
+                                                    onPageChanged: (index, reason) {
+                                                      setState(() {
+                                                        currentIndex = index;
+                                                      });
+                                                    },
+                                                    initialPage: 0,
+                                                    height:
+                                                    MediaQuery.of(context).size.height *
+                                                        .4,
+                                                    viewportFraction: 1.0,
+                                                    enableInfiniteScroll: false,
+                                                    autoPlay: false,
+                                                    enlargeStrategy:
+                                                    CenterPageEnlargeStrategy.height,
+                                                  ),
+                                                  itemBuilder: (BuildContext context,
+                                                      int itemIndex, int index1) {
+                                                    final imgUrl =
+                                                        productImages[index1].url ?? "";
+
+                                                    return Container(
+                                                      height:
+                                                      MediaQuery.of(context).size.height *
+                                                          0.3,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius.circular(10),
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(imgUrl),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
                                               ),
                                             ),
@@ -2158,7 +2221,7 @@ Padding(
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      ' HD Camera (black & white) dfgdf',
+                                                      filteredItemss [index].name.toString(),
                                                       style: TextStyle(
                                                         fontFamily:
                                                             "Montserrat-Regular",
@@ -2361,8 +2424,6 @@ Padding(
     );
   }
 }
-
-//   https://images.pexels.com/photos/3757226/pexels-photo-3757226.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2
 
 class CustomImageClipper extends CustomClipper<Path> {
   @override
