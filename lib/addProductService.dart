@@ -15,6 +15,7 @@ import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'CatagrioesList.dart';
 import 'MyBehavior.dart';
 import 'ResponseModule/getSubCatResponseModel.dart';
+import 'createPostCity.dart';
 import 'dummytwo.dart';
 import 'ResponseModule/getSubCatResponseModel.dart' as subCatData;
 
@@ -56,11 +57,12 @@ class _CreateProductServiceState extends State<CreateProductService>
   String updatedTexts = "Choose Categories";
   String productType = "Product";
   String updatedCitys = "Choose City";
+
   final box = GetStorage();
   final ImagePicker _picker = ImagePicker();
   List<File> _selectedImages = [];
   String? selectedCategory;
-
+  String categoryId = '';
   int quantity = 0;
 
   bool perDay = false;
@@ -76,14 +78,7 @@ class _CreateProductServiceState extends State<CreateProductService>
   bool _showPrimarySuggestions = false;
   bool _showSecondarySuggestions = false;
 
-  // Primary suggestions
-/*
-  List<String> _primarySuggestions = [
-    'apple',
-    'banana',
-    'cherry',
-  ];
-*/
+
 
   Map<String, List<String>> _secondarySuggestions = {
     'apple': ['Color', 'Seed', 'Type'],
@@ -122,9 +117,11 @@ class _CreateProductServiceState extends State<CreateProductService>
 
 
   void fetchSubCategories(String categoryId) async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       Map<String, dynamic> response = await ApiClients().getAllSubCat(categoryId);
-
       var jsonList = getSubCategories.fromJson(response);
       setState(() {
         SubCat = jsonList.data ?? [];
@@ -294,6 +291,13 @@ class _CreateProductServiceState extends State<CreateProductService>
 
 
 
+  void updateCitys(String newCity) {
+    setState(() {
+      updatedCitys = newCity;
+      GetStorage().write('selectedCity', newCity);
+    });
+  }
+
   Future<void> _pickImageForReplacement(int index) async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile =
@@ -308,12 +312,12 @@ class _CreateProductServiceState extends State<CreateProductService>
     }
   }
 
-  void updateTextCity(String newText) {
+ /* void updateTextCity(String newText) {
     box.write('updatedTextCity', newText); // Save the new text
     setState(() {
       updatedCitys = newText; // Update the state to show the new text
     });
-  }
+  }*/
 
   void _updateQuantity(int change) {
     setState(() {
@@ -445,6 +449,10 @@ class _CreateProductServiceState extends State<CreateProductService>
     return true;
   }
 
+  void onCategoryChanged(String selectedCategoryId) {
+    print("Selected Category ID in parent: $selectedCategoryId");
+    fetchSubCategories(selectedCategoryId);  // Fetch subcategories with the selected category ID
+  }
 
 
 /*  void _filterSuggestions(String query) {
@@ -475,9 +483,13 @@ class _CreateProductServiceState extends State<CreateProductService>
     _tabController = TabController(length: 2, vsync: this);
 
     quantity = box.read<int>('quantity') ?? 0;
+    updatedCitys = GetStorage().read('selectedCity') ?? "Choose city";
 
     _pageController = PageController(initialPage: currentIndex);
-
+    if (categoryId.isNotEmpty) {
+      print("Selected Category ID: $categoryId");
+      fetchSubCategories(categoryId);
+    }
 
     super.initState();
   }
@@ -780,19 +792,24 @@ class _CreateProductServiceState extends State<CreateProductService>
                                         builder: (BuildContext bc) {
                                           return CatagriesList(
                                             onChanged: (value) {
+                                              onCategoryChanged(value);
                                               setState(() {
+                                                categoryId = value;
                                                 selectedCategory = value;
                                               });
-                                            },
+                                            }, categoryId: categoryId,
                                           );
                                         },
                                       );
 
                                       if (result != null) {
                                         setState(() {
+
+                                          categoryId = result;
+
+
                                           selectedCategory = result;
-                                          updatedTexts =
-                                              result;
+                                          updatedTexts = result;
                                         });
                                       }
                                     },
@@ -853,7 +870,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                               ),
                             ),
                           ),
-                          SizedBox(height: 37),
+                          SizedBox(height: 12),
                           Visibility(
                             visible: selectedCategory != null,
                             child: Padding(
@@ -865,18 +882,23 @@ class _CreateProductServiceState extends State<CreateProductService>
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(height: 10),
-                                      Text(
-                                        "    Types of ${updatedTexts} categories",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: "okra_Medium",
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
+                                      Container(
+                                        height: SizeConfig.screenHeight * 0.03,
+                                        width: SizeConfig.screenWidth * 0.9,
+                                       
+                                        child: Text(
+                                          "    Types of ${updatedTexts} categories",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: "okra_Medium",
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ), overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       Padding(
                                           padding: EdgeInsets.only(
-                                              left: 10, right: 10, top: 10),
+                                              left: 5, right: 5, top: 10),
                                           child: TextField(
                                             controller: SubCatController,
                                             readOnly: true, // Prevent typing
@@ -1452,10 +1474,10 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
-                                                              CreateCity()));
-                                              // If a result is received (i.e., category was selected), update the text
+                                                              CreateCityCreatePost()));
+
                                               if (result != null) {
-                                                updateTextCity(result);
+                                                updateCitys(result);
                                               }
                                             }
                                           : null,
@@ -1475,11 +1497,12 @@ class _CreateProductServiceState extends State<CreateProductService>
                                             child: Text(
                                               (updatedCitys),
                                               style: TextStyle(
-                                                color: Color(0xff7D7B7B),
-                                                fontFamily: "Roboto_Regular",
+                                                color: Colors.black,
+                                                letterSpacing: 0.5,
+                                                fontFamily: "okra_Medium",
                                                 fontSize:
                                                     SizeConfig.blockSizeHorizontal *
-                                                        3.5,
+                                                        4.0,
                                               ),
                                             ),
                                           ),
@@ -2135,31 +2158,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                                                     FontWeight.w600,
                                                               ),
                                                             ),
-                                                            /*  Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  left: 10, right: 10, top: 7),
-                                                              child: Container(
-                                                                height: 50,
-                                                                width: SizeConfig.screenWidth * 0.3,
-                                                                decoration: BoxDecoration(
-                                                                  color: Color(0xffF5F6FB),
-                                                                  borderRadius: BorderRadius.all(
-                                                                      Radius.circular(7)),
-                                                                ),
-                                                                child: Center(
-                                                                  child: Text(
-                                                                   "Lowest Prise",
-                                                                    style: TextStyle(
-                                                                      color: Color(0xff7D7B7B),
-                                                                      fontFamily: "Roboto_Regular",
-                                                                      fontSize:
-                                                                      SizeConfig.blockSizeHorizontal *
-                                                                          3.5,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),*/
+
                                                             Expanded(
                                                               child: Padding(
                                                                 padding:
@@ -2379,12 +2378,11 @@ class _CreateProductServiceState extends State<CreateProductService>
                                     updatedTexts,
                                     quantity,
                                     _selectedImages,
-                                    rating, // Pass the rating as double
+                                    rating,
                                     productCurrentAddressController.text,
                                     productPriceController.text,
                                   )
                                       .then((value) {
-                                    //  if (value.isEmpty) return;
 
                                     print("type.. ${value['data']?['type']}");
                                     Navigator.pushReplacement(
@@ -2452,132 +2450,77 @@ class _CreateProductServiceState extends State<CreateProductService>
                         ],
                       ),
 
+
+
                        if (_showPrimarySuggestions || _showSecondarySuggestions)
-                        Container(
-                          height: 300,
-                          padding: EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(9),
+                        Padding(
+                          padding:  EdgeInsets.only(top:240,left:10,right:10),
+                          child: Container(
+                            height: 320,
 
-                          ),
-                          child:   /* ListView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount:*//* _showPrimarySuggestions*//*
-                                 filteredSubCat.length,
-                               *//* : _secondarySuggestions[_selectedPrimaryOption]!.length +
-                                1,*//*
-                            itemBuilder: (context, index) {
-                              if (index == 0) {
-                                return Padding(
-                                  padding:  EdgeInsets.only(top: 10),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        _showPrimarySuggestions ? "  Fashion Categories" : "  Fashion Categories",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                            padding: EdgeInsets.only(top:10,left:10,right:10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(9),
+                          
+                            ),
+                            child:
+
+                            ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount: filteredSubCat.length + 1, // +1 for header
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Fashion Categories",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      *//*  Container(
-                              height: SizeConfig.screenHeight * 0.0005,
-                              color: CommonColor.SearchBar,
-                            ),*//*
-                                    ],
-                                  ),
-                                );
-                              }
-                              final actualIndex = index - 1;
-                              if (_showPrimarySuggestions) {
-
+                                        SizedBox(height: 10),
+                                      ],
+                                    ),
+                                  );
+                                }
+                          
+                                final actualIndex = index - 1;
+                          
                                 return Column(
                                   children: [
                                     ListTile(
                                       contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
                                       visualDensity: VisualDensity(horizontal: 0, vertical: -4),
                                       minVerticalPadding: 0,
-                                      title: Text(filteredSubCat[index].name.toString()[actualIndex],style: TextStyle(
-                                        letterSpacing: 0.5,
-                                        color: Colors.black,
-                                        fontFamily: "Montserrat_Medium",
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                      ),),
-                                      onTap: () => _onPrimaryOptionTap(
-                                          filteredSubCat[index].name.toString()[actualIndex]),
-                                    ),
-                                    Divider( color: CommonColor.SearchBar,thickness: 0.2,),
-                                  ],
-                                );
-                              }
-                              return null; *//*else {
-                                return ListTile(
-                                  title: Text(_secondarySuggestions[_selectedPrimaryOption]![actualIndex]),
-                                  onTap: () => _onSecondaryOptionTap(
-                                      _secondarySuggestions[_selectedPrimaryOption]![actualIndex]),
-                                );
-                              }*//*
-                            },
-                          ),*/
-
-
-                          ListView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: filteredSubCat.length + 1, // +1 for header
-                            itemBuilder: (context, index) {
-                              if (index == 0) {
-                                return Padding(
-                                  padding: EdgeInsets.only(top: 10),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Fashion Categories",
+                                      title: Text(
+                                        filteredSubCat[actualIndex].name ?? '',
                                         style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.5,
+                                          color: Colors.black,
+                                          fontFamily: "Montserrat_Regular",
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
                                         ),
                                       ),
-                                      SizedBox(height: 10),
-                                    ],
-                                  ),
-                                );
-                              }
-
-                              final actualIndex = index - 1;
-
-                              return Column(
-                                children: [
-                                  ListTile(
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-                                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-                                    minVerticalPadding: 0,
-                                    title: Text(
-                                      filteredSubCat[actualIndex].name ?? '',
-                                      style: TextStyle(
-                                        letterSpacing: 0.5,
-                                        color: Colors.black,
-                                        fontFamily: "Montserrat_Medium",
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                      ),
+                                      onTap: () => _onPrimaryOptionTap(filteredSubCat[index].name.toString()[actualIndex]),
                                     ),
-                                    onTap: () => _onPrimaryOptionTap(filteredSubCat[index].name.toString()[actualIndex]),
-                                  ),
-                                  Divider(
-                                    color: CommonColor.SearchBar,
-                                    thickness: 0.2,
-                                  ),
-                                ],
-                              );
-                            },
+                                    Divider(
+                                      color: CommonColor.SearchBar,
+                                      thickness: 0.2,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          
+                          
+                          
                           ),
-
-
-
                         ),
 
 

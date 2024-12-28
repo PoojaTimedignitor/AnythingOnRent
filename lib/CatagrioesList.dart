@@ -10,8 +10,10 @@ import 'model/dio_client.dart';
 
 class CatagriesList extends StatefulWidget {
   final Function(String) onChanged;
+  final String categoryId;
 
-  const CatagriesList({super.key, required this.onChanged});
+
+  const CatagriesList({super.key, required this.onChanged, required this.categoryId});
 
   @override
   State<CatagriesList> createState() => _CatagriesListState();
@@ -196,7 +198,7 @@ class _CatagriesListState extends State<CatagriesList> {
                           crossAxisSpacing: 11.0, // Space between columns
                           mainAxisSpacing: 1.0, // Space between rows
                           childAspectRatio: 1,
-                          // Aspect ratio of each grid item
+
                         ),
                         itemCount: filteredItems.length,
                         // Total number of items
@@ -207,20 +209,22 @@ class _CatagriesListState extends State<CatagriesList> {
                           /* String categoryName = filteredItems[index];
                       int productCount = productCountList[categoryName] ?? 0;*/
                           return GestureDetector(
-                            onTap: () {
-                              widget.onChanged(
-                                  filteredItems[index].name.toString());
-                              Navigator.pop(context,
-                                  filteredItems[index].name.toString());
+    onTap: () {
+    String selectedCategoryId = filteredItems[index].sId.toString();
+    print("Selected Category ID: $selectedCategoryId");
+
+    widget.onChanged(selectedCategoryId); // Pass categoryId to parent widget
+    Navigator.pop(context, filteredItems[index].name.toString());
+
                             },
                             child: Container(
-                              // padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+
                               margin: EdgeInsets.only(
                                   left: 8.0,
                                   right: 5.0,
                                   top: 14.0,
                                   bottom: 10.0),
-                              //  height: SizeConfig.screenHeight * 0,
+
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius:
@@ -237,7 +241,7 @@ class _CatagriesListState extends State<CatagriesList> {
                                   Container(
                                     width: 120,
                                     margin: EdgeInsets.only(bottom: 5),
-                                    // bottom: 10, // Position the text at the bottom
+
                                     child: Padding(
                                       padding: const EdgeInsets.all(5.0),
                                       child: Text(
@@ -294,23 +298,7 @@ class _CatagriesListState extends State<CatagriesList> {
                       ),
               )
 
-                  /*ListView.builder(
-                  itemCount: filteredItems.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(filteredItems[index]),
-                      onTap: () {
-                        Navigator.pop(context, filteredItems[index]);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('You selected: ${filteredItems[index]}'),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                )
-                    : Center(child: Text('No items found')),*/
+
                   )
             ],
           ),

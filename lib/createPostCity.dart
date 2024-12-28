@@ -6,14 +6,14 @@ import 'Common_File/common_color.dart';
 import 'ResponseModule/getAllCityResponseModel.dart';
 import 'model/dio_client.dart';
 
-class CreateCity extends StatefulWidget {
-  const CreateCity({super.key});
+class CreateCityCreatePost extends StatefulWidget {
+  const CreateCityCreatePost({super.key});
 
   @override
-  State<CreateCity> createState() => _CreateCityState();
+  State<CreateCityCreatePost> createState() => _CreateCityCreatePostState();
 }
 
-class _CreateCityState extends State<CreateCity> {
+class _CreateCityCreatePostState extends State<CreateCityCreatePost> {
   final List<String> cityName = [
     "Mumbai",
     "Pune",
@@ -190,11 +190,8 @@ class _CreateCityState extends State<CreateCity> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      print("object");
 
-                        GetStorage().write('selectedCity', cityName[index]);
-                      Navigator.pushReplacementNamed(context, '/dashboard');
-
+                      Navigator.pop(context, cityName[index]);
                     },
                     child: Container(
                       margin: EdgeInsets.only(right: 3.0),

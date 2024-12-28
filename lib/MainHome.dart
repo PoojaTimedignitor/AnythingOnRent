@@ -120,6 +120,7 @@ class MainHomeState extends State<MainHome>
     'assets/images/books.png',
     'assets/images/sports.png',
     'assets/images/agriculture.png',
+    'assets/images/agriculture.png',
 
   ];
 
@@ -391,7 +392,7 @@ class MainHomeState extends State<MainHome>
                                 backgroundImage: (profileImage != null &&
                                         profileImage!.isNotEmpty)
                                     ? NetworkImage(
-                                        profileImage!) // Display image from URL
+                                        profileImage!)
                                     : AssetImage('assets/images/profiless.png')
                                         as ImageProvider,
                                 // Profile image
@@ -472,7 +473,7 @@ class MainHomeState extends State<MainHome>
                         Image(
                           image: AssetImage('assets/images/userprofile.png'),
                           height: 22,
-                          //color: CommonColor.gray,
+
                         ),
                         Text("My Profile",
                             style: TextStyle(
@@ -1502,7 +1503,7 @@ class MainHomeState extends State<MainHome>
                           body: Container(
                               height: SizeConfig.screenHeight,
                               child: CatagriesList(
-                                onChanged: (value) {},
+                                onChanged: (value) {}, categoryId: '',
                               )))));
             },
             child: Padding(

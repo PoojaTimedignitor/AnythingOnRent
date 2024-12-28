@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:anything/City_Create.dart';
-import 'package:anything/MainHome.dart';
 import 'package:google_ml_kit/google_ml_kit.dart'; // For text recognition
 
 import 'package:anything/Common_File/common_color.dart';
@@ -14,7 +13,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import '../Common_File/SizeConfig.dart';
 import '../ConstantData/Constant_data.dart';
-import '../location_map.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'login_screen.dart';
@@ -34,16 +32,14 @@ class RegisterScreen extends StatefulWidget {
   final String FrontImage;
   final String BackImage;
 
-  /* final File FrontImage;
-  final File BackImage;
-*/
+
   const RegisterScreen(
       {super.key,
       required this.address,
       required this.lat,
       required this.long,
       required this.ProfilePicture,
-      /*required this.FrontImage, required this.BackImage*/ required this.firstName,
+      required this.firstName,
       required this.lastname,
       required this.email,
       required this.password,

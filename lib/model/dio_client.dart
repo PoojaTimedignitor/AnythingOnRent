@@ -158,30 +158,41 @@ class ApiClients {
 
 
   Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
-    String url = "${ApiConstant().BaseUrlGetAllCat}/${ApiConstant().getAllSubCatagries.replaceAll("{categoryId}", categoryId)}";
-    print("ccccc  ${url}");
+    String url = "${ApiConstant().BaseUrlGetAllCat}${ApiConstant().getAllSubCatagries(categoryId)}";
+    print("Constructed URL: $url");
 
     String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    print("Authorization Token: $sessionToken");
 
     try {
+
       Response response = await _dio.get(
         url,
         options: Options(
           headers: {
-            'Authorization': 'Bearer $sessionToken',
+            'Authorization': 'Bearer $sessionToken', // Send the authorization token
           },
         ),
       );
 
-      print("getCatList Status Code --> ${response.statusCode}");
-      print("Response Data --> ${response.data}");
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Data: ${response.data}");
+
 
       return response.data;
     } on DioError catch (e) {
-      print("Dio Error: ${e.response}");
-      return e.response!.data;
+
+      if (e.response != null) {
+        print("Dio Error Response: ${e.response?.data}");
+        return e.response?.data ?? {'error': 'Unknown error'};
+      } else {
+        print("Dio Error: No response from server.");
+        return {'error': 'No response from server'};
+      }
     }
   }
+
+
 
 
 
