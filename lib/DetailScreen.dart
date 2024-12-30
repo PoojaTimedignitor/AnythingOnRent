@@ -875,6 +875,7 @@ class _DetailScreenState extends State<DetailScreen>
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Color(0xffffffff),
+
                                 // : Color(0xffF1E7FB),
                                 borderRadius: BorderRadius.circular(10),
                               ),

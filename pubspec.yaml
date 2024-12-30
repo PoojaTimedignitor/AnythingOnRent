@@ -150,6 +150,10 @@ flutter:
       fonts:
         - asset: assets/fonts/okra_bold.ttf
 
+    - family: Montserrat-BoldItalic
+      fonts:
+        - asset: assets/fonts/Montserrat-BoldItalic.ttf
+
     - family: okra_extrabold
       fonts:
         - asset: assets/fonts/okra_extrabold.ttf

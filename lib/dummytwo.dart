@@ -1,79 +1,122 @@
 import 'package:flutter/material.dart';
 
-class FaintContainerAndTextField extends StatefulWidget {
-  @override
-  _FaintContainerAndTextFieldState createState() =>
-      _FaintContainerAndTextFieldState();
+void main() {
+  runApp(dataaaaaa());
 }
 
-class _FaintContainerAndTextFieldState
-    extends State<FaintContainerAndTextField> {
-  String? selectedCategory;
+class dataaaaaa extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ZeptoToggleBar(),
+    );
+  }
+}
+
+class ZeptoToggleBar extends StatefulWidget {
+  @override
+  _ZeptoToggleBarState createState() => _ZeptoToggleBarState();
+}
+
+class _ZeptoToggleBarState extends State<ZeptoToggleBar> {
+  int selectedIndex = 0; // To track selected tab
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Container aur TextField Faint"),
+        elevation: 0,
+        backgroundColor: Colors.green[50],
+        title: const Text(
+          "Zepto",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Column(
         children: [
-          // Category Dropdown Selector
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: DropdownButton<String>(
-              value: selectedCategory,
-              hint: Text("Category Chunein"),
-              items: ["Category 1", "Category 2", "Category 3"]
-                  .map((category) => DropdownMenuItem<String>(
-                value: category,
-                child: Text(category),
-              ))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCategory = value;
-                });
-              },
+          // Top toggle bar container with buttons inside
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.redAccent,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
             ),
-          ),
-
-          // Faint Container
-          Opacity(
-            opacity: selectedCategory == null ? 0.5 : 1.0, // Faint effect
-            child: Container(
-              margin: EdgeInsets.all(16.0),
-              padding: EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Center(
-                child: Text(
-                  selectedCategory == null
-                      ? "Category select karein."
-                      : "Category selected: $selectedCategory",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround, // Align buttons to ends
+              children: [
+                // Zepto Button (Left aligned)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = 0;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 70, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: selectedIndex == 0 ? Colors.blue : Colors.transparent,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: Text(
+                      "Zepto",
+                      style: TextStyle(
+                        color: selectedIndex == 0 ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
+
+                // Zepto Super Saver Button (Right aligned)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = 1;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: selectedIndex == 1 ? Colors.blue : Colors.transparent,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: Text(
+                      "Zepto Super Saver",
+                      style: TextStyle(
+                        color: selectedIndex == 1 ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // Faint TextField
-          Opacity(
-            opacity: selectedCategory == null ? 0.5 : 1.0, // Faint effect
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                enabled: selectedCategory != null, // Disable if no category
-                decoration: InputDecoration(
-                  labelText: "Yaha Text Likhein",
-                  hintText: "Category ke bina enable nahi hoga",
-                  border: OutlineInputBorder(),
+          // Content based on selected tab
+          Expanded(
+            child: Container(
+              alignment: Alignment.center,
+              child: selectedIndex == 0
+                  ? Text(
+                "Zepto Content",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+                  : Text(
+                "Zepto Super Saver Content",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
