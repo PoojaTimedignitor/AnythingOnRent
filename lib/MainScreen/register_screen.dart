@@ -1897,9 +1897,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 
                 print(
-                    "phone number stored successfully: ${value['newUser']?['phoneNumber']}");
+                    "UserId stored successfully: ${value['newUser']?['_id']}");
                 GetStorage()
-                    .write(ConstantData.UserId, value['newUser']?['userId']);
+                    .write(ConstantData.UserId, value['newUser']?['_id']);
                 GetStorage()
                     .write(ConstantData.UserAccessToken, value['token']);
                 GetStorage()

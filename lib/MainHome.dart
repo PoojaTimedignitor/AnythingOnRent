@@ -13,6 +13,7 @@ import 'ConstantData/Constant_data.dart';
 import 'MyBehavior.dart';
 import 'package:anything/ResponseModule/getAllCatList.dart' as catData;
 import 'ResponseModule/getAllCatList.dart';
+import 'ResponseModule/getAllCatList.dart';
 import 'ResponseModule/getAllProductList.dart';
 import 'SearchCatagries.dart';
 import 'SideBar/My Collection.dart';
@@ -24,7 +25,6 @@ import 'SideBar/chat.dart';
 import 'addProductService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
-import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:carousel_slider/carousel_slider.dart' as cs;
 
 import 'package:get_storage/get_storage.dart';
@@ -38,8 +38,8 @@ class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
   bool isSearchExpanded = false;
-  List<catData.Data> filteredItems = [];
-  List<catData.Data> items = [];
+  List<catData.CategoryData> filteredItems = [];
+  List<catData.CategoryData> items = [];
   final cs.CarouselSliderController _controller = cs.CarouselSliderController();
 
   bool isLoading = true;
@@ -131,7 +131,7 @@ class MainHomeState extends State<MainHome>
 
       var jsonList = GetAllCategoriesList.fromJson(response);
       setState(() {
-        items = jsonList.data?.take(10).toList() ?? [];
+        items = jsonList.categoryData?.take(10).toList() ?? [];
         filteredItems = List.from(items);
         isLoading = false;
       });
@@ -1600,8 +1600,8 @@ class MainHomeState extends State<MainHome>
                            decoration: BoxDecoration(
                              gradient: selectedIndex != 1
                                  ? LinearGradient(
-                               colors:[  Color(0xff624ffa),
-                               Color(0xffffc7fb)],
+                               colors:[  Color(0xff1371f6),
+                               Color(0xffb8a1ff)],
                                begin: Alignment.topRight,
                                end: Alignment.bottomLeft,
                              )
@@ -1637,8 +1637,8 @@ class MainHomeState extends State<MainHome>
                            decoration: BoxDecoration(
                              gradient: selectedIndex == 1
                                  ? LinearGradient(
-                               colors:[  Color(0xff624ffa),
-                                 Color(0xffffc7fb)],
+                               colors:[   Color(0xff1371f6),
+                                 Color(0xffb8a1ff)],
                                begin: Alignment.topRight,
                                end: Alignment.bottomLeft,
                              )

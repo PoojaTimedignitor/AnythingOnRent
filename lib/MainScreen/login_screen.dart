@@ -375,12 +375,12 @@ class _LoginScreenState extends State<LoginScreen> {
           }
 
           if (value['success'] == true) {
-            print("UserId: ${ value['user']?['userId']}");
+            print("UserId: ${ value['user']?['_id']}");
 
             print(
                 "toekn: ${value['token']}");
             GetStorage()
-                .write(ConstantData.UserId, value['user']?['userId']);
+                .write(ConstantData.UserId, value['user']?['_id']);
             GetStorage()
                 .write(ConstantData.UserAccessToken, value['token']);
             GetStorage()

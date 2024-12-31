@@ -6,6 +6,7 @@ import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 
 import 'MyBehavior.dart';
+
 import 'model/dio_client.dart';
 
 class CatagriesList extends StatefulWidget {
@@ -20,7 +21,7 @@ class CatagriesList extends StatefulWidget {
 }
 
 class _CatagriesListState extends State<CatagriesList> {
-  List<Data> items = [];
+  List<CategoryData> items = [];
 
   final List<String> catagriesImage = [
     'assets/images/fashion.png',
@@ -41,7 +42,7 @@ class _CatagriesListState extends State<CatagriesList> {
     'assets/images/other.png',
   ];
 
-  List<Data> filteredItems = [];
+  List<CategoryData> filteredItems = [];
 
   bool isLoading = true;
   bool isSearchingData = false;
@@ -57,7 +58,7 @@ class _CatagriesListState extends State<CatagriesList> {
       Map<String, dynamic> response = await ApiClients().getAllCat();
       var jsonList = GetAllCategoriesList.fromJson(response);
       setState(() {
-        items = jsonList.data ?? [];
+        items = jsonList.categoryData ?? [];
         filteredItems = List.from(items);
         isLoading = false;
       });

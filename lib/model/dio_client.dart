@@ -131,7 +131,7 @@ class ApiClients {
 
   Future<Map<String, dynamic>> getAllCat() async {
     String url =
-        ApiConstant().BaseUrlGetAllCat + ApiConstant().getAllCatagries;
+        ApiConstant().BaseUrlGetAllCats + ApiConstant().getAllCatagries;
 
     String? sessionToken =
         GetStorage().read<String>(ConstantData.UserAccessToken);
@@ -361,7 +361,7 @@ class ApiClients {
       'user': userId,
       'suggest': suggest,
     });
-    print("data....> $sessionToken");
+    print("data....>>>> $userId");
     try {
       Response response = await _dio.post<Map<String, dynamic>>(
         url,
