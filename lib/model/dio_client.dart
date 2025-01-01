@@ -158,7 +158,7 @@ class ApiClients {
 
 
   Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
-    String url = "${ApiConstant().BaseUrlGetAllCat}${ApiConstant().getAllSubCatagries(categoryId)}";
+    String url = "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().getAllSubCatagries(categoryId)}";
     print("Constructed URL: $url");
 
     String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);

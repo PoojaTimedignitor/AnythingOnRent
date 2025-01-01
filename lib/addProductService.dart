@@ -109,8 +109,8 @@ class _CreateProductServiceState extends State<CreateProductService>
     });
   }
 
-  List<subCatData.Data> SubCat = [];
-  List<subCatData.Data> filteredSubCat = [];
+  List<subCatData.SubCategoryData> SubCat = [];
+  List<subCatData.SubCategoryData> filteredSubCat = [];
 
   void fetchSubCategories(String categoryId) async {
     setState(() {
@@ -119,9 +119,9 @@ class _CreateProductServiceState extends State<CreateProductService>
     try {
       Map<String, dynamic> response =
           await ApiClients().getAllSubCat(categoryId);
-      var jsonList = getSubCategories.fromJson(response);
+      var jsonList = GetSubCategories.fromJson(response);
       setState(() {
-        SubCat = jsonList.data ?? [];
+        SubCat = jsonList.subCategoryData ?? [];
         filteredSubCat = List.from(SubCat);
         isLoading = false;
       });
@@ -2198,7 +2198,6 @@ border: Border.all(color: Color(0xffFE7F64),width: 0.5),
                                                     15,),
                                                   child: TextFormField(
                                                       textAlign: TextAlign.start,
-
                                                       // focusNode: _productNameFocus,
                                                       keyboardType: TextInputType.number,
                                                       controller: sellController,
@@ -2315,8 +2314,10 @@ border: Border.all(color: Color(0xffFE7F64),width: 0.5),
                                       begin: Alignment.topRight,
                                       end: Alignment.bottomLeft,
                                       colors: [
-                                        Color(0xffC0B5E8),
-                                        Color(0xff9584D6),
+                                        Color(0xff8664ff),
+                                        Color(0xff8664ff),
+                                        Color(0xffe8b5c4),
+
                                       ],
                                     ),
                                     /*   border: Border.all(
@@ -2329,7 +2330,7 @@ border: Border.all(color: Color(0xffFE7F64),width: 0.5),
                                       child: Text(
                                     "Add Product",
                                     style: TextStyle(
-                                        color: Colors.black,
+                                        color: Colors.white,
                                         fontWeight: FontWeight.w700,
                                         fontFamily: 'Roboto-Regular',
                                         fontSize:

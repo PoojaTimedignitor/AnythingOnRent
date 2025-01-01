@@ -6,6 +6,7 @@ import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Admin/UserFeedback.dart';
+import 'Admin/helpCentre.dart';
 import 'City_Create.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
@@ -704,10 +705,10 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      /* Navigator.push(
+                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AppImprov()));*/
+                              builder: (context) => HelpCenter()));
                     },
                     child: Wrap(
                       spacing: 12,
@@ -871,7 +872,7 @@ class MainHomeState extends State<MainHome>
                             image: AssetImage(
                                 'assets/images/dashtwo.png'), // Replace with your image path
                             fit: BoxFit
-                                .cover, // You can use BoxFit.cover, BoxFit.fill, etc. based on your need
+                                .cover,
                           ),
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),

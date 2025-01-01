@@ -20,16 +20,16 @@ class _ddddState extends State<dddd> {
 
   bool isLoading = true;
 
-  List<Data> SubCat = [];
-  List<Data> filteredSubCat = [];
+  List<GetSubCategories> SubCat = [];
+  List<GetSubCategories> filteredSubCat = [];
 
   void fetchSubCategories(String categoryId) async {
     try {
       Map<String, dynamic> response = await ApiClients().getAllSubCat(categoryId);
 
-      var jsonList = getSubCategories.fromJson(response);
+      var jsonList = GetSubCategories.fromJson(response);
       setState(() {
-        SubCat = jsonList.data ?? [];
+        SubCat = jsonList.subCategoryData ?? [];
         filteredSubCat = List.from(SubCat);
         isLoading = false;
       });

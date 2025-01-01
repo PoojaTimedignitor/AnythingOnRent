@@ -1,49 +1,80 @@
-class getSubCategories {
+class GetSubCategories {
   bool? success;
   String? message;
-  List<Data>? data;
+  List<SubCategoryData>? subCategoryData;
 
-  getSubCategories({this.success, this.message, this.data});
+  GetSubCategories({this.success, this.message, this.subCategoryData});
 
-  getSubCategories.fromJson(Map<String, dynamic> json) {
+  GetSubCategories.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+    if (json['subCategoryData'] != null) {
+      subCategoryData = <SubCategoryData>[];
+      json['subCategoryData'].forEach((v) {
+        subCategoryData!.add(SubCategoryData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    data['message'] = this.message;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    data['message'] = message;
+    if (subCategoryData != null) {
+      data['subCategoryData'] = subCategoryData!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Data {
+class SubCategoryData {
   String? sId;
   String? name;
+  String? slug;
+  String? parentCategory;
+  List<dynamic>? relatedSubCategories; // Updated to List<dynamic>
+  String? createdAt;
+  String? updatedAt;
+  int? iV;
 
-  Data({this.sId, this.name});
+  SubCategoryData(
+      {this.sId,
+        this.name,
+        this.slug,
+        this.parentCategory,
+        this.relatedSubCategories,
+        this.createdAt,
+        this.updatedAt,
+        this.iV});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  SubCategoryData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     name = json['name'];
+    slug = json['slug'];
+    parentCategory = json['parentCategory'];
+    if (json['relatedSubCategories'] != null) {
+      relatedSubCategories = <dynamic>[]; // Corrected initialization
+      json['relatedSubCategories'].forEach((v) {
+        relatedSubCategories!.add(v); // Simply add to the list
+      });
+    }
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['name'] = this.name;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = sId;
+    data['name'] = name;
+    data['slug'] = slug;
+    data['parentCategory'] = parentCategory;
+    if (relatedSubCategories != null) {
+      data['relatedSubCategories'] = relatedSubCategories!;
+    }
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['__v'] = iV;
     return data;
   }
 }
-
-

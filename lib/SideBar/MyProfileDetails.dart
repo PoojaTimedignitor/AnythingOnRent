@@ -67,7 +67,6 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       email = GetStorage().read(ConstantData.Useremail) ?? "Guest";
       profileImage = GetStorage().read(ConstantData.UserProfileImage);
 
-      // profileImage = GetStorage().read(ConstantData.UserProfileImage)?['image'] ;
     });
 
     nameController.text = firstname;
