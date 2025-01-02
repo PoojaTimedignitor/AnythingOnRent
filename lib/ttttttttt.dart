@@ -29,7 +29,8 @@ class _ddddState extends State<dddd> {
 
       var jsonList = GetSubCategories.fromJson(response);
       setState(() {
-        SubCat = jsonList.subCategoryData ?? [];
+       // SubCat = jsonList.subCategoryData ?? [];
+
         filteredSubCat = List.from(SubCat);
         isLoading = false;
       });
@@ -193,10 +194,11 @@ class _SuggestionTextFieldState extends State<SuggestionTextField> {
                               ),
                             ),
                             SizedBox(height: 10),
-                          /*  Container(
+  Container(
                               height: SizeConfig.screenHeight * 0.0005,
                               color: CommonColor.SearchBar,
-                            ),*/
+                            ),
+
                           ],
                         ),
                       );

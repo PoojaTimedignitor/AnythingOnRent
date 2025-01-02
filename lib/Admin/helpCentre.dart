@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
+import 'FAQ.dart';
 class HelpCenter extends StatefulWidget {
   const HelpCenter({super.key});
 
@@ -37,37 +38,45 @@ width: SizeConfig.screenHeight*0.5,
       color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(10))
 
-    ),child: Padding(
-      padding:  EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.help_outline, // Icon before the text
-            color: Colors.black,
-            size: 20,
-          ),
-          SizedBox(width: 8),
-          Text(
-            " Need Help? Contact Us",
-            style: TextStyle(
+    ),child: GestureDetector(
+    onTap: (){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => FAQ()),
+      );
+    },
+      child: Padding(
+        padding:  EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.help_outline, // Icon before the text
               color: Colors.black,
-              fontFamily: "okra_Medium",
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+              size: 20,
             ),
-          ),
-          Spacer(),
-          Icon(
-            Icons.arrow_forward_ios,
-            color: Colors.black,
-            size: 16,
-          ),
-        ],
-      )
+            SizedBox(width: 8),
+            Text(
+              " Need Help? Contact Us",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Spacer(),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.black,
+              size: 16,
+            ),
+          ],
+        )
 
-  ),
+        ),
+    ),
 
   ),
 ),
@@ -168,4 +177,11 @@ width: SizeConfig.screenHeight*0.5,
     ),
     );
   }
+
+
+
+
+
 }
+
+

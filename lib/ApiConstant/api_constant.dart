@@ -21,7 +21,7 @@ String getDisplayProductList = "/products";
 
 
 String AdminBaseUrl = "https://admin-fyu1.onrender.com/api/app";
-
+String AdminGetCatFAQ = "/faq/knowledge/category";
 String UserFeedback = "/app-improment";
 String BaseUrlCity = "https://rental-api-5vfa.onrender.com";
 String getCityUrl = "/city";
