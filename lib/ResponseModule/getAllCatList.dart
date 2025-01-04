@@ -32,7 +32,7 @@ class CategoryData {
   String? name;
   String? slug;
   String? desc;
-  Null? otherOption;
+  Null otherOption;
   String? createdAt;
   String? updatedAt;
   int? iV;

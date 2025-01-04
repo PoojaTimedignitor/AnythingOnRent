@@ -7,7 +7,7 @@ class ApiConstant {
   String registerss = "/reg";
   String login = "/login";
   String products = "/addproduct/jhdfs";
-  String getAllCatagries = "/categories";
+  String getAllCatagries = "/category123";
   String getAllSubCatagries(String categoryId) {
     return "/subcategories/$categoryId";
   }

@@ -519,7 +519,7 @@ class MainHomeState extends State<MainHome>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myfevorites()));
+                              builder: (context) => AddToCart()));
                     },
                     child: Wrap(
                       spacing: 13,
