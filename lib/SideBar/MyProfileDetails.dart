@@ -419,7 +419,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
               ),
               SizedBox(
                   width:
-                      10), // Spacer between the CircleAvatar and "Edit" button
+                      10),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -444,7 +444,6 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
                       child: Center(
-                        // Center the text inside the container
                         child: Text(
                           "Edit",
                           textAlign: TextAlign.center,

@@ -239,9 +239,9 @@ class _AddToCartState extends State<AddToCart> {
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 12),
+                        horizontal: 15, vertical: 15),
                     child: Container(
-                      height: 180,
+                      height: 160,
                       decoration: BoxDecoration(
                        // color: Color(0xfff8f8ff),
                         border: Border.all(  color: CommonColor.SearchBar,width: 0.3 ),
@@ -272,25 +272,25 @@ class _AddToCartState extends State<AddToCart> {
 
                                           Container(
 
-                                        width: parentWidth * 0.6,
-                                        height: 59,
+
+
                                         // Set width for each item
                                         margin: EdgeInsets.symmetric(horizontal: 10.0),
                                         decoration: BoxDecoration(
                                             gradient: LinearGradient(
                                               begin: Alignment.topLeft,
                                               end: Alignment.topRight,
-                                              colors: [Color(0xffeaeaea), Color(0xffffffff)],
+                                              colors: [Color(0xffededff), Color(0xffffffff)],
                                             ),
 
                                             borderRadius: BorderRadius.circular(10)),
                                             child: Padding(
-                                              padding:  EdgeInsets.only(left: 10),
+                                              padding:  EdgeInsets.only(left: 5),
                                               child: Column(
                                                 children: [
                                                   Padding(
                                                     padding:
-                                                    EdgeInsets.only(top: 5,left: 2),
+                                                    EdgeInsets.only(top: 8,left: 2),
                                                     child: Text(
                                                       filteredItems[index]
                                                           .name
@@ -381,6 +381,7 @@ class _AddToCartState extends State<AddToCart> {
                                                       },
                                                     ),
                                                   ),
+
                                                 ],
                                               ),
                                             )
@@ -391,12 +392,13 @@ class _AddToCartState extends State<AddToCart> {
 
                                           Padding(
                                             padding: EdgeInsets.only(
-                                                left: 4,top: 14),
+                                                left: 10,top: 15),
                                             child: Column(
                                               crossAxisAlignment:
                                               CrossAxisAlignment
-                                                  .start, // Align the entire column's content to the start
+                                                  .start,
                                               children: [
+
 
                                                 Row(
                                                   crossAxisAlignment:
@@ -445,7 +447,7 @@ class _AddToCartState extends State<AddToCart> {
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     Container(
-                                                      width:80,
+                                                      width:120,
                                                       child: Text(
                                                         "Honda Shine 125cc 2024 Model",
                                                         style: TextStyle(
@@ -500,7 +502,7 @@ class _AddToCartState extends State<AddToCart> {
                                     children: [
 
                                       Padding(
-                                        padding:  EdgeInsets.only(top: 75,right: 10),
+                                        padding:  EdgeInsets.only(top: 63,right: 10),
                                         child: Container(
 
                                           height: MediaQuery.of(context)
@@ -529,7 +531,7 @@ class _AddToCartState extends State<AddToCart> {
                                         ),
                                       ),
                                       Padding(
-                                        padding:  EdgeInsets.only(left: 60,top: 35),
+                                        padding:  EdgeInsets.only(left: 60,top: 67),
                                         child: Container(
                                           height: 26,
                                           width: 26,

@@ -1006,9 +1006,6 @@ class _CreateProductServiceState extends State<CreateProductService>
                                       decoration: BoxDecoration(
 
 border: Border.all(color: Color(0xffFE7F64),width: 0.5),
-                                        
-        
-
 
 
                                         borderRadius: BorderRadius.all(

@@ -13,6 +13,7 @@ import 'Common_File/common_color.dart';
 import 'ConstantData/Constant_data.dart';
 import 'MyBehavior.dart';
 import 'package:anything/ResponseModule/getAllCatList.dart' as catData;
+import 'ProductConfirmation.dart';
 import 'ResponseModule/getAllCatList.dart';
 import 'ResponseModule/getAllCatList.dart';
 import 'ResponseModule/getAllProductList.dart';
@@ -723,7 +724,7 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                              // the text of the row.
+
                               "Help",
                               style: TextStyle(
                                   fontSize:
@@ -739,10 +740,10 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      /* Navigator.push(
+                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));*/
+                              builder: (context) => ProductConfigurations()));
                     },
                     child: Wrap(
                       spacing: 09,
@@ -870,7 +871,7 @@ class MainHomeState extends State<MainHome>
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
-                                'assets/images/dashtwo.png'), // Replace with your image path
+                                'assets/images/dashtwo.png'),
                             fit: BoxFit
                                 .cover,
                           ),
@@ -895,7 +896,7 @@ class MainHomeState extends State<MainHome>
                                     Text(
                                       " Hi, $firstname",
                                       style: TextStyle(
-                                        fontSize: 15, // Adjusted for clarity
+                                        fontSize: 15,
                                         fontFamily: 'okra_extrabold',
                                         fontWeight: FontWeight.w400,
                                         color: Colors.black,
@@ -1021,6 +1022,7 @@ class MainHomeState extends State<MainHome>
                     child: getAddGameTabLayout(
                         SizeConfig.screenHeight, SizeConfig.screenWidth),
                   ),
+
 
                   /* Stack(
                     children: [

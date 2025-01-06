@@ -168,7 +168,7 @@ class _DetailScreenState extends State<DetailScreen>
 
                                       return GestureDetector(
                                         onTap: () {
-                                          // Show image in a dialog on tap
+
                                           showDialog(
                                             context: context,
                                             builder: (_) => Dialog(
@@ -346,9 +346,9 @@ class _DetailScreenState extends State<DetailScreen>
                           boxShadow: [
                             BoxShadow(
                               color:
-                                  Colors.black.withOpacity(0.1), // Shadow color
-                              blurRadius: 5, // Shadow blur
-                              offset: Offset(0, 2), // Shadow position (x, y)
+                                  Colors.black.withOpacity(0.1),
+                              blurRadius: 5,
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
@@ -373,7 +373,7 @@ class _DetailScreenState extends State<DetailScreen>
                           padding: const EdgeInsets.all(5),
                           child: Center(
                             child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
+
                                 children: [
                                   Icon(
                                     Icons.location_on,
@@ -422,7 +422,7 @@ class _DetailScreenState extends State<DetailScreen>
                                   ),
                                   Text(
                                     "4.5",
-                                    /* filteredItems[index].rating.toString(),*/
+
                                     style: TextStyle(
                                       fontFamily: "Roboto-Regular",
                                       fontSize:
@@ -656,18 +656,7 @@ class _DetailScreenState extends State<DetailScreen>
                                                 ),
 
 
-                                                /* Text("TO RENT",
-                                                    style: TextStyle(
-                                                      color: CommonColor.Black,
-                                                      fontFamily:
-                                                          "poppins_Regular",
-                                                      fontSize: SizeConfig
-                                                              .blockSizeHorizontal *
-                                                          2.6,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ))
-                                            */
+
                                               ),
                                             ),
                                           ],

@@ -243,7 +243,7 @@ class _MyCollectionState extends State<MyCollection> {
                               child: Container(
                                 height: 130,
                                 decoration: BoxDecoration(
-                                  color: Color(0xfff8f8ff),
+                                  color: Color(0xfffafaff),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Column(
@@ -320,7 +320,7 @@ class _MyCollectionState extends State<MyCollection> {
                                                               .Black,
                                                           fontFamily:
                                                               "okra_Medium",
-                                                          fontSize: 17,
+                                                          fontSize: 15,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                         ),
@@ -398,7 +398,7 @@ class _MyCollectionState extends State<MyCollection> {
                                                                           "okra_Medium",
                                                                       fontSize:
                                                                           SizeConfig.blockSizeHorizontal *
-                                                                              3.7,
+                                                                              3.4,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w400,
