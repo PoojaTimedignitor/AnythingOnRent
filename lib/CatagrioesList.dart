@@ -113,7 +113,7 @@ class _CatagriesListState extends State<CatagriesList> {
     return Center(
       child: Container(
         width: MediaQuery.of(context).size.width *
-            0.9, // Set the width of the bottom sheet
+            0.9,
         child: Padding(
           padding: EdgeInsets.only(top: parentheight * 0.03),
           child: Column(

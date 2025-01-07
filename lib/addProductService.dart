@@ -1384,7 +1384,8 @@ border: Border.all(color: Color(0xffFE7F64),width: 0.5),
                                                                     onTap: () =>
                                                                         Navigator.pop(
                                                                             context),
-                                                                    child: /*Container(
+                                                                    child:
+                                                                    /*Container(
 
                                                                           height: SizeConfig.screenHeight * 0.5,
                                                                           width: SizeConfig.screenWidth ,// 80% of the screen height
@@ -1697,7 +1698,7 @@ border: Border.all(color: Color(0xffFE7F64),width: 0.5),
                                 children: [
                                   SizedBox(height: 12),
                                   Text(
-                                    "    Current Product Adddress ",
+                                    "  Current Product Adddress ",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontFamily: "okra_Medium",

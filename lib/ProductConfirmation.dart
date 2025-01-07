@@ -104,7 +104,7 @@ backgroundColor: Colors.white,
                               child: Icon(Icons.arrow_back,
                                   color: Colors.black, size: 23)),
                           Text(
-                            "PRODUCT CONFIGURATION",
+                            "   PRODUCT CONFIGURATION",
                             style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 0.0,
@@ -327,9 +327,7 @@ backgroundColor: Colors.white,
 
 
                             width: SizeConfig.screenWidth * 0.90,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8)),
+
                             child: Padding(
                               padding:  EdgeInsets.all(11.0),
                               child: Text(
@@ -354,9 +352,7 @@ backgroundColor: Colors.white,
                           SizedBox(height: 5),
                           Container(
                             width: SizeConfig.screenWidth * 0.90,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8)),
+
                             child: Padding(
                               padding:  EdgeInsets.all(11.0),
                               child: Text(
@@ -471,9 +467,7 @@ backgroundColor: Colors.white,
                           SizedBox(height: 5),
                           Container(
                             width: SizeConfig.screenWidth * 0.90,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8)),
+
                             child: Padding(
                               padding:  EdgeInsets.all(11.0),
                               child: Text(
@@ -502,13 +496,11 @@ backgroundColor: Colors.white,
                           SizedBox(height: 5),
                           Container(
                             width: SizeConfig.screenWidth * 0.90,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8)),
+
                             child: Padding(
                               padding:  EdgeInsets.all(11.0),
                               child: Text(
-                                "Pune, Maharastra ",
+                                "Pune, Maharastra",
                                 style: TextStyle(
                                   color: CommonColor.grayText,
                                   fontFamily: "Montserrat-Medium",
@@ -534,9 +526,7 @@ backgroundColor: Colors.white,
                           SizedBox(height: 5),
                           Container(
                             width: SizeConfig.screenWidth * 0.90,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8)),
+
                             child: Padding(
                               padding:  EdgeInsets.all(11.0),
                               child: Text(
@@ -551,11 +541,11 @@ backgroundColor: Colors.white,
                             ),
                           ),
 
-                          SizedBox(height: 20),
+                          SizedBox(height: 6),
                           Row(
                             children: [
                               Text(
-                                "Total Quantity:",
+                                "Total Quantity  :",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -564,9 +554,7 @@ backgroundColor: Colors.white,
                               SizedBox(width: 10),
                               Container(
 
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8)),
+
                                 child: Padding(
                                   padding:  EdgeInsets.all(11.0),
                                   child: Text(
@@ -607,16 +595,16 @@ backgroundColor: Colors.white,
                                               offset: Offset(1,1)),
                                         ],
                                     gradient: LinearGradient(
+
                                       begin: Alignment.topRight,
                                       end: Alignment.bottomLeft,
                                       colors: [
-                                        Color(0xff8664ff),
-                                        Color(0xff8664ff),
+                                        Color(0xff9548fb),
+                                        Color(0xff9548fb),
 
                                       ],
                                     ),
-                                    /*   border: Border.all(
-                                                  width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
+
                                     borderRadius: const BorderRadius.all(
                                       Radius.circular(30),
                                     ),

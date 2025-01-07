@@ -174,7 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void resetSplashFlag() {
-    // Set the flag to false if it's there in GetStorage
     GetStorage().write('isFirstTimesss', false);
   }
 
@@ -193,9 +192,9 @@ class _MyHomePageState extends State<MyHomePage> {
       print("-----> $accessToken");
 
       if (accessToken.isEmpty) {
-        return Timer(duration, navigateParentPage); // Navigate to onboarding if token is empty
+        return Timer(duration, navigateParentPage);
       } else if (accessToken.isNotEmpty) {
-        return Timer(duration, navigateHomePage); // Navigate to home screen if token is not empty
+        return Timer(duration, navigateHomePage);
       }
     } catch (e) {
       print("Error: $e");

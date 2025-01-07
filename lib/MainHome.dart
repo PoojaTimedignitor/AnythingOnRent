@@ -504,7 +504,7 @@ class MainHomeState extends State<MainHome>
                           height: 22,
                         ),
                         Text(
-                            // the text of the row.
+
                             "My Collection",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
