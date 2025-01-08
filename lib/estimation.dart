@@ -235,8 +235,7 @@ class _EstimationState extends State<Estimation> {
   }
 }*/
 
-
-
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -250,19 +249,32 @@ class Estimation extends StatefulWidget {
   State<Estimation> createState() => _EstimationState();
 }
 
-class _EstimationState extends State<Estimation> {
+class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
   bool _startAnimation = false;
+  late AnimationController _controllerzoom;
+
   @override
+  void dispose() {
+    _controllerzoom.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
-
+    _controllerzoom = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+      lowerBound: 1.0,
+      upperBound: 1.07,
+    )..repeat(reverse: true);
     Future.delayed(Duration(milliseconds: 300), () {
       setState(() {
         _startAnimation = true;
       });
     });
   }
+
   int currentIndex = 0;
 
   final List<String> Price = [
@@ -277,10 +289,11 @@ class _EstimationState extends State<Estimation> {
     "/Per Week",
     "/Per Month"
   ];
-  bool isDropdownOpenRent = false;
+  bool isDropdown32Days = false;
+  bool isDropdown54Days = false;
 
-  bool isSelectedRent = false;
-
+  bool isSelected32Days = false;
+  bool isSelected54Days = false;
 
   final List<String> images = [
     'https://img.freepik.com/free-psd/shoes-sale-social-media-post-square-banner-template-design_505751-2862.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
@@ -291,10 +304,6 @@ class _EstimationState extends State<Estimation> {
   ];
   @override
   Widget build(BuildContext context) {
-
-
-
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: ListView(
@@ -312,48 +321,45 @@ class _EstimationState extends State<Estimation> {
   Widget ProductBigView(double parentWidth, double parentHeight) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return  SingleChildScrollView(
+    return SingleChildScrollView(
       child: SizedBox(
-
-        height: MediaQuery.of(context).size.height *1.6,
+        height: MediaQuery.of(context).size.height * 1.6,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
-
             AnimatedPositioned(
-
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut,
-              top: _startAnimation ? 0 : - screenHeight * 0.4,
+              top: _startAnimation ? 0 : -screenHeight * 0.4,
               left: 0,
               right: 0,
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.28,
+                height: MediaQuery.of(context).size.height * 0.32,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  color: Color(0xffF3F5FF),
-                  border: Border.all(color: Colors.grey, width: 0.5),
-                  borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(70.0),
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/estione.png'),
+                    fit: BoxFit.cover,
                   ),
-                ),child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-
-                    Padding(
-                      padding: EdgeInsets.only(left: 8, top: 35),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Icon(Icons.arrow_back,
-                                  color: Colors.black, size: 23)),
-                          Text(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 8, top: 35),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Icon(Icons.arrow_back,
+                                    color: Colors.black, size: 23)),
+                            /* Text(
                             "ESTIMATION",
                             style: TextStyle(
                               color: Colors.black,
@@ -364,12 +370,12 @@ class _EstimationState extends State<Estimation> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Image(image: AssetImage('assets/images/more.png'),height:13,color: Colors.transparent)
-                        ],
+                          Image(image: AssetImage('assets/images/more.png'),height:13,color: Colors.transparent)*/
+                          ],
+                        ),
                       ),
-                    ),
 
-                    Row(
+                      /*    Row(
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
@@ -438,9 +444,9 @@ class _EstimationState extends State<Estimation> {
                           ],
                         ),
                       ],
-                    ),
+                    ),*/
 
-                    Padding(
+                      /* Padding(
                       padding:  EdgeInsets.only(right: 2),
                       child: Padding(
                         padding:  EdgeInsets.all(14.0),
@@ -457,15 +463,13 @@ class _EstimationState extends State<Estimation> {
                           ),
                         ),
                       ),
-                    ),
-
-                  ],
+                    ),*/
+                    ],
+                  ),
                 ),
               ),
-              ),
-
             ),
-            Padding(
+            /*  Padding(
               padding:  EdgeInsets.only(left: 10,top: 150),
               child:   AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
@@ -480,9 +484,9 @@ class _EstimationState extends State<Estimation> {
                   child: Image(image: AssetImage('assets/images/estimation.png'),height: 100),
                 ),
               ),
-            ),
+            ),*/
             AnimatedPositioned(
-            /*  duration: Duration(milliseconds: 700),
+              /*  duration: Duration(milliseconds: 700),
               curve: Curves.easeInOut,
               right: _startAnimation ? 0 : -MediaQuery.of(context).size.width,
               top: 310,*/
@@ -492,501 +496,476 @@ class _EstimationState extends State<Estimation> {
               bottom: _startAnimation ? 0 : -screenHeight * 0.5,
               left: 0,
               right: 0,
-
               child: Container(
-                height: MediaQuery.of(context).size.height *1.23 ,
+                height: MediaQuery.of(context).size.height * 1.23,
                 width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Color(0xffF3F5FF),
-                  border: Border.all(color: Colors.grey, width: 0.5),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                  ),
-                ),child: Padding(
-                padding:  EdgeInsets.only(top: 20,right: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Stack(
                   children: [
-                    Padding(
-                      padding:  EdgeInsets.all(14.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-
-                          Text(
-                            "Total Product Details",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          Container(
-                            width: 353,
-                            height: 140,
+                    // Background image or gradient
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/glass.png'),
+                          fit: BoxFit.cover,
+                        ),
+                        border: Border.all(color: Colors.grey, width: 0.5),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(20.0), // Rounded corners
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(
+                              sigmaX: 10.0, sigmaY: 10.0), // Blur effect
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 1.23,
+                            width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(10))
+                              color: Colors.white
+                                  .withOpacity(0.2), // Semi-transparent white
+                              borderRadius: BorderRadius.circular(20.0),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 1.5,
+                              ),
                             ),
-
-                            child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment
-                                    .start, // Ensure text aligns at the top
+                            child: Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Padding(
-                                    padding:  EdgeInsets.only(top: 22,left: 5),
-                                    child: Container(
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .height *
-                                          0.12,
-                                      width: 130,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffffffff),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Container(
-                                        margin: EdgeInsets.all(4),
-
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            0.13,
-                                        child: Center(
-                                          child: ClipRRect(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/images/home.jpeg'),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-
-
-
-                                          ),
-                                        ),
-                                      ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    "UPGRADE TO PREMIUM",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: "okra_Bold",
+                                      color: Color(0xff1A1698),
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(width: 2),
+                                  SizedBox(height: 10),
                                   Padding(
-                                    padding:
-                                    EdgeInsets.only(top: 10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment
-                                          .start,
-
+                                    padding: EdgeInsets.only(left: 80),
+                                    child: Row(
                                       children: [
-                                        Padding(
-                                          padding:
-                                          EdgeInsets.only(left: parentWidth*0.20),
-                                          child: Text(
-                                            "Edit",
-                                            style: TextStyle(
-                                              color: Color(0xff3684F0),
-                                              fontFamily:
-                                              "okra_Medium",
-                                              fontSize: 15,
-                                              fontWeight:
-                                              FontWeight.w600,
-                                            ),
-                                            overflow: TextOverflow
-                                                .ellipsis,
-
+                                        Image(
+                                            image: AssetImage(
+                                                'assets/images/checkmark.png'),
+                                            height: 20),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Unlimated AI Generation",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "okra_Regular",
+                                            color: Colors.black,
                                           ),
                                         ),
-                                        Padding(
-                                          padding:
-                                          EdgeInsets.only(top: 7,left: 2),
-                                          child: Container(
-                                             width: 180,
-                                            child: Text(
-                                             "HD Camera (black & White)",
-                                              style: TextStyle(
-                                                color: CommonColor
-                                                    .Black,
-                                                fontFamily:
-                                                "okra_Medium",
-                                                fontSize: 15,
-                                                fontWeight:
-                                                FontWeight.w600,
-                                              ),
-                                              overflow: TextOverflow
-                                                  .ellipsis,
-                                            ),
-                                          ),
-                                        ),
-
-                                        Padding(
-                                          padding:  EdgeInsets.only(top: 7),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .start,
-                                            children: [
-                                              Icon(
-                                                Icons
-                                                    .location_on,
-                                                size: SizeConfig
-                                                    .screenHeight *
-                                                    0.017,
-                                                color: Color(
-                                                    0xff3684F0),
-                                              ),
-                                              Container(
-                                                width: 150,
-                                                child: Text(
-                                                  ' MG ROAD, PUNE',
-                                                  style:
-                                                  TextStyle(
-                                                    color: Color(
-                                                        0xff3684F0),
-                                                    fontFamily:
-                                                    "okra_Regular",
-                                                    fontSize:
-                                                    SizeConfig.blockSizeHorizontal *
-                                                        3.0,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .w400,
-                                                  ),
-                                                  overflow:
-                                                  TextOverflow
-                                                      .ellipsis,
-                                                  maxLines: 1,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                        Padding(
-                                          padding:  EdgeInsets.only(top: 3),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .start,
-                                            children: [
-                                              Icon(
-                                                Icons
-                                                    .phone,
-                                                size: SizeConfig
-                                                    .screenHeight *
-                                                    0.017,
-                                                color: CommonColor.grayText,
-                                              ),
-                                              Container(
-                                                width: 150,
-                                                child: Text(
-                                                  ' +919878765676',
-                                                  style:
-                                                  TextStyle(
-                                                    color: CommonColor.grayText,
-                                                    fontFamily: "Montserrat-Medium",
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                  overflow:
-                                                  TextOverflow
-                                                      .ellipsis,
-                                                  maxLines: 1,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-
                                       ],
                                     ),
                                   ),
-
-
-
-
-                                ]),
-                          ),
-
-
-                          SizedBox(height: 40),
-
-                          Container(
-                            height: parentHeight*0.5,
-                            width: parentWidth*0.43,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                              BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  blurRadius: 5,
-                                  spreadRadius: 1,
-                                  offset: Offset(1, 1)),
-                            ],
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
-
-                            ),child:  Column(
-                              children: [
-                                Padding(
-                                  padding:  EdgeInsets.only(top: 10),
-                                  child: Align(
-                                  alignment: Alignment.topCenter,
-                                    child: Text(
-                                    "CHOOSE TENURE FOR LISTENING",
-                                    style: TextStyle(
-                                        color: Color(0xfff44343),
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: 'Roboto-Regular',
-                                        fontSize:
-                                        SizeConfig.blockSizeHorizontal *
-                                            4.2),
+                                  SizedBox(height: 10),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 80),
+                                    child: Row(
+                                      children: [
+                                        Image(
+                                            image: AssetImage(
+                                                'assets/images/checkmark.png'),
+                                            height: 20),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Unlimated Pro Sketches",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "okra_Regular",
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 80),
+                                    child: Row(
+                                      children: [
+                                        Image(
+                                            image: AssetImage(
+                                                'assets/images/checkmark.png'),
+                                            height: 20),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Ads Free !",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "okra_Regular",
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 50),
+                                  AnimatedBuilder(
+                                    animation: _controllerzoom,
+                                    builder: (context, child) {
+                                      return Transform.scale(
+                                        scale: _controllerzoom.value,
+                                        child: child,
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 353,
+                                      height:
+                                      SizeConfig.screenHeight * 0.5,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Color(0xffFE7F64)
+                                                    .withOpacity(0.5),
+                                                blurRadius: 9,
+                                                spreadRadius: 0,
+                                                offset: Offset(0, 1)),
+                                          ],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: Column(children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 26,
+                                              left: 15,
+                                              right: 15,
+                                              bottom: 10),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topRight,
+                                                  end: Alignment.bottomLeft,
+                                                  colors: [
+                                                    Color(0xff8c59f8),
+                                                    Color(0xffc1a3fe),
+                                                  ],
+                                                ),
+                                                //   border: Border.all(width: 0.5, color: CommonColor.Black),
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            height:
+                                                SizeConfig.screenHeight * 0.065,
+                                            width:
+                                                SizeConfig.screenWidth * 0.94,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  isDropdown32Days =
+                                                      !isDropdown32Days;
+                                                  isSelected32Days =
+                                                      !isSelected32Days; // Toggle the selected state
+                                                });
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 20),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 13,
+                                                                vertical: 15),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Container(
+                                                              width: 20,
+                                                              height: 20,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                border:
+                                                                    Border.all(
+                                                                  color: Colors
+                                                                      .white, // Outer circle color
+                                                                  width: 02,
+                                                                ),
                                                               ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
+                                                              child: isSelected32Days ||
+                                                                      isDropdown32Days
+                                                                  ? Center(
+                                                                      child:
+                                                                          Container(
+                                                                        width:
+                                                                            10, // Inner circle size
+                                                                        height:
+                                                                            10,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          shape:
+                                                                              BoxShape.circle,
+                                                                          color:
+                                                                              Colors.white, // Inner circle color
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : null,
+                                                            ),
 
-                                        color: Color(0xffF3F5FF),
-                                        borderRadius: BorderRadius.circular(7)),
-                                    width: SizeConfig.screenWidth * 0.94,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isDropdownOpenRent =
-                                          !isDropdownOpenRent;
-                                          isSelectedRent =
-                                          !isSelectedRent; // Toggle the selected state
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 20),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 13,
-                                                    vertical: 10),
-                                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Container(
-                                                      width: 18,
-                                                      height: 18,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                          color: Color(
-                                                              0xff624ffa), // Outer circle color
-                                                          width: 01,
+                                                            Text(
+                                                              "32 Days",
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      "Montserrat-BoldItalic",
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16),
+                                                            ),
+                                                            SizedBox(width: 10),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      right:
+                                                                          15),
+                                                              child: Text(
+                                                                "48 INR",
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        "Montserrat-BoldItalic",
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        16),
+                                                              ),
+                                                            ),
+
+                                                            // Dropdown Icon
+                                                          ],
                                                         ),
                                                       ),
-                                                      child: isSelectedRent ||
-                                                          isDropdownOpenRent
-                                                          ? Center(
-                                                        child: Container(
-                                                          width:
-                                                          10, // Inner circle size
-                                                          height: 10,
-                                                          decoration:
-                                                          BoxDecoration(
-                                                            shape: BoxShape
-                                                                .circle,
-                                                            color: Color(
-                                                                0xff624ffa), // Inner circle color
-                                                          ),
-                                                        ),
-                                                      )
-                                                          : null,
-                                                    ),
-
-                                                    Text(
-                                                      "32 Days",
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                          "Montserrat-BoldItalic",
-                                                          color:
-                                                          Color(0xff624ffa),
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                   /* SizedBox(
-                                                        width:
-                                                        10),*/
-                                                    Padding(
-                                                      padding:  EdgeInsets.only(right: 12),
-                                                      child: Text(
-                                                        "48 INR",
-                                                        style: TextStyle(
-                                                            fontFamily:
-                                                            "Montserrat-BoldItalic",
-                                                            color:
-                                                            Color(0xff624ffa),
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-
-
-
-                                                    // Dropdown Icon
-
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 19,
+                                              left: 15,
+                                              right: 15,
+                                              bottom: 10),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topRight,
+                                                  end: Alignment.bottomLeft,
+                                                  colors: [
+                                                    Color(0xff7e43f4),
+                                                    Color(0xffc1a3fe),
+                                                  ],
+                                                ),
+                                                color: Color(0xffF3F5FF),
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            height:
+                                                SizeConfig.screenHeight * 0.065,
+                                            width:
+                                                SizeConfig.screenWidth * 0.94,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  isDropdown54Days =
+                                                      !isDropdown54Days;
+                                                  isSelected54Days =
+                                                      !isSelected54Days; // Toggle the selected state
+                                                });
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 20),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 13,
+                                                                vertical: 15),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Container(
+                                                              width: 20,
+                                                              height: 20,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                border:
+                                                                    Border.all(
+                                                                  color: Colors
+                                                                      .white, // Outer circle color
+                                                                  width: 02,
+                                                                ),
+                                                              ),
+                                                              child: isSelected54Days ||
+                                                                      isDropdown54Days
+                                                                  ? Center(
+                                                                      child:
+                                                                          Container(
+                                                                        width:
+                                                                            10, // Inner circle size
+                                                                        height:
+                                                                            10,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          shape:
+                                                                              BoxShape.circle,
+                                                                          color:
+                                                                              Colors.white, // Inner circle color
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : null,
+                                                            ),
 
+                                                            Text(
+                                                              "54 Days",
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      "Montserrat-BoldItalic",
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16),
+                                                            ),
+                                                            SizedBox(width: 10),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      right:
+                                                                          15),
+                                                              child: Text(
+                                                                "78 INR",
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        "Montserrat-BoldItalic",
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        16),
+                                                              ),
+                                                            ),
+
+                                                            // Dropdown Icon
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:  EdgeInsets.only(left: 20,top: 20),
+                                          child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              "Total Estimation",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "okra_Medium",
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:  EdgeInsets.only(left: 20,top: 10,right: 30),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("54 Days",
+                                                  style:  TextStyle(
+                                                    fontFamily: "Roboto_Regular",
+                                                    color: Color(0xff7D7B7B),
+                                                    fontSize:
+                                                    SizeConfig.blockSizeHorizontal *
+                                                        3.8,
+                                                  ),),
+
+
+                                              Text("\$78 INR",
+                                                style:  TextStyle(
+                                                  fontFamily:
+                                                  "Montserrat-BoldItalic",
+                                                  color: Colors.black,
+                                                  fontSize:
+                                                  SizeConfig.blockSizeHorizontal *
+                                                      3.8,
+                                                ),),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    ),
-
-
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-
-                                        color: Color(0xffF3F5FF),
-                                        borderRadius: BorderRadius.circular(7)),
-                                    width: SizeConfig.screenWidth * 0.94,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isDropdownOpenRent =
-                                          !isDropdownOpenRent;
-                                          isSelectedRent =
-                                          !isSelectedRent; // Toggle the selected state
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 20),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 13,
-                                                    vertical: 10),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Container(
-                                                      width: 18,
-                                                      height: 18,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                          color: Color(
-                                                              0xff624ffa), // Outer circle color
-                                                          width: 01,
-                                                        ),
-                                                      ),
-                                                      child: isSelectedRent ||
-                                                          isDropdownOpenRent
-                                                          ? Center(
-                                                        child: Container(
-                                                          width:
-                                                          10, // Inner circle size
-                                                          height: 10,
-                                                          decoration:
-                                                          BoxDecoration(
-                                                            shape: BoxShape
-                                                                .circle,
-                                                            color: Color(
-                                                                0xff624ffa), // Inner circle color
-                                                          ),
-                                                        ),
-                                                      )
-                                                          : null,
-                                                    ),
-
-                                                    Text(
-                                                      "32 Days",
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                          "Montserrat-BoldItalic",
-                                                          color:
-                                                          Color(0xff624ffa),
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14),
-                                                    ),
-                                                    /* SizedBox(
-                                                        width:
-                                                        10),*/
-                                                    Padding(
-                                                      padding:  EdgeInsets.only(right: 12),
-                                                      child: Text(
-                                                        "48 INR",
-                                                        style: TextStyle(
-                                                            fontFamily:
-                                                            "Montserrat-BoldItalic",
-                                                            color:
-                                                            Color(0xff624ffa),
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-
-
-
-                                                    // Dropdown Icon
-
-                                                  ],
-                                                ),
-                                              ),
-
-                                            ],
+                                        SizedBox(height: 5),
+                                        Padding(
+                                          padding: const EdgeInsets.all(11.0),
+                                          child: Container(
+                                            height: SizeConfig.screenHeight * 0.0005,
+                                            color: CommonColor.SearchBar,
                                           ),
                                         ),
-                                      ),
+                                      ]),
                                     ),
-
-
-                                  ),
-                                ),
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-
-
-
-                        ],
+                        ),
                       ),
                     ),
-
                   ],
                 ),
-              ),
               ),
             ),
           ],
         ),
       ),
     );
-
-
   }
 }

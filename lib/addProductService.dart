@@ -1260,353 +1260,350 @@ border: Border.all(color: Color(0xffFE7F64),width: 0.5),
                           ),
                         ),
                         SizedBox(height: 27),
-                        Opacity(
-                          opacity: selectedCategory == null ? 0.3 : 1.0,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              height: SizeConfig.screenHeight * 0.24,
-                              width: SizeConfig.screenWidth * 0.94,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: 12),
-                                  Text(
-                                    "    Add Product Images",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "okra_Medium",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)),
+                            height: SizeConfig.screenHeight * 0.24,
+                            width: SizeConfig.screenWidth * 0.94,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 12),
+                                Text(
+                                  "    Add Product Images",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                  if (selectedCategory != null)
-                                    Row(children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(top: 13, left: 20),
-                                        child: Container(
-                                          width: parentWidth * 0.36,
-                                          child: DottedBorder(
-                                            borderType: BorderType.RRect,
-                                            radius: Radius.circular(10),
-                                            color: CommonColor.Blue,
-                                            strokeWidth: 1,
-                                            dashPattern: [4, 5],
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                _pickImagesFromGallery();
-                                              },
-                                              child: Container(
-                                                height: parentHeight * 0.14,
-                                                width: double.infinity,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: parentHeight *
-                                                              0.01),
-                                                      child: Image(
-                                                        image: AssetImage(
-                                                            'assets/images/uploadpic.png'),
-                                                        height:
-                                                            parentHeight * 0.04,
-                                                      ),
+                                ),
+                                if (selectedCategory != null)
+                                  Row(children: [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 13, left: 20),
+                                      child: Container(
+                                        width: parentWidth * 0.36,
+                                        child: DottedBorder(
+                                          borderType: BorderType.RRect,
+                                          radius: Radius.circular(10),
+                                          color: CommonColor.Blue,
+                                          strokeWidth: 1,
+                                          dashPattern: [4, 5],
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _pickImagesFromGallery();
+                                            },
+                                            child: Container(
+                                              height: parentHeight * 0.14,
+                                              width: double.infinity,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: parentHeight *
+                                                            0.01),
+                                                    child: Image(
+                                                      image: AssetImage(
+                                                          'assets/images/uploadpic.png'),
+                                                      height:
+                                                          parentHeight * 0.04,
                                                     ),
-                                                    SizedBox(height: 10),
-                                                    Container(
-                                                      height: 26,
-                                                      width: 100,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: CommonColor
-                                                                .Blue),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(7),
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          "Browser file",
-                                                          style: TextStyle(
-                                                            fontSize: SizeConfig
-                                                                    .blockSizeHorizontal *
-                                                                2.5,
-                                                            fontFamily:
-                                                                'Roboto_Regular',
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: CommonColor
-                                                                .Blue,
-                                                          ),
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  Container(
+                                                    height: 26,
+                                                    width: 100,
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: CommonColor
+                                                              .Blue),
+                                                      borderRadius:
+                                                          BorderRadius
+                                                              .circular(7),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Browser file",
+                                                        style: TextStyle(
+                                                          fontSize: SizeConfig
+                                                                  .blockSizeHorizontal *
+                                                              2.5,
+                                                          fontFamily:
+                                                              'Roboto_Regular',
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: CommonColor
+                                                              .Blue,
                                                         ),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      if (_selectedImages.isNotEmpty)
-                                        Stack(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                top: parentHeight * 0.018,
-                                                left: parentWidth * 0.05,
-                                              ),
-                                              child: Container(
-                                                height: 122,
-                                                width: 170,
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10)),
-                                                  child: AnotherCarousel(
-                                                    images: _selectedImages
-                                                        .map((image) {
-                                                      return GestureDetector(
-                                                        onTap: () {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (_) =>
-                                                                Dialog(
-                                                              child: Stack(
-                                                                children: [
-                                                                  GestureDetector(
-                                                                    onTap: () =>
-                                                                        Navigator.pop(
-                                                                            context),
-                                                                    child:
-                                                                    /*Container(
+                                    ),
+                                    if (_selectedImages.isNotEmpty)
+                                      Stack(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              top: parentHeight * 0.018,
+                                              left: parentWidth * 0.05,
+                                            ),
+                                            child: Container(
+                                              height: 122,
+                                              width: 170,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(10)),
+                                                child: AnotherCarousel(
+                                                  images: _selectedImages
+                                                      .map((image) {
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (_) =>
+                                                              Dialog(
+                                                            child: Stack(
+                                                              children: [
+                                                                GestureDetector(
+                                                                  onTap: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                  child:
+                                                                  /*Container(
 
-                                                                          height: SizeConfig.screenHeight * 0.5,
-                                                                          width: SizeConfig.screenWidth ,// 80% of the screen height
+                                                                        height: SizeConfig.screenHeight * 0.5,
+                                                                        width: SizeConfig.screenWidth ,// 80% of the screen height
 
-                                                                          decoration: BoxDecoration(
+                                                                        decoration: BoxDecoration(
+                                                                          color: Colors.transparent,
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(12),
+                                                                          image: DecorationImage(
+                                                                            image: FileImage(image),
+                                                                            fit: BoxFit.cover,
+                                                                          ),
+                                                                        ),
+                                                                      ),*/
+
+                                                                      SizedBox(
+                                                                    height:
+                                                                        SizeConfig.screenHeight *
+                                                                            0.5,
+                                                                    child: PageView
+                                                                        .builder(
+                                                                      controller:
+                                                                          _pageController,
+                                                                      itemCount:
+                                                                          _selectedImages.length,
+                                                                      onPageChanged:
+                                                                          (index) {
+                                                                        setState(
+                                                                            () {
+                                                                          currentIndex =
+                                                                              index;
+                                                                        });
+                                                                      },
+                                                                      itemBuilder:
+                                                                          (context,
+                                                                              index) {
+                                                                        return Container(
+                                                                          height:
+                                                                              SizeConfig.screenHeight * 0.5,
+                                                                          width:
+                                                                              SizeConfig.screenWidth, // 80% of the screen height
+                                                                          decoration:
+                                                                              BoxDecoration(
                                                                             color: Colors.transparent,
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(12),
+                                                                            borderRadius: BorderRadius.circular(12),
                                                                             image: DecorationImage(
-                                                                              image: FileImage(image),
+                                                                              image: FileImage(_selectedImages[index]),
                                                                               fit: BoxFit.cover,
                                                                             ),
                                                                           ),
-                                                                        ),*/
-
-                                                                        SizedBox(
-                                                                      height:
-                                                                          SizeConfig.screenHeight *
-                                                                              0.5,
-                                                                      child: PageView
-                                                                          .builder(
-                                                                        controller:
-                                                                            _pageController,
-                                                                        itemCount:
-                                                                            _selectedImages.length,
-                                                                        onPageChanged:
-                                                                            (index) {
-                                                                          setState(
-                                                                              () {
-                                                                            currentIndex =
-                                                                                index;
-                                                                          });
-                                                                        },
-                                                                        itemBuilder:
-                                                                            (context,
-                                                                                index) {
-                                                                          return Container(
-                                                                            height:
-                                                                                SizeConfig.screenHeight * 0.5,
-                                                                            width:
-                                                                                SizeConfig.screenWidth, // 80% of the screen height
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              color: Colors.transparent,
-                                                                              borderRadius: BorderRadius.circular(12),
-                                                                              image: DecorationImage(
-                                                                                image: FileImage(_selectedImages[index]),
-                                                                                fit: BoxFit.cover,
-                                                                              ),
-                                                                            ),
-                                                                          );
-                                                                        },
-                                                                      ),
+                                                                        );
+                                                                      },
                                                                     ),
                                                                   ),
+                                                                ),
 
-                                                                  if (currentIndex >
-                                                                      0)
-                                                                    Positioned(
-                                                                      top: 180,
-                                                                      left: 10,
-                                                                      child:
-                                                                          Container(
-                                                                        decoration: BoxDecoration(
-                                                                            color:
-                                                                                Colors.black.withOpacity(0.5),
-                                                                            borderRadius: BorderRadius.circular(10)),
-                                                                        child:
-                                                                            IconButton(
-                                                                          icon: Icon(
-                                                                              Icons.arrow_back,
-                                                                              color: Colors.white,
-                                                                              size: 30),
-                                                                          onPressed:
-                                                                              () {
-                                                                            if (currentIndex >
-                                                                                0) {
-                                                                              setState(() {
-                                                                                currentIndex--;
-                                                                              });
-                                                                              _pageController.animateToPage(
-                                                                                currentIndex,
-                                                                                duration: Duration(milliseconds: 300),
-                                                                                curve: Curves.easeInOut,
-                                                                              );
-                                                                            }
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  // Forward Arrow
-                                                                  if (currentIndex <
-                                                                      _selectedImages
-                                                                              .length -
-                                                                          1)
-                                                                    Positioned(
-                                                                      top: 180,
-                                                                      right: 10,
-                                                                      child:
-                                                                          Container(
-                                                                        decoration: BoxDecoration(
-                                                                            color:
-                                                                                Colors.black.withOpacity(0.5),
-                                                                            borderRadius: BorderRadius.circular(10)),
-                                                                        child:
-                                                                            IconButton(
-                                                                          icon: Icon(
-                                                                              Icons.arrow_forward,
-                                                                              color: Colors.white,
-                                                                              size: 30),
-                                                                          onPressed:
-                                                                              () {
-                                                                            if (currentIndex <
-                                                                                _selectedImages.length - 1) {
-                                                                              setState(() {
-                                                                                currentIndex++;
-                                                                              });
-                                                                              _pageController.animateToPage(
-                                                                                currentIndex,
-                                                                                duration: Duration(milliseconds: 300),
-                                                                                curve: Curves.easeInOut,
-                                                                              );
-                                                                            }
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    ),
-
+                                                                if (currentIndex >
+                                                                    0)
                                                                   Positioned(
-                                                                    right: 16,
+                                                                    top: 180,
+                                                                    left: 10,
                                                                     child:
-                                                                        IconButton(
-                                                                      icon:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .close,
-                                                                        color: Colors
-                                                                            .white,
+                                                                        Container(
+                                                                      decoration: BoxDecoration(
+                                                                          color:
+                                                                              Colors.black.withOpacity(0.5),
+                                                                          borderRadius: BorderRadius.circular(10)),
+                                                                      child:
+                                                                          IconButton(
+                                                                        icon: Icon(
+                                                                            Icons.arrow_back,
+                                                                            color: Colors.white,
+                                                                            size: 30),
+                                                                        onPressed:
+                                                                            () {
+                                                                          if (currentIndex >
+                                                                              0) {
+                                                                            setState(() {
+                                                                              currentIndex--;
+                                                                            });
+                                                                            _pageController.animateToPage(
+                                                                              currentIndex,
+                                                                              duration: Duration(milliseconds: 300),
+                                                                              curve: Curves.easeInOut,
+                                                                            );
+                                                                          }
+                                                                        },
                                                                       ),
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(context),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                // Forward Arrow
+                                                                if (currentIndex <
+                                                                    _selectedImages
+                                                                            .length -
+                                                                        1)
+                                                                  Positioned(
+                                                                    top: 180,
+                                                                    right: 10,
+                                                                    child:
+                                                                        Container(
+                                                                      decoration: BoxDecoration(
+                                                                          color:
+                                                                              Colors.black.withOpacity(0.5),
+                                                                          borderRadius: BorderRadius.circular(10)),
+                                                                      child:
+                                                                          IconButton(
+                                                                        icon: Icon(
+                                                                            Icons.arrow_forward,
+                                                                            color: Colors.white,
+                                                                            size: 30),
+                                                                        onPressed:
+                                                                            () {
+                                                                          if (currentIndex <
+                                                                              _selectedImages.length - 1) {
+                                                                            setState(() {
+                                                                              currentIndex++;
+                                                                            });
+                                                                            _pageController.animateToPage(
+                                                                              currentIndex,
+                                                                              duration: Duration(milliseconds: 300),
+                                                                              curve: Curves.easeInOut,
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ),
+
+                                                                Positioned(
+                                                                  right: 16,
+                                                                  child:
+                                                                      IconButton(
+                                                                    icon:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .close,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    onPressed:
+                                                                        () =>
+                                                                            Navigator.pop(context),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                          );
-                                                        },
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10.0),
-                                                          child: Image.file(
-                                                            image,
-                                                            fit: BoxFit.cover,
-                                                            width:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
                                                           ),
+                                                        );
+                                                      },
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    10.0),
+                                                        child: Image.file(
+                                                          image,
+                                                          fit: BoxFit.cover,
+                                                          width:
+                                                              MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width,
                                                         ),
-                                                      );
-                                                    }).toList(),
-                                                    dotSize: 6,
-                                                    dotSpacing: 10,
-                                                    dotColor: Colors.white70,
-                                                    dotIncreasedColor:
-                                                        Colors.black45,
-                                                    indicatorBgPadding: 5.0,
-                                                  ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  dotSize: 6,
+                                                  dotSpacing: 10,
+                                                  dotColor: Colors.white70,
+                                                  dotIncreasedColor:
+                                                      Colors.black45,
+                                                  indicatorBgPadding: 5.0,
                                                 ),
                                               ),
                                             ),
-                                            GestureDetector(
-                                              onTap: () async {
-                                                int replaceIndex =
-                                                    await _getReplaceIndex();
-                                                if (replaceIndex != -1) {
-                                                  //_pickImageForReplacement(replaceIndex);
-                                                }
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: parentWidth * 0.17),
-                                                child: Container(
-                                                  height: parentHeight * 0.04,
-                                                  width: parentWidth * 0.22,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xffF5F6FB),
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5))),
-                                                  child: Center(
-                                                    child: Text(
-                                                      " Replace",
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            "okra_Medium",
-                                                        fontSize: SizeConfig
-                                                                .blockSizeHorizontal *
-                                                            3.1,
-                                                        color:
-                                                            Color(0xff3684F0),
-                                                        fontWeight:
-                                                            FontWeight.w200,
-                                                      ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              int replaceIndex =
+                                                  await _getReplaceIndex();
+                                              if (replaceIndex != -1) {
+                                                //_pickImageForReplacement(replaceIndex);
+                                              }
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: parentWidth * 0.17),
+                                              child: Container(
+                                                height: parentHeight * 0.04,
+                                                width: parentWidth * 0.22,
+                                                decoration: BoxDecoration(
+                                                    color: Color(0xffF5F6FB),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
+                                                child: Center(
+                                                  child: Text(
+                                                    " Replace",
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          "okra_Medium",
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          3.1,
+                                                      color:
+                                                          Color(0xff3684F0),
+                                                      fontWeight:
+                                                          FontWeight.w200,
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      SizedBox(width: 17),
-                                    ])
-                                ],
-                              ),
+                                          ),
+                                        ],
+                                      ),
+                                    SizedBox(width: 17),
+                                  ])
+                              ],
                             ),
                           ),
                         ),
