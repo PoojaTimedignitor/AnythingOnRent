@@ -241,6 +241,7 @@ import 'package:flutter/material.dart';
 
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
+import 'ProductConfirmation.dart';
 
 class Estimation extends StatefulWidget {
   const Estimation({super.key});
@@ -295,6 +296,8 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
   bool isSelected32Days = false;
   bool isSelected54Days = false;
 
+  String selectedOption = "";
+
   final List<String> images = [
     'https://img.freepik.com/free-psd/shoes-sale-social-media-post-square-banner-template-design_505751-2862.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/premium-vector/black-friday-sale-social-media-post-banner-home-appliance-product-instagram-post-banner-design_755018-930.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
@@ -309,7 +312,7 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
       body: ListView(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         children: [
           ProductBigView(MediaQuery.of(context).size.height,
               MediaQuery.of(context).size.width),
@@ -323,7 +326,7 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
     final screenHeight = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 1.6,
+        height: MediaQuery.of(context).size.height * 1.06,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
@@ -469,39 +472,17 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                 ),
               ),
             ),
-            /*  Padding(
-              padding:  EdgeInsets.only(left: 10,top: 150),
-              child:   AnimatedPositioned(
-                duration: Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                left: _startAnimation ? 0 : -MediaQuery.of(context).size.width,
-                child: Container(
-
-                  height: MediaQuery.of(context).size.height * 0.2,
-
-                  width: MediaQuery.of(context).size.width *0.25,
-
-                  child: Image(image: AssetImage('assets/images/estimation.png'),height: 100),
-                ),
-              ),
-            ),*/
             AnimatedPositioned(
-              /*  duration: Duration(milliseconds: 700),
-              curve: Curves.easeInOut,
-              right: _startAnimation ? 0 : -MediaQuery.of(context).size.width,
-              top: 310,*/
-
               duration: const Duration(milliseconds: 700),
               curve: Curves.easeInOut,
               bottom: _startAnimation ? 0 : -screenHeight * 0.5,
               left: 0,
               right: 0,
               child: Container(
-                height: MediaQuery.of(context).size.height * 1.23,
+                height: MediaQuery.of(context).size.height * 0.69,
                 width: MediaQuery.of(context).size.width,
                 child: Stack(
                   children: [
-                    // Background image or gradient
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -517,11 +498,9 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                     ),
                     Center(
                       child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(20.0), // Rounded corners
+                        borderRadius: BorderRadius.circular(20.0),
                         child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                              sigmaX: 10.0, sigmaY: 10.0), // Blur effect
+                          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                           child: Container(
                             height: MediaQuery.of(context).size.height * 1.23,
                             width: MediaQuery.of(context).size.width,
@@ -622,8 +601,7 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                                     },
                                     child: Container(
                                       width: 353,
-                                      height:
-                                      SizeConfig.screenHeight * 0.5,
+                                      height: SizeConfig.screenHeight * 0.32,
                                       decoration: BoxDecoration(
                                           color: Colors.white,
                                           boxShadow: [
@@ -637,270 +615,22 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10))),
                                       child: Column(children: [
+                                        SizedBox(height: 30),
+                                        buildOption("32 Days", "48 INR"),
+                                        SizedBox(height: 15),
+                                        buildOption("54 Days", "78 INR"),
+                                        SizedBox(height: 5),
                                         Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 26,
-                                              left: 15,
-                                              right: 15,
-                                              bottom: 10),
+                                          padding: const EdgeInsets.all(11.0),
                                           child: Container(
-                                            decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topRight,
-                                                  end: Alignment.bottomLeft,
-                                                  colors: [
-                                                    Color(0xff8c59f8),
-                                                    Color(0xffc1a3fe),
-                                                  ],
-                                                ),
-                                                //   border: Border.all(width: 0.5, color: CommonColor.Black),
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                            height:
-                                                SizeConfig.screenHeight * 0.065,
-                                            width:
-                                                SizeConfig.screenWidth * 0.94,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  isDropdown32Days =
-                                                      !isDropdown32Days;
-                                                  isSelected32Days =
-                                                      !isSelected32Days; // Toggle the selected state
-                                                });
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 20),
-                                                child: SingleChildScrollView(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 13,
-                                                                vertical: 15),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Container(
-                                                              width: 20,
-                                                              height: 20,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                border:
-                                                                    Border.all(
-                                                                  color: Colors
-                                                                      .white, // Outer circle color
-                                                                  width: 02,
-                                                                ),
-                                                              ),
-                                                              child: isSelected32Days ||
-                                                                      isDropdown32Days
-                                                                  ? Center(
-                                                                      child:
-                                                                          Container(
-                                                                        width:
-                                                                            10, // Inner circle size
-                                                                        height:
-                                                                            10,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          shape:
-                                                                              BoxShape.circle,
-                                                                          color:
-                                                                              Colors.white, // Inner circle color
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : null,
-                                                            ),
-
-                                                            Text(
-                                                              "32 Days",
-                                                              style: TextStyle(
-                                                                  fontFamily:
-                                                                      "Montserrat-BoldItalic",
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 16),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      right:
-                                                                          15),
-                                                              child: Text(
-                                                                "48 INR",
-                                                                style: TextStyle(
-                                                                    fontFamily:
-                                                                        "Montserrat-BoldItalic",
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        16),
-                                                              ),
-                                                            ),
-
-                                                            // Dropdown Icon
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
+                                            height: SizeConfig.screenHeight *
+                                                0.0005,
+                                            color: CommonColor.SearchBar,
                                           ),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              top: 19,
-                                              left: 15,
-                                              right: 15,
-                                              bottom: 10),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topRight,
-                                                  end: Alignment.bottomLeft,
-                                                  colors: [
-                                                    Color(0xff7e43f4),
-                                                    Color(0xffc1a3fe),
-                                                  ],
-                                                ),
-                                                color: Color(0xffF3F5FF),
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                            height:
-                                                SizeConfig.screenHeight * 0.065,
-                                            width:
-                                                SizeConfig.screenWidth * 0.94,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  isDropdown54Days =
-                                                      !isDropdown54Days;
-                                                  isSelected54Days =
-                                                      !isSelected54Days; // Toggle the selected state
-                                                });
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 20),
-                                                child: SingleChildScrollView(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 13,
-                                                                vertical: 15),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Container(
-                                                              width: 20,
-                                                              height: 20,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                border:
-                                                                    Border.all(
-                                                                  color: Colors
-                                                                      .white, // Outer circle color
-                                                                  width: 02,
-                                                                ),
-                                                              ),
-                                                              child: isSelected54Days ||
-                                                                      isDropdown54Days
-                                                                  ? Center(
-                                                                      child:
-                                                                          Container(
-                                                                        width:
-                                                                            10, // Inner circle size
-                                                                        height:
-                                                                            10,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          shape:
-                                                                              BoxShape.circle,
-                                                                          color:
-                                                                              Colors.white, // Inner circle color
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : null,
-                                                            ),
-
-                                                            Text(
-                                                              "54 Days",
-                                                              style: TextStyle(
-                                                                  fontFamily:
-                                                                      "Montserrat-BoldItalic",
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 16),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      right:
-                                                                          15),
-                                                              child: Text(
-                                                                "78 INR",
-                                                                style: TextStyle(
-                                                                    fontFamily:
-                                                                        "Montserrat-BoldItalic",
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        16),
-                                                              ),
-                                                            ),
-
-                                                            // Dropdown Icon
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:  EdgeInsets.only(left: 20,top: 20),
+                                              left: 20, top: 10),
                                           child: Align(
                                             alignment: Alignment.topLeft,
                                             child: Text(
@@ -915,38 +645,34 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                                           ),
                                         ),
                                         Padding(
-                                          padding:  EdgeInsets.only(left: 20,top: 10,right: 30),
+                                          padding: EdgeInsets.only(
+                                              left: 20, top: 10, right: 30),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text("54 Days",
-                                                  style:  TextStyle(
-                                                    fontFamily: "Roboto_Regular",
-                                                    color: Color(0xff7D7B7B),
-                                                    fontSize:
-                                                    SizeConfig.blockSizeHorizontal *
-                                                        3.8,
-                                                  ),),
-
-
-                                              Text("\$78 INR",
-                                                style:  TextStyle(
-                                                  fontFamily:
-                                                  "Montserrat-BoldItalic",
-                                                  color: Colors.black,
-                                                  fontSize:
-                                                  SizeConfig.blockSizeHorizontal *
+                                              Text(
+                                                "54 Days",
+                                                style: TextStyle(
+                                                  fontFamily: "Roboto_Regular",
+                                                  color: Color(0xff7D7B7B),
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
                                                       3.8,
-                                                ),),
+                                                ),
+                                              ),
+                                              Text(
+                                                "\$78 INR",
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      "Montserrat-BoldItalic",
+                                                  color: Colors.black,
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      3.8,
+                                                ),
+                                              ),
                                             ],
-                                          ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Padding(
-                                          padding: const EdgeInsets.all(11.0),
-                                          child: Container(
-                                            height: SizeConfig.screenHeight * 0.0005,
-                                            color: CommonColor.SearchBar,
                                           ),
                                         ),
                                       ]),
@@ -964,6 +690,290 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildOption(String option, String price) {
+    bool isSelected = selectedOption == option;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedOption = option; // Update the selected option
+        });
+        /* showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Selected Option"),
+              content: Text("You selected: $option"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: Text("OK"),
+                ),
+              ],
+            );
+          },
+        );*/
+
+        showDialog(
+          context: context,
+          builder: (
+            BuildContext context,
+          ) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              backgroundColor: Color(0xfff3e8ff),
+              title: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Text("Selected Plan",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "okra_Medium",
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
+                  Container(
+                      width: 300,
+                      padding: EdgeInsets.all(3),
+                      height: 100,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin:
+                          Alignment.topCenter,
+                          end: Alignment.topLeft,
+                          colors: [Colors.blue, Colors.white],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(13),
+                        ),
+                        child: Center(child: Text('Press')),
+                      )
+
+                      /* child: Text(
+                      " Are You Sure you want to Logout?",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Montserrat-Medium",
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),*/
+                      ),
+                  /*
+                  Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Text("Logout",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "okra_Medium",
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image(
+                        image: AssetImage('assets/images/logthree.png'),
+                        height: SizeConfig.screenHeight * 0.07,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height:
+                    SizeConfig.screenHeight * 0.03, // Adjust height as needed
+
+                    child: Text(
+                      " Are You Sure you want to Logout?",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Montserrat-Medium",
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+
+                           */ /* Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginScreen()),
+                                  (route) => false,
+                            );*/ /*
+                          //}
+                        },
+                        child: Padding(
+                          padding:
+                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                          child: Container(
+                            width: SizeConfig.screenWidth * 0.3,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  Color(0xffFEBA69),
+                                  Color(0xffFE7F64),
+                                ],
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Yes",
+                                style: TextStyle(
+                                    height: 2,
+                                    fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                    fontFamily: 'Roboto_Medium',
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Padding(
+                          padding:
+                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                          child: Container(
+                            width: SizeConfig.screenWidth * 0.3,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              // color: Colors.white,
+
+                              gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  Color(0xffFEBA69),
+                                  Color(0xffFE7F64),
+                                ],
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "No",
+                                style: TextStyle(
+                                    height: 2,
+                                    fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                    fontFamily: 'Roboto_Medium',
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),*/
+                ],
+              ),
+            );
+          },
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.only(left: 20, right: 20),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xffF3F5FF),
+            border: Border.all(
+                color: isSelected
+                    ? Color(0xff8d4fd6)
+                    : Colors.black.withOpacity(0.3),
+                width: 0.4),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected
+                              ? Color(0xff8d4fd6)
+                              : Colors.black, // Outer circle color
+                          width: 1,
+                        ),
+                      ),
+                      child: isSelected
+                          ? Center(
+                              child: Container(
+                                width: 10, // Inner circle size
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isSelected
+                                      ? Color(0xff8d4fd6)
+                                      : Colors.black,
+                                ),
+                              ),
+                            )
+                          : null,
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      option,
+                      style: TextStyle(
+                        fontFamily: "Montserrat-BoldItalic",
+                        color: isSelected ? Color(0xff8d4fd6) : Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 15),
+                      child: Text(
+                        price,
+                        style: TextStyle(
+                          fontFamily: "Montserrat-BoldItalic",
+                          color: isSelected ? Color(0xff8d4fd6) : Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

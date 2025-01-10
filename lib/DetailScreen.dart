@@ -8,7 +8,6 @@ import 'MyBehavior.dart';
 import 'ResponseModule/getAllProductList.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'dummytwo.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 import 'dart:ui' as ui;

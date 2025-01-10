@@ -143,14 +143,24 @@ flutter:
         - asset: assets/fonts/Poppins-Regular.ttf
 
 
+
+
+
+
     - family: Montserrat-Italic
       fonts:
         - asset: assets/fonts/Montserrat-Italic.ttf
 
 
+    - family: Roboto-Light
+      fonts:
+        - asset: assets/fonts/Roboto-Light.ttf
+
+
     - family: OkraRegular
       fonts:
         - asset: assets/fonts/okra_regular.ttf
+
 
     - family: okra_bold
       fonts:
