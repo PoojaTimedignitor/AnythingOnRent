@@ -237,11 +237,11 @@ class _EstimationState extends State<Estimation> {
 
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
-import 'ProductConfirmation.dart';
 
 class Estimation extends StatefulWidget {
   const Estimation({super.key});
@@ -297,13 +297,20 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
   bool isSelected54Days = false;
 
   String selectedOption = "";
+  String selectedOptionTotal = "";
 
   final List<String> images = [
+
+
+
     'https://img.freepik.com/free-psd/shoes-sale-social-media-post-square-banner-template-design_505751-2862.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/premium-vector/black-friday-sale-social-media-post-banner-home-appliance-product-instagram-post-banner-design_755018-930.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/free-vector/drink-ad-nature-pear-juice_52683-34246.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/premium-psd/ironing-machine-brand-product-social-media-banner_154386-123.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/free-vector/sports-drink-advertisement_52683-430.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
+
+
+
   ];
   @override
   Widget build(BuildContext context) {
@@ -315,13 +322,16 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
         physics: NeverScrollableScrollPhysics(),
         children: [
           ProductBigView(MediaQuery.of(context).size.height,
-              MediaQuery.of(context).size.width),
+              MediaQuery.of(context).size.width,"Days","78"),
         ],
       ),
     );
   }
 
-  Widget ProductBigView(double parentWidth, double parentHeight) {
+
+  Widget ProductBigView(double parentWidth, double parentHeight,String options, String prices) {
+    bool isSelectedTotal = selectedOptionTotal == options;
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
@@ -616,9 +626,9 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                                               Radius.circular(10))),
                                       child: Column(children: [
                                         SizedBox(height: 30),
-                                        buildOption("32 Days", "48 INR"),
+                                        buildOption("32 Days", "48"),
                                         SizedBox(height: 15),
-                                        buildOption("54 Days", "78 INR"),
+                                        buildOption("54 Days", "78"),
                                         SizedBox(height: 5),
                                         Padding(
                                           padding: const EdgeInsets.all(11.0),
@@ -651,8 +661,8 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                "54 Days",
+                                              isSelectedTotal?  Text(
+                                                "$options Days",
                                                 style: TextStyle(
                                                   fontFamily: "Roboto_Regular",
                                                   color: Color(0xff7D7B7B),
@@ -660,9 +670,12 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                                                           .blockSizeHorizontal *
                                                       3.8,
                                                 ),
+                                              ):Text(
+                                                "",
+
                                               ),
                                               Text(
-                                                "\$78 INR",
+                                                "₹$prices INR",
                                                 style: TextStyle(
                                                   fontFamily:
                                                       "Montserrat-BoldItalic",
@@ -724,180 +737,221 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
         showDialog(
           context: context,
           builder: (
-            BuildContext context,
-          ) {
-            return AlertDialog(
+              BuildContext context,
+              ) {
+            return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              backgroundColor: Color(0xfff3e8ff),
-              title: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 5),
-                    child: Text("Selected Plan",
+              child: Container(
+
+                decoration: BoxDecoration(
+                  color: Color(0xfff3e8ff),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Selected Plan",
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "okra_Medium",
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                        )),
-                  ),
-                  Container(
-                      width: 300,
-                      padding: EdgeInsets.all(3),
-                      height: 100,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin:
-                          Alignment.topCenter,
-                          end: Alignment.topLeft,
-                          colors: [Colors.blue, Colors.white],
                         ),
-                        borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Container(
+                      SizedBox(height: 15),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.90, // Inner container width
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(13),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Center(child: Text('Press')),
-                      )
-
-                      /* child: Text(
-                      " Are You Sure you want to Logout?",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Montserrat-Medium",
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),*/
-                      ),
-                  /*
-                  Padding(
-                    padding: EdgeInsets.only(top: 6),
-                    child: Text("Logout",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "okra_Medium",
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        )),
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image(
-                        image: AssetImage('assets/images/logthree.png'),
-                        height: SizeConfig.screenHeight * 0.07,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height:
-                    SizeConfig.screenHeight * 0.03, // Adjust height as needed
-
-                    child: Text(
-                      " Are You Sure you want to Logout?",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Montserrat-Medium",
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-
-                           */ /* Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()),
-                                  (route) => false,
-                            );*/ /*
-                          //}
-                        },
-                        child: Padding(
-                          padding:
-                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
-                          child: Container(
-                            width: SizeConfig.screenWidth * 0.3,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              gradient: LinearGradient(
-                                begin: Alignment.topRight,
-                                end: Alignment.bottomLeft,
-                                colors: [
-                                  Color(0xffFEBA69),
-                                  Color(0xffFE7F64),
-                                ],
-                              ),
+                        padding: EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.01),
+                                  child: Container(
+                                    height: 50,
+                                    width: MediaQuery.of(context).size.width * 0.63,
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text: "You have selected the",
+                                        style: TextStyle(
+                                          fontFamily: "Montserrat-Bold",
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: " $option",
+                                            style: TextStyle(
+                                              fontFamily: "Montserrat-Bold",
+                                              fontSize: 16,
+                                              color: Color(0xff8d4fd6),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: " plan",
+                                            style: TextStyle(
+                                              fontFamily: "Montserrat-Bold",
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: Center(
-                              child: Text(
-                                "Yes",
-                                style: TextStyle(
-                                    height: 2,
-                                    fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                    fontFamily: 'Roboto_Medium',
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black),
-                              ),
+                            SizedBox(height: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "1.",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        "You can make 2 products live under 1 subscription.",
+                                        style: TextStyle(
+                                          color: CommonColor.Black,
+                                          fontFamily: "Montserrat-Medium",
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "2.",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        "Additional benefits can be availed with premium subscriptions.",
+                                        style: TextStyle(
+                                          color: CommonColor.Black,
+                                          fontFamily: "Montserrat-Medium",
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "3.",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        "Upgrade to unlock more features.",
+                                        style: TextStyle(
+                                          color: CommonColor.Black,
+                                          fontFamily: "Montserrat-Medium",
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
+                          ],
                         ),
                       ),
+                      SizedBox(height: 15),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Estimation()));
                         },
-                        child: Padding(
-                          padding:
-                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                        child: Center(
                           child: Container(
-                            width: SizeConfig.screenWidth * 0.3,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              // color: Colors.white,
+                              width: SizeConfig.screenWidth * 0.75,
+                              height: SizeConfig.screenHeight * 0.05,
+                              decoration: BoxDecoration(
 
-                              gradient: LinearGradient(
-                                begin: Alignment.topRight,
-                                end: Alignment.bottomLeft,
-                                colors: [
-                                  Color(0xffFEBA69),
-                                  Color(0xffFE7F64),
-                                ],
+                                gradient: LinearGradient(
+
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [
+                                    Color(0xff8d4fd6),
+                                    Color(0xffbd6dd6)
+                                  ],
+                                ),
+
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
                               ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "No",
-                                style: TextStyle(
-                                    height: 2,
-                                    fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                    fontFamily: 'Roboto_Medium',
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black),
-                              ),
-                            ),
-                          ),
+                              child: Center(
+                                  child: Text(
+                                    " PAY ₹$price",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Roboto-Regular',
+                                        fontSize:
+                                        SizeConfig.blockSizeHorizontal *
+                                            4.5),
+                                  ))),
                         ),
                       ),
+                      SizedBox(height: 16),
+
                     ],
-                  ),*/
-                ],
+                  ),
+                ),
               ),
             );
           },
         );
+
       },
       child: Padding(
         padding: EdgeInsets.only(left: 20, right: 20),
@@ -960,7 +1014,7 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                     Padding(
                       padding: const EdgeInsets.only(right: 15),
                       child: Text(
-                        price,
+                        price + " INR",
                         style: TextStyle(
                           fontFamily: "Montserrat-BoldItalic",
                           color: isSelected ? Color(0xff8d4fd6) : Colors.black,
