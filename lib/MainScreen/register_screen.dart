@@ -15,6 +15,7 @@ import '../Common_File/SizeConfig.dart';
 import '../ConstantData/Constant_data.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../estimation.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -1826,121 +1827,69 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget RegisterButton(double parentWidth, double parentHeight) {
     return Column(
       children: [
+
         GestureDetector(
-          onTap: () {
-            if (passwordController.text != confirmPasswordController.text) {
-              print("Error: Password and Confirm Password do not match");
-              // You can also show a UI error message here
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Passwords do not match')));
-              return;
-            }
-            /*
-             if(mounted){
-                setState(() {
-                  isLoading = true;
-                });
-              }*/
-            if (formKey.currentState != null) {
-              final isValid = formKey.currentState!.validate();
-              if (!isValid) return;
-              // proceed with form submission or other logic
-            } else {
-              print("Form state is null");
-            }
+          onTap: () async {
+            setState(() {
+              isLoading = true; // Start loading indicator
+            });
 
-            /*else {*/
-            // print("Full Name: ${fullNameController.text}");
-            print("firstname: ${firstNameController.text}");
-            print("lastname: ${lastNameController.text}");
-            print("phoneNumber: ${mobileNumberController.text}");
-            print("email: ${emailController.text}");
-            print("password: ${passwordController.text}");
-            print("cpassword: ${confirmPasswordController.text}");
-          //  print("currentLocation: ${widget.lat}");
-            print("PermanentAdd: ${permanentAddressController.text}");
-            print("profileImage: ${_imageProfile}");
-            print("frountImage: ${_imageFront}");
-            print("backImage: ${_imageBack}");
-            ApiClients()
-                .registerDio(
-              // fullNameController.text,
-              firstNameController.text,
-              lastNameController.text,
-              mobileNumberController.text,
-              emailController.text,
-              passwordController.text,
-              confirmPasswordController.text,
-              _imageProfile,
-              _imageFront,
-              _imageBack,
-              permanentAddressController.text,
-             // widget.lat,
-            //  widget.long,
-            )
-                .then((value) {
-              //  if (value.isEmpty) return;
-              print(value['data']);
-              print("Loading: $isLoading");
-              if (mounted) {
-                setState(() {
-                  isLoading = false;
-                });
-              }
+            try {
+              var value = await ApiClients().registerDio(
+                firstNameController.text,
+                lastNameController.text,
+                mobileNumberController.text,
+                emailController.text,
+                passwordController.text,
+                confirmPasswordController.text,
+                _imageProfile,
+                _imageFront,
+                _imageBack,
+                permanentAddressController.text,
+              );
+              print("API Response: $value");
 
-              if (value['success'] == true) {
-                if (value['newUser']?['email'] != null) {}
-                //GetStorage().remov('selectedCity');
-
-                // Now navigate to city selection screen
-               // GetStorage().write('isFirstTime', false); // Mark user as not first time
-
-
-                print(
-                    "UserId stored successfully: ${value['newUser']?['_id']}");
+              if (value['message'] == 'User registered successfully') {
+                // Store the token for future use
+                String token = value['user']['generateToken'];
+                GetStorage().write(ConstantData.UserRegisterId, value['user']['id']);
                 GetStorage()
-                    .write(ConstantData.UserId, value['newUser']?['_id']);
+                    .write(ConstantData.UserAccessToken, value['user']['generateToken']);
                 GetStorage()
-                    .write(ConstantData.UserAccessToken, value['token']);
-                GetStorage()
-                    .write(ConstantData.Useremail, value['newUser']?['email']);
+                    .write(ConstantData.Useremail, value['user']['email']);
                 GetStorage()
                     .write(ConstantData.Userpassword, passwordController.text);
 
                 GetStorage().write(
                     ConstantData.UserCpassword, confirmPasswordController.text);
                 GetStorage().write(ConstantData.UserParmanentAddress,
-                    value['newUser']?['permanentAddress']);
+                    value['user']['permanentAddress']);
                 GetStorage().write(
-                    ConstantData.UserMobile, value['newUser']?['phoneNumber']);
+                    ConstantData.UserMobile, value['user']['phoneNumber']);
                 GetStorage().write(
-                    ConstantData.UserFirstName, value['newUser']?['firstName']);
+                    ConstantData.UserFirstName, value['user']['firstName']);
                 GetStorage().write(
-                    ConstantData.UserLastName, value['newUser']?['lastName']);
+                    ConstantData.UserLastName, value['user']['lastName']);
                 GetStorage().write(ConstantData.UserFrontImage,
-                    value['newUser']?['frontImages']);
+                    value['user']['frontImages']);
                 GetStorage().write(ConstantData.UserBackImage,
-                    value['newUser']?['backImages']);
+                    value['user']['backImages']);
                 GetStorage().write(ConstantData.UserProfileImage,
-                    value['newUser']?['profilePicture']?['url']);
+                    value['user']['profilePicture']);
 
-
-                String? selectedCity = GetStorage().read('selectedCity');
-
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => CreateCity()),
-                  );
-                }
-
-                if (mounted) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                }
-
-            });
-            // }
+                GetStorage()
+                    .write(ConstantData.UserAccessToken, value['user']['generateToken']);
+                // Navigate to the next screen
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateCity()),
+                );
+              }
+            }  finally {
+              setState(() {
+                isLoading = false; // Stop loading indicator
+              });
+            }
           },
           child: Padding(
             padding: EdgeInsets.only(
@@ -1948,40 +1897,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 left: parentWidth * 0.04,
                 right: parentWidth * 0.04),
             child: Container(
-                width: parentWidth * 0.77,
-                height: parentHeight * 0.13,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 5,
-                        spreadRadius: 1,
-                        offset: Offset(1, 1)),
+              width: parentWidth * 0.77,
+              height: parentHeight * 0.13,
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 5,
+                      spreadRadius: 1,
+                      offset: Offset(1, 1)),
+                ],
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Color(0xffFEBA69),
+                    Color(0xffFE7F64),
                   ],
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: [
-                      Color(0xffFEBA69),
-                      Color(0xffFE7F64),
-                    ],
-                  ),
-                  /*   border: Border.all(
-                      width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(30),
-                  ),
                 ),
-                child: Center(
-                    child: Text(
+                borderRadius: const BorderRadius.all(Radius.circular(30)),
+              ),
+              child: Center(
+                child: Text(
                   "Register",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontFamily: 'Roboto-Regular',
                       fontSize: SizeConfig.blockSizeHorizontal * 4.3),
-                ))),
+                ),
+              ),
+            ),
           ),
+
         ),
         SizedBox(height: 15),
         Row(
@@ -1996,27 +1944,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         fontFamily: 'Roboto-Regular',
                         fontSize: 15),
                     children: [
-                  TextSpan(
-                    text: " Login",
-                    style: TextStyle(
-                        color: CommonColor.Blue,
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline,
-                        fontFamily: 'Roboto-Regular',
-                        fontSize: 17),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        print("jdfbsdff");
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()),
-                        );
-                      },
-                  ),
-                ])),
+                      TextSpan(
+                        text: " Login",
+                        style: TextStyle(
+                            color: CommonColor.Blue,
+                            fontWeight: FontWeight.w500,
+                            decoration: TextDecoration.underline,
+                            fontFamily: 'Roboto-Regular',
+                            fontSize: 17),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            print("jdfbsdff");
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginScreen()),
+                            );
+                          },
+                      ),
+                    ])),
           ],
         )
+
+
       ],
     );
   }

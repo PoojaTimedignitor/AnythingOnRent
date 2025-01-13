@@ -188,6 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var duration = const Duration(seconds: 3); // Splash screen time duration
     try {
       String accessToken = GetStorage().read(ConstantData.UserAccessToken);
+      String accessTokens = GetStorage().read(ConstantData.UserRegisterToken);
 
       print("-----> $accessToken");
 

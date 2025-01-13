@@ -236,6 +236,7 @@ class _EstimationState extends State<Estimation> {
 }*/
 
 import 'dart:ui';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -263,18 +264,50 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
     _controllerzoom = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
       lowerBound: 1.0,
       upperBound: 1.07,
     )..repeat(reverse: true);
+
+
     Future.delayed(Duration(milliseconds: 300), () {
       setState(() {
         _startAnimation = true;
       });
     });
   }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+
+    print("response.paymentId ${response.paymentId}  ${response.data}");
+
+    orderPaymentId = response.paymentId.toString();
+
+    print("orderPaymentId ${orderPaymentId} ");
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // setSnackBars(response.message!, context);
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response.message!)
+        ));
+
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    print("EXTERNAL_WALLET: ${response.walletName!}");
+  }
+
+
+  final _razorpay = Razorpay();
+  String orderPaymentId = "";
 
   int currentIndex = 0;
 
@@ -297,6 +330,7 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
   bool isSelected54Days = false;
 
   String selectedOption = "";
+  String selectedPrice = "";
   String selectedOptionTotal = "";
 
   final List<String> images = [
@@ -322,15 +356,15 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
         physics: NeverScrollableScrollPhysics(),
         children: [
           ProductBigView(MediaQuery.of(context).size.height,
-              MediaQuery.of(context).size.width,"Days","78"),
+              MediaQuery.of(context).size.width),
         ],
       ),
     );
   }
 
 
-  Widget ProductBigView(double parentWidth, double parentHeight,String options, String prices) {
-    bool isSelectedTotal = selectedOptionTotal == options;
+  Widget ProductBigView(double parentWidth, double parentHeight) {
+
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -629,65 +663,10 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                                         buildOption("32 Days", "48"),
                                         SizedBox(height: 15),
                                         buildOption("54 Days", "78"),
-                                        SizedBox(height: 5),
-                                        Padding(
-                                          padding: const EdgeInsets.all(11.0),
-                                          child: Container(
-                                            height: SizeConfig.screenHeight *
-                                                0.0005,
-                                            color: CommonColor.SearchBar,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 20, top: 10),
-                                          child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              "Total Estimation",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontFamily: "okra_Medium",
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 20, top: 10, right: 30),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              isSelectedTotal?  Text(
-                                                "$options Days",
-                                                style: TextStyle(
-                                                  fontFamily: "Roboto_Regular",
-                                                  color: Color(0xff7D7B7B),
-                                                  fontSize: SizeConfig
-                                                          .blockSizeHorizontal *
-                                                      3.8,
-                                                ),
-                                              ):Text(
-                                                "",
+                                        buildTotalOption()
+                                     //   buildTotalOption("32 Days", "48"),
 
-                                              ),
-                                              Text(
-                                                "₹$prices INR",
-                                                style: TextStyle(
-                                                  fontFamily:
-                                                      "Montserrat-BoldItalic",
-                                                  color: Colors.black,
-                                                  fontSize: SizeConfig
-                                                          .blockSizeHorizontal *
-                                                      3.8,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+
                                       ]),
                                     ),
                                   )
@@ -716,23 +695,7 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
         setState(() {
           selectedOption = option; // Update the selected option
         });
-        /* showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("Selected Option"),
-              content: Text("You selected: $option"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: Text("OK"),
-                ),
-              ],
-            );
-          },
-        );*/
+
 
         showDialog(
           context: context,
@@ -904,10 +867,10 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
                       SizedBox(height: 15),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Estimation()));
+                          print("listAmounts ${price}");
+                         // razorpayPayment(double.parse(listAmounts[index]['amount'].toString()));
+                          razorpayPayment(double.parse(price));
+
                         },
                         child: Center(
                           child: Container(
@@ -1032,4 +995,161 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
       ),
     );
   }
+
+
+  Widget buildTotalOption() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 5),
+        Padding(
+          padding: const EdgeInsets.all(11.0),
+          child: Container(
+            height: SizeConfig.screenHeight *
+                0.0005,
+            color: CommonColor.SearchBar,
+          ),
+        ),
+        SizedBox(height: 10),
+        Text(
+          "Total Estimation",
+          style: TextStyle(
+            color: Colors.black,
+            fontFamily: "okra_Medium",
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                selectedOption ?? "No Option Selected",
+                style: TextStyle(
+                  fontFamily: "Roboto_Regular",
+                  color: Color(0xff7D7B7B),
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                selectedPrice != null ? "₹$selectedPrice INR" : "₹0 INR",
+                style: TextStyle(
+                  fontFamily: "Montserrat-BoldItalic",
+                  color: Colors.black,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+
+/*
+Widget buildTotalOption(String totalOption, String totalPrice){
+  bool isTotalSelected = selectedOption == totalOption;
+    return Column(
+      children: [
+        SizedBox(height: 5),
+        Padding(
+          padding: const EdgeInsets.all(11.0),
+          child: Container(
+            height: SizeConfig.screenHeight *
+                0.0005,
+            color: CommonColor.SearchBar,
+          ),
+        ),
+        Padding(
+
+
+          padding: EdgeInsets.only(
+              left: 20, top: 10),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              "Total Estimation",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+              left: 20, top: 10, right: 30),
+          child: Row(
+            mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
+            children: [
+              //  isSelectedTotal?
+
+              Text(
+                "$totalOption",
+                style: TextStyle(
+                  fontFamily: "Roboto_Regular",
+                  color: Color(0xff7D7B7B),
+                  fontSize: SizeConfig
+                      .blockSizeHorizontal *
+                      3.8,
+                ),
+              ),
+
+              */
+/*Text(
+                                                "",
+
+                                              ),*//*
+
+              Text(
+                "₹$totalPrice INR",
+                style: TextStyle(
+                  fontFamily:
+                  "Montserrat-BoldItalic",
+                  color: Colors.black,
+                  fontSize: SizeConfig
+                      .blockSizeHorizontal *
+                      3.8,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+}
+*/
+  razorpayPayment(double price) async {
+
+    double amt = price * 100;
+
+    var options = {
+      'key': "rzp_test_XXp6pYrKU2MgRN",
+      'amount': amt.toString(),
+      'name': 'Order Payment',
+      'prefill': {'contact': '', 'email': ''},
+      'description': "My Product Payment",
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
+      'external': {
+        'wallets': ['']
+      }
+    };
+    print("options  $options");
+    try {
+      _razorpay.open(
+        options,
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+
 }

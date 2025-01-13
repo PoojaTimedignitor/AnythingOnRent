@@ -1,110 +1,114 @@
-/*
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'apiImage.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-class SaveButtonExample extends StatefulWidget {
+class estimation extends StatefulWidget {
+  const estimation({super.key});
+
   @override
-  _SaveButtonExampleState createState() => _SaveButtonExampleState();
+  State<estimation> createState() => _estimationState();
 }
 
-class _SaveButtonExampleState extends State<SaveButtonExample> {
-  File? _frontImage;
-  bool isLoading = false;
+class _estimationState extends State<estimation> {
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile =
-    await picker.pickImage(source: ImageSource.gallery); // Gallery or Camera
-
-    if (pickedFile != null) {
-      setState(() {
-        _frontImage = File(pickedFile.path);
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
-  Future<void> _saveImage() async {
-    print("image   ${_frontImage}");
-    if (_frontImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an image before saving')),
-      );
-      return;
-    }
+  final _razorpay = Razorpay();
+  String orderPaymentId = "";
 
-    setState(() {
-      isLoading = true;
-    });
 
-    // Call API to upload the front image
-    ApiClients apiClient = ApiClients();
-    final response = await apiClient.uploadFrontImage(_frontImage!);
 
-    if (response.containsKey('success') && response['success'] == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Image uploaded successfully')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${response['error']}')),
-      );
-    }
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
 
-    setState(() {
-      isLoading = false;
-    });
+    print("response.paymentId ${response.paymentId}  ${response.data}");
+
+    orderPaymentId = response.paymentId.toString();
+
+    print("orderPaymentId ${orderPaymentId} ");
   }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // setSnackBars(response.message!, context);
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response.message!)
+        ));
+
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    print("EXTERNAL_WALLET: ${response.walletName!}");
+  }
+
+  List<Map<String, int>> listAmounts = [
+    {"amount": 48},
+    {"amount": 78}
+  ];
+
 
   @override
   Widget build(BuildContext context) {
-    return
-      Scaffold(
-        body:  Column(
-          children: [
-            GestureDetector(
-              onTap: _pickImage, // Pick image from gallery
-              child: _frontImage == null
-                  ? Container(
-                height: 150,
-                width: 150,
-                color: Colors.grey[300],
-                child: Icon(Icons.add_a_photo, size: 50),
-              )
-                  : Image.file(_frontImage!, height: 150, width: 150, fit: BoxFit.cover),
-            ),
-            SizedBox(height: 20),
-            GestureDetector(
-              onTap: _saveImage, // Save button action
-              child: Container(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xffFEBA69), Color(0xffFE7F64)],
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Center(
-                  child: isLoading
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                    "Save",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      body:  Container(
+        height: screenHeight,
+        child: ListView.builder(
+          itemCount: listAmounts.length,
+          itemBuilder: (context, index) {
+            final amount = listAmounts[index]['amount'];
+            return ListTile(
+              contentPadding: EdgeInsets.only(
+                  top:  screenHeight * 0.03,
+                  left: screenWidth * 0.1
               ),
-            ),
-          ],
-        )
+              title: GestureDetector(
+                onTap: (){
+                  print("listAmounts[index]['amount'] ${listAmounts[index]['amount']}");
+                  razorpayPayment(double.parse(listAmounts[index]['amount'].toString()));
+                },
+                child: Container(
+                    color: Colors.transparent,
+                    child: Text("Amount: $amount")),
+              ),
+            );
+          },
+        ),
+      ),
+
+    );
+  }
+
+  razorpayPayment(double price) async {
+
+    double amt = price * 100;
+
+    var options = {
+      'key': "rzp_test_XXp6pYrKU2MgRN",
+      'amount': amt.toString(),
+      'name': 'Order Payment',
+      'prefill': {'contact': '', 'email': ''},
+      'description': "My Project Recharge",
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
+      'external': {
+        'wallets': ['']
+      }
+    };
+    print("options  $options");
+    try {
+      _razorpay.open(
+        options,
       );
-
-
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
-*/
+
+//razorpay_flutter:

@@ -374,11 +374,12 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {});
           }
 
-          if (value['success'] == true) {
+       //   if (value['success'] == true) {
+          if (value['message'] == 'User Login successfully') {
             print("UserId: ${ value['user']?['_id']}");
 
             print(
-                "toekn: ${value['token']}");
+                "token: ${value['token']}");
             GetStorage()
                 .write(ConstantData.UserId, value['user']?['_id']);
             GetStorage()

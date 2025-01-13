@@ -11,22 +11,20 @@ class ApiClients {
   final Dio _dio = Dio();
 
   Future<Map<String, dynamic>> registerDio(
-    String firstName,
-    String lastName,
-    String phoneNumber,
-    String email,
-    String password,
-    String cpassword,
-    File? profilePicture,
-    File? frontImages,
-    File? backImages,
-    String permanentAddress,
-  ) async
-  {
+      String firstName,
+      String lastName,
+      String phoneNumber,
+      String email,
+      String password,
+      String cpassword,
+      File? profilePicture,
+      File? frontImages,
+      File? backImages,
+      String permanentAddress,
+      ) async {
     String url = ApiConstant().BaseUrl + ApiConstant().registerss;
 
-    String? sessionToken =
-        GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
     print("Session Token: $sessionToken");
 
     try {
@@ -42,7 +40,6 @@ class ApiClients {
           'profilePicture': await MultipartFile.fromFile(
             profilePicture.path,
             filename: profilePicture.path.split('/').last,
-
           ),
         if (frontImages != null)
           'frontImages': await MultipartFile.fromFile(
@@ -56,11 +53,10 @@ class ApiClients {
           ),
       });
 
-      // Debug: Print the URL and the form data
-      print("URL: $url");
+
+   print("URL: $url");
       print("FormData: $formData");
 
-      // Make the POST request
       Response response = await _dio.post<Map<String, dynamic>>(
         url,
         data: formData,
@@ -69,22 +65,17 @@ class ApiClients {
         ),
       );
 
-      // Debug: Print the response data
       print("Response: ${response.data}");
-      return response.data!;
+      return response.data ?? {'error': 'No response data'};
     } on DioError catch (e) {
       if (e.response != null) {
+        print("Dio Error Response: ${e.response!.statusCode}");
+        print("Dio Error Data: ${e.response!.data}");
+        print("Dio Error Headers: ${e.response!.headers}");
       } else {
         print("Dio Error Message: ${e.message}");
       }
-
-      // Handle error gracefully
-      return e.response?.data ?? {'error': 'Server error occurred'};
-    }
-    catch (e) {
-      // Catch any other errors
-      print("Error: $e");
-      return {'error': e.toString()};
+      return {'error': e.message};
     }
   }
 
@@ -98,10 +89,6 @@ class ApiClients {
         GetStorage().read<String>(ConstantData.UserAccessToken);
 
 
-   /* if (sessionToken == null) {
-      print("Error: Session Token is null!");
-      return {"success": false, "message": "User is not logged in."};
-    }*/
 
     print("Session Token: $sessionToken");
 
