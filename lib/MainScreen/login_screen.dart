@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import '../MainHome.dart';
+import 'forget_pass_OTP_verify.dart';
 import 'forget_password.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -355,78 +356,62 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget RegisterButton(double parentWidth, double parentHeight) {
     return GestureDetector(
       onTap: () {
+        setState(() {
+          isLoading = true; // Start loading indicator
+        });
         _validateAndShowTooltip();
 
-        // Password validation (ensure it's not empty and meets a minimum length requirement)
         if (emailController.text.isEmpty || passwordController.text.isEmpty) {
           print("Password must be at least 6 characters long");
           return;
         }
 
-        // Call login API if validation passes
         ApiClients()
             .loginDio(emailController.text, passwordController.text)
             .then((value) {
-          print(value['data']);
-          print("Response: $value");
+          if (value['message'] == 'Login successful.') {
+            print("UserId: ${value['user']['_id']}");
+            print("Token: ${value['token']}");
 
-          if (mounted) {
-            setState(() {});
-          }
+            try {
+              GetStorage().write(ConstantData.UserId, value['user']['_id']);
+              GetStorage()
+                  .write(ConstantData.UserAccessToken, value['user']['generateToken']);
+              /*GetStorage().write(
+                  ConstantData.UserAccessToken, value['user']['token']);
+              GetStorage().write(
+                  ConstantData.Useremail, value['user']['email']);
+              GetStorage().write(
+                  ConstantData.Userpassword, passwordController.text);
+              GetStorage().write(ConstantData.UserParmanentAddress,
+                  value['user']['permanentAddress']);
+              GetStorage().write(
+                  ConstantData.UserMobile, value['user']['phoneNumber']);
+              GetStorage().write(
+                  ConstantData.UserFirstName, value['user']['firstName']);
+              GetStorage().write(
+                  ConstantData.UserLastName, value['user']['lastName']);
+              GetStorage().write(
+                  ConstantData.UserFrontImage, value['user']['frontImages']);
+              GetStorage().write(
+                  ConstantData.UserBackImage, value['user']['backImages']);
+              GetStorage().write(ConstantData.UserProfileImage,
+                  value['user']['profilePicture']['url']);
+              GetStorage().write(
+                  ConstantData.Userlatitude, value['user']['latitude']);
+              GetStorage().write(
+                  ConstantData.Userlongitude, value['user']['longitude']);*/
+            } catch (e) {
+              print("Error in GetStorage writes: $e");
+            }
 
-       //   if (value['success'] == true) {
-          if (value['message'] == 'User Login successfully') {
-            print("UserId: ${ value['user']?['_id']}");
-
-            print(
-                "token: ${value['token']}");
-            GetStorage()
-                .write(ConstantData.UserId, value['user']?['_id']);
-            GetStorage()
-                .write(ConstantData.UserAccessToken, value['token']);
-            GetStorage()
-                .write(ConstantData.Useremail, value['user']?['email']);
-            GetStorage()
-                .write(ConstantData.Userpassword, passwordController.text);
-
-
-            GetStorage().write(ConstantData.UserParmanentAddress,
-                value['user']?['permanentAddress']);
-            GetStorage().write(
-                ConstantData.UserMobile, value['user']?['phoneNumber']);
-            GetStorage().write(
-                ConstantData.UserFirstName, value['user']?['firstName']);
-            GetStorage().write(
-                ConstantData.UserLastName, value['user']?['lastName']);
-            GetStorage().write(ConstantData.UserFrontImage,
-                value['user']?['frontImages']);
-            GetStorage().write(ConstantData.UserBackImage,
-                value['user']?['backImages']);
-            GetStorage().write(ConstantData.UserProfileImage,
-                value['user']?['profilePicture']?['url']);
-            GetStorage().write(
-                ConstantData.Userlatitude, value['user']?['latitude']);
-            GetStorage().write(
-                ConstantData.Userlongitude, value['user']?['longitude']);
-
-
-            // Store credentials in GetStorage
-
-           /* GetStorage().write(ConstantData.Useremail, value['user']?['email']);
-            GetStorage().write(ConstantData.UserId, value['user']?['userId']);
-            GetStorage().write(
-                ConstantData.Userpassword, passwordController.text);*/
-
-            // Navigate to the home screen upon successful login
-
-
-
-
-            Navigator.pushReplacement(context,
+            print("Navigating to MainHome...");
+            Navigator.pushReplacement(
+              context,
               MaterialPageRoute(builder: (context) => MainHome()),
             );
-          } else if (value['success'] == false) {
-            print("Email or password does not match");
+          } else {
+            print("Login failed: ${value['message']}");
           }
         }).catchError((error) {
           print("An error occurred: $error");

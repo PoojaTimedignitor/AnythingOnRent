@@ -144,6 +144,83 @@ class ApiClients {
   }
 
 
+
+  Future<Map<String, dynamic>> editUserProfile(
+      String userId,
+      String firstName,
+      String phoneNumber,
+      String email,
+      File? profilePicture,
+      ) async {
+    String url = "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().editUser(userId)}";
+    print("Constructed URL: $url");
+
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    if (sessionToken == null) {
+      print("Error: Authorization token is null.");
+      return {"message": "Authorization token missing"};
+    }
+    print("Authorization Token: $sessionToken");
+
+    try {
+      FormData formData = FormData.fromMap({
+        "firstName": firstName,
+        "phoneNumber": phoneNumber,
+        "email": email,
+        if (profilePicture != null)
+          "profilePicture": await MultipartFile.fromFile(
+            profilePicture.path,
+            filename: profilePicture.path.split('/').last,
+          ),
+      });
+
+      Response response = await _dio.put(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+        data: formData,
+      );
+
+      print("editUserProfileDataSC --> ${response.statusCode}");
+      print("editUserProfileData --> ${response.data}");
+      return response.data;
+    } on DioError catch (e) {
+      print("DioError: ${e.response}");
+      return e.response?.data ?? {"message": "An error occurred"};
+    }
+  }
+
+
+
+  Future<Map<String, dynamic>> getUserProfileData() async {
+    String url = ApiConstant().BaseUrl + ApiConstant().userProfile;
+
+    String? sessionToken =
+    GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("getUserProfileDataSC --> ${response.statusCode}");
+      print("getUserProfileData --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      return e.response!.data;
+    }
+  }
+
   Future<Map<String, dynamic>> getCatFAQ() async {
     String url =
         ApiConstant().AdminBaseUrl + ApiConstant().AdminGetCatFAQ;

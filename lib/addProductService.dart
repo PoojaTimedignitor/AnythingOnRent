@@ -946,10 +946,10 @@ class _CreateProductServiceState extends State<CreateProductService>
                                 SizedBox(height: 12),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
+                                   /* Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => StarAnimationExample()));
+                                            builder: (context) => StarAnimationExample()));*/
                                   },
                                   child: Text(
                                     "    SELECT CATAGORIES",

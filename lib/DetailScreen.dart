@@ -270,7 +270,7 @@ class _DetailScreenState extends State<DetailScreen>
                                     productImages.length > 5
                                         ? 5
                                         : productImages
-                                            .length, // Limit to 5 images
+                                            .length,
                                     (index) {
                                       return GestureDetector(
                                         onTap: () {

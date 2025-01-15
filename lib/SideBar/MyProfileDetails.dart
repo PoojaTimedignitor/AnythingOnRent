@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:anything/MainHome.dart';
+import 'package:anything/model/dio_client.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -8,6 +10,8 @@ import '../Common_File/common_color.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../ConstantData/Constant_data.dart';
+import '../MainScreen/forget_pass_OTP_verify.dart';
+import '../MyBehavior.dart';
 import '../dummyData.dart';
 
 class Myprofiledetails extends StatefulWidget {
@@ -210,6 +214,8 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
+
       appBar: AppBar(
         title: Text(
           "Profile Details",
@@ -224,7 +230,11 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       ),
       body: Stack(
         children: [
-          Column(
+          ListView(
+
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: NeverScrollableScrollPhysics(),
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 100),
@@ -289,7 +299,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                             image: DecorationImage(
                               image: AssetImage(
                                   "assets/images/anytwo.png"), // Replace with your image path
-                              // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+
                             ),
                           ),
                         ),
@@ -320,174 +330,180 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   }
 
   Widget AllDetalisContaine(double parentWidth, double parentHeight) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: SizeConfig.screenWidth * 0.33),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center, // Centers horizontally
-            crossAxisAlignment: CrossAxisAlignment.center, // Centers vertically
-            children: [
-              Stack(
-                children: [
-                  _image != null
-                      ? Padding(
-                          padding: EdgeInsets.only(top: parentHeight * 0.05),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.1), // Shadow color
-                                  blurRadius: 5, // Shadow blur
-                                  offset:
-                                      Offset(0, 2), // Shadow position (x, y)
-                                ),
-                              ],
-                            ),
-                            child: CircleAvatar(
-                              radius: 35.0,
-                              backgroundColor: Colors.white,
+    return ScrollConfiguration(
+      behavior: MyBehavior(),
+      child: ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+
+       // crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: SizeConfig.screenWidth * 0.33),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Stack(
+                  children: [
+                    _image != null
+                        ? Padding(
+                            padding: EdgeInsets.only(top: parentHeight * 0.05),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.1), // Shadow color
+                                    blurRadius: 5, // Shadow blur
+                                    offset:
+                                        Offset(0, 2), // Shadow position (x, y)
+                                  ),
+                                ],
+                              ),
                               child: CircleAvatar(
-                                radius: 32.0,
-                                backgroundColor: Colors.transparent,
-                                backgroundImage:FileImage(_image!)
-                                // Profile image
+                                radius: 35.0,
+                                backgroundColor: Colors.white,
+                                child: CircleAvatar(
+                                  radius: 32.0,
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage:FileImage(_image!)
+                                  // Profile image
+                                ),
+                              ),
+                            ),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.only(top: parentHeight * 0.05),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.1), // Shadow color
+                                    blurRadius: 5, // Shadow blur
+                                    offset:
+                                        Offset(0, 2), // Shadow position (x, y)
+                                  ),
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 35.0,
+                                backgroundColor: Colors.white,
+                                child: CircleAvatar(
+                                  radius: 32.0,
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: (profileImage != null &&
+                                          profileImage!.isNotEmpty)
+                                      ? NetworkImage(
+                                          profileImage!) // Display image from URL
+                                      : AssetImage('assets/images/profiless.png')
+                                          as ImageProvider,
+                                  // Profile image
+                                ),
                               ),
                             ),
                           ),
-                        )
-                      : Padding(
-                          padding: EdgeInsets.only(top: parentHeight * 0.05),
+                    if (isEditing)
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            _showGallaryDialogBox(context);
+                            // Handle camera icon tap here
+                            print("Camera Icon Tapped");
+                          },
                           child: Container(
                             decoration: BoxDecoration(
+                              color: Colors.blue,
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.1), // Shadow color
-                                  blurRadius: 5, // Shadow blur
-                                  offset:
-                                      Offset(0, 2), // Shadow position (x, y)
-                                ),
-                              ],
                             ),
-                            child: CircleAvatar(
-                              radius: 35.0,
-                              backgroundColor: Colors.white,
-                              child: CircleAvatar(
-                                radius: 32.0,
-                                backgroundColor: Colors.transparent,
-                                backgroundImage: (profileImage != null &&
-                                        profileImage!.isNotEmpty)
-                                    ? NetworkImage(
-                                        profileImage!) // Display image from URL
-                                    : AssetImage('assets/images/profiless.png')
-                                        as ImageProvider,
-                                // Profile image
-                              ),
+                            padding: EdgeInsets.all(6),
+                            child: Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 16,
                             ),
-                          ),
-                        ),
-                  if (isEditing)
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          _showGallaryDialogBox(context);
-                          // Handle camera icon tap here
-                          print("Camera Icon Tapped");
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                          ),
-                          padding: EdgeInsets.all(6),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 16,
                           ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-              SizedBox(
-                  width:
-                      10),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => UserProfileScreen()));
-                },
-                child: GestureDetector(
+                  ],
+                ),
+                SizedBox(
+                    width:
+                        10),
+                GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isEditing = !isEditing; // Toggle editing mode
-                    });
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserProfileScreen()));
                   },
-                  child: Padding(
-                    padding:
-                        EdgeInsets.only(left: SizeConfig.screenWidth * 0.1),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.045,
-                      width: MediaQuery.of(context).size.width * 0.22,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Edit",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Montserrat-Medium",
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isEditing = !isEditing; // Toggle editing mode
+                      });
+                    },
+                    child: Padding(
+                      padding:
+                          EdgeInsets.only(left: SizeConfig.screenWidth * 0.1),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.045,
+                        width: MediaQuery.of(context).size.width * 0.22,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Edit",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Montserrat-Medium",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 10),
-        Center(
-          child: Text("Listing ID:",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: 16,
-                letterSpacing: 0.9,
-                fontWeight: FontWeight.w600,
-              )),
-        ),
-        SizedBox(height: 5),
-        Center(
-          child: Text("AB2345",
-              style: TextStyle(
-                color: Color(0xff3684F0),
-                fontFamily: "okra_Regular",
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              )),
-        ),
-        SizedBox(height: 20),
-        isEditing
-            ? _buildEditForm(SizeConfig.screenHeight, SizeConfig.screenWidth)
-            : mainData(),
-      ],
+          SizedBox(height: 10),
+          Center(
+            child: Text("Listing ID:",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "okra_Medium",
+                  fontSize: 16,
+                  letterSpacing: 0.9,
+                  fontWeight: FontWeight.w600,
+                )),
+          ),
+          SizedBox(height: 5),
+          Center(
+            child: Text("AB2345",
+                style: TextStyle(
+                  color: Color(0xff3684F0),
+                  fontFamily: "okra_Regular",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                )),
+          ),
+          SizedBox(height: 20),
+          isEditing
+              ? _buildEditForm(SizeConfig.screenHeight, SizeConfig.screenWidth)
+              : mainData(),
+        ],
+      ),
     );
   }
 
@@ -746,7 +762,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                     left: parentWidth * 0.04,
                   ),
                   hintStyle: TextStyle(
-                    color: Colors.grey, // Hint text color
+                    color: Colors.grey,
                     fontFamily: "Montserrat-Medium",
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -776,11 +792,64 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
           GestureDetector(
             onTap: () {
               setState(() {
-                firstname = nameController.text;
+                isEditing = false;
+                isLoading = true;
+                ApiClients()
+                    .editUserProfile(
+                     nameController.text,
+                     phoneController.text,
+                     emailController.text,
+                  addressController.text,
+_image
+                    )
+                    .then((value) {
+                  /*if (value.containsKey("message") && value["message"] == "Authorization token missing") {
+                    print("User is not authorized. Redirect to login.");
+                    // Handle redirection or error notification
+                    return;
+                  }*/
+
+                  if (mounted) {
+                    setState(() => isLoading = false);
+                  }
+
+                  ApiClients().getUserProfileData().then((value) {
+                    if (value == null || !value.containsKey('user')) {
+                      print("Invalid user data received.");
+                      return;
+                    }
+                  ApiClients().getUserProfileData().then((value) {
+                    if (value.isEmpty) return;
+
+                    GetStorage()
+                        .write(ConstantData.UserId, value['user']['userId']);
+                    GetStorage().write(
+                        ConstantData.UserFirstName, value['user']['firstName']);
+                    GetStorage().write(
+                        ConstantData.UserMobile, value['user']['phoneNumber']);
+                    GetStorage().write(
+                        ConstantData.Useremail, value['user']['email']);
+
+                    GetStorage().write(ConstantData.UserProfileImage,
+                        value['user']['profilePicture']);
+
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => MainHome()),
+                    );
+                  });
+                  }).catchError((error) {
+                    print("Error during profile update: $error");
+                    setState(() => isLoading = false);
+                  });
+                },);
+
+               /* firstname = nameController.text;
                 phoneNumber = phoneController.text;
                 email = emailController.text;
                 address = addressController.text;
-                isEditing = false; // Exit edit mode
+                isEditing = false;*/ // Exit edit mode
               });
             },
             child: Padding(
@@ -805,8 +874,10 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                         Color(0xffFE7F64),
                       ],
                     ),
-                    /*   border: Border.all(
-                      width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
+
+
+
+
                     borderRadius: const BorderRadius.all(
                       Radius.circular(30),
                     ),

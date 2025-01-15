@@ -1850,8 +1850,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               print("API Response: $value");
 
               if (value['message'] == 'User registered successfully') {
-                // Store the token for future use
-                String token = value['user']['generateToken'];
+
+
                 GetStorage().write(ConstantData.UserRegisterId, value['user']['id']);
                 GetStorage()
                     .write(ConstantData.UserAccessToken, value['user']['generateToken']);

@@ -29,6 +29,23 @@ class _HelpCenterState extends State<HelpCenter> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20),
+        Container (
+          height: SizeConfig.screenHeight * 0.3,
+          width: SizeConfig.screenWidth,
+
+          child: Column(
+            children: [
+              Image(image: AssetImage('assets/images/ticket.png'), height: SizeConfig.screenHeight * 0.18),
+              SizedBox(height: 16),
+              Text("You havent't bought any tiket yet", style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+              ),)
+            ],
+          ),
+        ),
         Padding(
   padding: const EdgeInsets.all(13.0),
   child: Container(

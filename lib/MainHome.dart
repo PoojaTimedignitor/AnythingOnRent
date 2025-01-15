@@ -450,6 +450,7 @@ class MainHomeState extends State<MainHome>
                               ],
                             ),
                           ),
+
                         ],
                       ),
                     ),
@@ -878,7 +879,7 @@ class MainHomeState extends State<MainHome>
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.only(top: 40, left: 20),
+                          padding: EdgeInsets.only(top: 40, left: 10),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -929,6 +930,16 @@ class MainHomeState extends State<MainHome>
                                       ],
                                     ),
                                   ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 3,left: 110),
+                                child: const Image(
+                                  image: AssetImage(
+                                      'assets/images/notification.png'),
+                                  height: 20,
+
+
                                 ),
                               ),
                             ],
