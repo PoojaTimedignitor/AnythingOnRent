@@ -1,204 +1,94 @@
+import 'package:anything/Admin/supportPage.dart';
 import 'package:flutter/material.dart';
 
-import '../Common_File/SizeConfig.dart';
-import '../Common_File/common_color.dart';
+import 'ContactUs.dart';
 import 'FAQ.dart';
-class HelpCenter extends StatefulWidget {
-  const HelpCenter({super.key});
+
+
+
+class HelpCenterScreen extends StatefulWidget {
+  final int initialIndex;
+  HelpCenterScreen({this.initialIndex = 0});
 
   @override
-  State<HelpCenter> createState() => _HelpCenterState();
+  _HelpCenterScreenState createState() => _HelpCenterScreenState();
 }
-class _HelpCenterState extends State<HelpCenter> {
+
+class _HelpCenterScreenState extends State<HelpCenterScreen> {
+  late int _selectedIndex;
+
+  final List<Widget> _pages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+
+    _pages.addAll([
+      Supportpage(
+        onNeedHelpTap: () {
+          setState(() {
+            _selectedIndex = 1; // Switch to FAQsPage
+          });
+        },
+      ),
+      FAQ( onContactUsTap: () {
+        setState(() {
+          _selectedIndex = 2; // Switch to FAQsPage
+        });
+      },),
+      ContactUsPage(
+          onContactQuationTap:(){
+            setState(() {
+
+              _selectedIndex = 3;
+            });
+          }
+      ),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Color(0xffF5F6FB),
       appBar: AppBar(
         title: Text(
           "Help Center",
           style: TextStyle(
             fontFamily: "Montserrat-Medium",
-            fontSize: SizeConfig.blockSizeHorizontal * 4.5,
-            color: CommonColor.TextBlack,
+            fontSize: 16,
+            color: Colors.black,
             fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
-      ),body: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 20),
-        Container (
-          height: SizeConfig.screenHeight * 0.3,
-          width: SizeConfig.screenWidth,
+        backgroundColor: Colors.white,
+        elevation: 1,
+        iconTheme: IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            if (_selectedIndex > 0) {
 
-          child: Column(
-            children: [
-              Image(image: AssetImage('assets/images/ticket.png'), height: SizeConfig.screenHeight * 0.18),
-              SizedBox(height: 16),
-              Text("You havent't bought any tiket yet", style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-              ),)
-            ],
-          ),
+              setState(() {
+                _selectedIndex--;
+              });
+            } else {
+
+              Navigator.pop(context);
+            }
+          },
         ),
-        Padding(
-  padding: const EdgeInsets.all(13.0),
-  child: Container(
-    height: 40,
-width: SizeConfig.screenHeight*0.5,
-    decoration: BoxDecoration(
-      color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(10))
-
-    ),child: GestureDetector(
-    onTap: (){
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => FAQ()),
-      );
-    },
-      child: Padding(
-        padding:  EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.help_outline, // Icon before the text
-              color: Colors.black,
-              size: 20,
-            ),
-            SizedBox(width: 8),
-            Text(
-              " Need Help? Contact Us",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Spacer(),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.black,
-              size: 16,
-            ),
-          ],
-        )
-
+      ),
+      body:  AnimatedSwitcher(
+        duration: Duration(milliseconds: 300),
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: child,
         ),
-    ),
+        child: _pages[_selectedIndex],
+      ),
 
-  ),
-),
-        Padding(
-          padding: EdgeInsets.only(top: 4,left: 10,right: 10),
-          child: Container(
-            height: 40,
-            width: SizeConfig.screenHeight*0.5,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(10))
-
-            ),child: Padding(
-              padding:  EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.help_outline, // Icon before the text
-                    color: Colors.black,
-                    size: 20,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    " Terms and conditions",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "okra_Medium",
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black,
-                    size: 16,
-                  ),
-                ],
-              )
-
-          ),
-
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 14,left: 10,right: 10),
-          child: Container(
-            height: 40,
-            width: SizeConfig.screenHeight*0.5,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(10))
-
-            ),child: Padding(
-              padding:  EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.help_outline, // Icon before the text
-                    color: Colors.black,
-                    size: 20,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    " Privacy Policy",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "okra_Medium",
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black,
-                    size: 16,
-                  ),
-                ],
-              )
-
-          ),
-
-          ),
-        ),
-        SizedBox(height: 50),
-        Text("    ANYTHING ON RENT",  style: TextStyle(
-          fontFamily: "okra_extrabold",
-          fontSize: SizeConfig.blockSizeHorizontal * 5.5,
-          color: Color(0xffC6C6C6),
-          fontWeight: FontWeight.w600,
-        ))
-      ],
-    ),
     );
   }
-
-
-
-
-
 }
-
-

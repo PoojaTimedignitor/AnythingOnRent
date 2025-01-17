@@ -13,8 +13,8 @@ class CatagriesList extends StatefulWidget {
   final Function(String) onChanged;
   final String categoryId;
 
-
-  const CatagriesList({super.key, required this.onChanged, required this.categoryId});
+  const CatagriesList(
+      {super.key, required this.onChanged, required this.categoryId});
 
   @override
   State<CatagriesList> createState() => _CatagriesListState();
@@ -112,8 +112,7 @@ class _CatagriesListState extends State<CatagriesList> {
   Widget AllCatagriesList(double parentheight, double parentWidth) {
     return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width *
-            0.9,
+        width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: EdgeInsets.only(top: parentheight * 0.03),
           child: Column(
@@ -199,7 +198,6 @@ class _CatagriesListState extends State<CatagriesList> {
                           crossAxisSpacing: 11.0, // Space between columns
                           mainAxisSpacing: 1.0, // Space between rows
                           childAspectRatio: 1,
-
                         ),
                         itemCount: filteredItems.length,
                         // Total number of items
@@ -210,22 +208,23 @@ class _CatagriesListState extends State<CatagriesList> {
                           /* String categoryName = filteredItems[index];
                       int productCount = productCountList[categoryName] ?? 0;*/
                           return GestureDetector(
-    onTap: () {
-    String selectedCategoryId = filteredItems[index].sId.toString();
-    print("Selected Category ID: $selectedCategoryId");
+                            onTap: () {
+                              String selectedCategoryId =
+                                  filteredItems[index].sId.toString();
+                              print(
+                                  "Selected Category ID: $selectedCategoryId");
 
-    widget.onChanged(selectedCategoryId); // Pass categoryId to parent widget
-    Navigator.pop(context, filteredItems[index].name.toString());
-
+                              widget.onChanged(
+                                  selectedCategoryId); // Pass categoryId to parent widget
+                              Navigator.pop(context,
+                                  filteredItems[index].name.toString());
                             },
                             child: Container(
-
                               margin: EdgeInsets.only(
                                   left: 8.0,
                                   right: 5.0,
                                   top: 14.0,
                                   bottom: 10.0),
-
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius:
@@ -242,7 +241,6 @@ class _CatagriesListState extends State<CatagriesList> {
                                   Container(
                                     width: 120,
                                     margin: EdgeInsets.only(bottom: 5),
-
                                     child: Padding(
                                       padding: const EdgeInsets.all(5.0),
                                       child: Text(
@@ -297,10 +295,7 @@ class _CatagriesListState extends State<CatagriesList> {
                           )
                         ],
                       ),
-              )
-
-
-                  )
+              ))
             ],
           ),
         ),

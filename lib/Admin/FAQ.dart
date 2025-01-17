@@ -1,33 +1,42 @@
+import 'package:anything/ResponseModule/getCatFAQ.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:anything/ResponseModule/getCatFAQ.dart';
+import 'package:anything/ResponseModule/getCatFAQ.dart' as FAQs;
+import 'package:anything/ResponseModule/getIdByCatagories.dart' as Categories;
 
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import '../MyBehavior.dart';
+
+import '../ResponseModule/getCatFAQ.dart';
+
 import '../model/dio_client.dart';
 
 class FAQ extends StatefulWidget {
-  const FAQ({super.key});
+  final VoidCallback onContactUsTap;
+
+  const FAQ({super.key, required this.onContactUsTap});
 
   @override
   State<FAQ> createState() => _FAQState();
 }
 
 class _FAQState extends State<FAQ> {
-  List<Knowledgement> itemss = [];
-  List<Knowledgement>  filteredItemss = [];
+  List<Data> itemss = [];
+  List<Data> filteredItemss = [];
   bool isLoading = true;
-   bool isOpen = false;
+  bool isOpen = false;
+  String? selectedCategoryId;
 
 
-  void fetchCategories() async {
+  void fetchKnowledgement() async {
     try {
       Map<String, dynamic> response = await ApiClients().getCatFAQ();
 
-      var jsonList = getCatFaqResponse.fromJson(response);
+      var jsonList = getCatFaqResponse.fromJson(response); // Parse the response
+
       setState(() {
-        itemss = jsonList.knowledgement?.toList() ?? [];
+        itemss = jsonList.data?.toList() ?? [];
         filteredItemss = List.from(itemss);
         isLoading = false;
       });
@@ -35,13 +44,13 @@ class _FAQState extends State<FAQ> {
       setState(() {
         isLoading = false;
       });
-      print("Error fetching categories: $e");
+      print("Error fetching categories: $e"); // Log the error
     }
   }
 
   @override
   void initState() {
-    fetchCategories();
+    fetchKnowledgement();
     super.initState();
   }
 
@@ -49,18 +58,6 @@ class _FAQState extends State<FAQ> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffF5F6FB),
-      appBar: AppBar(
-        title: Text(
-          "Help Center",
-          style: TextStyle(
-            fontFamily: "Montserrat-Medium",
-            fontSize: SizeConfig.blockSizeHorizontal * 4.5,
-            color: CommonColor.TextBlack,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Column(
         children: [
           FAQQuations(SizeConfig.screenHeight, SizeConfig.screenWidth),
@@ -102,8 +99,8 @@ class _FAQState extends State<FAQ> {
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
-              maxLines: 2, // Limit to 2 lines
-              overflow: TextOverflow.ellipsis, // Add ellipsis if text overflows
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           SizedBox(height: 20),
@@ -119,7 +116,13 @@ class _FAQState extends State<FAQ> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        isOpen = !isOpen; // Toggle the dropdown state
+                        if (selectedCategoryId ==
+                            filteredItemss[index].category!.name) {
+                          selectedCategoryId = null;
+                        } else {
+                          selectedCategoryId =
+                              filteredItemss[index].category!.name;
+                        }
                       });
                     },
                     child: Container(
@@ -131,7 +134,6 @@ class _FAQState extends State<FAQ> {
                       ),
                       child: Column(
                         children: [
-                          // First container part (text and icon)
                           Padding(
                             padding: EdgeInsets.only(left: 2, right: 2),
                             child: Container(
@@ -140,30 +142,43 @@ class _FAQState extends State<FAQ> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        filteredItemss[index].name.toString(),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: "okra_Medium",
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
+                                      Container(
+                                        width: SizeConfig.screenHeight * 0.37,
+                                        child: Text(
+                                          filteredItemss[index]
+                                              .category!
+                                              .name
+                                              .toString(),
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: "okra_Medium",
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       Padding(
                                         padding: EdgeInsets.only(right: 10),
-                                        child: isOpen
+                                        child: selectedCategoryId ==
+                                                filteredItemss[index]
+                                                    .category!
+                                                    .name
                                             ? Image(
-                                          image: AssetImage('assets/images/minus.png'),
-                                          height: 15,
-                                          color: Color(0xfff44343),
-                                        )
+                                                image: AssetImage(
+                                                    'assets/images/minus.png'),
+                                                height: 15,
+                                                color: Color(0xfff44343),
+                                              )
                                             : Image(
-                                          image: AssetImage('assets/images/add.png'),
-                                          height: 15,
-                                          color: Color(0xfff44343),
-                                        ),
+                                                image: AssetImage(
+                                                    'assets/images/add.png'),
+                                                height: 15,
+                                                color: Color(0xfff44343),
+                                              ),
                                       ),
                                     ],
                                   ),
@@ -171,26 +186,50 @@ class _FAQState extends State<FAQ> {
                               ),
                             ),
                           ),
-                          // Second container part (details)
-                          if (isOpen)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                padding: EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                 filteredItemss[index].d.toString(),
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                  ),
+                          if (selectedCategoryId ==
+                              filteredItemss[index].category!.name)
+                            Container(
+
+                              margin: EdgeInsets.symmetric(vertical: 7.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                              child: Padding(
+                                padding:  EdgeInsets.only(left: 12,right: 10),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: filteredItemss[index].questions?.length ?? 0,
+                                  itemBuilder: (context, questionIndex) {
+                                    var question = filteredItemss[index].questions![questionIndex];
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: 8),
+                                        Text(
+                                          question.title.toString(),
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          question.description.toString(),
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               ),
-                            ),
+                            )
                         ],
                       ),
                     ),
@@ -199,8 +238,6 @@ class _FAQState extends State<FAQ> {
               ),
             ),
           ),
-
-
         ],
       ),
     );
@@ -209,7 +246,7 @@ class _FAQState extends State<FAQ> {
   Widget AddContactUsButton(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
-        print("Create Post button tapped");
+        widget.onContactUsTap();
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -279,3 +316,4 @@ class _FAQState extends State<FAQ> {
     );
   }
 }
+

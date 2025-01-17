@@ -1,95 +1,125 @@
 class getCatFaqResponse {
   bool? success;
   String? message;
-  List<Knowledgement>? knowledgement;
+  List<Data>? data;
+  Pagination? pagination;
 
-  getCatFaqResponse({this.success, this.message, this.knowledgement});
+  getCatFaqResponse({this.success, this.message, this.data, this.pagination});
 
   getCatFaqResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    if (json['knowledgement'] != null) {
-      knowledgement = <Knowledgement>[];
-      json['knowledgement'].forEach((v) {
-        knowledgement!.add(new Knowledgement.fromJson(v));
+    if (json['data'] != null) {
+      data = <Data>[];
+      json['data'].forEach((v) {
+        data!.add(new Data.fromJson(v));
       });
     }
+    pagination = json['pagination'] != null
+        ? new Pagination.fromJson(json['pagination'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
     data['message'] = this.message;
-    if (this.knowledgement != null) {
-      data['knowledgement'] =
-          this.knowledgement!.map((v) => v.toJson()).toList();
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    if (this.pagination != null) {
+      data['pagination'] = this.pagination!.toJson();
     }
     return data;
   }
 }
 
-class Knowledgement {
-  String? sId;
-  String? name;
-  List<Icons>? icons;
-  String? createdAt;
-  String? updatedAt;
-  int? iV;
+class Data {
+  Category? category;
+  List<Questions>? questions;
 
-  Knowledgement(
-      {this.sId,
-        this.name,
-        this.icons,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+  Data({this.category, this.questions});
 
-  Knowledgement.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    name = json['name'];
-    if (json['icons'] != null) {
-      icons = <Icons>[];
-      json['icons'].forEach((v) {
-        icons!.add(new Icons.fromJson(v));
+  Data.fromJson(Map<String, dynamic> json) {
+    category = json['category'] != null
+        ? new Category.fromJson(json['category'])
+        : null;
+    if (json['questions'] != null) {
+      questions = <Questions>[];
+      json['questions'].forEach((v) {
+        questions!.add(new Questions.fromJson(v));
       });
     }
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['name'] = this.name;
-    if (this.icons != null) {
-      data['icons'] = this.icons!.map((v) => v.toJson()).toList();
+    if (this.category != null) {
+      data['category'] = this.category!.toJson();
     }
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
+    if (this.questions != null) {
+      data['questions'] = this.questions!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
 
-class Icons {
-  String? publicId;
-  String? url;
-  String? sId;
+class Category {
+  String? name;
 
-  Icons({this.publicId, this.url, this.sId});
+  Category({this.name});
 
-  Icons.fromJson(Map<String, dynamic> json) {
-    publicId = json['public_id'];
-    url = json['url'];
-    sId = json['_id'];
+  Category.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['public_id'] = this.publicId;
-    data['url'] = this.url;
-    data['_id'] = this.sId;
+    data['name'] = this.name;
+    return data;
+  }
+}
+
+class Questions {
+  String? title;
+  String? description;
+  String? externalUrl;
+
+  Questions({this.title, this.description, this.externalUrl});
+
+  Questions.fromJson(Map<String, dynamic> json) {
+    title = json['title'];
+    description = json['description'];
+    externalUrl = json['externalUrl'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['title'] = this.title;
+    data['description'] = this.description;
+    data['externalUrl'] = this.externalUrl;
+    return data;
+  }
+}
+
+class Pagination {
+  int? totalItems;
+  int? currentPage;
+  int? totalPages;
+
+  Pagination({this.totalItems, this.currentPage, this.totalPages});
+
+  Pagination.fromJson(Map<String, dynamic> json) {
+    totalItems = json['totalItems'];
+    currentPage = json['currentPage'];
+    totalPages = json['totalPages'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['totalItems'] = this.totalItems;
+    data['currentPage'] = this.currentPage;
+    data['totalPages'] = this.totalPages;
     return data;
   }
 }

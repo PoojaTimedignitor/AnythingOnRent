@@ -710,7 +710,7 @@ class MainHomeState extends State<MainHome>
                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => HelpCenter()));
+                              builder: (context) => HelpCenterScreen()));
                     },
                     child: Wrap(
                       spacing: 12,
@@ -1708,7 +1708,7 @@ class MainHomeState extends State<MainHome>
                                    context,
                                    MaterialPageRoute(
                                        builder: (context) =>
-                                           PopularCatagoriesData()));
+                                            PopularCatagoriesData()));
                              },
                              child: Padding(
                                padding: EdgeInsets.only(

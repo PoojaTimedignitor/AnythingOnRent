@@ -1005,7 +1005,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                       width: SizeConfig.screenWidth * 0.9,
                                       decoration: BoxDecoration(
 
-border: Border.all(color: Color(0xffFE7F64),width: 0.5),
+                                        border: Border.all(color: Color(0xffFE7F64),width: 0.5),
 
 
                                         borderRadius: BorderRadius.all(
