@@ -47,12 +47,8 @@ bool isSelected = false;
 
   @override
   void initState() {
-    fetchContactUs
-      ();
+    fetchContactUs();
     super.initState();
-
-
-
 
   }
 
@@ -103,7 +99,7 @@ bool isSelected = false;
                             Navigator.pop(context,
                                 filteredItemss[index].name.toString());
                             filteredItemss[index].description.toString();
-                            selectedIndex = index; // Toggle the selection state
+                            selectedIndex = index;
                           });
 
                       },

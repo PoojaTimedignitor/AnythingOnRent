@@ -508,6 +508,43 @@ class ApiClients {
 
 
 
+  Future<Map<String, dynamic>> CreateTicket(
+      String category,String description
+      ) async
+  {
+    String url = ApiConstant().AdminBaseUrl + ApiConstant().AdminContactUsMessage;
+
+    String? sessionToken =
+    GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    String? userId = GetStorage().read<String>(ConstantData.UserId);
+
+
+    var datas = jsonEncode({
+      'user': userId,
+      'category': category,
+      'description': description,
+    });
+    print("data....>>>> $userId");
+    try {
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: datas,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+      print("statusCode --> ${response.statusCode}");
+      print("dateeeee --> ${response.data}");
+      return response.data;
+    } on DioError catch (e) {
+      return e.response!.data;
+    }
+  }
+
+
 
 
   Future<Map<String, dynamic>> getAllCity() async {
@@ -529,6 +566,7 @@ class ApiClients {
 
       print("getCatList Status Code --> ${response.statusCode}");
       print("Response Data --> ${response.data}");
+
 
       return response.data;
     } on DioError catch (e) {

@@ -875,9 +875,6 @@ _image
                       ],
                     ),
 
-
-
-
                     borderRadius: const BorderRadius.all(
                       Radius.circular(30),
                     ),

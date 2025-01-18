@@ -1,17 +1,18 @@
-import 'package:anything/ResponseModule/getCatFAQ.dart';
 import 'package:anything/ResponseModule/getContactUsCatResponse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
-import '../MyBehavior.dart';
+import 'package:get_storage/get_storage.dart';
 
+import '../ConstantData/Constant_data.dart';
 import '../model/dio_client.dart';
 import 'ContactUsQuestions.dart';
 
 class ContactUsPage extends StatefulWidget {
   final VoidCallback onContactQuationTap;
+
 
   const ContactUsPage({super.key, required this.onContactQuationTap});
 
@@ -27,8 +28,53 @@ class _ContactUsPageState extends State<ContactUsPage> {
   String? selectedCategoryId;
   String updatedTexts = "";
   String updatedDescription = "";
-  TextEditingController productNameController = TextEditingController();
+  TextEditingController messageController = TextEditingController();
 
+
+
+  void onTextSelected(String result) {
+    if (result.isNotEmpty) {
+      setState(() {
+        updatedTexts = result;
+        updatedDescription = "";
+        isOpen = true;
+      });
+    }
+  }
+
+
+  void showTopSnackBar(BuildContext context, String message) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: SizeConfig.screenHeight *
+            0.7, // Adjust this value to position it exactly where you want
+        left: 2,
+        right: 2,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.black87,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              message,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+
+    // Remove the snack bar after some time
+    Future.delayed(Duration(seconds: 3), () {
+      overlayEntry.remove();
+    });
+  }
 
   void fetchContactUs() async {
     try {
@@ -59,19 +105,17 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffF5F6FB),
-      body: Column(
-        children: [
-          FAQQuations(SizeConfig.screenHeight, SizeConfig.screenWidth),
-        ],
-      ),
+      body: FAQQuations(SizeConfig.screenHeight, SizeConfig.screenWidth),
     );
   }
 
   Widget FAQQuations(double parentHeight, double parentWidth) {
     return Padding(
       padding: const EdgeInsets.all(14.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 250,
@@ -120,10 +164,21 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     return ContactUs();
                   });
 
+             /* if (result != null) {
+                setState(() {
+                  onTextSelected(updatedTexts);
+*//*
+                  updatedTexts = result;
+
+                  updatedDescription = result;
+*//*
+                });
+              }*/
               if (result != null) {
                 setState(() {
-                  updatedTexts = result;
-                  updatedDescription = result;
+                  updatedTexts = result; // Assign the name
+                  updatedDescription = "is a great choice!"; // Add custom description
+                 // onTextSelected(updatedTexts); // Handle text selection
                 });
               }
             },
@@ -144,7 +199,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     Container(
                       width: SizeConfig.screenHeight * 0.3,
                       child: Text(
-                        "Ask a Question Here",
+                        "choose a Question Here",
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "okra_Medium",
@@ -164,175 +219,50 @@ class _ContactUsPageState extends State<ContactUsPage> {
                   ],
                 )
 
-                /*Text("Ask a Question Here"),*/
-
-/*
-              ScrollConfiguration(
-                behavior: MyBehavior(),
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  scrollDirection: Axis.vertical,
-                  itemCount: filteredItemss.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-               setState(() {
-                          if (selectedCategoryId ==
-                              filteredItemss[index].sId) {
-                            selectedCategoryId = null;
-                          } else {
-                            selectedCategoryId =
-                                filteredItemss[index].sId;
-                          }
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 7.0),
-                        width: SizeConfig.screenHeight * 0.5,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 2, right: 2),
-                              child: Container(
-                                height: 42,
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: SizeConfig.screenHeight * 0.37,
-                                          child: Text(
-                                            filteredItemss[index]
-                                                .name
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "okra_Medium",
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(right: 10),
-                                          child:  Image(
-                                            image: AssetImage(
-                                                'assets/images/downarrow.png'),
-                                            height: 35,
-                                            color: Color(0xfff44343),
-                                          )
-
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                 if (selectedCategoryId ==
-                                filteredItemss[index].category!.name)
-                              Container(
-
-                                margin: EdgeInsets.symmetric(vertical: 7.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                                ),
-                                child: Padding(
-                                  padding:  EdgeInsets.only(left: 12,right: 10),
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.zero,
-                                    scrollDirection: Axis.vertical,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: filteredItemss[index].questions?.length ?? 0,
-                                    itemBuilder: (context, questionIndex) {
-                                      var question = filteredItemss[index].questions![questionIndex];
-                                      return Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 8),
-                                          Text(
-                                            question.title.toString(),
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(height: 4),
-                                          Text(
-                                            question.description.toString(),
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),*/
                 ),
           ),
           SizedBox(height: 20),
+
+          if (isOpen)
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-               height:100,
+               height:70,
                 decoration: BoxDecoration(
                     color: Colors.white,
+                    border: Border.all(color: Color(0xfff4823b),width: 0.3 ),
                     borderRadius: BorderRadius.circular(15)),
                 child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: EdgeInsets.all(10.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         (updatedTexts),
                         style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "okra_Medium",
+                          color: Color(0xfff4823b),
+                          fontFamily: "okra_Bold",
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 4),
+
                       Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                            color: Color(0xfffff4f2),
-                            borderRadius: BorderRadius.circular(5)),
+
+
                         width: 500,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            (updatedDescription) + " jsfgg jfghdf ajhgfhaf ajhgdfagf afhah",
-                            style: TextStyle(
-                              color: CommonColor.grayText,
-                              fontFamily: "Montserrat-Medium",
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        child: Text(
+                          (updatedDescription),
+                          style: TextStyle(
+                            color: Color(0xfff4823b),
+                            fontFamily: "Montserrat-Medium",
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
 
@@ -344,7 +274,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
               SizedBox(height: 34),
               Text(
-                "    Product Name",
+                " Send us a message",
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: "okra_Medium",
@@ -355,19 +285,18 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
               Padding(
                 padding: EdgeInsets.only(
-                    left: 10, right: 10, top: 10),
+                    left: 0, right: 0, top: 10),
                 child: TextFormField(
-                  //  enabled: selectedCategory != null,
                     textAlign: TextAlign.start,
-                    maxLines: 2,
+                    maxLines: 5 ,
                     keyboardType: TextInputType.text,
-                    controller: productNameController,
+                    controller: messageController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       isDense: true,
                       hintText:
-                      'Ex.HD Camera (black & white)',
+                      'Message',
                       contentPadding: EdgeInsets.all(10.0),
                       hintStyle: TextStyle(
                         fontFamily: "Roboto_Regular",
@@ -376,11 +305,13 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         SizeConfig.blockSizeHorizontal *
                             3.5,
                       ),
-                      fillColor: Color(0xffF5F6FB),
+                      fillColor: Color(0xfff3f3f3),
                       hoverColor: Colors.white,
                       filled: true,
                       enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(
+                              color: Color(0xffD9D9D9),
+                              width: 1),
                           borderRadius:
                           BorderRadius.circular(10.0)),
                       focusedBorder: OutlineInputBorder(
@@ -391,6 +322,72 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         BorderRadius.circular(10.0),
                       ),
                     )),
+              ),
+              SizedBox(height: 34),
+              GestureDetector(
+                onTap: (){
+    ApiClients()
+        .PostfeedbackUser(
+    messageController.text)
+        .then((value) {
+    print(value['data']);
+    print("Response: $value");
+
+    if (mounted) {
+    setState(() {});
+    }
+
+    if (value['success'] == true) {
+    print(
+    "Userssssss....${value['data']?['feedbackUser']}");
+    GetStorage().write(ConstantData.UserId,
+    value['data']?['feedbackUser']);
+
+    showTopSnackBar(context, 'Feedback submitted successfully');
+    Navigator.pop(
+    context,
+    MaterialPageRoute(
+    builder: (context) => MainHome()),
+    );
+    }git
+    });
+
+                },
+                child: Center(
+                  child: Container(
+                      width: parentWidth * 0.77,
+                      height: parentHeight * 0.06,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 5,
+                              spreadRadius: 1,
+                              offset: Offset(1, 1)),
+                        ],
+                        gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          colors: [
+                            Color(0xffFEBA69),
+                            Color(0xffFE7F64),
+                          ],
+                        ),
+
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(30),
+                        ),
+                      ),
+                      child: Center(
+                          child: Text(
+                            "Save Ticket",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Roboto-Regular',
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.5),
+                          ))),
+                ),
               ),
             ],
           ),

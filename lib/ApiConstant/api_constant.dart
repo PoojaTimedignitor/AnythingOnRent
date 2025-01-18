@@ -29,6 +29,7 @@ String getDisplayProductList = "/products";
 String AdminBaseUrl = "https://admin-fyu1.onrender.com/api/app";
 String AdminGetCatFAQ = "/knowledge";
 String AdminContactUsQuations = "/app-support/category";
+String AdminContactUsMessage = "/app-support/register";
 
 
 String UserFeedback = "/app-improment";
