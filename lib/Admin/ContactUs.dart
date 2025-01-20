@@ -1,3 +1,4 @@
+import 'package:anything/Admin/helpCentre.dart';
 import 'package:anything/ResponseModule/getContactUsCatResponse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,10 @@ import 'package:get_storage/get_storage.dart';
 import '../ConstantData/Constant_data.dart';
 import '../model/dio_client.dart';
 import 'ContactUsQuestions.dart';
+import 'FAQ.dart';
 
 class ContactUsPage extends StatefulWidget {
   final VoidCallback onContactQuationTap;
-
 
   const ContactUsPage({super.key, required this.onContactQuationTap});
 
@@ -25,23 +26,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
   List<ExistingSupportCategories> filteredItemss = [];
   bool isLoading = true;
   bool isOpen = false;
-  String? selectedCategoryId;
+  String selectedCategoryId = "";
   String updatedTexts = "";
   String updatedDescription = "";
   TextEditingController messageController = TextEditingController();
-
-
-
-  void onTextSelected(String result) {
-    if (result.isNotEmpty) {
-      setState(() {
-        updatedTexts = result;
-        updatedDescription = "";
-        isOpen = true;
-      });
-    }
-  }
-
 
   void showTopSnackBar(BuildContext context, String message) {
     final overlay = Overlay.of(context);
@@ -76,28 +64,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
     });
   }
 
-  void fetchContactUs() async {
-    try {
-      Map<String, dynamic> response = await ApiClients().getContactUsQuations();
-
-      var jsonList = getContactUsCatResponse.fromJson(response);
-
-      setState(() {
-        itemss = jsonList.existingSupportCategories ?? [];
-        filteredItemss = List.from(itemss);
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      print("Error fetching categories: $e");
-    }
-  }
-
   @override
   void initState() {
-    fetchContactUs();
     super.initState();
   }
 
@@ -147,8 +115,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
           SizedBox(height: 20),
           GestureDetector(
             onTap: () async {
-              final String? result =
-                  await showModalBottomSheet(
+              final result = await showModalBottomSheet(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
@@ -164,21 +131,12 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     return ContactUs();
                   });
 
-             /* if (result != null) {
-                setState(() {
-                  onTextSelected(updatedTexts);
-*//*
-                  updatedTexts = result;
-
-                  updatedDescription = result;
-*//*
-                });
-              }*/
               if (result != null) {
                 setState(() {
-                  updatedTexts = result; // Assign the name
-                  updatedDescription = "is a great choice!"; // Add custom description
-                 // onTextSelected(updatedTexts); // Handle text selection
+                  updatedTexts = result['name'];
+                  updatedDescription = result['description'];
+                  selectedCategoryId = result['std'];
+                  isOpen = true;
                 });
               }
             },
@@ -217,181 +175,160 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           color: Color(0xfff44343),
                         )),
                   ],
-                )
-
-                ),
+                )),
           ),
           SizedBox(height: 20),
-
           if (isOpen)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-               height:70,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Color(0xfff4823b),width: 0.3 ),
-                    borderRadius: BorderRadius.circular(15)),
-                child: Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        (updatedTexts),
-                        style: TextStyle(
-                          color: Color(0xfff4823b),
-                          fontFamily: "okra_Bold",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-
-                      Container(
-
-
-                        width: 500,
-                        child: Text(
-                          (updatedDescription),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 70,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Color(0xfff4823b), width: 0.3),
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          (updatedTexts),
                           style: TextStyle(
                             color: Color(0xfff4823b),
-                            fontFamily: "Montserrat-Medium",
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            fontFamily: "okra_Bold",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
-                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-
-
-                    ],
+                        Container(
+                          width: 500,
+                          child: Text(
+                            (updatedDescription),
+                            style: TextStyle(
+                              color: Color(0xfff4823b),
+                              fontFamily: "Montserrat-Medium",
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-
-              SizedBox(height: 34),
-              Text(
-                " Send us a message",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "okra_Medium",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                SizedBox(height: 34),
+                Text(
+                  " Send us a message",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "okra_Medium",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: EdgeInsets.only(left: 0, right: 0, top: 10),
+                  child: TextFormField(
+                      textAlign: TextAlign.start,
+                      maxLines: 5,
+                      keyboardType: TextInputType.text,
+                      controller: messageController,
+                      autocorrect: true,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: 'Message',
+                        contentPadding: EdgeInsets.all(10.0),
+                        hintStyle: TextStyle(
+                          fontFamily: "Roboto_Regular",
+                          color: Color(0xffa1a1a1),
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                        ),
+                        fillColor: Color(0xfff3f3f3),
+                        hoverColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Color(0xffD9D9D9), width: 1),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Color(0xffD9D9D9), width: 1),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      )),
+                ),
+                SizedBox(height: 34),
+                GestureDetector (
+                  onTap: () {
+                    ApiClients()
+                        .CreateTicket(
+                            selectedCategoryId, messageController.text)
+                        .then((value) {
+                      print(value['data']);
+                      print("Response: $value");
 
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 0, right: 0, top: 10),
-                child: TextFormField(
-                    textAlign: TextAlign.start,
-                    maxLines: 5 ,
-                    keyboardType: TextInputType.text,
-                    controller: messageController,
-                    autocorrect: true,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText:
-                      'Message',
-                      contentPadding: EdgeInsets.all(10.0),
-                      hintStyle: TextStyle(
-                        fontFamily: "Roboto_Regular",
-                        color: Color(0xffa1a1a1),
-                        fontSize:
-                        SizeConfig.blockSizeHorizontal *
-                            3.5,
-                      ),
-                      fillColor: Color(0xfff3f3f3),
-                      hoverColor: Colors.white,
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color(0xffD9D9D9),
-                              width: 1),
-                          borderRadius:
-                          BorderRadius.circular(10.0)),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Color(0xffD9D9D9),
-                            width: 1),
-                        borderRadius:
-                        BorderRadius.circular(10.0),
-                      ),
-                    )),
-              ),
-              SizedBox(height: 34),
-              GestureDetector(
-                onTap: (){
-    ApiClients()
-        .PostfeedbackUser(
-    messageController.text)
-        .then((value) {
-    print(value['data']);
-    print("Response: $value");
+                      if (mounted) {
+                        setState(() {});
+                      }
 
-    if (mounted) {
-    setState(() {});
-    }
+                      if (value['success'] == true) {
+                        print("Userssssss....${value['data']?['userId']}");
+                        GetStorage().write(
+                            ConstantData.UserId, value['data']?['userId']);
 
-    if (value['success'] == true) {
-    print(
-    "Userssssss....${value['data']?['feedbackUser']}");
-    GetStorage().write(ConstantData.UserId,
-    value['data']?['feedbackUser']);
-
-    showTopSnackBar(context, 'Feedback submitted successfully');
-    Navigator.pop(
-    context,
-    MaterialPageRoute(
-    builder: (context) => MainHome()),
-    );
-    }git
-    });
-
-                },
-                child: Center(
-                  child: Container(
-                      width: parentWidth * 0.77,
-                      height: parentHeight * 0.06,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              blurRadius: 5,
-                              spreadRadius: 1,
-                              offset: Offset(1, 1)),
-                        ],
-                        gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                          colors: [
-                            Color(0xffFEBA69),
-                            Color(0xffFE7F64),
+                        showTopSnackBar(
+                            context, 'question submitted successfully');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HelpCenterScreen()),
+                        );
+                      }
+                    });
+                  },
+                  child: Center(
+                    child: Container(
+                        width: parentWidth * 0.77,
+                        height: parentHeight * 0.06,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 5,
+                                spreadRadius: 1,
+                                offset: Offset(1, 1)),
                           ],
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffFEBA69),
+                              Color(0xffFE7F64),
+                            ],
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(30),
+                          ),
                         ),
-
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(30),
-                        ),
-                      ),
-                      child: Center(
-                          child: Text(
-                            "Save Ticket",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'Roboto-Regular',
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.5),
-                          ))),
+                        child: Center(
+                            child: Text(
+                          "Save Ticket",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Roboto-Regular',
+                              fontSize: SizeConfig.blockSizeHorizontal * 4.5),
+                        ))),
+                  ),
                 ),
-              ),
-            ],
-          ),
-
+              ],
+            ),
         ],
       ),
     );

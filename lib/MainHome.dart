@@ -227,8 +227,9 @@ class MainHomeState extends State<MainHome>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
+              /*    GestureDetector(
                     onTap: () async {
+
                       String email =
                           GetStorage().read<String>(ConstantData.Useremail) ??
                               "";
@@ -281,8 +282,88 @@ class MainHomeState extends State<MainHome>
                         ),
                       ),
                     ),
-                  ),
-                  GestureDetector(
+                  ),*/
+
+
+        GestureDetector(
+        onTap: () async {
+        String email =
+        GetStorage().read<String>(ConstantData.Useremail) ??
+        "";
+        String password = GetStorage()
+            .read<String>(ConstantData.Userpassword) ??
+        "";
+        print("Logout initiated...");
+
+        // Retrieve the session token
+        String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
+
+        // Validate token existence
+        if (sessionToken == null || sessionToken.isEmpty) {
+        print("No session token found. Redirecting to login.");
+        Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false,
+        );
+        return;
+        }
+
+        // Call the logout API
+        final response = await ApiClients().getLogoutUser(email,password);
+
+        if (response['success'] == true) {
+        print("Logout Successful");
+
+        // Clear user data from storage
+        await GetStorage().remove(ConstantData.UserAccessToken);
+        await GetStorage().remove(ConstantData.Useremail);
+        await GetStorage().remove(ConstantData.Userpassword);
+
+        // Redirect to login screen
+        Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false,
+        );
+        } else {
+        print("Logout failed: ${response['error']}");
+        }
+        },
+        child: Padding(
+        padding:
+        EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+        child: Container(
+        width: SizeConfig.screenWidth * 0.3,
+        decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        gradient: LinearGradient(
+        begin: Alignment.topRight,
+        end: Alignment.bottomLeft,
+        colors: [
+        Color(0xffFEBA69),
+        Color(0xffFE7F64),
+        ],
+        ),
+        ),
+        child: Center(
+        child: Text(
+        "Yes",
+        style: TextStyle(
+        height: 2,
+        fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+        fontFamily: 'Roboto_Medium',
+        fontWeight: FontWeight.w400,
+        color: Colors.black),
+        ),
+        ),
+        ),
+        ),
+
+
+        ),
+
+
+        GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
                     },

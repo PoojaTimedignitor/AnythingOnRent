@@ -21,7 +21,7 @@ class ApiConstant {
   String BaseUrlCreateProdcut = "https://rental-api-5vfa.onrender.com/api/addon";
   String createProduct = "/hgsd";
 
-String logout = "/logout";
+String logout = "/users/logout";
 
 String getDisplayProductList = "/products";
 
@@ -30,6 +30,11 @@ String AdminBaseUrl = "https://admin-fyu1.onrender.com/api/app";
 String AdminGetCatFAQ = "/knowledge";
 String AdminContactUsQuations = "/app-support/category";
 String AdminContactUsMessage = "/app-support/register";
+
+
+  String getAllTickitesSupport(String userId) {
+    return "/app-support/$userId";
+  }
 
 
 String UserFeedback = "/app-improment";

@@ -355,69 +355,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget RegisterButton(double parentWidth, double parentHeight) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          isLoading = true; // Start loading indicator
-        });
-        _validateAndShowTooltip();
 
-        if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-          print("Password must be at least 6 characters long");
-          return;
-        }
+          onTap: () {
+            setState(() {
+              isLoading = true; // Start loading indicator
+            });
+            _validateAndShowTooltip();
 
-        ApiClients()
-            .loginDio(emailController.text, passwordController.text)
-            .then((value) {
-          if (value['message'] == 'Login successful.') {
-            print("UserId: ${value['user']['_id']}");
-            print("Token: ${value['token']}");
-
-            try {
-              GetStorage().write(ConstantData.UserId, value['user']['_id']);
-              GetStorage()
-                  .write(ConstantData.UserAccessToken, value['user']['generateToken']);
-              /*GetStorage().write(
-                  ConstantData.UserAccessToken, value['user']['token']);
-              GetStorage().write(
-                  ConstantData.Useremail, value['user']['email']);
-              GetStorage().write(
-                  ConstantData.Userpassword, passwordController.text);
-              GetStorage().write(ConstantData.UserParmanentAddress,
-                  value['user']['permanentAddress']);
-              GetStorage().write(
-                  ConstantData.UserMobile, value['user']['phoneNumber']);
-              GetStorage().write(
-                  ConstantData.UserFirstName, value['user']['firstName']);
-              GetStorage().write(
-                  ConstantData.UserLastName, value['user']['lastName']);
-              GetStorage().write(
-                  ConstantData.UserFrontImage, value['user']['frontImages']);
-              GetStorage().write(
-                  ConstantData.UserBackImage, value['user']['backImages']);
-              GetStorage().write(ConstantData.UserProfileImage,
-                  value['user']['profilePicture']['url']);
-              GetStorage().write(
-                  ConstantData.Userlatitude, value['user']['latitude']);
-              GetStorage().write(
-                  ConstantData.Userlongitude, value['user']['longitude']);*/
-            } catch (e) {
-              print("Error in GetStorage writes: $e");
+            if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+              print("Email or Password cannot be empty");
+              return;
             }
 
-            print("Navigating to MainHome...");
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => MainHome()),
-            );
-          } else {
-            print("Login failed: ${value['message']}");
-          }
-        }).catchError((error) {
-          print("An error occurred: $error");
-        });
-      },
-      child: Column(
+            ApiClients()
+                .loginDio(emailController.text, passwordController.text)
+                .then((value) {
+              if (value['message'] == 'Login successful.') {
+                print("UserId: ${value['user']['_id']}");
+                print("Token: ${value['user']['token']}");
+
+                try {
+                  // Save UserId and Token in GetStorage
+                  GetStorage().write(ConstantData.UserId, value['user']['_id']);
+                  GetStorage().write(ConstantData.UserAccessToken, value['user']['token']);
+
+                } catch (e) {
+                  print("Error in GetStorage writes: $e");
+                }
+
+                print("Navigating to MainHome...");
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainHome()),
+                );
+              } else {
+                print("Login failed: ${value['message']}");
+              }
+            }).catchError((error) {
+              print("An error occurred: $error");
+            });
+          },
+
+
+        child: Column(
         children: [
           Padding(
             padding: EdgeInsets.only(

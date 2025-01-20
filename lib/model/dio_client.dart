@@ -278,9 +278,71 @@ class ApiClients {
   }
 
 
+/*  Future<Map<String, dynamic>> getAllTicket(String userId) async {
+    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTickitesSupport(userId)}";
 
 
+    String? sessionToken =
+    GetStorage().read<String>(ConstantData.UserAccessToken);
 
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("getCatList Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print("Dio Error: ${e.response}");
+      return e.response!.data;
+    }
+  }*/
+
+
+  Future<Map<String, dynamic>> getAllTicket(String userId) async {
+    String url = "${ApiConstant().AdminBaseUrl}/${ApiConstant().getAllTickitesSupport(userId)}";
+
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    if (sessionToken == null || sessionToken.isEmpty) {
+      throw Exception("Session token is missing or invalid.");
+    }
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("getAllTicket Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      if (response.headers.value('content-type')?.contains('application/json') ?? false) {
+        return response.data;
+      } else {
+        throw Exception("Unexpected response format: ${response.data}");
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print("Dio Error Response: ${e.response?.data}");
+        return e.response?.data ?? {'error': 'Unknown error'};
+      } else {
+        print("Dio Error Message: ${e.message}");
+        return {'error': e.message};
+      }
+    }
+  }
 
 
   Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
@@ -400,7 +462,7 @@ class ApiClients {
     }
   }
 
-  Future<Map<String, dynamic>> getLogoutUser(String email, String password) async {
+/*  Future<Map<String, dynamic>> getLogoutUser(String email, String password) async {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
     String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
 
@@ -427,6 +489,46 @@ class ApiClients {
         } else {
           return {"error": response.data['message'] ?? "Logout failed"};
         }
+      } else {
+        return {"error": "Unexpected response code: ${response.statusCode}"};
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print("DioError Response: ${e.response?.data}");
+        print("Error Status Code: ${e.response?.statusCode}");
+      } else {
+        print("DioError Message: ${e.message}");
+      }
+      return {"error": "Exception: ${e.message}"};
+    }
+  }*/
+  Future<Map<String, dynamic>> getLogoutUser(String email, String password) async {
+    String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    if (sessionToken == null || sessionToken.isEmpty) {
+      return {"error": "Session token is missing. Please log in again."};
+    }
+
+    print("Final API URL: $url");
+    print("Session Token: $sessionToken");
+
+    try {
+      Response response = await _dio.post(
+        url,
+        data: {
+          "email": email,
+          "password": password,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
       } else {
         return {"error": "Unexpected response code: ${response.statusCode}"};
       }
@@ -508,24 +610,20 @@ class ApiClients {
 
 
 
-  Future<Map<String, dynamic>> CreateTicket(
-      String category,String description
-      ) async
-  {
+  Future<Map<String, dynamic>> CreateTicket(String categoryId, String description) async {
     String url = ApiConstant().AdminBaseUrl + ApiConstant().AdminContactUsMessage;
 
-    String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
-
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
     String? userId = GetStorage().read<String>(ConstantData.UserId);
 
-
     var datas = jsonEncode({
-      'user': userId,
-      'category': category,
+      'userId': userId,
+      'category': categoryId, // Ensure this is the ObjectId
       'description': description,
     });
-    print("data....>>>> $userId");
+
+    print("datass....>>>> $datas");
+
     try {
       Response response = await _dio.post<Map<String, dynamic>>(
         url,

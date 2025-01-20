@@ -73,129 +73,118 @@ bool isSelected = false;
           itemCount: filteredItemss.length,
           itemBuilder: (context, index) {
             bool isSelected = selectedIndex == index;
-            return GestureDetector(
-              onTap: () {
-                setState(() {
+            return Container(
+              margin: EdgeInsets.symmetric(vertical: 7.0),
+              width: SizeConfig.screenHeight * 0.5,
 
-                  if (selectedCategoryId ==
-                      filteredItemss[index].sId) {
-                    selectedCategoryId = null;
-                  } else {
-                    selectedCategoryId =
-                        filteredItemss[index].sId;
-                  }
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.symmetric(vertical: 7.0),
-                width: SizeConfig.screenHeight * 0.5,
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: (){
 
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: (){
+                      setState(() {
 
-                          setState(() {
-                            Navigator.pop(context,
-                                filteredItemss[index].name.toString());
-                            filteredItemss[index].description.toString();
-                            selectedIndex = index;
-                          });
+                        Navigator.pop(context, {
+                          'name': filteredItemss[index].name.toString(),
+                          'description': filteredItemss[index].description.toString(),
+                          'std': filteredItemss[index].sId.toString(),
+                        });
+                        selectedIndex = index;
+                      });
 
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 2, right: 2),
-                        child: Container(
-                          height: 48,
-                          child: Center(
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 20),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    width: 18,
-                                    height: 18,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 2, right: 2),
+                      child: Container(
+                        height: 48,
+                        child: Center(
+                          child: Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 20),
+                            child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: 18,
+                                  height: 18,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Color(0xff8d4fd6)
+                                          : Colors.black, // Outer circle color
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: isSelected
+                                      ? Center(
+                                    child: Container(
+                                      width: 10, // Inner circle size
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
                                         color: isSelected
                                             ? Color(0xff8d4fd6)
-                                            : Colors.black, // Outer circle color
-                                        width: 1,
+                                            : Colors.black,
                                       ),
                                     ),
-                                    child: isSelected
-                                        ? Center(
-                                      child: Container(
-                                        width: 10, // Inner circle size
-                                        height: 10,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: isSelected
-                                              ? Color(0xff8d4fd6)
-                                              : Colors.black,
-                                        ),
-                                      ),
-                                    )
-                                        : null,
-                                  ),
+                                  )
+                                      : null,
+                                ),
 
-                                  Column(
-                                    children: [
-                                      Container(
-                                        width: SizeConfig.screenHeight * 0.37,
-                                        child: Text(
-                                          filteredItemss[index]
-                                              .name
-                                              .toString(),
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: "okra_Medium",
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: SizeConfig.screenHeight * 0.37,
+                                      child: Text(
+                                        filteredItemss[index]
+                                            .name
+                                            .toString(),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
                                         ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      SizedBox(height: 2),
-                                      Container(
+                                    ),
+                                    SizedBox(height: 2),
+                                    Container(
 
-                                        width: 300,
-                                        child: Text(
-                                          filteredItemss[index].description.toString(),
-                                          style: TextStyle(
-                                            color: CommonColor.grayText,
-                                            fontFamily: "Montserrat-Medium",
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                      width: 300,
+                                      child: Text(
+                                        filteredItemss[index].description.toString(),
+                                        style: TextStyle(
+                                          color: CommonColor.grayText,
+                                          fontFamily: "Montserrat-Medium",
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
                                         ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
+                                ),
 
-                                ],
-                              ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                     Padding(
-            padding: EdgeInsets.only(top: 2),
-            child: Container(
-              color: CommonColor.grays,
-              height: SizeConfig.screenHeight * 0.0005,
-            ),
-          ),
+                  ),
+                   Padding(
+                        padding: EdgeInsets.only(top: 2),
+                        child: Container(
+            color: CommonColor.grays,
+            height: SizeConfig.screenHeight * 0.0005,
+                        ),
+                      ),
 
-                  ],
-                ),
+                ],
               ),
             );
           },

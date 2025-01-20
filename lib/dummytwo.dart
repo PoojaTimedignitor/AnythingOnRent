@@ -133,7 +133,7 @@ class _HelpCenterState extends State<HelpCenter> {
             children: [
               Image(image: AssetImage('assets/images/ticket.png'), height: SizeConfig.screenHeight * 0.18),
               SizedBox(height: 16),
-              Text("You havent't bought any tiket yet", style: TextStyle(
+              Text("You havent't bought any ticket yet", style: TextStyle(
                 color: Colors.black,
                 fontFamily: "okra_Medium",
                 fontSize: 17,

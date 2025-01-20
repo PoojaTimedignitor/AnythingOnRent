@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../Common_File/SizeConfig.dart';
+import '../ResponseModule/getAllSupportTicket.dart';
+import '../model/dio_client.dart';
 import 'FAQ.dart';
 import 'helpCentre.dart';
 
@@ -15,6 +17,42 @@ class Supportpage extends StatefulWidget {
 }
 
 class _SupportpageState extends State<Supportpage> {
+
+  bool isLoading = true;
+  List<Data> SubTicket = [];
+  List<Data> filteredTicket = [];
+  String userId = '';
+  void fetchAllTicketSupport(String userId) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      Map<String, dynamic> response = await ApiClients().getAllTicket(userId);
+
+
+      var jsonList = getAllSupportTicket.fromJson(response);
+
+      setState(() {
+        SubTicket = jsonList.data ?? []; // Use the correct property from the model
+        filteredTicket = List.from(SubTicket);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching Ticket: $e");
+    }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAllTicketSupport(userId);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,17 +65,37 @@ class _SupportpageState extends State<Supportpage> {
             height: SizeConfig.screenHeight * 0.3,
             width: SizeConfig.screenWidth,
 
-            child: Column(
+            child: filteredTicket.isEmpty? Column(
               children: [
                 Image(image: AssetImage('assets/images/ticket.png'), height: SizeConfig.screenHeight * 0.18),
                 SizedBox(height: 16),
-                Text("You havent't bought any tiket yet", style: TextStyle(
+                Text("You havent't bought any ticket yet", style: TextStyle(
                   color: Colors.black,
                   fontFamily: "okra_Medium",
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
                 ),)
               ],
+            ):ListView.builder(
+              itemCount: filteredTicket.length,
+              itemBuilder: (context, index) {
+                final ticket = filteredTicket[index];
+                return ListTile(
+                  title: Text(
+                    "Ticket #${ticket.ticketNumber}",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text("Category: ${ticket.category?.name}"),
+                  trailing: Text(
+                    ticket.status ?? "",
+                    style: TextStyle(
+                      color: ticket.status == "Open"
+                          ? Colors.green
+                          : Colors.red,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           Padding(
