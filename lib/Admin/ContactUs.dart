@@ -8,6 +8,7 @@ import '../Common_File/common_color.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../ConstantData/Constant_data.dart';
+import '../MyBehavior.dart';
 import '../model/dio_client.dart';
 import 'ContactUsQuestions.dart';
 import 'FAQ.dart';
@@ -69,6 +70,129 @@ class _ContactUsPageState extends State<ContactUsPage> {
     super.initState();
   }
 
+  void showSuccessDialog(BuildContext context) {
+
+    showDialog(
+      context: context,
+      builder: (
+          BuildContext context,
+          ) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Container(
+
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 10),
+                  Image(image: AssetImage('assets/images/sucess.png'),height: 65,),
+
+
+                  Container(
+
+                    padding: EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 1),
+                        Text(
+                          "Your ticket has been raised successfully!",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: "okra_Medium",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        Text(
+                          "Now track status of all your tickets in the Support section.",
+                          style: TextStyle(
+                            color: CommonColor.Black,
+                            fontFamily: "Montserrat-Medium",
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+
+                  GestureDetector(
+                    onTap: () {
+        ApiClients()
+            .CreateTicket(selectedCategoryId, messageController.text)
+            .then((value) {
+        print(value['data']);
+        print("Response: $value");
+
+        if (mounted) {
+        setState(() {});
+        }
+
+        if (value['success'] == true) {
+
+        print("Userssssss....${value['data']?['userId']}");
+        GetStorage().write(
+        ConstantData.UserId, value['data']?['userId']);
+
+
+        showTopSnackBar(context, 'Question submitted successfully');
+
+
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HelpCenterScreen()),
+        );
+        }
+        });// Close the dialog
+
+
+                    },
+                    child: Center(
+                      child: Container(
+                          width: SizeConfig.screenWidth * 0.75,
+                          height: SizeConfig.screenHeight * 0.05,
+
+                          child: Center(
+                              child: Text(
+                                " Okay",
+                                style: TextStyle(
+                                    color: Color(0xfff44343),
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Roboto-Regular',
+                                    fontSize:
+                                    SizeConfig.blockSizeHorizontal *
+                                        4.5),
+                              ))),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,220 +204,244 @@ class _ContactUsPageState extends State<ContactUsPage> {
   Widget FAQQuations(double parentHeight, double parentWidth) {
     return Padding(
       padding: const EdgeInsets.all(14.0),
-      child: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        //crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 250,
-            child: Text(
-              "Let's Talk?",
-              style: TextStyle(
-                fontFamily: "okra_extrabold",
-                fontSize: SizeConfig.blockSizeHorizontal * 5.1,
-                color: Colors.black,
-                fontWeight: FontWeight.w200,
+      child: ScrollConfiguration(
+        behavior: MyBehavior(),
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          //crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 250,
+              child: Text(
+                "Let's Talk?",
+                style: TextStyle(
+                  fontFamily: "okra_extrabold",
+                  fontSize: SizeConfig.blockSizeHorizontal * 5.1,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w200,
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            width: 400,
-            child: Text(
-              "Tell us about your issues so we can help you more quickly. ",
-              style: TextStyle(
-                color: CommonColor.Black,
-                fontFamily: "Montserrat-Medium",
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+            SizedBox(height: 10),
+            Container(
+              width: 400,
+              child: Text(
+                "Tell us about your issues so we can help you more quickly. ",
+                style: TextStyle(
+                  color: CommonColor.Black,
+                  fontFamily: "Montserrat-Medium",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
-          ),
-          SizedBox(height: 20),
-          GestureDetector(
-            onTap: () async {
-              final result = await showModalBottomSheet(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  context: context,
-                  backgroundColor: Colors.white,
-                  elevation: 2,
-                  isScrollControlled: true,
-                  isDismissible: true,
-                  builder: (BuildContext bc) {
-                    return ContactUs();
-                  });
-
-              if (result != null) {
-                setState(() {
-                  updatedTexts = result['name'];
-                  updatedDescription = result['description'];
-                  selectedCategoryId = result['std'];
-                  isOpen = true;
-                });
-              }
-            },
-            child: Container(
-                height: SizeConfig.screenHeight * 0.09,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.only(left: 15),
-                        child: Image(
-                          image: AssetImage('assets/images/questionmark.png'),
-                          height: 20,
-                        )),
-                    Container(
-                      width: SizeConfig.screenHeight * 0.3,
-                      child: Text(
-                        "choose a Question Here",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "okra_Medium",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+            SizedBox(height: 20),
+            GestureDetector(
+              onTap: () async {
+                final result = await showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
                     ),
-                    Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Image(
-                          image: AssetImage('assets/images/downarrow.png'),
-                          height: 35,
-                          color: Color(0xfff44343),
-                        )),
-                  ],
-                )),
-          ),
-          SizedBox(height: 20),
-          if (isOpen)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 70,
+                    context: context,
+                    backgroundColor: Colors.white,
+                    elevation: 2,
+                    isScrollControlled: true,
+                    isDismissible: true,
+                    builder: (BuildContext bc) {
+                      return ContactUs();
+                    });
+
+                if (result != null) {
+                  setState(() {
+                    updatedTexts = result['name'];
+                    updatedDescription = result['description'];
+                    selectedCategoryId = result['std'];
+                    isOpen = true;
+                  });
+                }
+              },
+              child: Container(
+                  height: SizeConfig.screenHeight * 0.09,
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(color: Color(0xfff4823b), width: 0.3),
                       borderRadius: BorderRadius.circular(15)),
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          (updatedTexts),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: Image(
+                            image: AssetImage('assets/images/questionmark.png'),
+                            height: 20,
+                          )),
+                      Container(
+                        width: SizeConfig.screenHeight * 0.3,
+                        child: Text(
+                          "choose a Question Here",
                           style: TextStyle(
-                            color: Color(0xfff4823b),
-                            fontFamily: "okra_Bold",
+                            color: Colors.black,
+                            fontFamily: "okra_Medium",
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
-                        Container(
-                          width: 500,
-                          child: Text(
-                            (updatedDescription),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: Image(
+                            image: AssetImage('assets/images/downarrow.png'),
+                            height: 35,
+                            color: Color(0xfff44343),
+                          )),
+                    ],
+                  )),
+            ),
+            SizedBox(height: 20),
+            if (isOpen)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 70,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Color(0xfff4823b), width: 0.3),
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            (updatedTexts),
                             style: TextStyle(
                               color: Color(0xfff4823b),
-                              fontFamily: "Montserrat-Medium",
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                              fontFamily: "okra_Bold",
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
-                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                          Container(
+                            width: 500,
+                            child: Text(
+                              (updatedDescription),
+                              style: TextStyle(
+                                color: Color(0xfff4823b),
+                                fontFamily: "Montserrat-Medium",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 34),
-                Text(
-                  " Send us a message",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "okra_Medium",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  SizedBox(height: 34),
+                  Text(
+                    " Send us a message",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "okra_Medium",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 0, right: 0, top: 10),
-                  child: TextFormField(
-                      textAlign: TextAlign.start,
-                      maxLines: 5,
-                      keyboardType: TextInputType.text,
-                      controller: messageController,
-                      autocorrect: true,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Message',
-                        contentPadding: EdgeInsets.all(10.0),
-                        hintStyle: TextStyle(
-                          fontFamily: "Roboto_Regular",
-                          color: Color(0xffa1a1a1),
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        ),
-                        fillColor: Color(0xfff3f3f3),
-                        hoverColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
+                  Padding(
+                    padding: EdgeInsets.only(left: 0, right: 0, top: 10),
+                    child: TextFormField(
+                        textAlign: TextAlign.start,
+                        maxLines: 5,
+                        keyboardType: TextInputType.text,
+                        controller: messageController,
+                        autocorrect: true,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          hintText: 'Message',
+                          contentPadding: EdgeInsets.all(10.0),
+                          hintStyle: TextStyle(
+                            fontFamily: "Roboto_Regular",
+                            color: Color(0xffa1a1a1),
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                          ),
+                          fillColor: Color(0xfff3f3f3),
+                          hoverColor: Colors.white,
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Color(0xffD9D9D9), width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          focusedBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Color(0xffD9D9D9), width: 1),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xffD9D9D9), width: 1),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      )),
-                ),
-                SizedBox(height: 34),
-                GestureDetector (
-                  onTap: () {
-                    ApiClients()
-                        .CreateTicket(
-                            selectedCategoryId, messageController.text)
-                        .then((value) {
-                      print(value['data']);
-                      print("Response: $value");
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        )),
+                  ),
+                  SizedBox(height: 34),
+                  GestureDetector(
+                    onTap: (){
+                      showSuccessDialog(context);
+                    },
+                   /* onTap: () {
+                      ApiClients()
+                          .CreateTicket(selectedCategoryId, messageController.text)
+                          .then((value) {
+                        print(value['data']);
+                        print("Response: $value");
 
-                      if (mounted) {
-                        setState(() {});
-                      }
+                        if (mounted) {
+                          setState(() {});
+                        }
 
-                      if (value['success'] == true) {
-                        print("Userssssss....${value['data']?['userId']}");
-                        GetStorage().write(
-                            ConstantData.UserId, value['data']?['userId']);
+                        if (value['success'] == true) {
+                          // Show dialog on success
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Success"),
+                                content: Text("Your ticket has been raised successfully!"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(); // Close the dialog
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
 
-                        showTopSnackBar(
-                            context, 'question submitted successfully');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HelpCenterScreen()),
-                        );
-                      }
-                    });
-                  },
-                  child: Center(
-                    child: Container(
+                          print("Userssssss....${value['data']?['userId']}");
+                          GetStorage().write(
+                              ConstantData.UserId, value['data']?['userId']);
+
+                          // Show a top snack bar for success notification
+                          showTopSnackBar(context, 'Question submitted successfully');
+
+                          // Navigate to HelpCenterScreen after raising the ticket
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HelpCenterScreen()),
+                          );
+                        }
+                      });
+                    },*/
+                    child: Center(
+                      child: Container(
                         width: parentWidth * 0.77,
                         height: parentHeight * 0.06,
                         decoration: BoxDecoration(
@@ -317,19 +465,24 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           ),
                         ),
                         child: Center(
-                            child: Text(
-                          "Save Ticket",
-                          style: TextStyle(
+                          child: Text(
+                            "Raise Ticket",
+                            style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontFamily: 'Roboto-Regular',
-                              fontSize: SizeConfig.blockSizeHorizontal * 4.5),
-                        ))),
+                              fontSize: SizeConfig.blockSizeHorizontal * 4.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-        ],
+
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }

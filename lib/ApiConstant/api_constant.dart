@@ -32,7 +32,7 @@ String AdminContactUsQuations = "/app-support/category";
 String AdminContactUsMessage = "/app-support/register";
 
 
-  String getAllTickitesSupport(String userId) {
+  String getAllTicketsSupport(String userId) {
     return "/app-support/$userId";
   }
 

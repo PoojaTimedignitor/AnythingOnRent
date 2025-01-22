@@ -306,11 +306,19 @@ class ApiClients {
   }*/
 
 
-  Future<Map<String, dynamic>> getAllTicket(String userId) async {
-    String url = "${ApiConstant().AdminBaseUrl}/${ApiConstant().getAllTickitesSupport(userId)}";
+  Future<Map<String, dynamic>> getAllTicket(String userIds) async {
+    String? userId = GetStorage().read<String>(ConstantData.UserId);
+
+    if (userId == null || userId.isEmpty) {
+      throw Exception("User ID is missing or invalid.");
+    }
+
+    print("User ID: $userId"); // Ensure correct User ID
+
+    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
+    print("Constructed URL: $url");
 
     String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
-
     if (sessionToken == null || sessionToken.isEmpty) {
       throw Exception("Session token is missing or invalid.");
     }
@@ -336,10 +344,10 @@ class ApiClients {
     } on DioError catch (e) {
       if (e.response != null) {
         print("Dio Error Response: ${e.response?.data}");
-        return e.response?.data ?? {'error': 'Unknown error'};
+        throw Exception("Error fetching data: ${e.response?.statusCode ?? 'Unknown Status Code'} - ${e.response?.data}");
       } else {
         print("Dio Error Message: ${e.message}");
-        return {'error': e.message};
+        throw Exception("Dio Error: ${e.message}");
       }
     }
   }
@@ -356,6 +364,7 @@ class ApiClients {
 
       Response response = await _dio.get(
         url,
+
         options: Options(
           headers: {
             'Authorization': 'Bearer $sessionToken', // Send the authorization token
