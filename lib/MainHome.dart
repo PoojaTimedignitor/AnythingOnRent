@@ -124,7 +124,6 @@ class MainHomeState extends State<MainHome>
     'assets/images/sports.png',
     'assets/images/agriculture.png',
     'assets/images/agriculture.png',
-
   ];
 
   void fetchCategories() async {
@@ -145,22 +144,15 @@ class MainHomeState extends State<MainHome>
     }
   }
 
-
-
-
   void fetchProductsList() async {
     try {
       Map<String, dynamic> response = await ApiClients().getAllProductList();
       var jsonList = getAllProductList.fromJson(response);
       setState(() {
-
         itemss = jsonList.products?.take(10).toList() ?? [];
         itemss = jsonList.products ?? [];
 
-
-
         filteredItemss = List.from(itemss);
-
 
         isLoading = false;
       });
@@ -171,10 +163,6 @@ class MainHomeState extends State<MainHome>
       print("loder $isLoading");
     }
   }
-
-
-
-
 
   void LogoutDialogBox(BuildContext context) {
     SizeConfig().init(context);
@@ -227,7 +215,7 @@ class MainHomeState extends State<MainHome>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-              /*    GestureDetector(
+                  /*    GestureDetector(
                     onTap: () async {
 
                       String email =
@@ -284,86 +272,84 @@ class MainHomeState extends State<MainHome>
                     ),
                   ),*/
 
+                  GestureDetector(
+                    onTap: () async {
+                      String email =
+                          GetStorage().read<String>(ConstantData.Useremail) ??
+                              "";
+                      String password = GetStorage()
+                              .read<String>(ConstantData.Userpassword) ??
+                          "";
+                      print("Logout initiated...");
 
-        GestureDetector(
-        onTap: () async {
-        String email =
-        GetStorage().read<String>(ConstantData.Useremail) ??
-        "";
-        String password = GetStorage()
-            .read<String>(ConstantData.Userpassword) ??
-        "";
-        print("Logout initiated...");
+                      // Retrieve the session token
+                      String? sessionToken = GetStorage()
+                          .read<String>(ConstantData.UserAccessToken);
 
-        // Retrieve the session token
-        String? sessionToken =
-        GetStorage().read<String>(ConstantData.UserAccessToken);
+                      // Validate token existence
+                      if (sessionToken == null || sessionToken.isEmpty) {
+                        print("No session token found. Redirecting to login.");
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                          (route) => false,
+                        );
+                        return;
+                      }
 
-        // Validate token existence
-        if (sessionToken == null || sessionToken.isEmpty) {
-        print("No session token found. Redirecting to login.");
-        Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (route) => false,
-        );
-        return;
-        }
+                      // Call the logout API
+                      final response =
+                          await ApiClients().getLogoutUser(email, password);
 
-        // Call the logout API
-        final response = await ApiClients().getLogoutUser(email,password);
-
-        if (response['success'] == true) {
-        print("Logout Successful");
-
-        // Clear user data from storage
-        await GetStorage().remove(ConstantData.UserAccessToken);
-        await GetStorage().remove(ConstantData.Useremail);
-        await GetStorage().remove(ConstantData.Userpassword);
-
-        // Redirect to login screen
-        Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (route) => false,
-        );
-        } else {
-        print("Logout failed: ${response['error']}");
-        }
-        },
-        child: Padding(
-        padding:
-        EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
-        child: Container(
-        width: SizeConfig.screenWidth * 0.3,
-        decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        gradient: LinearGradient(
-        begin: Alignment.topRight,
-        end: Alignment.bottomLeft,
-        colors: [
-        Color(0xffFEBA69),
-        Color(0xffFE7F64),
-        ],
-        ),
-        ),
-        child: Center(
-        child: Text(
-        "Yes",
-        style: TextStyle(
-        height: 2,
-        fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-        fontFamily: 'Roboto_Medium',
-        fontWeight: FontWeight.w400,
-        color: Colors.black),
-        ),
-        ),
-        ),
-        ),
+                      if (response['success'] == true) {
+                        print("Logout Successful");
 
 
-        ),
+                        await GetStorage().remove(ConstantData.UserAccessToken);
+                        await GetStorage().remove(ConstantData.Useremail);
+                        await GetStorage().remove(ConstantData.Userpassword);
 
 
-        GestureDetector(
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                          (route) => false,
+                        );
+                      } else {
+                        print("Logout failed: ${response['error']}");
+                      }
+                    },
+                    child: Padding(
+                      padding:
+                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                      child: Container(
+                        width: SizeConfig.screenWidth * 0.3,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffFEBA69),
+                              Color(0xffFE7F64),
+                            ],
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Yes",
+                            style: TextStyle(
+                                height: 2,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Medium',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
                     },
@@ -475,8 +461,7 @@ class MainHomeState extends State<MainHome>
                                 backgroundColor: Colors.transparent,
                                 backgroundImage: (profileImage != null &&
                                         profileImage!.isNotEmpty)
-                                    ? NetworkImage(
-                                        profileImage!)
+                                    ? NetworkImage(profileImage!)
                                     : AssetImage('assets/images/profiless.png')
                                         as ImageProvider,
                                 // Profile image
@@ -531,7 +516,6 @@ class MainHomeState extends State<MainHome>
                               ],
                             ),
                           ),
-
                         ],
                       ),
                     ),
@@ -558,7 +542,6 @@ class MainHomeState extends State<MainHome>
                         Image(
                           image: AssetImage('assets/images/userprofile.png'),
                           height: 22,
-
                         ),
                         Text("My Profile",
                             style: TextStyle(
@@ -585,9 +568,7 @@ class MainHomeState extends State<MainHome>
                           image: AssetImage('assets/images/myads.png'),
                           height: 22,
                         ),
-                        Text(
-
-                            "My Collection",
+                        Text("My Collection",
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeHorizontal * 3.9,
                                 fontFamily: "okra_Regular",
@@ -599,10 +580,8 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddToCart()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => AddToCart()));
                     },
                     child: Wrap(
                       spacing: 13,
@@ -675,7 +654,7 @@ class MainHomeState extends State<MainHome>
                           width: 108,
                           //  color: Colors.red,
                           child: Text(
-                              // the text of the row.
+
                               "My Ratings",
                               style: TextStyle(
                                   fontSize:
@@ -788,7 +767,7 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                       Navigator.push(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => HelpCenterScreen()));
@@ -805,9 +784,7 @@ class MainHomeState extends State<MainHome>
                         Container(
                           width: 108,
                           //  color: Colors.red,
-                          child: Text(
-
-                              "Help",
+                          child: Text("Help",
                               style: TextStyle(
                                   fontSize:
                                       SizeConfig.blockSizeHorizontal * 3.9,
@@ -822,7 +799,7 @@ class MainHomeState extends State<MainHome>
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                       Navigator.push(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ProductConfigurations()));
@@ -952,10 +929,8 @@ class MainHomeState extends State<MainHome>
                         height: 250,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage(
-                                'assets/images/dashtwo.png'),
-                            fit: BoxFit
-                                .cover,
+                            image: AssetImage('assets/images/dashtwo.png'),
+                            fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
@@ -1014,13 +989,11 @@ class MainHomeState extends State<MainHome>
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(top: 3,left: 110),
+                                padding: EdgeInsets.only(top: 3, left: 110),
                                 child: const Image(
                                   image: AssetImage(
                                       'assets/images/notification.png'),
                                   height: 20,
-
-
                                 ),
                               ),
                             ],
@@ -1114,7 +1087,6 @@ class MainHomeState extends State<MainHome>
                     child: getAddGameTabLayout(
                         SizeConfig.screenHeight, SizeConfig.screenWidth),
                   ),
-
 
                   /* Stack(
                     children: [
@@ -1289,8 +1261,6 @@ class MainHomeState extends State<MainHome>
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
-
-
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => CreateProductService()));
       },
@@ -1300,7 +1270,6 @@ class MainHomeState extends State<MainHome>
             right: parentWidth * 0.09,
             top: SizeConfig.screenHeight * 0.275),
         child: Container(
-
           height: parentHeight * 0.040,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -1539,9 +1508,7 @@ class MainHomeState extends State<MainHome>
                             end: Alignment.bottomRight,
                             colors: [Color(0xffeaeaea), Color(0xffffffff)],
                           ),
-
                           borderRadius: BorderRadius.circular(10),
-
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(9.0),
@@ -1560,7 +1527,6 @@ class MainHomeState extends State<MainHome>
                       Container(
                         height: parentHeight * 0.02,
                         width: parentWidth * 0.2,
-
                         child: Text(
                           filteredItems[index].name.toString(),
                           style: TextStyle(
@@ -1570,7 +1536,6 @@ class MainHomeState extends State<MainHome>
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
                           ),
-
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1591,7 +1556,8 @@ class MainHomeState extends State<MainHome>
                           body: Container(
                               height: SizeConfig.screenHeight,
                               child: CatagriesList(
-                                onChanged: (value) {}, categoryId: '',
+                                onChanged: (value) {},
+                                categoryId: '',
                               )))));
             },
             child: Padding(
@@ -1661,643 +1627,668 @@ class MainHomeState extends State<MainHome>
           SizedBox(
             height: 20,
           ),
-         Container(
-           height: SizeConfig.screenHeight*0.97,
+          Container(
+            height: SizeConfig.screenHeight * 0.97,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(5.0),
+                    decoration: BoxDecoration(
+                      color: Color(0xffEAEEFF),
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceAround, // Align buttons to ends
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = 0;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 58, vertical: 10),
+                            decoration: BoxDecoration(
+                              gradient: selectedIndex != 1
+                                  ? LinearGradient(
+                                      colors: [
+                                        Color(0xff1371f6),
+                                        Color(0xffb8a1ff)
+                                      ],
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomLeft,
+                                    )
+                                  : null,
+                              color: selectedIndex == 1
+                                  ? Colors.transparent
+                                  : null, // Transparent for unselected
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                            ),
+                            child: Text(
+                              "Product",
+                              style: TextStyle(
+                                  fontFamily: "Montserrat-BoldItalic",
+                                  color: selectedIndex == 0
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            ),
+                          ),
+                        ),
 
-           child: Column(
+                        // Zepto Super Saver Button (Right aligned)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = 1;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 58, vertical: 10),
+                            decoration: BoxDecoration(
+                              gradient: selectedIndex == 1
+                                  ? LinearGradient(
+                                      colors: [
+                                        Color(0xff1371f6),
+                                        Color(0xffb8a1ff)
+                                      ],
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomLeft,
+                                    )
+                                  : null,
+                              color: selectedIndex != 1
+                                  ? Colors.transparent
+                                  : null,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                            ),
+                            child: Text(
+                              "Service",
+                              style: TextStyle(
+                                  color: selectedIndex == 1
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Montserrat-BoldItalic",
+                                  fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
 
-             children: [
+                // Content based on selected tab
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: selectedIndex == 0
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text(
+                                    "  Near by Location",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "Montserrat-Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PopularCatagoriesData()));
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: parentWidth * 0.38, top: 5),
+                                      child: Container(
+                                        height: parentHeight * 0.03,
+                                        width: parentWidth * 0.22,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Color(0xff3684F0),
+                                                width: 0.5),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5))),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text(
+                                              " View All",
+                                              style: TextStyle(
+                                                fontFamily: "okra_Medium",
+                                                fontSize: SizeConfig
+                                                        .blockSizeHorizontal *
+                                                    3.1,
+                                                color: Color(0xff3684F0),
+                                                fontWeight: FontWeight.w200,
+                                              ),
+                                            ),
+                                            Image(
+                                              image: AssetImage(
+                                                  'assets/images/arrow.png'),
+                                              height: 20,
+                                              width: 15,
+                                              color: Color(0xff3684F0),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Text(
+                                "   Near by place",
+                                style: TextStyle(
+                                  color: CommonColor.grayText,
+                                  fontFamily: "Montserrat-Medium",
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              GridView.builder(
+                                padding: EdgeInsets.only(top: 15),
+                                physics:
+                                    NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                                shrinkWrap:
+                                    true, // Take only the space it needs
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      2, // Number of columns in the grid
+                                  crossAxisSpacing: 1.0,
+                                  mainAxisSpacing: 0.0,
+                                  childAspectRatio: 1.0, // Adjust as needed
+                                ),
+                                itemCount: 4, // Number of items in the grid
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: EdgeInsets.only(
+                                        left: 10.0,
+                                        right: 5.0,
+                                        top: 0.0,
+                                        bottom: 30.0),
+                                    //  height: SizeConfig.screenHeight * 0,
+                                    decoration: BoxDecoration(
+                                        color: CommonColor.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Color(0xff000000)
+                                                  .withOpacity(0.2),
+                                              blurRadius: 2,
+                                              spreadRadius: 0,
+                                              offset: Offset(0, 1)),
+                                        ],
+                                        border: Border.all(
+                                            color: Colors.black38, width: 0.9),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(7))),
 
-               Padding(
-                 padding: const EdgeInsets.all(8.0),
-                 child: Container(
-                   padding: const EdgeInsets.all(5.0),
-                   decoration: BoxDecoration(
-                     color: Color(0xffEAEEFF),
-                     borderRadius: BorderRadius.all(Radius.circular(30)),
-                   ),
-                   child:
+                                    // alignment: Alignment.center,
 
+                                    child: Column(
+                                      // crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Stack(
+                                          children: [
+                                            Container(
+                                              height: SizeConfig.screenHeight *
+                                                  0.19,
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10)),
+                                                child: AnotherCarousel(
+                                                  images: const [
+                                                    NetworkImage(
+                                                        "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
+                                                    NetworkImage(
+                                                        "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
+                                                    NetworkImage(
+                                                        "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
+                                                    NetworkImage(
+                                                        "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
+                                                    NetworkImage(
+                                                        "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
+                                                  ],
+                                                  autoplay: false,
+                                                  dotSize: 6,
+                                                  dotSpacing: 10,
+                                                  dotColor: Colors.white70,
+                                                  // overlayShadow: false,
 
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceAround, // Align buttons to ends
-                     children: [
+                                                  dotIncreasedColor:
+                                                      Colors.black45,
+                                                  indicatorBgPadding: 3.0,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: parentHeight * 0.125),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomLeft,
+                                                  child: Container(
+                                                    height:
+                                                        parentHeight * 0.055,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black
+                                                          .withOpacity(0.3),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              0),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 8,
+                                                          right: 10,
+                                                          top: 2),
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            'HD Camera (black & white) dfgdf',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontFamily:
+                                                                  "okra_Medium",
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 2),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(
+                                                                  Icons
+                                                                      .location_on,
+                                                                  size: SizeConfig
+                                                                          .screenHeight *
+                                                                      0.019,
+                                                                  color: Color(
+                                                                          0xffffffff)
+                                                                      .withOpacity(
+                                                                          0.8),
+                                                                ),
+                                                                Flexible(
+                                                                  child: Text(
+                                                                    ' Park Street,pune banner 20023',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .white
+                                                                          .withOpacity(
+                                                                              0.8),
+                                                                      fontFamily:
+                                                                          "Montserrat-Medium",
+                                                                      fontSize:
+                                                                          11,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )),
+                                            Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 0, left: 110),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomLeft,
+                                                  child: Container(
+                                                    height: 15,
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xff5095f1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                    ),
+                                                    child: Row(children: [
+                                                      Icon(
+                                                        Icons.location_on,
+                                                        size: SizeConfig
+                                                                .screenHeight *
+                                                            0.019,
+                                                        color: Colors.white,
+                                                      ),
+                                                      Text(
+                                                        '1.2 Km   ',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              "Montserrat-Regular",
+                                                          fontSize: SizeConfig
+                                                                  .blockSizeHorizontal *
+                                                              2.5,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ]),
+                                                  ),
+                                                )),
+                                          ],
+                                        ),
+                                        SizedBox(height: 4),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "  All Product List",
+                                    style: TextStyle(
+                                      fontFamily: "Montserrat-Medium",
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal * 4.1,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AllProductList()));
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: parentWidth * 0.38, top: 3),
+                                      child: Container(
+                                        height: parentHeight * 0.03,
+                                        width: parentWidth * 0.22,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Color(0xff3684F0),
+                                                width: 0.5),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5))),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text(
+                                              " View All",
+                                              style: TextStyle(
+                                                fontFamily: "okra_Medium",
+                                                fontSize: SizeConfig
+                                                        .blockSizeHorizontal *
+                                                    3.1,
+                                                color: Color(0xff3684F0),
+                                                fontWeight: FontWeight.w200,
+                                              ),
+                                            ),
+                                            Image(
+                                              image: AssetImage(
+                                                  'assets/images/arrow.png'),
+                                              height: 20,
+                                              width: 15,
+                                              color: Color(0xff3684F0),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 3, left: 10),
+                                child: Container(
+                                  width: 350,
+                                  child: Text(
+                                    "Display All rental product options in your choose location",
+                                    style: TextStyle(
+                                      color: CommonColor.grayText,
+                                      fontFamily: "Montserrat-Medium",
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 2, // Limit to 2 lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Add ellipsis if text overflows
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Expanded(
+                                child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: filteredItemss
+                                        .length, // Define the number of items
+                                    itemBuilder: (context, index) {
+                                      final product = filteredItemss[index];
 
-                       GestureDetector(
-                         onTap: () {
-                           setState(() {
-                             selectedIndex = 0;
-                           });
-                         },
-                         child: Container(
-                           padding: const EdgeInsets.symmetric(
-                               horizontal: 58, vertical: 10),
-                           decoration: BoxDecoration(
-                             gradient: selectedIndex != 1
-                                 ? LinearGradient(
-                               colors:[  Color(0xff1371f6),
-                               Color(0xffb8a1ff)],
-                               begin: Alignment.topRight,
-                               end: Alignment.bottomLeft,
-                             )
-                                 : null,
-                             color: selectedIndex == 1
-                                 ? Colors.transparent
-                                 : null, // Transparent for unselected
-                             borderRadius: BorderRadius.all(Radius.circular(30)),
+                                      final productImages =
+                                          product.images ?? [];
 
-                           ),
-                           child: Text(
-                             "Product",
-                             style: TextStyle(
-                               fontFamily: "Montserrat-BoldItalic",
-                               color: selectedIndex == 0 ? Colors.white : Colors.black,
-                               fontWeight: FontWeight.bold,
-                                 fontSize: 15
-                             ),
-                           ),
-                         ),
-                       ),
+                                      return Container(
+                                        width: parentWidth * 0.55,
 
-                       // Zepto Super Saver Button (Right aligned)
-                       GestureDetector(
-                         onTap: () {
-                           setState(() {
-                             selectedIndex = 1;
-                           });
-                         },
-                         child: Container(
-                           padding: const EdgeInsets.symmetric(
-                               horizontal: 58, vertical: 10),
-                           decoration: BoxDecoration(
-                             gradient: selectedIndex == 1
-                                 ? LinearGradient(
-                               colors:[   Color(0xff1371f6),
-                                 Color(0xffb8a1ff)],
-                               begin: Alignment.topRight,
-                               end: Alignment.bottomLeft,
-                             )
-                                 : null,
-                             color: selectedIndex != 1
-                                 ? Colors.transparent
-                                 : null,
-                             borderRadius: BorderRadius.all(Radius.circular(30)),
+                                        // Set width for each item
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 10.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(7),
+                                          border: Border.all(
+                                              color: CommonColor.grayText,
+                                              width: 0.3),
+                                        ),
+                                        child: ListView(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(3.0),
+                                              child: Container(
+                                                height:
+                                                    SizeConfig.screenHeight *
+                                                        0.16,
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft: Radius.circular(7),
+                                                    topRight:
+                                                        Radius.circular(7),
+                                                  ),
+                                                  child: CarouselSlider.builder(
+                                                    key: PageStorageKey(
+                                                        'carouselKey'),
+                                                    carouselController:
+                                                        _controller,
+                                                    itemCount:
+                                                        productImages.length,
+                                                    options: CarouselOptions(
+                                                      onPageChanged:
+                                                          (index, reason) {
+                                                        setState(() {
+                                                          currentIndex = index;
+                                                        });
+                                                      },
+                                                      initialPage: 0,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              .4,
+                                                      viewportFraction: 1.0,
+                                                      enableInfiniteScroll:
+                                                          false,
+                                                      autoPlay: false,
+                                                      enlargeStrategy:
+                                                          CenterPageEnlargeStrategy
+                                                              .height,
+                                                    ),
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int itemIndex,
+                                                            int index1) {
+                                                      final imgUrl =
+                                                          productImages[index1]
+                                                                  .url ??
+                                                              "";
 
-                           ),
-                           child: Text(
-                             "Service",
-                             style: TextStyle(
-                               color: selectedIndex == 1 ? Colors.white : Colors.black,
-                               fontWeight: FontWeight.bold,
-                                 fontFamily: "Montserrat-BoldItalic",
-                               fontSize: 15
-                             ),
-                           ),
-                         ),
-                       ),
-                     ],
-                   ),
-
-                 ),
-               ),
-
-               // Content based on selected tab
-               Expanded(
-                 child: Container(
-
-
-                   alignment: Alignment.center,
-                   child: selectedIndex == 0
-                       ?   Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       SizedBox(height: 10),
-                       Row(
-                         children: [
-                           Text(
-                             "  Near by Location",
-                             style: TextStyle(
-                               color: Colors.black,
-                               fontFamily: "Montserrat-Medium",
-                               fontSize: 15,
-                               fontWeight: FontWeight.w600,
-                             ),
-                           ),
-                           GestureDetector(
-                             onTap: () {
-                               Navigator.push(
-                                   context,
-                                   MaterialPageRoute(
-                                       builder: (context) =>
-                                            PopularCatagoriesData()));
-                             },
-                             child: Padding(
-                               padding: EdgeInsets.only(
-                                   left: parentWidth * 0.38, top: 5),
-                               child: Container(
-                                 height: parentHeight * 0.03,
-                                 width: parentWidth * 0.22,
-                                 decoration: BoxDecoration(
-                                     border: Border.all(
-                                         color: Color(0xff3684F0),
-                                         width: 0.5),
-                                     borderRadius: BorderRadius.all(
-                                         Radius.circular(5))),
-                                 child: Row(
-                                   mainAxisAlignment:
-                                   MainAxisAlignment.spaceAround,
-                                   children: [
-                                     Text(
-                                       " View All",
-                                       style: TextStyle(
-                                         fontFamily: "okra_Medium",
-                                         fontSize: SizeConfig
-                                             .blockSizeHorizontal *
-                                             3.1,
-                                         color: Color(0xff3684F0),
-                                         fontWeight: FontWeight.w200,
-                                       ),
-                                     ),
-                                     Image(
-                                       image: AssetImage(
-                                           'assets/images/arrow.png'),
-                                       height: 20,
-                                       width: 15,
-                                       color: Color(0xff3684F0),
-                                     )
-                                   ],
-                                 ),
-                               ),
-                             ),
-                           )
-                         ],
-                       ),
-                       Text(
-                         "   Near by place",
-                         style: TextStyle(
-                           color: CommonColor.grayText,
-                           fontFamily: "Montserrat-Medium",
-                           fontSize: 13,
-                           fontWeight: FontWeight.w500,
-                         ),
-                       ),
-                       GridView.builder(
-                         padding: EdgeInsets.only(top: 15),
-                         physics:
-                         NeverScrollableScrollPhysics(), // Disable GridView's scrolling
-                         shrinkWrap: true, // Take only the space it needs
-                         gridDelegate:
-                         SliverGridDelegateWithFixedCrossAxisCount(
-                           crossAxisCount:
-                           2, // Number of columns in the grid
-                           crossAxisSpacing: 1.0,
-                           mainAxisSpacing: 0.0,
-                           childAspectRatio: 1.0, // Adjust as needed
-                         ),
-                         itemCount: 4, // Number of items in the grid
-                         itemBuilder: (context, index) {
-                           return Container(
-                             margin: EdgeInsets.only(
-                                 left: 10.0,
-                                 right: 5.0,
-                                 top: 0.0,
-                                 bottom: 30.0),
-                             //  height: SizeConfig.screenHeight * 0,
-                             decoration: BoxDecoration(
-                                 color: CommonColor.white,
-                                 boxShadow: [
-                                   BoxShadow(
-                                       color: Color(0xff000000)
-                                           .withOpacity(0.2),
-                                       blurRadius: 2,
-                                       spreadRadius: 0,
-                                       offset: Offset(0, 1)),
-                                 ],
-                                 border: Border.all(
-                                     color: Colors.black38, width: 0.9),
-                                 borderRadius:
-                                 BorderRadius.all(Radius.circular(7))),
-
-                             // alignment: Alignment.center,
-
-                             child: Column(
-                               // crossAxisAlignment: CrossAxisAlignment.start,
-                               children: [
-                                 Stack(
-                                   children: [
-                                     Container(
-                                       height:
-                                       SizeConfig.screenHeight * 0.19,
-                                       child: ClipRRect(
-                                         borderRadius: BorderRadius.all(
-                                             Radius.circular(10)),
-                                         child: AnotherCarousel(
-                                           images: const [
-                                             NetworkImage(
-                                                 "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
-                                             NetworkImage(
-                                                 "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
-                                             NetworkImage(
-                                                 "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
-                                             NetworkImage(
-                                                 "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
-                                             NetworkImage(
-                                                 "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
-                                           ],
-                                           autoplay: false,
-                                           dotSize: 6,
-                                           dotSpacing: 10,
-                                           dotColor: Colors.white70,
-                                           // overlayShadow: false,
-
-                                           dotIncreasedColor:
-                                           Colors.black45,
-                                           indicatorBgPadding: 3.0,
-                                         ),
-                                       ),
-                                     ),
-                                     Padding(
-                                         padding: EdgeInsets.only(
-                                             top: parentHeight * 0.125),
-                                         child: Align(
-                                           alignment: Alignment.bottomLeft,
-                                           child: Container(
-                                             height: parentHeight * 0.055,
-                                             decoration: BoxDecoration(
-                                               color: Colors.black
-                                                   .withOpacity(0.3),
-                                               borderRadius:
-                                               BorderRadius.circular(
-                                                   0),
-                                             ),
-                                             child: Padding(
-                                               padding: EdgeInsets.only(
-                                                   left: 8,
-                                                   right: 10,
-                                                   top: 2),
-                                               child: Column(
-                                                 children: [
-                                                   Text(
-                                                     'HD Camera (black & white) dfgdf',
-                                                     style: TextStyle(
-                                                       color: Colors.white,
-                                                       fontFamily:
-                                                       "okra_Medium",
-                                                       fontSize: 13,
-                                                       fontWeight:
-                                                       FontWeight.w600,
-                                                     ),
-                                                     overflow: TextOverflow
-                                                         .ellipsis,
-                                                   ),
-                                                   Padding(
-                                                     padding:
-                                                     EdgeInsets.only(
-                                                         top: 2),
-                                                     child: Row(
-                                                       children: [
-                                                         Icon(
-                                                           Icons
-                                                               .location_on,
-                                                           size: SizeConfig
-                                                               .screenHeight *
-                                                               0.019,
-                                                           color: Color(
-                                                               0xffffffff)
-                                                               .withOpacity(
-                                                               0.8),
-                                                         ),
-                                                         Flexible(
-                                                           child: Text(
-                                                             ' Park Street,pune banner 20023',
-                                                             style:
-                                                             TextStyle(
-                                                               color: Colors
-                                                                   .white
-                                                                   .withOpacity(
-                                                                   0.8),
-                                                               fontFamily:
-                                                               "Montserrat-Medium",
-                                                               fontSize:
-                                                               11,
-                                                               fontWeight:
-                                                               FontWeight
-                                                                   .w500,
-                                                             ),
-                                                             overflow:
-                                                             TextOverflow
-                                                                 .ellipsis,
-                                                             maxLines: 1,
-                                                           ),
-                                                         ),
-                                                       ],
-                                                     ),
-                                                   ),
-                                                 ],
-                                               ),
-                                             ),
-                                           ),
-                                         )),
-                                     Padding(
-                                         padding: EdgeInsets.only(
-                                             top: 0, left: 110),
-                                         child: Align(
-                                           alignment: Alignment.bottomLeft,
-                                           child: Container(
-                                             height: 15,
-                                             decoration: BoxDecoration(
-                                               color: Color(0xff5095f1),
-                                               borderRadius:
-                                               BorderRadius.circular(
-                                                   5),
-                                             ),
-                                             child: Row(
-
-                                                 children: [
-                                                   Icon(
-                                                     Icons.location_on,
-                                                     size: SizeConfig
-                                                         .screenHeight *
-                                                         0.019,
-                                                     color: Colors.white,
-                                                   ),
-                                                   Text(
-                                                     '1.2 Km   ',
-                                                     style: TextStyle(
-                                                       fontFamily:
-                                                       "Montserrat-Regular",
-                                                       fontSize: SizeConfig
-                                                           .blockSizeHorizontal *
-                                                           2.5,
-                                                       color: Colors.white,
-                                                       fontWeight:
-                                                       FontWeight.w600,
-                                                     ),
-                                                     overflow: TextOverflow
-                                                         .ellipsis,
-                                                   ),
-                                                 ]),
-                                           ),
-                                         )),
-                                   ],
-                                 ),
-                                 SizedBox(height: 4),
-
-                               ],
-                             ),
-                           );
-                         },
-                       ),
-                       Row(
-                         children: [
-                           Text(
-                             "  All Product List",
-                             style: TextStyle(
-                               fontFamily: "Montserrat-Medium",
-                               fontSize:
-                               SizeConfig.blockSizeHorizontal * 4.1,
-                               color: Colors.black,
-                               fontWeight: FontWeight.w600,
-                             ),
-                           ),
-                           GestureDetector(
-                             onTap: () {
-                               Navigator.push(
-                                   context,
-                                   MaterialPageRoute(
-                                       builder: (context) =>
-                                           AllProductList()));
-                             },
-                             child: Padding(
-                               padding: EdgeInsets.only(
-                                   left: parentWidth * 0.38, top: 3),
-                               child: Container(
-                                 height: parentHeight * 0.03,
-                                 width: parentWidth * 0.22,
-                                 decoration: BoxDecoration(
-                                     border: Border.all(
-                                         color: Color(0xff3684F0),
-                                         width: 0.5),
-                                     borderRadius: BorderRadius.all(
-                                         Radius.circular(5))),
-                                 child: Row(
-                                   mainAxisAlignment:
-                                   MainAxisAlignment.spaceAround,
-                                   children: [
-                                     Text(
-                                       " View All",
-                                       style: TextStyle(
-                                         fontFamily: "okra_Medium",
-                                         fontSize: SizeConfig
-                                             .blockSizeHorizontal *
-                                             3.1,
-                                         color: Color(0xff3684F0),
-                                         fontWeight: FontWeight.w200,
-                                       ),
-                                     ),
-                                     Image(
-                                       image: AssetImage(
-                                           'assets/images/arrow.png'),
-                                       height: 20,
-                                       width: 15,
-                                       color: Color(0xff3684F0),
-                                     )
-                                   ],
-                                 ),
-                               ),
-                             ),
-                           )
-                         ],
-                       ),
-                       Padding(
-                         padding: EdgeInsets.only(top: 3, left: 10),
-                         child: Container(
-                           width: 350,
-                           child: Text(
-                             "Display All rental product options in your choose location",
-                             style: TextStyle(
-                               color: CommonColor.grayText,
-                               fontFamily: "Montserrat-Medium",
-                               fontSize: 13,
-                               fontWeight: FontWeight.w500,
-                             ),
-                             maxLines: 2, // Limit to 2 lines
-                             overflow: TextOverflow
-                                 .ellipsis, // Add ellipsis if text overflows
-                           ),
-                         ),
-                       ),
-                       SizedBox(height: 10),
-                       Expanded(
-                         child: ListView.builder(
-                             padding: EdgeInsets.zero,
-                             scrollDirection: Axis.horizontal,
-                             itemCount: filteredItemss.length, // Define the number of items
-                             itemBuilder: (context, index) {
-
-                               final product = filteredItemss[index];
-
-                               final productImages = product.images ?? [];
-
-                               return Container(
-                                 width: parentWidth * 0.55,
-
-                                 // Set width for each item
-                                 margin: EdgeInsets.symmetric(
-                                     horizontal: 10.0),
-                                 decoration: BoxDecoration(
-                                   color: Colors.white,
-                                   borderRadius: BorderRadius.circular(7),
-                                   border: Border.all(
-                                       color: CommonColor.grayText,
-                                       width: 0.3),
-                                 ),
-                                 child: ListView(
-                                   physics: NeverScrollableScrollPhysics(),
-                                   children: [
-                                     Padding(
-                                       padding: const EdgeInsets.all(3.0),
-                                       child: Container(
-                                         height: SizeConfig.screenHeight *
-                                             0.16,
-                                         child: ClipRRect(
-                                           borderRadius: BorderRadius.only(
-                                             topLeft: Radius.circular(7),
-                                             topRight: Radius.circular(7),
-                                           ),
-                                           child: CarouselSlider.builder(
-                                             key: PageStorageKey('carouselKey'),
-                                             carouselController: _controller,
-                                             itemCount: productImages.length,
-                                             options: CarouselOptions(
-                                               onPageChanged: (index, reason) {
-                                                 setState(() {
-                                                   currentIndex = index;
-                                                 });
-                                               },
-                                               initialPage: 0,
-                                               height:
-                                               MediaQuery.of(context).size.height *
-                                                   .4,
-                                               viewportFraction: 1.0,
-                                               enableInfiniteScroll: false,
-                                               autoPlay: false,
-                                               enlargeStrategy:
-                                               CenterPageEnlargeStrategy.height,
-                                             ),
-                                             itemBuilder: (BuildContext context,
-                                                 int itemIndex, int index1) {
-                                               final imgUrl =
-                                                   productImages[index1].url ?? "";
-
-                                               return Container(
-                                                 height:
-                                                 MediaQuery.of(context).size.height *
-                                                     0.3,
-                                                 decoration: BoxDecoration(
-                                                   borderRadius:
-                                                   BorderRadius.circular(10),
-                                                   image: DecorationImage(
-                                                     image: NetworkImage(imgUrl),
-                                                     fit: BoxFit.cover,
-                                                   ),
-                                                 ),
-                                               );
-                                             },
-                                           ),
-                                         ),
-                                       ),
-                                     ),
-                                     Container(
-                                       width: SizeConfig.screenWidth * 0.5,
-                                       child: Column(
-                                         crossAxisAlignment:
-                                         CrossAxisAlignment.start,
-                                         children: [
-                                           SizedBox(height: 7),
-                                           Column(
-                                             crossAxisAlignment:
-                                             CrossAxisAlignment.start,
-                                             children: [
-                                               Text(
-                                                 filteredItemss [index].name.toString(),
-                                                 style: TextStyle(
-                                                   fontFamily:
-                                                   "Montserrat-Regular",
-                                                   fontSize: SizeConfig
-                                                       .blockSizeHorizontal *
-                                                       3.7,
-                                                   color:
-                                                   CommonColor.Black,
-                                                   fontWeight:
-                                                   FontWeight.w400,
-                                                 ),
-                                                 overflow:
-                                                 TextOverflow.ellipsis,
-                                               ),
-                                               SizedBox(height: 3),
-                                               Row(
-                                                 children: [
-                                                   Icon(
-                                                     Icons.location_on,
-                                                     size: SizeConfig
-                                                         .screenHeight *
-                                                         0.019,
-                                                     color:
-                                                     Color(0xff3684F0),
-                                                   ),
-                                                   Flexible(
-                                                     child: Text(
-                                                       ' Park Street,pune banner 20023',
-                                                       style: TextStyle(
-                                                         fontFamily:
-                                                         "Montserrat-Regular",
-                                                         fontSize: SizeConfig
-                                                             .blockSizeHorizontal *
-                                                             3.0,
-                                                         color: Color(
-                                                             0xff3684F0),
-                                                         fontWeight:
-                                                         FontWeight
-                                                             .w400,
-                                                       ),
-                                                       overflow:
-                                                       TextOverflow
-                                                           .ellipsis,
-                                                       maxLines: 1,
-                                                     ),
-                                                   ),
-                                                 ],
-                                               ),
-
-                                             ],
-                                           ),
-                                         ],
-                                       ),
-                                     ),
-                                   ],
-                                 ),
-                               );
-                             }),
-                       )
-                     ],
-                   )
-                       : Text(
-                     "Zepto Super Saver Content",
-                     style: TextStyle(
-                       fontSize: 24,
-                       fontWeight: FontWeight.bold,
-                     ),
-                   ),
-                 ),
-               ),
-             ],
-           ),
-         )
-
-
-
-
+                                                      return Container(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.3,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          image:
+                                                              DecorationImage(
+                                                            image: NetworkImage(
+                                                                imgUrl),
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width:
+                                                  SizeConfig.screenWidth * 0.5,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(height: 7),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        filteredItemss[index]
+                                                            .name
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              "Montserrat-Regular",
+                                                          fontSize: SizeConfig
+                                                                  .blockSizeHorizontal *
+                                                              3.7,
+                                                          color:
+                                                              CommonColor.Black,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                      SizedBox(height: 3),
+                                                      Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.location_on,
+                                                            size: SizeConfig
+                                                                    .screenHeight *
+                                                                0.019,
+                                                            color: Color(
+                                                                0xff3684F0),
+                                                          ),
+                                                          Flexible(
+                                                            child: Text(
+                                                              ' Park Street,pune banner 20023',
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    "Montserrat-Regular",
+                                                                fontSize: SizeConfig
+                                                                        .blockSizeHorizontal *
+                                                                    3.0,
+                                                                color: Color(
+                                                                    0xff3684F0),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                              )
+                            ],
+                          )
+                        : Text(
+                            "Zepto Super Saver Content",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

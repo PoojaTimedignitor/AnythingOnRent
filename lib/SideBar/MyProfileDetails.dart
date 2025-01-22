@@ -814,7 +814,7 @@ _image
                   }
 
                   ApiClients().getUserProfileData().then((value) {
-                    if (value == null || !value.containsKey('user')) {
+                    if (!value.containsKey('user')) {
                       print("Invalid user data received.");
                       return;
                     }

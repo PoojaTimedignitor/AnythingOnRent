@@ -4,7 +4,7 @@ class ApiConstant {
   String BaseUrlGetAllCat = "https://admin-fyu1.onrender.com/api";
   String BaseUrlGetAllCats = "https://rental-api-5vfa.onrender.com";
   String registerss = "/users/reg";
-  String login = "/users/login";
+  String login = "/login";
   String products = "/addproduct/jhdfs";
   String getAllCatagries = "/category123";
   String getAllSubCatagries(String categoryId) {
@@ -34,6 +34,11 @@ String AdminContactUsMessage = "/app-support/register";
 
   String getAllTickitesSupport(String userId) {
     return "/app-support/$userId";
+  }
+
+
+  String deleteProducts(String ProductId) {
+    return "/product/$ProductId";
   }
 
 

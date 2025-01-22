@@ -95,11 +95,7 @@ print("hgfhdgf");
     isPagination = true;
     fetchProductsList(page);
     print("Data has been refreshed!");
-    /*  page = 1;
-      isPagination = true;
-      getInternetCheck(page);
-      */
-    //  callGetReplyComment(page);
+
     return;
   }
 

@@ -7,6 +7,7 @@ import '../DetailScreen.dart';
 import '../MyBehavior.dart';
 import '../ResponseModule/getAllProductList.dart';
 import '../model/dio_client.dart';
+import 'EditDeleteBottomModelSheet.dart';
 
 class MyCollection extends StatefulWidget {
   const MyCollection({super.key});
@@ -23,7 +24,7 @@ class _MyCollectionState extends State<MyCollection> {
   int currentIndex = 0;
   int page = 1;
   bool isPagination = true;
-
+  String? selectedProductId;
   final List<String> Price = [
     "11,400",
     "500",
@@ -44,7 +45,7 @@ class _MyCollectionState extends State<MyCollection> {
     super.initState();
   }
 
-  void fetchProductsList(int page) async {
+  Future<void> fetchProductsList(int page) async {
     try {
       Map<String, dynamic> response = await ApiClients().getAllProductList();
       var jsonList = getAllProductList.fromJson(response);
@@ -59,9 +60,11 @@ class _MyCollectionState extends State<MyCollection> {
       setState(() {
         isLoading = false;
       });
-      print("loder $isLoading");
+      print("loader $isLoading");
     }
   }
+
+
 
   Future<void> refreshList() async {
     await Future.delayed(const Duration(seconds: 2));
@@ -70,92 +73,91 @@ class _MyCollectionState extends State<MyCollection> {
     isPagination = true;
     fetchProductsList(page);
     print("Data has been refreshed!");
-    /*  page = 1;
-      isPagination = true;
-      getInternetCheck(page);
-      */
-    //  callGetReplyComment(page);
+
     return;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                  top: SizeConfig.screenHeight * 0.04,
-                  left: SizeConfig.screenWidth * 0.05),
-              child: Row(
-                children: [
-                  GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(Icons.arrow_back)),
-                  Expanded(
-                    child: Center(
-                      child: !isSearchingData
-                          ? Text(
-                              "My Collection",
-                              style: TextStyle(
-                                fontFamily: "Montserrat-Medium",
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.5,
-                                color: CommonColor.TextBlack,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )
-                          : Padding(
-                              padding: EdgeInsets.only(left: 14),
-                              child: TextField(
-                                onChanged: (String query) {
-                                  setState(() {
-                                    filteredItems = items
-                                        .where((item) =>
-                                            item.name != null &&
-                                            item.name!
-                                                .toLowerCase()
-                                                .contains(query.toLowerCase()))
-                                        .toList();
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  hintText: "Search...",
-                                  border: InputBorder.none,
+        backgroundColor: Color(0xfffafaff),
+        body: RefreshIndicator(
+          onRefresh: refreshList,
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                    top: SizeConfig.screenHeight * 0.04,
+                    left: SizeConfig.screenWidth * 0.05),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(Icons.arrow_back)),
+                    Expanded(
+                      child: Center(
+                        child: !isSearchingData
+                            ? Text(
+                                "My Collection",
+                                style: TextStyle(
+                                  fontFamily: "Montserrat-Medium",
+                                  fontSize: SizeConfig.blockSizeHorizontal * 4.5,
+                                  color: CommonColor.TextBlack,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                autofocus: true,
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(left: 14),
+                                child: TextField(
+                                  onChanged: (String query) {
+                                    setState(() {
+                                      filteredItems = items
+                                          .where((item) =>
+                                              item.name != null &&
+                                              item.name!
+                                                  .toLowerCase()
+                                                  .contains(query.toLowerCase()))
+                                          .toList();
+                                    });
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: "Search...",
+                                    border: InputBorder.none,
+                                  ),
+                                  autofocus: true,
+                                ),
                               ),
-                            ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(13.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        print("list...$filteredItems");
-                        setState(() {
-                          isSearchingData = !isSearchingData;
-                          if (!isSearchingData) {
-                            filteredItems = items;
-                          }
-                        });
-                      },
-                      child: Icon(
-                        isSearchingData ? Icons.close : Icons.search_rounded,
                       ),
                     ),
-                  )
-                ],
+                    Padding(
+                      padding: EdgeInsets.all(13.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          print("list...$filteredItems");
+                          setState(() {
+                            isSearchingData = !isSearchingData;
+                            if (!isSearchingData) {
+                              filteredItems = items;
+                            }
+                          });
+                        },
+                        child: Icon(
+                          isSearchingData ? Icons.close : Icons.search_rounded,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-            Container(
-              height: SizeConfig.screenHeight * 0.0005,
-              color: CommonColor.SearchBar,
-            ),
-            MainCollectionData(SizeConfig.screenHeight, SizeConfig.screenWidth)
-          ],
+              Container(
+                height: SizeConfig.screenHeight * 0.0005,
+                color: CommonColor.SearchBar,
+              ),
+              MainCollectionData(SizeConfig.screenHeight, SizeConfig.screenWidth)
+            ],
+          ),
         ));
   }
 
@@ -164,27 +166,24 @@ class _MyCollectionState extends State<MyCollection> {
       child: ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView(shrinkWrap: true, children: [
-          Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(child: Divider()),
-                SizedBox(
-                  width: 10,
-                ),
-                Center(
-                    child: Text(
-                  "TO CREATE ALL PRODUCT LIST CHOOSE",
-                  style: TextStyle(color: Colors.grey[500]!),
-                )),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(child: Divider()),
-              ],
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(child: Divider()),
+              SizedBox(
+                width: 10,
+              ),
+              Center(
+                  child: Text(
+                "TO CREATE ALL PRODUCT LIST CHOOSE",
+                style: TextStyle(color: Colors.grey[500]!),
+              )),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(child: Divider()),
+            ],
           ),
           isLoading
               ? Center(
@@ -235,7 +234,7 @@ class _MyCollectionState extends State<MyCollection> {
                                 ),
                               );
 
-                              //  Navigator.pop(context, filteredItems [index].name.toString());
+
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(
@@ -243,7 +242,7 @@ class _MyCollectionState extends State<MyCollection> {
                               child: Container(
                                 height: 130,
                                 decoration: BoxDecoration(
-                                  color: Color(0xfffafaff),
+                                  color: Color(0xffffffff),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Column(
@@ -311,21 +310,27 @@ class _MyCollectionState extends State<MyCollection> {
                                                     Padding(
                                                       padding:
                                                            EdgeInsets.only(top: 5,left: 2),
-                                                      child: Text(
-                                                        filteredItems[index]
-                                                            .name
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                          color: CommonColor
-                                                              .Black,
-                                                          fontFamily:
-                                                              "okra_Medium",
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w600,
+                                                      child: Container(
+                                                        width: 190,
+                                                        child: Text(
+                                                          filteredItems[index]
+                                                              .name
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                            color: CommonColor
+                                                                .Black,
+                                                            fontFamily:
+                                                                "okra_Medium",
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+
+
+
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
                                                       ),
                                                     ),
                                                     Padding(
@@ -495,80 +500,43 @@ class _MyCollectionState extends State<MyCollection> {
                                                 ),
                                               ),
                                             ),
-                                          /*  Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 15, right: 5),
-                                              child: Image(
-                                                image: AssetImage(
-                                                    'assets/images/more.png'),
-                                                height: 15,
-                                              ),
-                                            ),*/
-                                            PopupMenuButton<String>(
-                                              offset: Offset.zero,
+                                            GestureDetector(
+                                              onTap: () async {
+                                                setState(() {
+                                                  selectedProductId = product.sId; // Set selected product ID
+                                                });
+                                                 showModalBottomSheet(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(20),
+                                                        topRight: Radius.circular(20),
+                                                      ),
+                                                    ),
+                                                    context: context,
+                                                    backgroundColor: Colors.white,
+                                                    elevation: 2,
+                                                    isScrollControlled: true,
+                                                    isDismissible: true,
+                                                    builder: (BuildContext bc) {
+                                                      return EditDeleteBottomSheet(  productId:selectedProductId.toString(), fetchProductsList: fetchProductsList,);
+                                                    });
 
-                                              icon: Image(
-                                                image: AssetImage('assets/images/more.png'),
-                                                height: 15,
-                                              ),
-                                                color:Colors.white,
-                                              onSelected: (value) {
-                                                if (value == 'edit') {
 
-                                                  print('Edit selected');
-                                                } else if (value == 'delete') {
-
-                                                  print('Delete selected');
-                                                }
                                               },
-                                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                                                PopupMenuItem<String>(
-                                                  value: 'edit',
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.edit, color: Colors.blue,size: 20),
-                                                      SizedBox(width: 8),
-                                                      Text('Edit', style:TextStyle(
-                                                        color: Color(
-                                                            0xff000000),
-                                                        letterSpacing:
-                                                        0.2,
-                                                        fontFamily:
-                                                        "okra_Regular",
-                                                        fontSize:
-                                                        SizeConfig.blockSizeHorizontal *
-                                                            3.7,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w400,
-                                                      ),),
-                                                    ],
+                                              child: Container(
+                                                height: 55,
+                                                width: 45,
+                                               // color: Colors.red,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 20,right: 10),
+                                                  child: Image(
+                                                    image: AssetImage(
+                                                        'assets/images/more.png'),
+
                                                   ),
                                                 ),
-                                                PopupMenuItem<String>(
-                                                  value: 'delete',
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.delete, color: Colors.red,size: 20,),
-                                                      SizedBox(width: 6),
-                                                      Text('Delete',style:TextStyle(
-                                                        color: Color(
-                                                            0xff000000),
-                                                        letterSpacing:
-                                                        0.2,
-                                                        fontFamily:
-                                                        "okra_Regular",
-                                                        fontSize:
-                                                        SizeConfig.blockSizeHorizontal *
-                                                            3.7,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w400,
-                                                      ),),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
+                                              ),
                                             ),
 
 
@@ -621,3 +589,315 @@ class _MyCollectionState extends State<MyCollection> {
     );
   }
 }
+class EditDeleteBottomSheet extends StatefulWidget {
+  final String?productId;
+  final Future<void> Function(int) fetchProductsList;
+  const EditDeleteBottomSheet({super.key, required this.productId, required this.fetchProductsList});
+
+  @override
+  State<EditDeleteBottomSheet> createState() => _EditDeleteBottomSheetState();
+}
+
+class _EditDeleteBottomSheetState extends State<EditDeleteBottomSheet> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:
+      EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        height: SizeConfig.screenHeight * 0.22,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: 20,
+                ),
+                child: Center(
+                  child: Container(
+                    color: CommonColor.showBottombar.withOpacity(0.2),
+                    height: SizeConfig.screenHeight * 0.004,
+                    width: SizeConfig.screenHeight * 0.1,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 13),
+            Center(
+              child: Text(
+                "Select Options",
+                style: TextStyle(
+                    fontSize: SizeConfig.blockSizeHorizontal * 4.6,
+                    fontFamily: 'Roboto_Medium',
+                    fontWeight: FontWeight.w400,
+                    color: CommonColor.Black),
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.only(top: 10, left: 18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image(
+                        image: AssetImage('assets/images/editing.png'),
+                        height: 18),
+                    SizedBox(width: 8),
+                    Text(
+                      " Can edit",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "okra_Medium",
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                )),
+            SizedBox(height: 8),
+            GestureDetector(
+              onTap: (){
+                Navigator.pop(context);
+                showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return DeleteConfirmationDialog(productId: widget.productId.toString(),
+                fetchProductsList: widget.fetchProductsList);
+          },
+        );
+      },
+              child: Padding(
+                  padding: EdgeInsets.only(top: 10, left: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                        size: 27,
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        "Delete",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontFamily: "okra_Medium",
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  )),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DeleteConfirmationDialog extends StatefulWidget {
+  final String productId;
+  final Future<void> Function(int) fetchProductsList;
+
+  const DeleteConfirmationDialog({Key? key, required this.productId, required this.fetchProductsList}) : super(key: key);
+
+  @override
+  State<DeleteConfirmationDialog> createState() => _DeleteConfirmationDialogState();
+}
+
+class _DeleteConfirmationDialogState extends State<DeleteConfirmationDialog> {
+
+  bool isLoading = true;
+/*  void deleteProduct(String productId) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+
+      Map<String, dynamic> response = await ApiClients().deleteProduct(productId);
+
+      if (response['success'] == true) {
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Product deleted successfully')),
+        );
+
+      } else {
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Failed to delete product')),
+        );
+      }
+    } catch (e) {
+      // Handle exceptions
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Something went wrong')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false; // Hide loader
+      });
+    }
+  }*/
+
+
+  void deleteProduct(String productId) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      Map<String, dynamic> response = await ApiClients().deleteProduct(productId);
+
+      if (response['success'] == true) {
+
+        await widget.fetchProductsList(1);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? '')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? '')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xffffffff),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: EdgeInsets.all(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 9),
+            Text(
+              "Delete Product?",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              "Are you sure you want to delete this product?",
+              style: TextStyle(
+                fontFamily: "Roboto_Regular",
+                fontSize: 14,
+                color: CommonColor.grayText,
+                fontWeight: FontWeight.w300,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Cancel Button
+                Container(
+                    width: SizeConfig.screenWidth * 0.25,
+                    height: SizeConfig.screenHeight * 0.05,
+
+                    child: Center(
+                        child: Text("Cancel",
+
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Roboto-Regular',
+                              fontSize:
+                              SizeConfig.blockSizeHorizontal *
+                                  4.4),
+                        )
+                    )
+                ),
+
+
+                // Delete Button
+
+
+      GestureDetector(
+        onTap: (){
+          Navigator.pop(context);
+          deleteProduct(widget.productId);
+        },
+        child: Container(
+            width: SizeConfig.screenWidth * 0.27,
+            height: SizeConfig.screenHeight * 0.05,
+            decoration: BoxDecoration(
+              color:  Color(0xffe64949),
+
+              borderRadius:  BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(
+                        Icons.delete_outline_outlined,
+                        color: CommonColor.white,
+                        size: 22,
+                      ),
+
+                      Text("Delete",
+
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Roboto-Regular',
+                            fontSize:
+                            SizeConfig.blockSizeHorizontal *
+                                4.1),
+                      ),
+                    ],
+                  )),
+            )),
+      ),
+
+
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

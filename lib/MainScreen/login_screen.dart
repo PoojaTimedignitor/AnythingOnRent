@@ -358,7 +358,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           onTap: () {
             setState(() {
-              isLoading = true; // Start loading indicator
+              isLoading = true;
             });
             _validateAndShowTooltip();
 
@@ -375,7 +375,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 print("Token: ${value['user']['token']}");
 
                 try {
-                  // Save UserId and Token in GetStorage
+
                   GetStorage().write(ConstantData.UserId, value['user']['_id']);
                   GetStorage().write(ConstantData.UserAccessToken, value['user']['token']);
 
@@ -423,8 +423,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Color(0xffFE7F64),
                     ],
                   ),
-                  /*   border: Border.all(
-                      width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
+
                   borderRadius: const BorderRadius.all(
                     Radius.circular(30),
                   ),

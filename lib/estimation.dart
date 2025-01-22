@@ -693,7 +693,7 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedOption = option; // Update the selected option
+          selectedOption = option;
         });
 
 
@@ -1105,7 +1105,8 @@ Widget buildTotalOption(String totalOption, String totalPrice){
 /*Text(
                                                 "",
 
-                                              ),*//*
+                                              ),*/
+  /*
 
               Text(
                 "₹$totalPrice INR",

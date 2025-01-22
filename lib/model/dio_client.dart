@@ -572,6 +572,39 @@ class ApiClients {
     }
   }
 
+
+
+
+  Future<Map<String, dynamic>> deleteProduct(String productId) async {
+    String url = "${ApiConstant().BaseUrl}${ApiConstant().deleteProducts(productId)}";
+
+
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    try {
+      Response response = await _dio.delete(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("Delete Product Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print("Dio Error: ${e.response}");
+      return e.response?.data ?? {'success': false, 'message': 'Something went wrong'};
+    }
+  }
+
+
+
+
+
   Future<Map<String, dynamic>> PostfeedbackUser(
       String suggest,
 
