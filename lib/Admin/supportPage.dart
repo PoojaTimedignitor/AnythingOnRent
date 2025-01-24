@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
+import '../Common_File/ResponsiveUtil.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import '../MyBehavior.dart';
 import '../ResponseModule/getAllSupportTicket.dart';
 import '../model/dio_client.dart';
+import 'bigSupportScreen.dart';
 
 class Supportpage extends StatefulWidget {
   final VoidCallback onNeedHelpTap;
@@ -50,6 +53,14 @@ class _SupportpageState extends State<Supportpage> {
     }
   }
 
+
+  String formatDate(String date) {
+    DateTime parsedDate = DateTime.parse(date);
+    String formattedDate = DateFormat('dd MMM yyyy').format(parsedDate);
+    return formattedDate;
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -59,12 +70,13 @@ class _SupportpageState extends State<Supportpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffF5F6FB),
       body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.zero,
-        //  crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
             SizedBox(height: 20),
 
@@ -127,7 +139,7 @@ class _SupportpageState extends State<Supportpage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.help_outline, // Icon before the text
+                          Icons.help_outline,
                           color: Colors.black,
                           size: 20,
                         ),
@@ -216,161 +228,185 @@ class _SupportpageState extends State<Supportpage> {
                   )
                 ],
               ))
-                : SizedBox(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: 20),
-                    Text("    Raise Ticket",style: TextStyle(
-                      color: Color(0xfff44343),
-                      fontFamily: "okra_bold",
-                      fontSize: 19,
-                      fontWeight: FontWeight.w600,
-                    ),),
-                    ListView.builder(
-                      itemCount: isShowMore ? filteredTicket.length : 2,
-                      physics: NeverScrollableScrollPhysics(), // Disable independent scrolling
-                      shrinkWrap: true, // Allow ListView to size itself
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (context, index) {
-                        final ticket = filteredTicket[index];
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 12),
-                          child: Container(
-                            height: 140,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                    color:
-                                    Color(0xffea926f).withOpacity(0.2),
-                                    blurRadius: 2,
-                                    spreadRadius: 0,
-                                    offset: Offset(0, 1)),
-                              ],
-                              border: Border.all(
-                                  color: Color(0xfff4823b), width: 0.3),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                : GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => BigSupportScreen(),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        // Define the right-to-left slide transition
+                        const begin = Offset(1.0, 0.0); // Starting point (off-screen to the right)
+                        const end = Offset.zero; // Ending point (at the current position)
+                        const curve = Curves.easeInOut;
+
+                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                        var offsetAnimation = animation.drive(tween);
+
+                        return SlideTransition(position: offsetAnimation, child: child);
+                      },
+                    ),
+                  );
+                },
+                  child: SizedBox(
+                                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(height: 17),
+                      Text("    Raise Ticket",style: TextStyle(
+                        color: Color(0xfff44343),
+                        fontFamily: "okra_bold",
+                        fontSize: 19,
+                        fontWeight: FontWeight.w600,
+                      ),),
+                      ListView.builder(
+                        itemCount: isShowMore ? filteredTicket.length : 1,
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (context, index) {
+                          final ticket = filteredTicket[index];
+                          String formattedDate = formatDate(ticket.createdAt.toString());
+
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 12),
                             child: Container(
+                              height: 140,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color:
+                                      Color(0xffea926f).withOpacity(0.2),
+                                      blurRadius: 2,
+                                      spreadRadius: 0,
+                                      offset: Offset(0, 1)),
+                                ],
+                                border: Border.all(
+                                    color: Color(0xfff4823b), width: 0.3),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                               child: Padding(
                                 padding: const EdgeInsets.all(13.0),
                                 child: Column(
                                   crossAxisAlignment:
                                   CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      "${ticket.ticketNumber}",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16),
+                                    Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "${ticket.ticketNumber}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16),
+                                        ),
+                                        Icon(Icons.arrow_forward_ios_sharp,size: 15,)
+                                      ],
                                     ),
                                     SizedBox(height: 5),
                                     Container(
-                                      width: 350,
+                                      width: ResponsiveUtil.fontSize(350),
                                       child: Text(
                                         "${ticket.category?.name.toString()} Display All rental product options in your choose location ",
                                         style: TextStyle(
                                           color: CommonColor.grayText,
                                           fontFamily: "Montserrat-Medium",
-                                          fontSize: 13,
+                                          fontSize: ResponsiveUtil.fontSize(12),
                                           fontWeight: FontWeight.w500,
                                         ),
-                                        maxLines: 2, // Limit to 2 lines
+                                        maxLines: 2,
                                         overflow: TextOverflow
-                                            .ellipsis, // Add ellipsis if text overflows
+                                            .ellipsis,
                                       ),
                                     ),
-                                    SizedBox(height: 20),
+                                    SizedBox(height: 23),
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.center,
+                                      MainAxisAlignment.spaceBetween,
+
                                       children: [
                                         Text(
-                                          " Date",
+                                          "$formattedDate",
                                           style: TextStyle(
+                                              color: Color(0xff3684F0),
                                               fontWeight: FontWeight.w500,
-                                              fontSize: 14),
+                                            fontSize: ResponsiveUtil.fontSize(13)),
                                         ),
-                                        Spacer(),
+                                     Spacer(),
                                         Container(
-                                          height: 25,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Color(0xfff4823b),
-                                                width: 0.3),
-                                            borderRadius:
-                                            BorderRadius.circular(3),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              " ${ticket.status.toString()}",
-                                              style: TextStyle(
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                  fontSize: 14),
-                                            ),
-                                          ),
-                                        )
+
+                                          height: ResponsiveUtil.height(25), // Responsive height
+                                          width: ResponsiveUtil.width(75),
+                                           child: Align(
+                                             alignment: Alignment.topRight,
+                                             child: Text(
+                                               " ${ticket.status.toString()} ",
+                                               style: TextStyle(
+                                                   fontWeight:
+                                                   FontWeight.w500,
+                                                 fontSize: ResponsiveUtil.fontSize(15),
+                                               ),
+                                             ),
+                                           ),
+                                         )
                                       ],
                                     )
                                   ],
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                   // SizedBox(height: 5),
-                    if (filteredTicket.length > 2 && !isShowMore)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isShowMore = true; // Show all tickets
-                          });
+                          );
                         },
-                        child: Center(
-                          child: Container(
-                            width: 200,
-                            height: 35,
+                      ),
 
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 15),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.keyboard_arrow_down_rounded,
-                                    color: Color(0xfff44343),
-                                    size: 20,
-                                  ),
-                                  SizedBox(width: 12),
-                                  Text(
-                                    "Show More",
-                                    style: TextStyle(
-                                      color: Color(0xfff44343),
-                                      fontFamily: "okra_Medium",
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
+                      if (filteredTicket.length > 2 && !isShowMore)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isShowMore = true; // Show all tickets
+                            });
+                          },
+                          child: Center(
+                            child: Container(
+                              width: 200,
+                              height: 35,
+
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 15),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      color: Colors.black,
+                                      size: 20,
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(width: 12),
+                                    Text(
+                                      "Show More",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: "okra_Medium",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
-                ),
-              ),
-            ),),
+                    ],
+                  ),
+                                ),
+                              ),
+                ),),
+
           /*  Text("    ANYTHING ON RENT",
                 style: TextStyle(
                   fontFamily: "okra_extrabold",

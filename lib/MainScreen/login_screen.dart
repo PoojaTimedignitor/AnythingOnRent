@@ -5,11 +5,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../Common_File/ResponsiveUtil.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import '../MainHome.dart';
 import 'forget_pass_OTP_verify.dart';
 import 'forget_password.dart';
+//import 'ResponsiveUtil.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -115,7 +117,10 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.black,
               fontWeight: FontWeight.w700,
               fontFamily: 'Roboto-Regular',
-              fontSize: SizeConfig.blockSizeHorizontal * 5.1),
+           fontSize: ResponsiveUtil.fontSize(12) < 14 ? 17 : ResponsiveUtil.fontSize(12),
+
+
+          ),
         ),
         SizedBox(height: 9),
         Text(
@@ -124,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.black,
               // fontWeight: FontWeight.w700,
               fontFamily: 'Roboto-Regular',
-              fontSize: SizeConfig.blockSizeHorizontal * 4.3),
+            fontSize: ResponsiveUtil.fontSize(12) ,),
         ),
         SizedBox(height: 20),
         Image(
@@ -146,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
             "Email",
             style: TextStyle(
               color: CommonColor.RegisterText,
-              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+              fontSize: ResponsiveUtil.fontSize(12) ,
               fontWeight: FontWeight.normal,
               fontFamily: 'Roboto-Regular',
             ),
@@ -223,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintStyle: TextStyle(
                           fontFamily: "Roboto_Regular",
                           color: Color(0xff7D7B7B),
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                          fontSize: ResponsiveUtil.fontSize(12) ,
                           // color: CommonColor.DIVIDER_COLOR,
                         ),
                         fillColor: Color(0xffFFF0F0),
@@ -249,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> {
             "Password",
             style: TextStyle(
               color: CommonColor.RegisterText,
-              fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+              fontSize: ResponsiveUtil.fontSize(12) ,
               fontWeight: FontWeight.normal,
               fontFamily: 'Roboto-Regular',
             ),
@@ -300,7 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintStyle: TextStyle(
                         fontFamily: "Roboto_Regular",
                         color: Color(0xff7D7B7B),
-                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                        fontSize: ResponsiveUtil.fontSize(12) ,
                         // color: CommonColor.DIVIDER_COLOR,
                       ),
                       fillColor: Color(0xffFFF0F0),
@@ -341,10 +346,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 "Forget Password?",
                 style: TextStyle(
                   color: CommonColor.RegisterText,
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                  fontSize: ResponsiveUtil.fontSize(14),
                   fontWeight: FontWeight.normal,
                   fontFamily: 'Roboto-Regular',
-                ),
+                ),   textScaleFactor: 1.0,
               ),
             ),
           ),
@@ -405,7 +410,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 left: parentWidth * 0.03,
                 right: parentWidth * 0.03),
             child: Container(
-                width: 370,
+
                 height: parentHeight * 0.13,
                 decoration: BoxDecoration(
                   boxShadow: [

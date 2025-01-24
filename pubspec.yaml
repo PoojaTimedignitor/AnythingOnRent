@@ -65,6 +65,7 @@ dev_dependencies:
   get_storage: ^2.1.1
   persistent_bottom_nav_bar: ^5.0.2
   dio: ^5.7.0
+  intl: ^0.18.0
   http:
   flutter_tesseract_ocr: ^0.4.28
   image:

@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class CommonColor {
+  static const primaryColor = Color(0xFF00ADEF);
+
   static const splashContainer = Color(0xFFFBD6E3);
   static const onBoardingOne = Color(0xFFDAECFD);
   static const RegisterText = Color(0xFF494949);

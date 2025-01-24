@@ -353,6 +353,53 @@ class ApiClients {
   }
 
 
+  Future<Map<String, dynamic>> getBigViewTicket(String userIds,ticketNumbers) async {
+    String? userId = GetStorage().read<String>(ConstantData.UserId);
+
+    if (userId == null || userId.isEmpty) {
+      throw Exception("User ID is missing or invalid.");
+    }
+
+    print("User ID: $userId"); // Ensure correct User ID
+
+    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getBigSupportTicket(userId,ticketNumbers)}";
+    print("Constructed URL: $url");
+
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    if (sessionToken == null || sessionToken.isEmpty) {
+      throw Exception("Session token is missing or invalid.");
+    }
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print("getAllTicket Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      if (response.headers.value('content-type')?.contains('application/json') ?? false) {
+        return response.data;
+      } else {
+        throw Exception("Unexpected response format: ${response.data}");
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print("Dio Error Response: ${e.response?.data}");
+        throw Exception("Error fetching data: ${e.response?.statusCode ?? 'Unknown Status Code'} - ${e.response?.data}");
+      } else {
+        print("Dio Error Message: ${e.message}");
+        throw Exception("Dio Error: ${e.message}");
+      }
+    }
+  }
+
+
   Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
     String url = "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().getAllSubCatagries(categoryId)}";
     print("Constructed URL: $url");

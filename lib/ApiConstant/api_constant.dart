@@ -37,6 +37,11 @@ String AdminContactUsMessage = "/app-support/register";
   }
 
 
+  String getBigSupportTicket(String userId,String ticketNumber) {
+    return "/app-support/$userId/$ticketNumber";
+  }
+
+
   String deleteProducts(String ProductId) {
     return "/product/$ProductId";
   }

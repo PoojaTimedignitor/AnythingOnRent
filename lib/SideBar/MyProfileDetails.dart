@@ -828,7 +828,7 @@ _image
                     GetStorage().write(
                         ConstantData.UserMobile, value['user']['phoneNumber']);
                     GetStorage().write(
-                        ConstantData.Useremail, value['user']['email']);
+                        ConstantData.Useremail  , value['user']['email']);
 
                     GetStorage().write(ConstantData.UserProfileImage,
                         value['user']['profilePicture']);

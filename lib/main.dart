@@ -1,15 +1,14 @@
 import 'dart:async';
 
-import 'package:anything/City_Create.dart';
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/MainHome.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'ConstantData/Constant_data.dart';
 
-import 'MainScreen/login_screen.dart';
 import 'MainScreen/onboardingScreen.dart';
 import 'MainScreen/register_screen.dart';
 
@@ -28,26 +27,39 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isFirstTime = GetStorage().read('isFirstTime') ?? true;
 
-
-    return MaterialApp(
-
-        initialRoute: '/',
-        home:  const MyHomePage(title: '',),
-        debugShowCheckedModeBanner: false,
-
-        routes: <String, WidgetBuilder>{
-          '/frame': (BuildContext context) =>  onboardingScreen(),
-         // '/login': (BuildContext context) => LoginScreen(),
-          '/dashboard': (BuildContext context) => MainHome(),
-
-
-          '/register': (BuildContext context) =>  RegisterScreen(
-            address: '', lat: '', long: '', ProfilePicture: '',  firstName: '', lastname: '', email: '', password: '', cpassword: '', permanetAddress: '', mobileNumber: '', FrontImage: '', BackImage: '',
-          ),
-
-        }
-
+    return  ScreenUtilInit(
+      designSize: Size(375, 812), // Your design size here
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          initialRoute: '/',
+          home: const MyHomePage(title: ''),
+          debugShowCheckedModeBanner: false,
+          routes: <String, WidgetBuilder>{
+            '/frame': (BuildContext context) => onboardingScreen(),
+            '/dashboard': (BuildContext context) => MainHome(),
+            '/register': (BuildContext context) => RegisterScreen(
+              address: '',
+              lat: '',
+              long: '',
+              ProfilePicture: '',
+              firstName: '',
+              lastname: '',
+              email: '',
+              password: '',
+              cpassword: '',
+              permanetAddress: '',
+              mobileNumber: '',
+              FrontImage: '',
+              BackImage: '',
+            ),
+          },
+        );
+      },
     );
+
+
   }
 }
 
@@ -76,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
+
 
       body: Column(
 
@@ -185,10 +198,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   startTimer() {
-    var duration = const Duration(seconds: 3); // Splash screen time duration
+    var duration = const Duration(seconds: 2);
     try {
       String accessToken = GetStorage().read(ConstantData.UserAccessToken);
-      String accessTokens = GetStorage().read(ConstantData.UserRegisterToken);
 
       print("-----> $accessToken");
 

@@ -11,7 +11,6 @@ import '../ConstantData/Constant_data.dart';
 import '../MyBehavior.dart';
 import '../model/dio_client.dart';
 import 'ContactUsQuestions.dart';
-import 'FAQ.dart';
 
 class ContactUsPage extends StatefulWidget {
   final VoidCallback onContactQuationTap;
@@ -37,7 +36,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         top: SizeConfig.screenHeight *
-            0.7, // Adjust this value to position it exactly where you want
+            0.7,
         left: 2,
         right: 2,
         child: Material(
@@ -59,7 +58,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
     overlay.insert(overlayEntry);
 
-    // Remove the snack bar after some time
     Future.delayed(Duration(seconds: 3), () {
       overlayEntry.remove();
     });
@@ -71,18 +69,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
   }
 
   void showSuccessDialog(BuildContext context) {
-
     showDialog(
       context: context,
       builder: (
-          BuildContext context,
-          ) {
+        BuildContext context,
+      ) {
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           child: Container(
-
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
@@ -95,11 +91,11 @@ class _ContactUsPageState extends State<ContactUsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(height: 10),
-                  Image(image: AssetImage('assets/images/sucess.png'),height: 65,),
-
-
+                  Image(
+                    image: AssetImage('assets/images/sucess.png'),
+                    height: 65,
+                  ),
                   Container(
-
                     padding: EdgeInsets.all(14),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,62 +120,54 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-
                       ],
                     ),
                   ),
-
                   GestureDetector(
                     onTap: () {
-        ApiClients()
-            .CreateTicket(selectedCategoryId, messageController.text)
-            .then((value) {
-        print(value['data']);
-        print("Response: $value");
+                      ApiClients()
+                          .CreateTicket(
+                              selectedCategoryId, messageController.text)
+                          .then((value) {
+                        print(value['data']);
+                        print("Response: $value");
 
-        if (mounted) {
-        setState(() {});
-        }
+                        if (mounted) {
+                          setState(() {});
+                        }
 
-        if (value['success'] == true) {
+                        if (value['success'] == true) {
+                          print("Userssssss....${value['data']?['userId']}");
+                          GetStorage().write(
+                              ConstantData.UserId, value['data']?['userId']);
 
-        print("Userssssss....${value['data']?['userId']}");
-        GetStorage().write(
-        ConstantData.UserId, value['data']?['userId']);
+                          showTopSnackBar(
+                              context, 'Question submitted successfully');
 
-
-        showTopSnackBar(context, 'Question submitted successfully');
-
-
-        Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HelpCenterScreen()),
-        );
-        }
-        });// Close the dialog
-
-
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HelpCenterScreen()),
+                          );
+                        }
+                      }); // Close the dialog
                     },
                     child: Center(
                       child: Container(
                           width: SizeConfig.screenWidth * 0.75,
                           height: SizeConfig.screenHeight * 0.05,
-
                           child: Center(
                               child: Text(
-                                " Okay",
-                                style: TextStyle(
-                                    color: Color(0xfff44343),
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: 'Roboto-Regular',
-                                    fontSize:
-                                    SizeConfig.blockSizeHorizontal *
-                                        4.5),
-                              ))),
+                            " Okay",
+                            style: TextStyle(
+                                color: Color(0xfff44343),
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Roboto-Regular',
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.5),
+                          ))),
                     ),
                   ),
                   SizedBox(height: 16),
-
                 ],
               ),
             ),
@@ -187,11 +175,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
         );
       },
     );
-
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +296,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     height: 70,
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border.all(color: Color(0xfff4823b), width: 0.3),
+                        border:
+                            Border.all(color: Color(0xfff4823b), width: 0.3),
                         borderRadius: BorderRadius.circular(15)),
                     child: Padding(
                       padding: EdgeInsets.all(10.0),
@@ -379,8 +364,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           hoverColor: Colors.white,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Color(0xffD9D9D9), width: 1),
+                              borderSide: BorderSide(
+                                  color: Color(0xffD9D9D9), width: 1),
                               borderRadius: BorderRadius.circular(10.0)),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
@@ -391,10 +376,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
                   ),
                   SizedBox(height: 34),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       showSuccessDialog(context);
                     },
-                   /* onTap: () {
+                    /* onTap: () {
                       ApiClients()
                           .CreateTicket(selectedCategoryId, messageController.text)
                           .then((value) {
@@ -478,7 +463,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       ),
                     ),
                   ),
-
                 ],
               ),
           ],
