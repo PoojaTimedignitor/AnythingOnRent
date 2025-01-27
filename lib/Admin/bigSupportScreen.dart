@@ -17,8 +17,8 @@ class BigSupportScreen extends StatefulWidget {
 class _BigSupportScreenState extends State<BigSupportScreen> {
 
   bool isLoading = true;
-  List<Data> SubBigTicket = [];
-  List<Data> filteredTicket = [];
+//  Data? subBigTicket;
+  getBigViewSupportTicket? subBigTicket;
   String userIds = '';
   String ticketNumbers = '';
 
@@ -29,25 +29,27 @@ class _BigSupportScreenState extends State<BigSupportScreen> {
 
     try {
       Map<String, dynamic> response = await ApiClients().getBigViewTicket(userId, ticketNumber);
+      print("API Response: $response");
 
-      if (response.isNotEmpty) {
-        setState(() {
-          SubBigTicket = response['data'];
-          isLoading = false;
-        });
+      if (response.isNotEmpty && response['data'] != null) {
+        subBigTicket = getBigViewSupportTicket.fromJson(response);
+        print("Parsed SubBigTicket: ${subBigTicket?.toJson()}"); // Print parsed data
       } else {
-        setState(() {
-          isLoading = false;
-        });
-        print("No data available.");
+        print("No data or invalid response structure.");
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
       print("Error fetching Ticket: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
+
+
+
 
   @override
   void initState() {
@@ -77,9 +79,7 @@ class _BigSupportScreenState extends State<BigSupportScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-
                 Navigator.pop(context);
-
             },
           ),
         ),
@@ -91,12 +91,14 @@ class _BigSupportScreenState extends State<BigSupportScreen> {
             fontSize: ResponsiveUtil.fontSize(20),
             color: Color(0xffE3654A),
 
+
+
             fontWeight: FontWeight.w200,
           ),),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              height: ResponsiveUtil.height(SizeConfig.screenHeight*0.4), // Responsive height
+              height: ResponsiveUtil.height(SizeConfig.screenHeight*0.4),
              // width: ResponsiveUtil.width(SizeConfig.screenWidth*0.2),
           
               decoration: BoxDecoration(
@@ -115,12 +117,16 @@ class _BigSupportScreenState extends State<BigSupportScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),child:Column(
               children: [
-                Text("Ticket Number: ${SubBigTicket}",)
+                Text("Ticket Number: ${subBigTicket?.data?.ticketNumber}")
+
+
               ],
             )
             ),
           ),
         ],
+
+
       )
       /*Stack(
         children: [

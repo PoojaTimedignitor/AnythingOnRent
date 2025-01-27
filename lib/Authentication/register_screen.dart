@@ -590,7 +590,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController mobileNumberController = TextEditingController();
 
   void saveFrontImages(List<Map<String, String>> frontImages) {
-    box.write('frontImages', frontImages); // Saving the list of images
+    box.write('frontImages', frontImages);
   }
 
   // Fetch front images from local storage

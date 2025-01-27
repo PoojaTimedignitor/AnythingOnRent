@@ -29,8 +29,8 @@ class Data {
   String? description;
   String? status;
   bool? callRequested;
-  Null? callRequestedAt;
-  Null? callResponseAt;
+  Null callRequestedAt;
+  Null callResponseAt;
   String? createdAt;
   String? updatedAt;
   String? ticketNumber;
@@ -54,7 +54,7 @@ class Data {
     sId = json['_id'];
     userId = json['userId'];
     category = json['category'] != null
-        ? new Category.fromJson(json['category'])
+        ? Category.fromJson(json['category'])
         : null;
     description = json['description'];
     status = json['status'];
@@ -69,14 +69,14 @@ class Data {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['userId'] = this.userId;
-    if (this.category != null) {
-      data['category'] = this.category!.toJson();
+    data['_id'] = sId;
+    data['userId'] = userId;
+    if (category != null) {
+      data['category'] = category!.toJson();
     }
-    data['description'] = this.description;
-    data['status'] = this.status;
-    data['callRequested'] = this.callRequested;
+    data['description'] = description;
+    data['status'] = status;
+    data['callRequested'] = callRequested;
     data['callRequestedAt'] = this.callRequestedAt;
     data['callResponseAt'] = this.callResponseAt;
     data['createdAt'] = this.createdAt;

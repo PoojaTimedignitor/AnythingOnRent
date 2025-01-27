@@ -1,5 +1,5 @@
+import 'package:anything/Authentication/register_screen.dart';
 import 'package:anything/ConstantData/Constant_data.dart';
-import 'package:anything/MainScreen/register_screen.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,6 @@ import '../Common_File/common_color.dart';
 import '../MainHome.dart';
 import 'forget_pass_OTP_verify.dart';
 import 'forget_password.dart';
-//import 'ResponsiveUtil.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

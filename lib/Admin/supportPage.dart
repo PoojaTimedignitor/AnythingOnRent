@@ -23,6 +23,7 @@ class _SupportpageState extends State<Supportpage> {
   List<Data> filteredTicket = [];
   String userIds = '';
   bool isShowMore = false;
+
   void fetchAllTicketSupport(String userId) async {
     setState(() {
       isLoading = true;
@@ -31,7 +32,7 @@ class _SupportpageState extends State<Supportpage> {
     try {
       Map<String, dynamic> response = await ApiClients().getAllTicket(userId);
 
-      if (response != null && response.isNotEmpty) {
+      if (response.isNotEmpty) {
         var jsonList = getAllSupportTicket.fromJson(response);
 
         setState(() {
@@ -233,7 +234,7 @@ class _SupportpageState extends State<Supportpage> {
                   Navigator.push(
                       context,
                     PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) => BigSupportScreen(),
+                      pageBuilder: (context, animation, secondaryAnimation) =>  BigSupportScreen(),
                       transitionsBuilder: (context, animation, secondaryAnimation, child) {
                         // Define the right-to-left slide transition
                         const begin = Offset(1.0, 0.0); // Starting point (off-screen to the right)

@@ -1,7 +1,8 @@
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
-import 'package:anything/MainScreen/forget_pass_OTP_verify.dart';
 import 'package:flutter/material.dart';
+
+import 'forget_pass_OTP_verify.dart';
 
 
 
@@ -108,6 +109,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       ),
                     ),
                     Padding(
+
                       padding: EdgeInsets.only(
                           top: SizeConfig.screenHeight * 0.02,
                           left: SizeConfig.screenWidth * 0.16,
@@ -254,7 +256,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                 ),
                                 /*   border: Border.all(
                                             width: 1, color: CommonColor.APP_BAR_COLOR),*/ //Border.
-                                borderRadius: const BorderRadius.all(
+                                borderRadius:  BorderRadius.all(
                                   Radius.circular(30),
                                 ),
                               ),

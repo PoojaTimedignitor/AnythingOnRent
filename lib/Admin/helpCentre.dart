@@ -31,13 +31,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       Supportpage(
         onNeedHelpTap: () {
           setState(() {
-            _selectedIndex = 1; // Switch to FAQsPage
+            _selectedIndex = 1;
           });
         },
       ),
       FAQ( onContactUsTap: () {
         setState(() {
-          _selectedIndex = 2; // Switch to FAQsPage
+          _selectedIndex = 2;
         });
       },),
       ContactUsPage(

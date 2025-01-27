@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../ApiConstant/api_constant.dart';
 import '../ConstantData/Constant_data.dart';
+import '../ResponseModule/getBigSupportViewResponse.dart';
 
 class ApiClients {
   final Dio _dio = Dio();
@@ -278,32 +279,37 @@ class ApiClients {
   }
 
 
-/*  Future<Map<String, dynamic>> getAllTicket(String userId) async {
-    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTickitesSupport(userId)}";
 
 
-    String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+  Future<Map<String, dynamic>> getBigViewTicket(String userId, String ticketNumber) async {
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+
+    if (sessionToken == null || sessionToken.isEmpty) {
+      throw Exception("Session token is missing or invalid.");
+    }
+
+    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getBigSupportTicket(userId,ticketNumber)}";
+    print("Final API URL: $url");
 
     try {
-      Response response = await _dio.get(
+      Response response = await Dio().get(
         url,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $sessionToken',
-          },
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $sessionToken'}),
       );
-
-      print("getCatList Status Code --> ${response.statusCode}");
-      print("Response Data --> ${response.data}");
-
-      return response.data;
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception("Failed to fetch ticket: ${response.statusMessage}");
+      }
     } on DioError catch (e) {
-      print("Dio Error: ${e.response}");
-      return e.response!.data;
+      print("Dio error: ${e.response?.data ?? e.message}");
+      throw Exception("Dio error: ${e.response?.data ?? e.message}");
     }
-  }*/
+  }
+
+
+
+
 
 
   Future<Map<String, dynamic>> getAllTicket(String userIds) async {
@@ -353,14 +359,14 @@ class ApiClients {
   }
 
 
-  Future<Map<String, dynamic>> getBigViewTicket(String userIds,ticketNumbers) async {
+  /*Future<Map<String, dynamic>> getBigViewTicket(String userIds,ticketNumbers) async {
     String? userId = GetStorage().read<String>(ConstantData.UserId);
 
     if (userId == null || userId.isEmpty) {
       throw Exception("User ID is missing or invalid.");
     }
 
-    print("User ID: $userId"); // Ensure correct User ID
+    print("User ID: $userId");
 
     String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getBigSupportTicket(userId,ticketNumbers)}";
     print("Constructed URL: $url");
@@ -397,7 +403,7 @@ class ApiClients {
         throw Exception("Dio Error: ${e.message}");
       }
     }
-  }
+  }*/
 
 
   Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
@@ -435,11 +441,6 @@ class ApiClients {
       }
     }
   }
-
-
-
-
-
 
   Future<Map<String, dynamic>> PostCreateProductApi(
     String name,
@@ -598,8 +599,6 @@ class ApiClients {
       return {"error": "Exception: ${e.message}"};
     }
   }
-
-
 
   Future<Map<String, dynamic>> getAllProductList() async {
     String url =

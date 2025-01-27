@@ -1,12 +1,13 @@
 import 'package:anything/All_Product_List.dart';
 import 'package:anything/CatagrioesList.dart';
-import 'package:anything/MainScreen/login_screen.dart';
 import 'package:anything/model/dio_client.dart';
-import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Admin/UserFeedback.dart';
 import 'Admin/helpCentre.dart';
+import 'Authentication/Register_Phone.dart';
+import 'Authentication/login_screen.dart';
+import 'Authentication/register_common.dart';
 import 'City_Create.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
@@ -14,7 +15,6 @@ import 'ConstantData/Constant_data.dart';
 import 'MyBehavior.dart';
 import 'package:anything/ResponseModule/getAllCatList.dart' as catData;
 import 'ProductConfirmation.dart';
-import 'ResponseModule/getAllCatList.dart';
 import 'ResponseModule/getAllCatList.dart';
 import 'ResponseModule/getAllProductList.dart';
 import 'SearchCatagries.dart';
@@ -304,11 +304,9 @@ class MainHomeState extends State<MainHome>
                       if (response['success'] == true) {
                         print("Logout Successful");
 
-
                         await GetStorage().remove(ConstantData.UserAccessToken);
                         await GetStorage().remove(ConstantData.Useremail);
                         await GetStorage().remove(ConstantData.Userpassword);
-
 
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
@@ -653,9 +651,7 @@ class MainHomeState extends State<MainHome>
                         Container(
                           width: 108,
                           //  color: Colors.red,
-                          child: Text(
-
-                              "My Ratings",
+                          child: Text("My Ratings",
                               style: TextStyle(
                                   fontSize:
                                       SizeConfig.blockSizeHorizontal * 3.9,
@@ -1665,7 +1661,7 @@ class MainHomeState extends State<MainHome>
                                   : null,
                               color: selectedIndex == 1
                                   ? Colors.transparent
-                                  : null, // Transparent for unselected
+                                  : null,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30)),
                             ),
@@ -1682,7 +1678,7 @@ class MainHomeState extends State<MainHome>
                           ),
                         ),
 
-                        // Zepto Super Saver Button (Right aligned)
+
                         GestureDetector(
                           onTap: () {
                             setState(() {
@@ -1725,8 +1721,6 @@ class MainHomeState extends State<MainHome>
                     ),
                   ),
                 ),
-
-                // Content based on selected tab
                 Expanded(
                   child: Container(
                     alignment: Alignment.center,
@@ -1752,7 +1746,7 @@ class MainHomeState extends State<MainHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  PopularCatagoriesData()));
+                                                  PhoneRegistrationPage()));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(
@@ -1808,17 +1802,15 @@ class MainHomeState extends State<MainHome>
                                 padding: EdgeInsets.only(top: 15),
                                 physics:
                                     NeverScrollableScrollPhysics(), // Disable GridView's scrolling
-                                shrinkWrap:
-                                    true, // Take only the space it needs
+                                shrinkWrap: true,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      2, // Number of columns in the grid
+                                  crossAxisCount: 2,
                                   crossAxisSpacing: 1.0,
                                   mainAxisSpacing: 0.0,
                                   childAspectRatio: 1.0, // Adjust as needed
                                 ),
-                                itemCount: 4, // Number of items in the grid
+                                itemCount: 4,
                                 itemBuilder: (context, index) {
                                   return Container(
                                     margin: EdgeInsets.only(
@@ -1826,7 +1818,7 @@ class MainHomeState extends State<MainHome>
                                         right: 5.0,
                                         top: 0.0,
                                         bottom: 30.0),
-                                    //  height: SizeConfig.screenHeight * 0,
+
                                     decoration: BoxDecoration(
                                         color: CommonColor.white,
                                         boxShadow: [
@@ -1845,7 +1837,6 @@ class MainHomeState extends State<MainHome>
                                     // alignment: Alignment.center,
 
                                     child: Column(
-                                      // crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Stack(
                                           children: [

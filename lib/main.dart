@@ -7,10 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'Authentication/onboardingScreen.dart';
+import 'Authentication/register_screen.dart';
 import 'ConstantData/Constant_data.dart';
 
-import 'MainScreen/onboardingScreen.dart';
-import 'MainScreen/register_screen.dart';
+
 
 
 
@@ -133,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
         ],
       ),
-      // This trailing comma makes auto-formatting nicer for build methods.
+
     );
   }
 
@@ -166,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: TextStyle(
                 color: Colors.black,
                 fontSize: SizeConfig.blockSizeHorizontal * 4.0,
-                //     fontWeight: FontWeight.w400,
+
                 fontFamily: 'Montserrat-Medium',
 
               ),

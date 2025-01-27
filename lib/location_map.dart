@@ -1,8 +1,7 @@
 
 import 'dart:async';
-import 'dart:io';
 
-import 'package:anything/MainScreen/register_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoding/geocoding.dart';
@@ -11,6 +10,7 @@ import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 
+import 'Authentication/register_screen.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 

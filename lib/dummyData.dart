@@ -175,7 +175,7 @@ class UserProfileScreen extends StatefulWidget {
 class _UserProfileScreenState extends State<UserProfileScreen> {
   bool isEditing = false; // Controls edit mode
   String profileImage =
-      "https://res.cloudinary.com/duqvffqxj/image/upload/v1733199289/ijndaqgyxlsu0lxmqqfy.jpg"; // Example profile image
+      "https://res.cloudinary.com/duqvffqxj/image/upload/v1733199289/ijndaqgyxlsu0lxmqqfy.jpg";
   String firstname = "John"; // Example data
   String phoneNumber = "8268849874";
   String email = "john.doe@example.com";

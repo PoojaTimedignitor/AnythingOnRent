@@ -1,5 +1,5 @@
 
-import 'package:anything/MainScreen/register_screen.dart';
+import 'package:anything/Authentication/register_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../Common_File/SizeConfig.dart';

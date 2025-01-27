@@ -5,12 +5,12 @@ import 'package:anything/model/dio_client.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../Authentication/forget_pass_OTP_verify.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../ConstantData/Constant_data.dart';
-import '../MainScreen/forget_pass_OTP_verify.dart';
 import '../MyBehavior.dart';
 import '../dummyData.dart';
 
