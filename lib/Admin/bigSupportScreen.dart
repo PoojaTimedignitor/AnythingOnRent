@@ -117,7 +117,7 @@ class _BigSupportScreenState extends State<BigSupportScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),child:Column(
               children: [
-                Text("Ticket Number: ${subBigTicket?.data?.ticketNumber}")
+                Text("Ticket Number: ${subBigTicket?.ticketNumber ?? ''}", style: TextStyle(fontSize: 18)),
 
 
               ],

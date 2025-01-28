@@ -31,6 +31,8 @@ import 'package:carousel_slider/carousel_slider.dart' as cs;
 
 import 'package:get_storage/get_storage.dart';
 
+import 'fff.dart';
+
 class MainHome extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => MainHomeState();
@@ -1746,7 +1748,7 @@ class MainHomeState extends State<MainHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  PhoneRegistrationPage()));
+                                                  PhoneRegistrationPage(mobileNumber: '',)));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

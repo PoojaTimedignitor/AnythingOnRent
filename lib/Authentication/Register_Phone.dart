@@ -259,14 +259,14 @@ class _Register_PhoneState extends State<Register_Phone> {
           : null,
       child: Padding(
         padding: EdgeInsets.only(
-            top: parentHeight * 0.0,
+
             left: parentWidth * 0.08,
             right: parentWidth * 0.08),
         child: Container(
             height: parentHeight * 0.06,
             decoration: BoxDecoration(
               color: isButtonActive
-                  ? Color(0xffFE7F64) // Active button color
+                  ? Color(0xff838383)
                   : CommonColor.SearchBar,
               borderRadius: BorderRadius.circular(15),
             ),
