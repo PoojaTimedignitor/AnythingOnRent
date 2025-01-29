@@ -1748,7 +1748,7 @@ class MainHomeState extends State<MainHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  PhoneRegistrationPage(mobileNumber: '',)));
+                                                  PhoneRegistrationPage(mobileNumber: '', email: '',)));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

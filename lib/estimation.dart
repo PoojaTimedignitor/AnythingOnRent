@@ -258,6 +258,8 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
   @override
   void dispose() {
     _controllerzoom.dispose();
+
+
     super.dispose();
   }
 
@@ -323,6 +325,7 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
     "/Per Week",
     "/Per Month"
   ];
+
   bool isDropdown32Days = false;
   bool isDropdown54Days = false;
 
@@ -335,15 +338,11 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
 
   final List<String> images = [
 
-
-
     'https://img.freepik.com/free-psd/shoes-sale-social-media-post-square-banner-template-design_505751-2862.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/premium-vector/black-friday-sale-social-media-post-banner-home-appliance-product-instagram-post-banner-design_755018-930.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/free-vector/drink-ad-nature-pear-juice_52683-34246.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/premium-psd/ironing-machine-brand-product-social-media-banner_154386-123.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
     'https://img.freepik.com/free-vector/sports-drink-advertisement_52683-430.jpg?uid=R160153524&ga=GA1.1.2033069531.1724674585&semt=ais_hybrid',
-
-
 
   ];
   @override
@@ -364,8 +363,6 @@ class _EstimationState extends State<Estimation> with TickerProviderStateMixin {
 
 
   Widget ProductBigView(double parentWidth, double parentHeight) {
-
-
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
