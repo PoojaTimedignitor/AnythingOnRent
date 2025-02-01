@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../ApiConstant/api_constant.dart';
 import '../ConstantData/Constant_data.dart';
-import '../ResponseModule/getBigSupportViewResponse.dart';
 
 class ApiClients {
   final Dio _dio = Dio();
-
+  final box = GetStorage();
   Future<Map<String, dynamic>> registerDio(
       String firstName,
       String lastName,
@@ -22,7 +22,8 @@ class ApiClients {
       File? frontImages,
       File? backImages,
       String permanentAddress,
-      ) async {
+      ) async
+  {
     String url = ApiConstant().BaseUrl + ApiConstant().registerss;
 
     String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
@@ -80,10 +81,176 @@ class ApiClients {
     }
   }
 
+
+  Future<Map<String, dynamic>> registerPhoneNumber(String phoneNumber) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
+
+    var data = {
+      'phoneNumber': phoneNumber,
+    };
+
+    try {
+      Response response = await _dio.post(url, data: data,options:Options(headers: {'Authorization': 'Bearer $sessionToken'}) );
+      return response.data;
+    } catch (e) {
+      return {'success': false, 'message': 'Kuch galat ho gaya hai'};
+    }
+  }
+
+
+  Future<bool> PhoneNumber(String phoneNumber) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
+
+    try {
+      Response response = await _dio.post(
+        url, // ✅ Use the constructed URL here
+        data: {'phoneNumber': phoneNumber},
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $sessionToken", // 🛑 Add token if needed
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+
+      if (response.data['success']) {
+        // ✅ Store userId & otp in GetStorage
+        box.write('userId', response.data['phoneData']['userId']);
+        box.write('otp', response.data['phoneData']['otp']);
+        box.write('phoneNumber', phoneNumber);
+        return true;
+      }
+    } catch (e) {
+      print("Error: ${e.toString()}");
+    }
+    return false;
+  }
+
+
+
+
+/*
+  Future<Map<String, dynamic>> registerPhoneNumber(String phoneNumber) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
+    try {
+      FormData formData = FormData.fromMap({'phoneNumber': phoneNumber});
+
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: formData,
+        options: Options(headers: {'Authorization': 'Bearer $sessionToken'}),
+      );
+
+
+      return response.data ?? {'error': 'No response data received'};
+    } on DioException catch (e) {
+
+
+      String errorMessage = e.response?.data?['message'] ??
+          e.message ??
+          'Something went wrong. Please try again.';
+
+
+
+      return {'error': errorMessage};
+    }
+  }
+*/
+
+  Future<bool> verifyOtp(String otp) async {
+    try {
+      String? userId = box.read('userId'); // 🛑 Ensure userId is stored
+      if (userId == null) return false;
+
+      String url = ApiConstant().BaseUrl + ApiConstant().PhoneOTP;
+      String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
+
+      Response response = await _dio.post(
+        url, // ✅ Use constructed URL
+        data: {'userId': userId, 'phoneOtp': otp},
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $sessionToken", // 🛑 Add token if required
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+
+      if (response.data['success']) {
+        // ✅ Mark phone as verified
+        box.write('phoneVerified', true);
+        return true;
+      }
+    } catch (e) {
+      print("Error: ${e.toString()}");
+    }
+    return false;
+  }
+
+/*
+  Future<Map<String, dynamic>> sendOTP(String Otp) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().PhoneOTP;
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
+
+    if (sessionToken == null || sessionToken.isEmpty) {
+      return {'error': 'Unauthorized. Session token is missing or invalid.'};
+    }
+
+    try {
+      FormData formData = FormData.fromMap({'phoneOtp': Otp});
+
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: formData,
+        options: Options(headers: {'Authorization': 'Bearer $sessionToken'}),
+      );
+
+      print("Server Response Code: ${response.statusCode}");
+      print("Full Response: ${response.data}"); // ✅ Full response print karo
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data.containsKey('success') && response.data['success'] == true) {
+          var phoneData = response.data['phoneData'];
+          String userId = phoneData['userId'];  // Extract userId
+          String phoneNumber = phoneData['phoneNumber'];
+
+          // Pass the userId and phone number to the OTP screen
+
+
+          return {
+            'phoneNumber': phoneNumber,
+            'userId': userId,
+            'phoneVerified': phoneData['phoneVerified'],
+          };
+        } else {
+          print("❌ API Response does not contain success=true");
+          return {'error': 'Invalid response from server. Please try again.'};
+        }
+      } else {
+        print("Unexpected Response Code: ${response.statusCode}");
+        return {'error': 'Server error: ${response.statusCode}'};
+      }
+    } on DioException catch (e) {
+      String errorMessage = e.response?.data?['message'] ?? e.message ?? 'कुछ गड़बड़ है। कृपया फिर से प्रयास करें।';
+      print("❌ DioException: $errorMessage");
+      return {'error': errorMessage};
+    } catch (e) {
+      print("❌ Unexpected Error: $e");
+      return {'error': 'Something went wrong. Please try again.'};
+    }
+  }
+*/
+
+
   Future<Map<String, dynamic>> loginDio(
     String email,
     String password,
-  ) async {
+  ) async
+  {
+
     String url = ApiConstant().BaseUrl + ApiConstant().login;
 
     String? sessionToken =
@@ -144,15 +311,14 @@ class ApiClients {
     }
   }
 
-
-
   Future<Map<String, dynamic>> editUserProfile(
       String userId,
       String firstName,
       String phoneNumber,
       String email,
       File? profilePicture,
-      ) async {
+      ) async
+  {
     String url = "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().editUser(userId)}";
     print("Constructed URL: $url");
 
@@ -194,7 +360,6 @@ class ApiClients {
       return e.response?.data ?? {"message": "An error occurred"};
     }
   }
-
 
 
   Future<Map<String, dynamic>> getUserProfileData() async {
@@ -282,7 +447,6 @@ class ApiClients {
 
 
   Future<Map<String, dynamic>> getBigViewTicket(String userId, String ticketNumber) async {
-    // Ensure no trailing slash in the base URL
     String baseUrl = ApiConstant().AdminBaseUrl.endsWith("/")
         ? ApiConstant().AdminBaseUrl.substring(0, ApiConstant().AdminBaseUrl.length - 1)
         : ApiConstant().AdminBaseUrl;
@@ -331,7 +495,7 @@ class ApiClients {
       throw Exception("User ID is missing or invalid.");
     }
 
-    print("User ID: $userId"); // Ensure correct User ID
+    print("User ID: $userId");
 
     String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
     print("Constructed URL: $url");
@@ -577,7 +741,6 @@ class ApiClients {
         ),
       );
 
-      // Debug: Print the response data
       print("Responsesss: ${response.data}");
       String? type = response.data?['data']['type'];
       print("Received type: $type");
@@ -639,6 +802,7 @@ class ApiClients {
       return {"error": "Exception: ${e.message}"};
     }
   }*/
+
   Future<Map<String, dynamic>> getLogoutUser(String email, String password) async {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
     String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
@@ -736,10 +900,6 @@ class ApiClients {
     }
   }
 
-
-
-
-
   Future<Map<String, dynamic>> PostfeedbackUser(
       String suggest,
 
@@ -778,7 +938,6 @@ class ApiClients {
   }
 
 
-
   Future<Map<String, dynamic>> CreateTicket(String categoryId, String description) async {
     String url = ApiConstant().AdminBaseUrl + ApiConstant().AdminContactUsMessage;
 
@@ -787,7 +946,7 @@ class ApiClients {
 
     var datas = jsonEncode({
       'userId': userId,
-      'category': categoryId, // Ensure this is the ObjectId
+      'category': categoryId,
       'description': description,
     });
 
@@ -810,9 +969,6 @@ class ApiClients {
       return e.response!.data;
     }
   }
-
-
-
 
   Future<Map<String, dynamic>> getAllCity() async {
     String url =

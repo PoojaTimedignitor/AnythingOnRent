@@ -1,9 +1,10 @@
 class ConstantData{
 
   static const String UserId =  "_id";
-  static const String UserRegisterId = "id";
+  static const String UserRegisterId = "userId";
+  static const String UserPhoneOTP = "otp";
   static const String UserAccessToken = "token";
-  static const String UserRegisterToken = "generateToken";
+  static const String UserRegisterToken = "token";
   static const String Useremail = "email";
   static const String Userpassword = "password";
   static const String UserCpassword = "cpassword";

@@ -15,7 +15,6 @@ import '../Common_File/SizeConfig.dart';
 import '../ConstantData/Constant_data.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../estimation.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -709,6 +708,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               NameData(SizeConfig.screenHeight, SizeConfig.screenWidth),
             ],
           ),
+
         ],
       ),
     );
@@ -1834,7 +1834,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               isLoading = true; // Start loading indicator
             });
 
-            try {
+            try
+            {
               var value = await ApiClients().registerDio(
                 firstNameController.text,
                 lastNameController.text,

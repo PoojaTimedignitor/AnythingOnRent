@@ -2,9 +2,8 @@ class getCatFaqResponse {
   bool? success;
   String? message;
   List<Data>? data;
-  Pagination? pagination;
 
-  getCatFaqResponse({this.success, this.message, this.data, this.pagination});
+  getCatFaqResponse({this.success, this.message, this.data});
 
   getCatFaqResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -15,9 +14,6 @@ class getCatFaqResponse {
         data!.add(new Data.fromJson(v));
       });
     }
-    pagination = json['pagination'] != null
-        ? new Pagination.fromJson(json['pagination'])
-        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -26,9 +22,6 @@ class getCatFaqResponse {
     data['message'] = this.message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    if (this.pagination != null) {
-      data['pagination'] = this.pagination!.toJson();
     }
     return data;
   }
@@ -83,43 +76,18 @@ class Category {
 class Questions {
   String? title;
   String? description;
-  String? externalUrl;
 
-  Questions({this.title, this.description, this.externalUrl});
+  Questions({this.title, this.description});
 
   Questions.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     description = json['description'];
-    externalUrl = json['externalUrl'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['title'] = this.title;
     data['description'] = this.description;
-    data['externalUrl'] = this.externalUrl;
-    return data;
-  }
-}
-
-class Pagination {
-  int? totalItems;
-  int? currentPage;
-  int? totalPages;
-
-  Pagination({this.totalItems, this.currentPage, this.totalPages});
-
-  Pagination.fromJson(Map<String, dynamic> json) {
-    totalItems = json['totalItems'];
-    currentPage = json['currentPage'];
-    totalPages = json['totalPages'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['totalItems'] = this.totalItems;
-    data['currentPage'] = this.currentPage;
-    data['totalPages'] = this.totalPages;
     return data;
   }
 }

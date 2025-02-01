@@ -41,11 +41,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^4.0.0
   google_maps_webservice: ^0.0.19
   flutter_google_places: ^0.3.0
@@ -66,7 +61,10 @@ dev_dependencies:
   persistent_bottom_nav_bar: ^5.0.2
   dio: ^5.7.0
   intl: ^0.18.0
+  url_launcher: ^6.1.5  # Ensure to use the latest version
+
   http:
+  flutter_widget_from_html: ^0.14.7
   form_field_validator: ^1.0.1
   flutter_tesseract_ocr: ^0.4.28
   image:
@@ -144,11 +142,6 @@ flutter:
     - family: Poppins-Regular
       fonts:
         - asset: assets/fonts/Poppins-Regular.ttf
-
-
-
-
-
 
     - family: Montserrat-Italic
       fonts:

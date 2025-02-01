@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../City_Create.dart';
 import '../Common_File/ResponsiveUtil.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import 'package:pinput/pinput.dart';
+import 'package:get_storage/get_storage.dart';
 
+import '../ConstantData/Constant_data.dart';
 import '../MainHome.dart';
+import '../model/dio_client.dart';
 
 const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
 const fillColor = Color.fromRGBO(243, 246, 249, 0);
@@ -65,36 +69,38 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   var code = "";
   String selectedGender = 'Male';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
 
   void clearOTPField() {
-    otpController.clear(); // Clear OTP field when switching
+    otpController.clear();
   }
 
   String? _number;
   bool showOTPWidget = false;
 
   String buttonText = "Verify OTP";
-  bool isEmailVerification = false; // Track if email verification is required
+  bool isEmailVerification = false;
   bool isOTPEmailVerification =
-      false;
-  bool isNextScreen = false; // Track if email verification is required
-  bool continueScreen = false; // Track if email verification is required
+  false;
+  bool isNextScreen = false;
+  bool continueScreen = false;
 
   @override
   void initState() {
     super.initState();
-    phoneController.addListener(() {
-      print("Phone Number Entered: ${phoneController.text}");
+    if (mounted)
+      phoneController.addListener(() {
+        print("Phone Number Entered: ${phoneController.text}");
 
-      // Update button state
-      setState(() {
-        isButtonActive = phoneController.text.length == 10 &&
-            RegExp(r'^[0-9]{10}$').hasMatch(phoneController.text);
+        // Update button state
+        setState(() {
+          isButtonActive = phoneController.text.length == 10 &&
+              RegExp(r'^[0-9]{10}$').hasMatch(phoneController.text);
+        });
+
+        print("Is Button Active: $isButtonActive");
       });
-
-      print("Is Button Active: $isButtonActive");
-    });
 
     _animationController = AnimationController(
       vsync: this,
@@ -124,7 +130,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     super.dispose();
   }
 
-  void validatePhoneNumber() {
+/*
+  Future<void> validatePhoneNumber() async {
     final phoneNumber = phoneController.text.trim();
 
     if (phoneNumber.isEmpty || phoneNumber.length != 10) {
@@ -135,30 +142,160 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
 
     setState(() {
-      showOTPWidget = true; // Show the OTP widget
+      showOTPWidget = true;
+      isLoading = true;
+      passwordController.clear();
     });
 
-    // Start animation
     _animationController.forward();
+
+    try {
+      var value = await ApiClients().registerPhoneNumber(phoneNumber);
+      print("📢 API Response: $value");
+
+      if (value.containsKey('error')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(value['error'])),
+        );
+        return;
+      }
+
+      if (value.containsKey('success') && value['success'] == true) {
+        if (value.containsKey('phoneData') && value['phoneData'] != null) {
+          String? userId = value['phoneData']?['userId'];
+
+          if (userId != null && userId.isNotEmpty) {
+            GetStorage().write(ConstantData.UserRegisterId, userId);
+            GetStorage().remove(ConstantData.UserRegisterId);
+
+
+            print("✅ User ID stored: $userId");
+
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Registration Successful!')),
+            );
+            return;
+          }
+        }
+      }
+
+
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
+*/
 
-  void validateOTP() {
-    final otp = otpController.text.trim();
+/*
+  Future<void> validatePhoneNumber() async {
+    final phoneNumber = phoneController.text.trim();
 
-    if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
+    if (phoneNumber.isEmpty || phoneNumber.length != 10) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid 4-digit OTP')),
+        SnackBar(content: Text('Please enter a valid phone number')),
       );
       return;
     }
 
-    setState(() {
-      isEmailVerification = true;
-      clearOTPField();
+    // Check if phone number is already registered
 
-    });
   }
 
+
+
+
+
+
+  Future<void> validateOTP() async {
+    final otp = otpController.text.trim();
+    final phoneNumber = phoneController.text.trim();
+
+    // OTP validation: Check if it's 4 digits
+    if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('कृपया एक वैध 4-अंकों का OTP दर्ज करें')),
+      );
+      return;
+    }
+
+
+    clearOTPField();
+  }*/
+
+
+  Future<void> validatePhoneNumber() async {
+    final phoneNumber = phoneController.text.trim();
+
+    if (phoneNumber.isEmpty || phoneNumber.length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid phone number')),
+      );
+      return;
+    }
+
+   // bool isRegistered = await phoneNumber(phoneNumber); // 📌 API Call
+
+/*    if (isRegistered) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('OTP sent successfully!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send OTP. Try again!')),
+      );
+    }*/
+  }
+
+  Future<void> validateOTP() async {
+    final otp = otpController.text.trim();
+
+    if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('कृपया एक वैध 4-अंकों का OTP दर्ज करें')),
+      );
+      return;
+    }
+
+   // bool isVerified = await verifyOtp(otp); // 📌 API Call
+
+/*    if (isVerified) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Phone number verified successfully!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid OTP. Please try again!')),
+      );
+    }*/
+
+    clearOTPField();
+  }
+
+
+  bool handleBackPress() {
+    if (showOTPWidget) {
+      setState(() {
+        showOTPWidget = false;
+        _animationController.reverse();
+      });
+      return false;
+    } else if (isOTPEmailVerification) {
+      setState(() {
+        isOTPEmailVerification = false;
+      });
+      return false;
+    } else if (continueScreen) {
+      setState(() {
+        continueScreen = false;
+      });
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   void validateEmail() {
     final email = emailController.text.trim();
@@ -174,7 +311,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
 
        setState(() {
-         isOTPEmailVerification = true; // Proceed to next step if needed
+         isOTPEmailVerification = true;
     });
 
     print("Email is valid: $email");
@@ -183,7 +320,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   void validateEmailOTP() {
     setState(() {
       isNextScreen = true;
-      clearOTPField();// Proceed after verifying email OTP
+      clearOTPField();
     });
   }
 
@@ -197,9 +334,9 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     final address = permanentAddressController.text.trim(); // Permanent Address
 
 
-    final nameRegex = RegExp(r'^[a-zA-Z\s]+$'); // Only letters & spaces allowed
+    final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
     final passwordRegex =
-    RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$'); // Min 6 chars, 1 letter, 1 number
+    RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
 
 
     if (firstName.isEmpty || !nameRegex.hasMatch(firstName)) {
@@ -230,7 +367,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
       Navigator.push(
         context, // Use the stored context
-        MaterialPageRoute(builder: (context) => MainHome()), // Replace with your screen
+        MaterialPageRoute(builder: (context) => MainHome()),
       );
     }
   void showSnackbar(String message) {
@@ -244,9 +381,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     );
   }
 
-
-
-
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -258,51 +392,67 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           fit: BoxFit.cover,
         ),
       ),
-      Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
+      WillPopScope(
+        onWillPop: () async{
+          return handleBackPress();
+        },
+        child: Scaffold(
           backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              otpController.clear();
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () {
+                otpController.clear();
+                passwordController.clear();
 
-              if (showOTPWidget) {
+        
                 setState(() {
-                  showOTPWidget = false;
-                  _animationController.reverse();
+                  if (showOTPWidget) {
+                    showOTPWidget = false;
+                    _animationController.reverse();
+                  } else if (isOTPEmailVerification) {
+                    isOTPEmailVerification = false;
+                    _animationController.reverse();
+                  } else if (continueScreen) {
+                    continueScreen = false;
+                    _animationController.reverse();
+                  } else {
+                    Navigator.pop(context);
+                  }
                 });
-              } else {
-                Navigator.pop(context);
-              }
-            },
-          ), // Reusable back arrow widget
-        ),
-        body: SingleChildScrollView(
-          child: SafeArea(
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 160, bottom: 30),
-                      child: Text(
-                        '',
-                        textAlign: TextAlign.center,
+              },
+            ), // Reusable back arrow widget
+          ),
+          body: SingleChildScrollView(
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 160, bottom: 30),
+                        child: Text(
+                          '',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    _buildVerificationWidget(),
-                    SizedBox(height: 50),
-                  ],
-                ),
-              ],
+                      _buildVerificationWidget(),
+                      SizedBox(height: 50),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       )
     ]);
   }
+  
+  
+  
 
   Widget _buildVerificationWidget() {
     return Column(
@@ -317,6 +467,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                 ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
                     buttonText: 'Send Mobile OTP',
                     onPressed: validatePhoneNumber),
+
               ],
             ),
           )

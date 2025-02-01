@@ -1,6 +1,9 @@
 import 'package:anything/ResponseModule/getCatFAQ.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:anything/ResponseModule/getCatFAQ.dart' as FAQs;
 import 'package:anything/ResponseModule/getIdByCatagories.dart' as Categories;
 
@@ -27,7 +30,7 @@ class _FAQState extends State<FAQ> {
   bool isLoading = true;
   bool isOpen = false;
   String? selectedCategoryId;
-
+  String? selectedName;
 
   void fetchKnowledgement() async {
     try {
@@ -48,6 +51,22 @@ class _FAQState extends State<FAQ> {
     }
   }
 
+  void _handleLinkTap(String? url) {
+    if (url != null) {
+      _launchURL(url);  // Open the URL
+    }
+  }
+
+
+  // Function to launch the URL
+  void _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   void initState() {
     fetchKnowledgement();
@@ -56,6 +75,8 @@ class _FAQState extends State<FAQ> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       backgroundColor: Color(0xffF5F6FB),
       body: Column(
@@ -132,26 +153,22 @@ class _FAQState extends State<FAQ> {
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
-                      child: Column(
+                      child:Column(
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(left: 2, right: 2),
+                            padding: EdgeInsets.only(left: 2, ),
                             child: Container(
                               height: 42,
                               child: Center(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding:  EdgeInsets.all(8.0),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Container(
                                         width: SizeConfig.screenHeight * 0.37,
                                         child: Text(
-                                          filteredItemss[index]
-                                              .category!
-                                              .name
-                                              .toString(),
+                                          filteredItemss[index].category!.name.toString(),
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontFamily: "okra_Medium",
@@ -163,22 +180,9 @@ class _FAQState extends State<FAQ> {
                                       ),
                                       Padding(
                                         padding: EdgeInsets.only(right: 10),
-                                        child: selectedCategoryId ==
-                                                filteredItemss[index]
-                                                    .category!
-                                                    .name
-                                            ? Image(
-                                                image: AssetImage(
-                                                    'assets/images/minus.png'),
-                                                height: 15,
-                                                color: Color(0xfff44343),
-                                              )
-                                            : Image(
-                                                image: AssetImage(
-                                                    'assets/images/add.png'),
-                                                height: 15,
-                                                color: Color(0xfff44343),
-                                              ),
+                                        child: selectedCategoryId == filteredItemss[index].category!.name
+                                            ? Image(image: AssetImage('assets/images/minus.png'), height: 15, color: Color(0xfff44343),)
+                                            : Image(image: AssetImage('assets/images/add.png'), height: 15, color: Color(0xfff44343),),
                                       ),
                                     ],
                                   ),
@@ -186,18 +190,15 @@ class _FAQState extends State<FAQ> {
                               ),
                             ),
                           ),
-                          if (selectedCategoryId ==
-                              filteredItemss[index].category!.name)
+                          if (selectedCategoryId == filteredItemss[index].category!.name)
                             Container(
-
                               margin: EdgeInsets.symmetric(vertical: 7.0),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
                               ),
                               child: Padding(
-                                padding:  EdgeInsets.only(left: 12,right: 10),
+                                padding: EdgeInsets.only(left: 12, right: 10),
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
@@ -208,30 +209,82 @@ class _FAQState extends State<FAQ> {
                                     var question = filteredItemss[index].questions![questionIndex];
                                     return Column(
                                       mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(height: 8),
-                                        Text(
-                                          question.title.toString(),
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
+                                        Padding(
+                                          padding: const EdgeInsets.all(1.0),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                width: SizeConfig.screenHeight * 0.37,
+                                                child: Text(
+                                                  question.title.toString(),
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ), Padding(
+                                                padding: EdgeInsets.only(right: 10),
+                                                child: selectedName == filteredItemss[index].questions![index].title
+                                                    ? Image(image: AssetImage('assets/images/minus.png'), height: 15, color: Color(0xfff44343))
+                                                    : Image(image: AssetImage('assets/images/add.png'), height: 15, color: Color(0xfff44343),),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          question.description.toString(),
-                                          style: TextStyle(fontSize: 14),
-                                        ),
+
+                  SizedBox(height: 4),
+
+if(selectedName == filteredItemss[index].questions![index].title)
+  ListView.builder(
+    shrinkWrap: true,
+    padding: EdgeInsets.zero,
+    scrollDirection: Axis.vertical,
+    physics: NeverScrollableScrollPhysics(),
+    itemCount: filteredItemss[index].questions?.length ?? 0,
+
+    itemBuilder: (context, questionIndex) {
+      var question = filteredItemss[index].questions![questionIndex];
+      return
+        HtmlWidget(
+          question.description.toString(),
+          onTapUrl: (String? url) async {
+            if (url != null && await canLaunchUrl(Uri.parse(url))) {
+              await launchUrl(Uri.parse(url));
+              return true;
+            } else {
+              throw 'Could not launch $url';
+            }
+          },
+          onErrorBuilder: (context, element, error) =>
+              Text('$element error: $error'),
+          onLoadingBuilder: (context, element, loadingProgress) =>
+              Center(child: CircularProgressIndicator()),
+          renderMode: RenderMode.column,
+          textStyle: TextStyle(
+              color: Colors.black,
+              fontSize: SizeConfig.blockSizeHorizontal * 4.0,
+              fontFamily: 'Poppins_Regular'),
+        );
+    }),
+
+
+
+                                        Divider(),
+
+
                                       ],
                                     );
                                   },
                                 ),
                               ),
-                            )
+                            ),
                         ],
-                      ),
+                      )
+
                     ),
                   );
                 },
@@ -317,3 +370,30 @@ class _FAQState extends State<FAQ> {
   }
 }
 
+
+/*
+
+HtmlWidget(
+widget.htmlText,
+onTapUrl: (String? url) async {
+if (await canLaunchUrl(Uri.parse(url!))) {
+await launchUrl(Uri.parse(url));
+return true;
+} else {
+throw 'Could not launch $url';
+}
+},
+onErrorBuilder: (context, element, error) =>
+Text('$element error: $error'),
+onLoadingBuilder: (context, element, loadingProgress) =>
+showCircularProgress(
+true, Theme.of(context).primaryColor),
+renderMode: RenderMode.column,
+textStyle: TextStyle(
+color: Colors.black,
+fontSize: SizeConfig.blockSizeHorizontal * 4.0,
+fontFamily: 'Poppins_Regular'),
+),
+),
+),
+)*/
