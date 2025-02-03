@@ -73,17 +73,21 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            if (_selectedIndex > 0) {
-
+            if (_selectedIndex == 3) {
               setState(() {
-                _selectedIndex--;
+                _selectedIndex = 2; // FAQ page pe wapas jayein
               });
             } else {
-
-              Navigator.pop(context);
+              // Agar back press karte waqt ContactUsPage open ho, toh directly previous page pe jaana hai
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context); // Normal back behavior
+              } else {
+                // Agar koi aur page stack mein nahi ho, toh default behavior
+                Navigator.pop(context);
+              }
             }
           },
-        ),
+        )
       ),
       body:  AnimatedSwitcher(
         duration: Duration(milliseconds: 300),

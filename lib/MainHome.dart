@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Admin/UserFeedback.dart';
 import 'Admin/helpCentre.dart';
+import 'Admin/vedio_player.dart';
 import 'Authentication/Register_Phone.dart';
 import 'Authentication/login_screen.dart';
 import 'Authentication/register_common.dart';
@@ -15,6 +16,7 @@ import 'ConstantData/Constant_data.dart';
 import 'MyBehavior.dart';
 import 'package:anything/ResponseModule/getAllCatList.dart' as catData;
 import 'ProductConfirmation.dart';
+import 'ResponseModule/BusniessAdsResponseModel.dart';
 import 'ResponseModule/getAllCatList.dart';
 import 'ResponseModule/getAllProductList.dart';
 import 'SearchCatagries.dart';
@@ -58,7 +60,7 @@ class MainHomeState extends State<MainHome>
     setState(() {
       fetchCategories();
       fetchProductsList();
-
+      fetchBusinessAds();
       firstname = GetStorage().read(ConstantData.UserFirstName) ?? "Guest";
 
       _tabController = TabController(length: 2, vsync: this);
@@ -78,6 +80,7 @@ class MainHomeState extends State<MainHome>
   final searchController = TextEditingController();
   int currentIndex = 0;
   List<Products> itemss = [];
+  List<String> adsUrlsList = [];
   List<Products> filteredItemss = [];
   int selectedIndex = 0; // To track selected tab
 
@@ -163,6 +166,27 @@ class MainHomeState extends State<MainHome>
         isLoading = false;
       });
       print("loder $isLoading");
+    }
+  }
+
+  void fetchBusinessAds() async {
+    try {
+      Map<String, dynamic> response = await ApiClients().fetchBusinessAdssss();
+
+      AdminBusinessAdsResponseModel businessAdsResponse =
+          AdminBusinessAdsResponseModel.fromJson(response);
+
+      List<String>? adsUrls = businessAdsResponse.urls;
+
+      setState(() {
+        isLoading = false;
+        adsUrlsList = adsUrls ?? []; // Handle null case
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching business ads: $e");
     }
   }
 
@@ -1078,7 +1102,11 @@ class MainHomeState extends State<MainHome>
                   ),
                   PopularCategories(
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
-                  sliderData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  sliderData(
+                    images,
+                    SizeConfig.screenHeight,
+                    SizeConfig.screenWidth,
+                  ),
                   Padding(
                     padding:
                         EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03),
@@ -1176,50 +1204,65 @@ class MainHomeState extends State<MainHome>
     );
   }
 
-  Widget sliderData(double parentHeight, double parentWidth) {
+  Widget sliderData(
+      List<String> images, double parentHeight, double parentWidth) {
     return Column(
       children: [
-        CarouselSlider.builder(
-            itemCount: images.length,
-            options: CarouselOptions(
-              onPageChanged: (index, reason) {
-                setState(() {
-                  currentIndex = index;
-                });
-              },
-              initialPage: 1,
-              height: MediaQuery.of(context).size.height * .2,
-              viewportFraction: 1.0,
-              enableInfiniteScroll: false,
-              autoPlay: true,
-              enlargeStrategy: CenterPageEnlargeStrategy.height,
-            ),
-            itemBuilder: (BuildContext context, int itemIndex, int index1) {
-              final img = images.isNotEmpty
-                  ? NetworkImage(images[index1])
-                  : NetworkImage("");
+        isLoading
+            ? Center(
+                child:
+                    CircularProgressIndicator()) // Show loader while fetching
+            : CarouselSlider.builder(
+                itemCount: adsUrlsList.length,
+                options: CarouselOptions(
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  initialPage: 0,
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  viewportFraction: 1.0,
+                  enableInfiniteScroll: false,
+                  autoPlay: true,
+                  enlargeStrategy: CenterPageEnlargeStrategy.height,
+                ),
+                itemBuilder: (BuildContext context, int itemIndex, int index1) {
+                  final baseUrl = 'https://admin-fyu1.onrender.com/';
+                  print("baseUrl... ${baseUrl}");
+                  final imgUrl = adsUrlsList.isNotEmpty
+                      ? '$baseUrl${adsUrlsList[index1].replaceAll("\\", "/")}'
+                      : null;
+                  final isVideo = imgUrl != null && imgUrl.endsWith('.mp4');
 
-              return Container(
-                  margin: EdgeInsets.all(16),
-                  child: Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(img.url),
-                            fit: BoxFit.cover,
+                  return imgUrl != null
+                      ? Container(
+                          margin: EdgeInsets.all(16),
+                          child: Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: isVideo
+                                  ? VideoPlayerWidget(
+                                      url: imgUrl) // Custom widget for video
+                                  : Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage(imgUrl),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ));
-            }),
+                        )
+                      : Container();
+                },
+              ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            for (int i = 0; i < images.length; i++)
+            for (int i = 0; i < adsUrlsList.length; i++)
               currentIndex == i
                   ? Container(
                       width: 25,
@@ -1228,12 +1271,13 @@ class MainHomeState extends State<MainHome>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              Color(0xff6a83da),
-                              Color(0xff665365B7),
-                            ]),
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          colors: [
+                            Color(0xff6a83da),
+                            Color(0xff665365B7),
+                          ],
+                        ),
                       ),
                     )
                   : Container(
@@ -1241,15 +1285,17 @@ class MainHomeState extends State<MainHome>
                       height: 7,
                       margin: EdgeInsets.all(2),
                       decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                Color(0xff7F9ED4),
-                                Color(0xff999999),
-                              ]),
-                          shape: BoxShape.circle),
-                    )
+                        gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          colors: [
+                            Color(0xff7F9ED4),
+                            Color(0xff999999),
+                          ],
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
           ],
         ),
       ],
@@ -1679,8 +1725,6 @@ class MainHomeState extends State<MainHome>
                             ),
                           ),
                         ),
-
-
                         GestureDetector(
                           onTap: () {
                             setState(() {
@@ -1748,7 +1792,10 @@ class MainHomeState extends State<MainHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  PhoneRegistrationPage(mobileNumber: '', email: '',)));
+                                                  PhoneRegistrationPage(
+                                                    mobileNumber: '',
+                                                    email: '',
+                                                  )));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

@@ -38,7 +38,6 @@ String AdminContactUsMessage = "/app-support/register";
     return "/app-support/$userId";
   }
 
-String basee = "https://admin-fyu1.onrender.com/api/app";
 
   String getBigSupportTicket(String userId, String ticketNumber) {
     return "/app-support/$userId/$ticketNumber"; // No slash here
@@ -47,6 +46,7 @@ String basee = "https://admin-fyu1.onrender.com/api/app";
   String deleteProducts(String ProductId) {
     return "/product/$ProductId";
   }
+  String getBusinessAds = "/advertisement";
 
 
 String UserFeedback = "/app-improment";

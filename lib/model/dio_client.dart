@@ -7,6 +7,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../ApiConstant/api_constant.dart';
 import '../ConstantData/Constant_data.dart';
+import 'package:path/path.dart'; // Import this package
 
 class ApiClients {
   final Dio _dio = Dio();
@@ -871,7 +872,77 @@ class ApiClients {
     }
   }
 
+/*
+  Future<Map<String, dynamic>> getBusinessAdss() async {
+    String url = ApiConstant().AdminBaseUrl + ApiConstant().getBusinessAds;
+    print("fffffffffff: $url");
+    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
 
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      // Debugging: print the status code and response data
+      print("getBusinessAdss Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      // Check if the response is a successful one (statusCode 200)
+      if (response.statusCode == 200) {
+        // Assuming the server returns JSON that can be mapped to a Map<String, dynamic>
+        return response.data is Map<String, dynamic> ? response.data : {};
+      } else {
+        // Handle non-200 responses (for example, 404, 500, etc.)
+        print("Error: Received status code ${response.statusCode}");
+        return {}; // Returning an empty map or a fallback value
+      }
+    } on DioError catch (e) {
+      // Handle errors from Dio (e.g., network errors, etc.)
+      print("Dio Error: ${e.response}");
+      // Check if Dio returned a valid response
+      return e.response?.data is Map<String, dynamic> ? e.response!.data : {};
+    } catch (e) {
+      // Handle any other type of error
+      print("Error fetching business ads: $e");
+      return {}; // Return an empty map as fallback
+    }
+  }
+*/
+
+
+  Future<Map<String, dynamic>> fetchBusinessAdssss() async {
+    String url = ApiConstant().AdminBaseUrl + ApiConstant().getBusinessAds;
+    print("urlllllllll ${url}");
+
+    try {
+      // Sending GET request to fetch business ads data
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${GetStorage().read<String>(ConstantData.UserAccessToken)}',
+          },
+        ),
+      );
+
+      // Check if the response status is 200 (success)
+      if (response.statusCode == 200) {
+        // Extracting the entire response data and returning it as Map<String, dynamic>
+        return response.data as Map<String, dynamic>;  // Return the response data
+      } else {
+        print("Error fetching business ads: ${response.statusCode}");
+        return {};  // Return an empty map if there is an error
+      }
+    } catch (e) {
+      print("Error fetching business ads: $e");
+      return {};  // Return empty map on error
+    }
+  }
 
 
   Future<Map<String, dynamic>> deleteProduct(String productId) async {

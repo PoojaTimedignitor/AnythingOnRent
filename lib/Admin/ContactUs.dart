@@ -71,104 +71,111 @@ class _ContactUsPageState extends State<ContactUsPage> {
   void showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (
-        BuildContext context,
-      ) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
+      barrierDismissible: false,  // Disable dismissing with back button or tapping outside
+      builder: (BuildContext context) {
+
+        return WillPopScope(
+            onWillPop: () async {
+              Navigator.of(context).pop();
+              return false;
+            },
+
+        child: Dialog(
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: 10),
-                  Image(
-                    image: AssetImage('assets/images/sucess.png'),
-                    height: 65,
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 1),
-                        Text(
-                          "Your ticket has been raised successfully!",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "okra_Medium",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: 15),
-                        Text(
-                          "Now track status of all your tickets in the Support section.",
-                          style: TextStyle(
-                            color: CommonColor.Black,
-                            fontFamily: "Montserrat-Medium",
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 10),
+                    Image(
+                      image: AssetImage('assets/images/sucess.png'),
+                      height: 65,
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      ApiClients()
-                          .CreateTicket(
-                              selectedCategoryId, messageController.text)
-                          .then((value) {
-                        print(value['data']);
-                        print("Response: $value");
-
-                        if (mounted) {
-                          setState(() {});
-                        }
-
-                        if (value['success'] == true) {
-                          print("Userssssss....${value['data']?['userId']}");
-                          GetStorage().write(
-                              ConstantData.UserId, value['data']?['userId']);
-
-                          showTopSnackBar(
-                              context, 'Question submitted successfully');
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HelpCenterScreen()),
-                          );
-                        }
-                      }); // Close the dialog
-                    },
-                    child: Center(
-                      child: Container(
-                          width: SizeConfig.screenWidth * 0.75,
-                          height: SizeConfig.screenHeight * 0.05,
-                          child: Center(
-                              child: Text(
-                            " Okay",
+                    Container(
+                      padding: EdgeInsets.all(14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 1),
+                          Text(
+                            "Your ticket has been raised successfully!",
                             style: TextStyle(
-                                color: Color(0xfff44343),
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'Roboto-Regular',
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.5),
-                          ))),
+                              color: Colors.black,
+                              fontFamily: "okra_Medium",
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            "Now track status of all your tickets in the Support section.",
+                            style: TextStyle(
+                              color: CommonColor.Black,
+                              fontFamily: "Montserrat-Medium",
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 16),
-                ],
+                    GestureDetector(
+                      onTap: () {
+                        ApiClients()
+                            .CreateTicket(
+                                selectedCategoryId, messageController.text)
+                            .then((value) {
+                          print(value['data']);
+                          print("Response: $value");
+          
+                          if (mounted) {
+                            setState(() {});
+                          }
+          
+                          if (value['success'] == true) {
+                            print("Userssssss....${value['data']?['userId']}");
+                            GetStorage().write(
+                                ConstantData.UserId, value['data']?['userId']);
+          
+                            showTopSnackBar(
+                                context, 'Question submitted successfully');
+          
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HelpCenterScreen()),
+                            );
+                          }
+                        }); // Close the dialog
+                      },
+                      child: Center(
+                        child: Container(
+                            width: SizeConfig.screenWidth * 0.75,
+                            height: SizeConfig.screenHeight * 0.05,
+                            child: Center(
+                                child: Text(
+                              " Okay",
+                              style: TextStyle(
+                                  color: Color(0xfff44343),
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'Roboto-Regular',
+                                  fontSize: SizeConfig.blockSizeHorizontal * 4.5),
+                            ))),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                  ],
+                ),
               ),
             ),
           ),

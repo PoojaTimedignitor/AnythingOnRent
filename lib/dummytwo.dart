@@ -97,6 +97,8 @@ import 'package:flutter/material.dart';
 
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'Admin/FAQ.dart';
 import 'Admin/helpCentre.dart';
 class HelpCenter extends StatefulWidget {
@@ -196,47 +198,60 @@ class _HelpCenterState extends State<HelpCenter> {
 
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(top: 4,left: 10,right: 10),
-          child: Container(
-            height: 40,
-            width: SizeConfig.screenHeight*0.5,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(10))
+        GestureDetector(
+          onTap: () async {
+            final url = 'https://admin-fyu1.onrender.com/api/pages/display/terms-of-service';
+            print("Ad URL: $url");
 
-            ),child: Padding(
-              padding:  EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.help_outline, // Icon before the text
-                    color: Colors.black,
-                    size: 20,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    " Terms and conditions",
-                    style: TextStyle(
+            // Launch the URL in the browser or relevant app
+            if (await canLaunch(url)) {
+              await launch(url);
+            } else {
+              print("Could not launch the URL");
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.only(top: 4,left: 10,right: 10),
+            child: Container(
+              height: 40,
+              width: SizeConfig.screenHeight*0.5,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+
+              ),child: Padding(
+                padding:  EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.help_outline, // Icon before the text
                       color: Colors.black,
-                      fontFamily: "okra_Medium",
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      size: 20,
                     ),
-                  ),
-                  Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black,
-                    size: 16,
-                  ),
-                ],
-              )
+                    SizedBox(width: 8),
+                    Text(
+                      " Terms and conditions",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "okra_Medium",
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black,
+                      size: 16,
+                    ),
+                  ],
+                )
 
-          ),
+            ),
 
+            ),
           ),
         ),
         Padding(
