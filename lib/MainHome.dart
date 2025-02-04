@@ -1794,7 +1794,7 @@ class MainHomeState extends State<MainHome>
                                               builder: (context) =>
                                                   PhoneRegistrationPage(
                                                     mobileNumber: '',
-                                                    email: '',
+                                                    email: '', phoneNumber: '',
                                                   )));
                                     },
                                     child: Padding(

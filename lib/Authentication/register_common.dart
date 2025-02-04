@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../City_Create.dart';
 import '../Common_File/ResponsiveUtil.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import 'package:pinput/pinput.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../ConstantData/Constant_data.dart';
 import '../MainHome.dart';
 import '../model/dio_client.dart';
 
@@ -34,10 +32,12 @@ final defaultPinTheme = PinTheme(
 class PhoneRegistrationPage extends StatefulWidget {
   late final String mobileNumber;
   late final String email;
+  final String phoneNumber;
+
   PhoneRegistrationPage({
     Key? key,
     required this.mobileNumber,
-    required this.email,
+    required this.email, required this.phoneNumber,
   }) : super(key: key);
   @override
   _PhoneRegistrationPageState createState() => _PhoneRegistrationPageState();
@@ -76,6 +76,11 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     otpController.clear();
   }
 
+  void clearOTPEmailField() {
+    emailOTPController.clear();
+  }
+  String? phoneNumber;
+  String? email;
   String? _number;
   bool showOTPWidget = false;
 
@@ -85,6 +90,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   false;
   bool isNextScreen = false;
   bool continueScreen = false;
+  final ApiClients authService = ApiClients(); // API Service का Object
 
   @override
   void initState() {
@@ -101,22 +107,25 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
         print("Is Button Active: $isButtonActive");
       });
-
+    phoneNumber = GetStorage().read<String>('phoneNumber'); // 📌 Saved Phone Number
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: Duration(milliseconds: 5000), // Duration of animation
     );
 
-    // Slide Animation
+    // SlideAnimation ki setup
     _slideAnimation = Tween<Offset>(
-      begin: Offset(1.0, 0.0),
-      end: Offset(0.0, 0.0),
+      begin: Offset(1.0, 0.0), // Slide from right
+      end: Offset(0.0, 0.0),    // Slide to the original position
     ).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
       ),
     );
+
+    // Animation start karna
+    _animationController.forward();
   }
 
   @override
@@ -124,106 +133,14 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     _animationController.dispose();
     phoneController.dispose();
     otpController.dispose();
+    emailController.dispose();
+    emailOTPController.dispose();
     _phoneFocus.dispose();
     focusNode.dispose();
-
     super.dispose();
   }
 
-/*
-  Future<void> validatePhoneNumber() async {
-    final phoneNumber = phoneController.text.trim();
 
-    if (phoneNumber.isEmpty || phoneNumber.length != 10) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid phone number')),
-      );
-      return;
-    }
-
-    setState(() {
-      showOTPWidget = true;
-      isLoading = true;
-      passwordController.clear();
-    });
-
-    _animationController.forward();
-
-    try {
-      var value = await ApiClients().registerPhoneNumber(phoneNumber);
-      print("📢 API Response: $value");
-
-      if (value.containsKey('error')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(value['error'])),
-        );
-        return;
-      }
-
-      if (value.containsKey('success') && value['success'] == true) {
-        if (value.containsKey('phoneData') && value['phoneData'] != null) {
-          String? userId = value['phoneData']?['userId'];
-
-          if (userId != null && userId.isNotEmpty) {
-            GetStorage().write(ConstantData.UserRegisterId, userId);
-            GetStorage().remove(ConstantData.UserRegisterId);
-
-
-            print("✅ User ID stored: $userId");
-
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Registration Successful!')),
-            );
-            return;
-          }
-        }
-      }
-
-
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-*/
-
-/*
-  Future<void> validatePhoneNumber() async {
-    final phoneNumber = phoneController.text.trim();
-
-    if (phoneNumber.isEmpty || phoneNumber.length != 10) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid phone number')),
-      );
-      return;
-    }
-
-    // Check if phone number is already registered
-
-  }
-
-
-
-
-
-
-  Future<void> validateOTP() async {
-    final otp = otpController.text.trim();
-    final phoneNumber = phoneController.text.trim();
-
-    // OTP validation: Check if it's 4 digits
-    if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('कृपया एक वैध 4-अंकों का OTP दर्ज करें')),
-      );
-      return;
-    }
-
-
-    clearOTPField();
-  }*/
 
 
   Future<void> validatePhoneNumber() async {
@@ -231,47 +148,70 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
     if (phoneNumber.isEmpty || phoneNumber.length != 10) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid phone number')),
+        SnackBar(content: Text('Please enter a valid 10-digit phone number')),
       );
       return;
     }
 
-   // bool isRegistered = await phoneNumber(phoneNumber); // 📌 API Call
+    print("📞 Sending OTP to: $phoneNumber");
 
-/*    if (isRegistered) {
+    bool isRegistered = await authService.sendMobileOtp(phoneNumber);
+
+    if (isRegistered) {
+      GetStorage().write('phoneNumber', phoneNumber); // ✅ Save phone number
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('OTP sent successfully!')),
       );
+
+      setState(() {
+        showOTPWidget = true;
+      });
+
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send OTP. Try again!')),
       );
-    }*/
+    }
   }
+
 
   Future<void> validateOTP() async {
     final otp = otpController.text.trim();
 
+
     if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('कृपया एक वैध 4-अंकों का OTP दर्ज करें')),
+        SnackBar(content: Text('Please enter a valid 4-digit OTP')),
       );
       return;
     }
 
-   // bool isVerified = await verifyOtp(otp); // 📌 API Call
+    print("🔢 Verifying OTP: $otp for $phoneNumber");
 
-/*    if (isVerified) {
+
+    phoneNumber = GetStorage().read<String>('phoneNumber');  // Read phone number from storage
+
+
+    bool isVerified = await authService.verifyMobileOtp(phoneNumber!, otp);
+
+    if (isVerified) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Phone number verified successfully!')),
+        SnackBar(content: Text('OTP verified successfully!')),
       );
+
+
+      setState(() {
+        isEmailVerification = true;
+        clearOTPField();
+      });
+
+      Navigator.pushNamed(context, '/emailVerification');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid OTP. Please try again!')),
+        SnackBar(content: Text('Invalid OTP. Try again!')),
       );
-    }*/
-
-    clearOTPField();
+    }
   }
 
 
@@ -297,11 +237,11 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
   }
 
-  void validateEmail() {
+/*  Future<void> validateEmail() async {
     final email = emailController.text.trim();
 
     final emailRegex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 
     if (email.isEmpty || !emailRegex.hasMatch(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -310,18 +250,139 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       return;
     }
 
-       setState(() {
-         isOTPEmailVerification = true;
-    });
 
+
+    // Read the phone number from local storage
+    String? phoneNumber = GetStorage().read<String>('phoneNumber');
+
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Phone number is not found in storage!')),
+      );
+      return;
+    }
+
+    print("📞 Sending OTP to: $phoneNumber");
+
+    // Call the sendEmailOtp function to send OTP to the email
+    bool isRegistered = await authService.sendEmailOtp(phoneNumber, email);
+
+    if (isRegistered) {
+      // Save the email in local storage
+      GetStorage().write('email', email);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('OTP sent to email successfully!')),
+      );
+
+      setState(() {
+        isOTPEmailVerification = true;
+      });
+    }
+    print("Email is valid: $email");
+  }*/
+
+
+
+  Future<void> validateEmail() async {
+    final email = emailController.text.trim();
+
+    final emailRegex =
+    RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
+    if (email.isEmpty || !emailRegex.hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid email address')),
+      );
+      return;
+    }
+
+    // Read the phone number from local storage
+    String? phoneNumber = GetStorage().read<String>('phoneNumber');
+
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Phone number is not found in storage!')),
+      );
+      return;
+    }
+
+    print("📞 Sending OTP to: $phoneNumber");
+
+    // Call the sendEmailOtp function to send OTP to the email
+    bool isRegistered = await authService.sendEmailOtp(phoneNumber, email);
+
+    print('isRegistered: $isRegistered'); // Debugging print
+    print("📞 phone: $phoneNumber");
+    print("📞 email: $email");
+    if (isRegistered) {
+      print("✅ OTP Sent Successfully");
+      GetStorage().write('email', email);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('OTP sent to email successfully!')),
+      );
+
+      setState(() {
+        isOTPEmailVerification = true;
+      });
+
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.pushNamed(context, '/Otp');
+      });
+    } else {
+      print("❌ Failed to send OTP, showing SnackBar"); // Debugging Print
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send email OTP. Try again!')),
+      );
+    }
     print("Email is valid: $email");
   }
 
-  void validateEmailOTP() {
-    setState(() {
-      isNextScreen = true;
-      clearOTPField();
-    });
+
+
+
+  Future<void> validateEmailOTP() async {
+    final otps = emailOTPController.text.trim();
+    print("📩 Entered OTP: $otps");
+
+    if (otps.isEmpty || otps.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otps)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid 4-digit OTP')),
+      );
+      return;
+    }
+
+    print("🔢 Verifying OTP: $otps for $phoneNumber");
+
+    phoneNumber = GetStorage().read<String>('phoneNumber');  // Phone number ko storage se read karo
+    email = GetStorage().read<String>('email');  // Email ko storage se read karo
+
+    print("hhhh   ${otps}");
+    bool isVerified = await authService.verifyEmailOtp(phoneNumber!, email!, otps);
+    print("🔢 phone: $phoneNumber, email: $email");
+
+    if (isVerified) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('OTP verified successfully!')),
+      );
+
+      // OTP verification successful hone par OTP field clear karo
+      if (isOTPEmailVerification) {
+        otpController.clear(); // Email OTP verification ke baad OTP field clear karo
+      }
+
+      setState(() {
+        isNextScreen = true;
+        clearOTPField();
+      });
+
+      // Agle screen pe jaane ke liye code daalein
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid OTP. Try again!')),
+      );
+    }
   }
 
 
@@ -370,6 +431,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         MaterialPageRoute(builder: (context) => MainHome()),
       );
     }
+
   void showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -403,8 +465,9 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             leading: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black),
               onPressed: () {
-                otpController.clear();
-                passwordController.clear();
+                //otpController.clear();
+               // emailOTPController.clear();
+           //     passwordController.clear();
 
         
                 setState(() {
@@ -412,6 +475,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                     showOTPWidget = false;
                     _animationController.reverse();
                   } else if (isOTPEmailVerification) {
+                    otpController.clear();
                     isOTPEmailVerification = false;
                     _animationController.reverse();
                   } else if (continueScreen) {
@@ -472,14 +536,14 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             ),
           )
         else if (!isEmailVerification)
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               children: [
                 SlideTransition(
-                  position: _slideAnimation,
-                  child: _buildOTPWidget(), // OTP widget
-                ),
+                    position: _slideAnimation,
+                    child: _buildOTPWidget(phoneNumber!)),
                 SizedBox(height: 20),
                 ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
                     buttonText: ' Verify OTP', onPressed: validateOTP),
@@ -487,13 +551,14 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             ),
           )
         else if (!isOTPEmailVerification)
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               children: [
                 SlideTransition(
                   position: _slideAnimation,
-                  child: _buildEmailWidget(), // Email widget
+                  child: _buildEmailWidget(phoneNumber!), // Email widget
                 ),
                 SizedBox(height: 50),
                 ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
@@ -506,10 +571,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               children: [
-                SlideTransition(
-                  position: _slideAnimation,
-                  child: _buildEmailOTPWidget(), // Email widget
-                ),
+                _buildEmailOTPWidget(email,phoneNumber!,),
                 SizedBox(height: 50),
                 ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
                     buttonText: ' Next', onPressed: validateEmailOTP),
@@ -521,10 +583,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Column(
                       children: [
-                        SlideTransition(
-                          position: _slideAnimation,
-                          child: _buildDetailsWidget(), // Email widget
-                        ),
+                        _buildDetailsWidget(),
                         SizedBox(height: 50),
                         ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
                             buttonText: ' Continue', onPressed: ContinueScreen),
@@ -625,7 +684,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     );
   }
 
-  Widget _buildEmailWidget() {
+  Widget _buildEmailWidget(String PhoneNumber) {
     return Column(
       children: [
         Text(
@@ -707,7 +766,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     );
   }
 
-  Widget _buildEmailOTPWidget() {
+  Widget _buildEmailOTPWidget(String? email,String? phoneNumber) {
     return Column(
       children: [
         Text(
@@ -734,7 +793,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     );
   }
 
-  Widget _buildOTPWidget() {
+  Widget _buildOTPWidget(String phoneNumber) {
     return Column(
       children: [
         Text(
@@ -751,67 +810,37 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           SizeConfig.screenHeight,
           SizeConfig.screenWidth,
           title: 'Send to',
-          contactInfo: "+91${widget.mobileNumber}",
+          contactInfo: "+91$phoneNumber",
           onPressed:
           (){
-
           },
           showOTPField: true,
         ),
-        /* TextFormField(
-            controller: otpController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: 'Enter OTP',
-              labelStyle: TextStyle(
-                color: Color(0xffFE7F64),
-                fontSize: 17,
-                fontFamily: "okra_Medium",
-              ),
-              contentPadding: EdgeInsets.all(12),
-              isDense: true,
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1,
-                  color: Color(0xffFE7F64),
-                ),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide:  BorderSide(
-                  width: 0.3,
-                  color: Color(0xff000000),
-                ),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              hintText: 'Enter OTP',
-              hintStyle: TextStyle(
-                color: Colors.grey,
-                fontSize: 15,
-                fontFamily: "okra_Light",
-              ),
-            ),
-          ),
-*/
+
       ],
     );
   }
 
   Widget getFirstImageFrame(
-    double parentHeight,
-    double parentWidth, {
-    required String title, // Dynamic Title (Send to Mobile / Email)
-    required String contactInfo, // Dynamic Mobile Number / Email
-    required VoidCallback onPressed,
-    bool showOTPField = true, // Enable/Disable OTP Field
-  }) {
+      double parentHeight,
+      double parentWidth, {
+        required String title, // Dynamic Title (Send to Mobile / Email)
+        required String contactInfo, // Dynamic Mobile Number / Email
+        required VoidCallback onPressed,
+        bool showOTPField = true, // Enable/Disable OTP Field
+      }) {
+    print('Phone Number: ${widget.phoneNumber}');
+    print('Contact Info: $contactInfo');
     return Center(
-      child: SizedBox(
+
+      child: Container(
+
         width: parentWidth,
-        height: parentHeight * 0.2,
+        height: parentHeight * 0.2, // Increased height for better layout
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
             Padding(
               padding: EdgeInsets.only(top: parentHeight * 0.01),
               child: Row(
@@ -829,6 +858,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                   Padding(
                     padding: EdgeInsets.only(right: parentWidth * 0.0),
                     child: Text(
+
                       contactInfo, // Dynamic Mobile Number / Email
                       style: TextStyle(
                         fontFamily: "Roboto_Regular",
@@ -840,30 +870,41 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                   ),
                 ],
               ),
+
             ),
-            if (showOTPField) // Only show OTP if enabled
+            if (showOTPField)
+
+              // Only show OTP if enabled
               Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Form(
                   key: formKey,
                   child: Column(
                     children: [
+
                       Directionality(
                         textDirection: TextDirection.ltr,
                         child: Pinput(
                           length: 4,
-                          controller: otpController,
+                          controller: isEmailVerification || isOTPEmailVerification
+                              ? emailOTPController
+                              : otpController,
                           focusNode: focusNode,
                           onClipboardFound: (value) {
-                            debugPrint('onClipboardFound: $value');
-                            otpController.setText(value);
+                            debugPrint('📋 OTP Pasted: $value');
+
+                            if (isEmailVerification || isOTPEmailVerification) {
+                              emailOTPController.setText(value);
+                            } else {
+                              otpController.setText(value);
+                            }
                           },
                           hapticFeedbackType: HapticFeedbackType.lightImpact,
                           onCompleted: (pin) {
-                            debugPrint('onCompleted: $pin');
+                            debugPrint('✅ OTP Entered: $pin');
                           },
                           onChanged: (value) {
-                            debugPrint('onChanged: $value');
+                            debugPrint('🔄 OTP Changed: $value');
                             code = value;
                           },
                           cursor: Column(
@@ -899,6 +940,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                 ),
               ),
           ],
+
         ),
       ),
     );

@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../ApiConstant/api_constant.dart';
 import '../ConstantData/Constant_data.dart';
-import 'package:path/path.dart'; // Import this package
 
 class ApiClients {
   final Dio _dio = Dio();
@@ -83,167 +81,161 @@ class ApiClients {
   }
 
 
-  Future<Map<String, dynamic>> registerPhoneNumber(String phoneNumber) async {
+
+
+  Future<bool> sendMobileOtp(String phoneNumber) async {
     String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
 
     var data = {
       'phoneNumber': phoneNumber,
     };
 
     try {
-      Response response = await _dio.post(url, data: data,options:Options(headers: {'Authorization': 'Bearer $sessionToken'}) );
-      return response.data;
-    } catch (e) {
-      return {'success': false, 'message': 'Kuch galat ho gaya hai'};
-    }
-  }
+      Response response = await _dio.post(url, data: data);
 
+      print("OTP Send Response: ${response.data}"); // Debugging Print
 
-  Future<bool> PhoneNumber(String phoneNumber) async {
-    String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
-
-    try {
-      Response response = await _dio.post(
-        url, // ✅ Use the constructed URL here
-        data: {'phoneNumber': phoneNumber},
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $sessionToken", // 🛑 Add token if needed
-            "Content-Type": "application/json",
-          },
-        ),
-      );
-
-      if (response.data['success']) {
-        // ✅ Store userId & otp in GetStorage
-        box.write('userId', response.data['phoneData']['userId']);
-        box.write('otp', response.data['phoneData']['otp']);
-        box.write('phoneNumber', phoneNumber);
+      if (response.statusCode == 200) {
         return true;
+      } else {
+        return false;
       }
     } catch (e) {
-      print("Error: ${e.toString()}");
-    }
-    return false;
-  }
-
-
-
-
-/*
-  Future<Map<String, dynamic>> registerPhoneNumber(String phoneNumber) async {
-    String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
-    try {
-      FormData formData = FormData.fromMap({'phoneNumber': phoneNumber});
-
-      Response response = await _dio.post<Map<String, dynamic>>(
-        url,
-        data: formData,
-        options: Options(headers: {'Authorization': 'Bearer $sessionToken'}),
-      );
-
-
-      return response.data ?? {'error': 'No response data received'};
-    } on DioException catch (e) {
-
-
-      String errorMessage = e.response?.data?['message'] ??
-          e.message ??
-          'Something went wrong. Please try again.';
-
-
-
-      return {'error': errorMessage};
+      print("Error in sendOtp: $e");
+      return false;
     }
   }
-*/
 
-  Future<bool> verifyOtp(String otp) async {
-    try {
-      String? userId = box.read('userId'); // 🛑 Ensure userId is stored
-      if (userId == null) return false;
-
-      String url = ApiConstant().BaseUrl + ApiConstant().PhoneOTP;
-      String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
-
-      Response response = await _dio.post(
-        url, // ✅ Use constructed URL
-        data: {'userId': userId, 'phoneOtp': otp},
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $sessionToken", // 🛑 Add token if required
-            "Content-Type": "application/json",
-          },
-        ),
-      );
-
-      if (response.data['success']) {
-        // ✅ Mark phone as verified
-        box.write('phoneVerified', true);
-        return true;
-      }
-    } catch (e) {
-      print("Error: ${e.toString()}");
-    }
-    return false;
-  }
-
-/*
-  Future<Map<String, dynamic>> sendOTP(String Otp) async {
+  Future<bool> verifyMobileOtp(String phoneNumber, String otp) async {
     String url = ApiConstant().BaseUrl + ApiConstant().PhoneOTP;
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
 
-    if (sessionToken == null || sessionToken.isEmpty) {
-      return {'error': 'Unauthorized. Session token is missing or invalid.'};
-    }
+
+
+    var data = {
+      'phoneNumber': phoneNumber,
+      'otp': otp,
+    };
 
     try {
-      FormData formData = FormData.fromMap({'phoneOtp': Otp});
+      Response response = await _dio.post(url, data: data);
 
-      Response response = await _dio.post<Map<String, dynamic>>(
-        url,
-        data: formData,
-        options: Options(headers: {'Authorization': 'Bearer $sessionToken'}),
-      );
+      print("OTP Verify Response: ${response.data}");
 
-      print("Server Response Code: ${response.statusCode}");
-      print("Full Response: ${response.data}"); // ✅ Full response print karo
+      if (response.statusCode == 200 && response.data['message'] == "Phone number verified successfully!, please verify your email") {
+        return true;
+      } else {
 
-      if (response.statusCode == 200 && response.data != null) {
-        if (response.data.containsKey('success') && response.data['success'] == true) {
-          var phoneData = response.data['phoneData'];
-          String userId = phoneData['userId'];  // Extract userId
-          String phoneNumber = phoneData['phoneNumber'];
-
-          // Pass the userId and phone number to the OTP screen
+        print("OTP verification failed: ${response.data['message']}");
+        return false;
+      }
+    } catch (e) {
+      print("Error in verifyOtp: $e");
 
 
-          return {
-            'phoneNumber': phoneNumber,
-            'userId': userId,
-            'phoneVerified': phoneData['phoneVerified'],
-          };
+      if (e is DioError) {
+        if (e.response != null) {
+          print("Error Response: ${e.response?.data}");
         } else {
-          print("❌ API Response does not contain success=true");
-          return {'error': 'Invalid response from server. Please try again.'};
+          print("Error occurred while making the request: ${e.message}");
         }
       } else {
-        print("Unexpected Response Code: ${response.statusCode}");
-        return {'error': 'Server error: ${response.statusCode}'};
+        print("Unknown error: $e");
       }
-    } on DioException catch (e) {
-      String errorMessage = e.response?.data?['message'] ?? e.message ?? 'कुछ गड़बड़ है। कृपया फिर से प्रयास करें।';
-      print("❌ DioException: $errorMessage");
-      return {'error': errorMessage};
-    } catch (e) {
-      print("❌ Unexpected Error: $e");
-      return {'error': 'Something went wrong. Please try again.'};
+
+      return false;
     }
   }
-*/
+
+
+
+  Future<bool> sendEmailOtp(String phoneNumber, String email) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().emailRegister;
+
+    var data = {
+      'phoneNumber': phoneNumber,
+      'email': email,
+    };
+
+    print("📡 Sending OTP to API: $url");
+    print("📨 Request Data: $data");
+
+    try {
+      Response response = await _dio.post(url, data: data);
+
+      print("📩 API Response: ${response.data}"); // Full API Response
+      print("📡 Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        String apiMessage = response.data['message'];
+        print("✅ API Message: $apiMessage");
+
+        if (apiMessage.contains("OTP sent successfully")) {
+          return true;
+        } else {
+          print("❌ API Error Message: $apiMessage");
+          return false;
+        }
+      } else {
+        print("❌ HTTP Error Code: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("🔥 Exception: $e");
+      return false;
+    }
+  }
+
+
+
+  Future<bool> verifyEmailOtp(String email, String phoneNumber, String otp) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().emailOtp;
+
+    var data = {
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'otp': otp,
+    };
+
+    print("🔍 Verifying OTP at: $url");
+    print("📨 Request Data: $data");
+
+    try {
+      Response response = await _dio.post(url, data: data);
+      
+      print('Response from backend: ${response}') ;
+
+      print("📩 API Response: ${response.data}");
+      print("📡 Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        String apiMessage = response.data['message'];
+        print("✅ API Message: $apiMessage");
+
+        if (apiMessage.contains("verified successfully")) {
+          return true;
+        } else {
+          print("❌ API Error Message: $apiMessage");
+          return false;
+        }
+      } else {
+        print("❌ HTTP Error Code: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("🔥 Exception: $e");
+
+      if (e is DioError) {
+        if (e.response != null) {
+          print("❌ Server Responseeeeeeeeee: ${e.response?.data}");
+        } else {
+          print("❌ Request Error: ${e.message}");
+        }
+      }
+
+      return false;
+    }
+  }
+
 
 
   Future<Map<String, dynamic>> loginDio(

@@ -3,8 +3,10 @@ class ApiConstant {
   String BaseUrlCreateProduct = "https://rental-api-5vfa.onrender.com/api";
   String BaseUrlGetAllCat = "https://admin-fyu1.onrender.com/api";
   String BaseUrlGetAllCats = "https://rental-api-5vfa.onrender.com";
-  String PhoneRegister = "/reg-phone";
-  String PhoneOTP = "/verify-phone";
+  String PhoneRegister = "/sendPhoneOtp";
+  String emailRegister = "/sendEmailOtp";
+  String emailOtp = "/verifyEmailOtp";
+  String PhoneOTP = "/verifyPhoneOtp";
   String registerss = "/register";
   String login = "/login";
   String products = "/addproduct/jhdfs";

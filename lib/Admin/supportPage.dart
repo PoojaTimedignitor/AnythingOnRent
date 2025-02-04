@@ -181,7 +181,7 @@ class _SupportpageState extends State<Supportpage> {
                     'https://admin-fyu1.onrender.com/api/pages/display/privacy-policy';
                 print("Ad URLllll: $url");
 
-                // Launch the URL in the browser or relevant app
+
                 if (await canLaunch(url)) {
                   await launch(url);
                 } else {
@@ -242,7 +242,7 @@ class _SupportpageState extends State<Supportpage> {
                               height: SizeConfig.screenHeight * 0.18),
                           SizedBox(height: 16),
                           Text(
-                            "You havent't bought any ticket yet",
+                            "You haven't bought any ticket yet",
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: "okra_Medium",
