@@ -11,21 +11,21 @@ class ApiClients {
   final Dio _dio = Dio();
   final box = GetStorage();
   Future<Map<String, dynamic>> registerDio(
-      String firstName,
-      String lastName,
-      String phoneNumber,
-      String email,
-      String password,
-      String cpassword,
-      File? profilePicture,
-      File? frontImages,
-      File? backImages,
-      String permanentAddress,
-      ) async
-  {
+    String firstName,
+    String lastName,
+    String phoneNumber,
+    String email,
+    String password,
+    String cpassword,
+    File? profilePicture,
+    File? frontImages,
+    File? backImages,
+    String permanentAddress,
+  ) async {
     String url = ApiConstant().BaseUrl + ApiConstant().registerss;
 
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserRegisterToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserRegisterToken);
     print("Session Token: $sessionToken");
 
     try {
@@ -54,8 +54,7 @@ class ApiClients {
           ),
       });
 
-
-   print("URL: $url");
+      print("URL: $url");
       print("FormData: $formData");
 
       Response response = await _dio.post<Map<String, dynamic>>(
@@ -80,10 +79,7 @@ class ApiClients {
     }
   }
 
-
-
-
-  Future<bool> sendMobileOtp(String phoneNumber) async {
+  /*Future<bool> sendMobileOtp(String phoneNumber) async {
     String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
 
     var data = {
@@ -105,11 +101,57 @@ class ApiClients {
       return false;
     }
   }
+*/
+
+
+  Future<bool> sendMobileOtp(String phoneNumber) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
+
+    var data = {
+      'phoneNumber': phoneNumber,
+    };
+
+    print("📡 API को OTP भेजा जा रहा है: $url");
+    print("📨 Request Data: $data");
+
+    try {
+      Response response = await _dio.post(url, data: data);
+
+      print("📩 API Response: ${response.data}"); // API का पूरा रिस्पॉन्स प्रिंट करें
+      print("📡 Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        String apiMessage = response.data['message']; // API से 'message' चेक करें
+        print("✅ API Message: $apiMessage");
+
+        if (apiMessage.contains("OTP sent successfully")) {
+          return true;
+        } else {
+          print("❌ API Error Message: $apiMessage");
+          return false;
+        }
+      } else {
+        print("❌ HTTP Error Code: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("🔥 Exception: $e");
+
+      if (e is DioError) {
+        if (e.response != null) {
+          print("❌ Server Response: ${e.response?.data}");
+        } else {
+          print("❌ Request Error: ${e.message}");
+        }
+      }
+
+      return false;
+    }
+  }
+
 
   Future<bool> verifyMobileOtp(String phoneNumber, String otp) async {
     String url = ApiConstant().BaseUrl + ApiConstant().PhoneOTP;
-
-
 
     var data = {
       'phoneNumber': phoneNumber,
@@ -121,16 +163,16 @@ class ApiClients {
 
       print("OTP Verify Response: ${response.data}");
 
-      if (response.statusCode == 200 && response.data['message'] == "Phone number verified successfully!, please verify your email") {
+      if (response.statusCode == 200 &&
+          response.data['message'] ==
+              "Phone number verified successfully!, please verify your email") {
         return true;
       } else {
-
         print("OTP verification failed: ${response.data['message']}");
         return false;
       }
     } catch (e) {
       print("Error in verifyOtp: $e");
-
 
       if (e is DioError) {
         if (e.response != null) {
@@ -146,9 +188,8 @@ class ApiClients {
     }
   }
 
-
-
-  Future<bool> sendEmailOtp(String phoneNumber, String email) async {
+  Future<Map<String, dynamic>?> sendEmailOtp(
+      String phoneNumber, String email) async {
     String url = ApiConstant().BaseUrl + ApiConstant().emailRegister;
 
     var data = {
@@ -162,32 +203,23 @@ class ApiClients {
     try {
       Response response = await _dio.post(url, data: data);
 
-      print("📩 API Response: ${response.data}"); // Full API Response
+      print("📩 API Response: ${response.data}");
       print("📡 Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        String apiMessage = response.data['message'];
-        print("✅ API Message: $apiMessage");
-
-        if (apiMessage.contains("OTP sent successfully")) {
-          return true;
-        } else {
-          print("❌ API Error Message: $apiMessage");
-          return false;
-        }
+        return response.data; // Return full JSON response
       } else {
         print("❌ HTTP Error Code: ${response.statusCode}");
-        return false;
+        return null;
       }
     } catch (e) {
       print("🔥 Exception: $e");
-      return false;
+      return null;
     }
   }
 
-
-
-  Future<bool> verifyEmailOtp(String email, String phoneNumber, String otp) async {
+  Future<bool> verifyEmailOtp(
+      String email, String phoneNumber, String otp) async {
     String url = ApiConstant().BaseUrl + ApiConstant().emailOtp;
 
     var data = {
@@ -198,11 +230,17 @@ class ApiClients {
 
     print("🔍 Verifying OTP at: $url");
     print("📨 Request Data: $data");
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? userId = GetStorage().read<String>(ConstantData.UserId);
 
+
+    print("sessionToken...${sessionToken}");
+    print("userId...${userId}");
     try {
       Response response = await _dio.post(url, data: data);
-      
-      print('Response from backend: ${response}') ;
+
+      print('Response from backend: ${response}');
 
       print("📩 API Response: ${response.data}");
       print("📡 Status Code: ${response.statusCode}");
@@ -236,20 +274,14 @@ class ApiClients {
     }
   }
 
-
-
   Future<Map<String, dynamic>> loginDio(
     String email,
     String password,
-  ) async
-  {
-
+  ) async {
     String url = ApiConstant().BaseUrl + ApiConstant().login;
 
     String? sessionToken =
         GetStorage().read<String>(ConstantData.UserAccessToken);
-
-
 
     print("Session Token: $sessionToken");
 
@@ -305,17 +337,18 @@ class ApiClients {
   }
 
   Future<Map<String, dynamic>> editUserProfile(
-      String userId,
-      String firstName,
-      String phoneNumber,
-      String email,
-      File? profilePicture,
-      ) async
-  {
-    String url = "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().editUser(userId)}";
+    String userId,
+    String firstName,
+    String phoneNumber,
+    String email,
+    File? profilePicture,
+  ) async {
+    String url =
+        "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().editUser(userId)}";
     print("Constructed URL: $url");
 
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     if (sessionToken == null) {
       print("Error: Authorization token is null.");
       return {"message": "Authorization token missing"};
@@ -354,12 +387,11 @@ class ApiClients {
     }
   }
 
-
   Future<Map<String, dynamic>> getUserProfileData() async {
     String url = ApiConstant().BaseUrl + ApiConstant().userProfile;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     try {
       Response response = await _dio.get(
@@ -381,11 +413,10 @@ class ApiClients {
   }
 
   Future<Map<String, dynamic>> getCatFAQ() async {
-    String url =
-        ApiConstant().AdminBaseUrl + ApiConstant().AdminGetCatFAQ;
+    String url = ApiConstant().AdminBaseUrl + ApiConstant().AdminGetCatFAQ;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     try {
       Response response = await _dio.get(
@@ -406,15 +437,13 @@ class ApiClients {
       return e.response!.data;
     }
   }
-
-
 
   Future<Map<String, dynamic>> getContactUsQuations() async {
     String url =
         ApiConstant().AdminBaseUrl + ApiConstant().AdminContactUsQuations;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     try {
       Response response = await _dio.get(
@@ -436,12 +465,12 @@ class ApiClients {
     }
   }
 
-
-
-
-  Future<Map<String, dynamic>> getBigViewTicket(String userId, String ticketNumber) async {
+  Future<Map<String, dynamic>> getBigViewTicket(
+      String userId, String ticketNumber) async {
     String baseUrl = ApiConstant().AdminBaseUrl.endsWith("/")
-        ? ApiConstant().AdminBaseUrl.substring(0, ApiConstant().AdminBaseUrl.length - 1)
+        ? ApiConstant()
+            .AdminBaseUrl
+            .substring(0, ApiConstant().AdminBaseUrl.length - 1)
         : ApiConstant().AdminBaseUrl;
 
     // Correctly construct the full URL
@@ -449,7 +478,8 @@ class ApiClients {
 
     print("Final API URL: $url");
 
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     if (sessionToken == null || sessionToken.isEmpty) {
       throw Exception("Session token is missing or invalid.");
     }
@@ -478,9 +508,6 @@ class ApiClients {
     }
   }
 
-
-
-
   Future<Map<String, dynamic>> getAllTicket(String userIds) async {
     String? userId = GetStorage().read<String>(ConstantData.UserId);
 
@@ -490,10 +517,12 @@ class ApiClients {
 
     print("User ID: $userId");
 
-    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
+    String url =
+        "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
     print("Constructed URL: $url");
 
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     if (sessionToken == null || sessionToken.isEmpty) {
       throw Exception("Session token is missing or invalid.");
     }
@@ -511,7 +540,10 @@ class ApiClients {
       print("getAllTicket Status Code --> ${response.statusCode}");
       print("Response Data --> ${response.data}");
 
-      if (response.headers.value('content-type')?.contains('application/json') ?? false) {
+      if (response.headers
+              .value('content-type')
+              ?.contains('application/json') ??
+          false) {
         return response.data;
       } else {
         throw Exception("Unexpected response format: ${response.data}");
@@ -519,14 +551,14 @@ class ApiClients {
     } on DioError catch (e) {
       if (e.response != null) {
         print("Dio Error Response: ${e.response?.data}");
-        throw Exception("Error fetching data: ${e.response?.statusCode ?? 'Unknown Status Code'} - ${e.response?.data}");
+        throw Exception(
+            "Error fetching data: ${e.response?.statusCode ?? 'Unknown Status Code'} - ${e.response?.data}");
       } else {
         print("Dio Error Message: ${e.message}");
         throw Exception("Dio Error: ${e.message}");
       }
     }
   }
-
 
   /*Future<Map<String, dynamic>> getBigViewTicket(String userIds,ticketNumbers) async {
     String? userId = GetStorage().read<String>(ConstantData.UserId);
@@ -574,7 +606,6 @@ class ApiClients {
     }
   }*/
 
-
   Future<Map<String, dynamic>> getAllTicketBig(String userIds) async {
     String? userId = GetStorage().read<String>(ConstantData.UserId);
 
@@ -584,10 +615,12 @@ class ApiClients {
 
     print("User ID: $userId");
 
-    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
+    String url =
+        "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
     print("Constructed URL: $url");
 
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     if (sessionToken == null || sessionToken.isEmpty) {
       throw Exception("Session token is missing or invalid.");
     }
@@ -634,7 +667,8 @@ class ApiClients {
     } on DioError catch (e) {
       if (e.response != null) {
         print("Dio Error Response: ${e.response?.data}");
-        throw Exception("Error fetching data: ${e.response?.statusCode ?? 'Unknown Status Code'} - ${e.response?.data}");
+        throw Exception(
+            "Error fetching data: ${e.response?.statusCode ?? 'Unknown Status Code'} - ${e.response?.data}");
       } else {
         print("Dio Error Message: ${e.message}");
         throw Exception("Dio Error: ${e.message}");
@@ -642,22 +676,22 @@ class ApiClients {
     }
   }
 
-
   Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
-    String url = "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().getAllSubCatagries(categoryId)}";
+    String url =
+        "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().getAllSubCatagries(categoryId)}";
     print("Constructed URL: $url");
 
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     print("Authorization Token: $sessionToken");
 
     try {
-
       Response response = await _dio.get(
         url,
-
         options: Options(
           headers: {
-            'Authorization': 'Bearer $sessionToken', // Send the authorization token
+            'Authorization':
+                'Bearer $sessionToken', // Send the authorization token
           },
         ),
       );
@@ -665,10 +699,8 @@ class ApiClients {
       print("Response Status Code: ${response.statusCode}");
       print("Response Data: ${response.data}");
 
-
       return response.data;
     } on DioError catch (e) {
-
       if (e.response != null) {
         print("Dio Error Response: ${e.response?.data}");
         return e.response?.data ?? {'error': 'Unknown error'};
@@ -688,8 +720,7 @@ class ApiClients {
     double rating,
     String productCurrentAddress,
     String price,
-  ) async
-  {
+  ) async {
     String url =
         ApiConstant().BaseUrlCreateProdcut + ApiConstant().createProduct;
 
@@ -714,7 +745,6 @@ class ApiClients {
           'perMonth': 0,
         },
         'type': 'Product',
-
         'images': images.map((file) {
           return MultipartFile.fromFileSync(
             file.path,
@@ -796,9 +826,11 @@ class ApiClients {
     }
   }*/
 
-  Future<Map<String, dynamic>> getLogoutUser(String email, String password) async {
+  Future<Map<String, dynamic>> getLogoutUser(
+      String email, String password) async {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     if (sessionToken == null || sessionToken.isEmpty) {
       return {"error": "Session token is missing. Please log in again."};
@@ -838,11 +870,10 @@ class ApiClients {
   }
 
   Future<Map<String, dynamic>> getAllProductList() async {
-    String url =
-        ApiConstant().BaseUrl + ApiConstant().getDisplayProductList;
+    String url = ApiConstant().BaseUrl + ApiConstant().getDisplayProductList;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     try {
       Response response = await _dio.get(
@@ -906,7 +937,6 @@ class ApiClients {
   }
 */
 
-
   Future<Map<String, dynamic>> fetchBusinessAdssss() async {
     String url = ApiConstant().AdminBaseUrl + ApiConstant().getBusinessAds;
     print("urlllllllll ${url}");
@@ -917,7 +947,8 @@ class ApiClients {
         url,
         options: Options(
           headers: {
-            'Authorization': 'Bearer ${GetStorage().read<String>(ConstantData.UserAccessToken)}',
+            'Authorization':
+                'Bearer ${GetStorage().read<String>(ConstantData.UserAccessToken)}',
           },
         ),
       );
@@ -925,23 +956,24 @@ class ApiClients {
       // Check if the response status is 200 (success)
       if (response.statusCode == 200) {
         // Extracting the entire response data and returning it as Map<String, dynamic>
-        return response.data as Map<String, dynamic>;  // Return the response data
+        return response.data
+            as Map<String, dynamic>; // Return the response data
       } else {
         print("Error fetching business ads: ${response.statusCode}");
-        return {};  // Return an empty map if there is an error
+        return {}; // Return an empty map if there is an error
       }
     } catch (e) {
       print("Error fetching business ads: $e");
-      return {};  // Return empty map on error
+      return {}; // Return empty map on error
     }
   }
 
-
   Future<Map<String, dynamic>> deleteProduct(String productId) async {
-    String url = "${ApiConstant().BaseUrl}${ApiConstant().deleteProducts(productId)}";
+    String url =
+        "${ApiConstant().BaseUrl}${ApiConstant().deleteProducts(productId)}";
 
-
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     try {
       Response response = await _dio.delete(
@@ -959,23 +991,20 @@ class ApiClients {
       return response.data;
     } on DioError catch (e) {
       print("Dio Error: ${e.response}");
-      return e.response?.data ?? {'success': false, 'message': 'Something went wrong'};
+      return e.response?.data ??
+          {'success': false, 'message': 'Something went wrong'};
     }
   }
 
   Future<Map<String, dynamic>> PostfeedbackUser(
-      String suggest,
-
-      ) async
-
-  {
+    String suggest,
+  ) async {
     String url = ApiConstant().AdminBaseUrl + ApiConstant().UserFeedback;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     String? userId = GetStorage().read<String>(ConstantData.UserId);
-
 
     var datas = jsonEncode({
       'user': userId,
@@ -1000,11 +1029,13 @@ class ApiClients {
     }
   }
 
+  Future<Map<String, dynamic>> CreateTicket(
+      String categoryId, String description) async {
+    String url =
+        ApiConstant().AdminBaseUrl + ApiConstant().AdminContactUsMessage;
 
-  Future<Map<String, dynamic>> CreateTicket(String categoryId, String description) async {
-    String url = ApiConstant().AdminBaseUrl + ApiConstant().AdminContactUsMessage;
-
-    String? sessionToken = GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken =
+        GetStorage().read<String>(ConstantData.UserAccessToken);
     String? userId = GetStorage().read<String>(ConstantData.UserId);
 
     var datas = jsonEncode({
@@ -1034,11 +1065,10 @@ class ApiClients {
   }
 
   Future<Map<String, dynamic>> getAllCity() async {
-    String url =
-        ApiConstant().BaseUrlCity + ApiConstant().getCityUrl;
+    String url = ApiConstant().BaseUrlCity + ApiConstant().getCityUrl;
 
     String? sessionToken =
-    GetStorage().read<String>(ConstantData.UserAccessToken);
+        GetStorage().read<String>(ConstantData.UserAccessToken);
 
     try {
       Response response = await _dio.get(
@@ -1053,16 +1083,10 @@ class ApiClients {
       print("getCatList Status Code --> ${response.statusCode}");
       print("Response Data --> ${response.data}");
 
-
       return response.data;
     } on DioError catch (e) {
       print("Dio Error: ${e.response}");
       return e.response!.data;
     }
   }
-
-
 }
-
-
-
