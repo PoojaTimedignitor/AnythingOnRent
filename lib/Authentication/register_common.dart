@@ -74,6 +74,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   String selectedGender = 'Male';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  String verifiedText = "Referral Code (optional)";
 
   void clearOTPField() {
     otpController.clear();
@@ -145,19 +146,14 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     ));
 
     ReferralCodeController.addListener(() {
-      // Check if the referral code has 6 digits and update state
-      if (ReferralCodeController.text.length == 6) {
-        setState(() {
-          isCodeValid = true;
-        });
-      } else {
-        setState(() {
-          isCodeValid = false;
-        });
-      }
+      setState(() {
+        isCodeValid = ReferralCodeController.text.length == 6;
+        if (!isCodeValid) {
+          verifiedText =
+              "Referral Code (optional)"; // ✅ Hide text if not 6 characters
+        }
+      });
     });
-
-
   }
 
   @override
@@ -169,6 +165,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     emailOTPController.dispose();
     _phoneFocus.dispose();
     focusNode.dispose();
+    ReferralCodeController.dispose(); // Cleanup
+
     super.dispose();
   }
 
@@ -257,51 +255,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       return true;
     }
   }
-
-/*  Future<void> validateEmail() async {
-    final email = emailController.text.trim();
-
-    final emailRegex =
-    RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-
-    if (email.isEmpty || !emailRegex.hasMatch(email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid email address')),
-      );
-      return;
-    }
-
-
-
-    // Read the phone number from local storage
-    String? phoneNumber = GetStorage().read<String>('phoneNumber');
-
-    if (phoneNumber == null || phoneNumber.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Phone number is not found in storage!')),
-      );
-      return;
-    }
-
-    print("📞 Sending OTP to: $phoneNumber");
-
-    // Call the sendEmailOtp function to send OTP to the email
-    bool isRegistered = await authService.sendEmailOtp(phoneNumber, email);
-
-    if (isRegistered) {
-      // Save the email in local storage
-      GetStorage().write('email', email);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP sent to email successfully!')),
-      );
-
-      setState(() {
-        isOTPEmailVerification = true;
-      });
-    }
-    print("Email is valid: $email");
-  }*/
 
   Future<void> validateEmail() async {
     final email = emailController.text.trim();
@@ -393,6 +346,11 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         await authService.verifyEmailOtp(email!, phoneNumber!, otps);
 
     if (isVerified) {
+      GetStorage().write('phoneNumber', phoneNumber);
+      GetStorage().write('phoneNumber', phoneNumber);
+
+      /* String userId = response['user']['id']; // User ID from response
+      String token = response['user']['token'];*/ // Token from response
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('OTP verified successfully!')),
       );
@@ -412,16 +370,19 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
   }
 
-  void ContinueScreen() {
+/*
+  Future<void> ContinueScreen() async {
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
     final password = passwordController.text.trim();
+    final address = permanentAddressController.text.trim();
+    final gender = selectedGender;
 
-    final address = permanentAddressController.text.trim(); // Permanent Address
-
+    // ✅ Regex Validations
     final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
     final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
 
+    // ✅ Validation Checks
     if (firstName.isEmpty || !nameRegex.hasMatch(firstName)) {
       showSnackbar('Please enter a valid First Name (only letters)');
       return;
@@ -432,9 +393,77 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       return;
     }
 
-    if (password.isEmpty || !passwordRegex.hasMatch(password)) {
-      showSnackbar(
-          'Password must be at least 6 characters, include 1 letter & 1 number');
+   */
+/* if (password.isEmpty || !passwordRegex.hasMatch(password)) {
+      showSnackbar('Password must be at least 6 characters, include 1 letter & 1 number');
+      return;
+    }*/
+  /*
+
+
+    if (address.isEmpty || address.length < 5) {
+      showSnackbar('Please enter a valid Permanent Address (min 5 chars)');
+      return;
+    }
+
+    // ✅ Show Loading Indicator
+ //   showLoadingIndicator();
+
+    try {
+      // ✅ Call API for user registration (No OTP, No Phone Number)
+      bool isRegistered = await authService.registerUser(
+
+        firstName: firstName,
+        lastName: lastName,
+        permanentAddress: address,
+        password: password,
+        gender: gender,
+      );
+
+      if (isRegistered) {
+       // hideLoadingIndicator();
+        GetStorage().write(ConstantData.UserRegisterId, ['user']['id']);
+        GetStorage()
+            .write(ConstantData.UserAccessToken, ['user']['token']);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration Successful!')),
+        );
+
+        // ✅ Navigate to Home Screen after successful registration
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MainHome()),
+        );
+      } else {
+       // hideLoadingIndicator();
+        showSnackbar('Registration Failed! Try again.');
+      }
+    } catch (e) {
+      //hideLoadingIndicator();
+      showSnackbar('Something went wrong. Please try again!');
+    }
+  }
+*/
+
+  Future<void> ContinueScreen() async {
+    final firstName = firstNameController.text.trim();
+    final lastName = lastNameController.text.trim();
+    final password = passwordController.text.trim();
+    final address = permanentAddressController.text.trim();
+    final gender = selectedGender;
+
+    // ✅ Regex Validations
+    final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
+    final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
+
+    // ✅ Validation Checks
+    if (firstName.isEmpty || !nameRegex.hasMatch(firstName)) {
+      showSnackbar('Please enter a valid First Name (only letters)');
+      return;
+    }
+
+    if (lastName.isEmpty || !nameRegex.hasMatch(lastName)) {
+      showSnackbar('Please enter a valid Last Name (only letters)');
       return;
     }
 
@@ -443,14 +472,43 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       return;
     }
 
-    setState(() {
-      continueScreen = true;
-    });
+    try {
+      final response = await authService.registerUser(
+        firstName: firstName,
+        lastName: lastName,
+        permanentAddress: address,
+        password: password,
+        gender: gender,
+      );
 
-    Navigator.push(
-      context, // Use the stored context
-      MaterialPageRoute(builder: (context) => MainHome()),
-    );
+      print("📩 Response Data: $response");
+
+      if (response['success'] == true) {
+        String userId = response['user']['id'];
+        String token = response['user']['token'];
+
+        print("✅ Storing User ID: $userId");
+        print("✅ Storing Token: $token");
+
+        GetStorage().write('userId', userId);
+        GetStorage().write('token', token);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration Successful!')),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MainHome()),
+        );
+      } else {
+        print("❌ Unexpected API Response: $response");
+        showSnackbar('Registration Failed! Try again.');
+      }
+    } catch (e) {
+      print("🔥 Exception: $e");
+      showSnackbar('Something went wrong. Please try again!');
+    }
   }
 
   void showSnackbar(String message) {
@@ -508,27 +566,17 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
               },
             ), // Reusable back arrow widget
           ),
-          body: SingleChildScrollView(
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 160, bottom: 30),
-                        child: Text(
-                          '',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      _buildVerificationWidget(),
-                      SizedBox(height: 50),
-                    ],
-                  ),
-                ],
+          body: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 150),
+                child: Container(
+                    height: 900,
+                    //  color: Colors.red,
+                    child: _buildVerificationWidget()),
               ),
-            ),
+              SizedBox(height: 50),
+            ],
           ),
         ),
       )
@@ -536,80 +584,68 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   }
 
   Widget _buildVerificationWidget() {
-    return Column(
-      children: [
-        if (!showOTPWidget)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              children: [
-                _buildPhoneNumberWidget(),
-                SizedBox(height: 50),
-                ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
-                    buttonText: 'Send Mobile OTP',
-                    onPressed: validatePhoneNumber),
-              ],
-            ),
-          )
-        else if (!isEmailVerification)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              children: [
-                SlideTransition(
-                    position: _slideAnimation, child: _buildOTPWidget()),
-                SizedBox(height: 20),
-                ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
-                    buttonText: ' Verify OTP', onPressed: validateOTP),
-              ],
-            ),
-          )
-        else if (!isOTPEmailVerification)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              children: [
-                SlideTransition(
-                  position: _slideAnimation,
-                  child: _buildEmailWidget(), // Email widget
-                ),
-                SizedBox(height: 50),
-                ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
-                    buttonText: ' Send Email OTP', onPressed: validateEmail),
-              ],
-            ),
-          )
-        else if (!isNextScreen)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              children: [
-                _buildEmailOTPWidget(),
-                SizedBox(height: 50),
-                ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
-                    buttonText: ' Next', onPressed: validateEmailOTP),
-              ],
-            ),
-          )
-        else if (!continueScreen)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                _buildDetailsWidget(SizeConfig.screenHeight,SizeConfig.screenHeight),
-                SizedBox(height: 50),
-                ContinueButton(SizeConfig.screenHeight, SizeConfig.screenWidth,
-                    buttonText: ' Continue', onPressed: ContinueScreen),
-              ],
-            ),
-          )
-
-        /* else
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: MainHome(),
-          ),*/
-      ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!showOTPWidget) ...[
+              _buildPhoneNumberWidget(),
+              SizedBox(height: 50),
+              ContinueButton(
+                SizeConfig.screenHeight,
+                SizeConfig.screenWidth,
+                buttonText: 'Send Mobile OTP',
+                onPressed: validatePhoneNumber,
+              ),
+            ] else if (!isEmailVerification) ...[
+              SlideTransition(
+                position: _slideAnimation,
+                child: _buildOTPWidget(),
+              ),
+              SizedBox(height: 20),
+              ContinueButton(
+                SizeConfig.screenHeight,
+                SizeConfig.screenWidth,
+                buttonText: ' Verify OTP',
+                onPressed: validateOTP,
+              ),
+            ] else if (!isOTPEmailVerification) ...[
+              SlideTransition(
+                position: _slideAnimation,
+                child: _buildEmailWidget(),
+              ),
+              SizedBox(height: 50),
+              ContinueButton(
+                SizeConfig.screenHeight,
+                SizeConfig.screenWidth,
+                buttonText: ' Send Email OTP',
+                onPressed: validateEmail,
+              ),
+            ] else if (!isNextScreen) ...[
+              _buildEmailOTPWidget(),
+              SizedBox(height: 50),
+              ContinueButton(
+                SizeConfig.screenHeight,
+                SizeConfig.screenWidth,
+                buttonText: ' Next',
+                onPressed: validateEmailOTP,
+              ),
+            ] else if (!continueScreen) ...[
+              _buildDetailsWidget(
+                  SizeConfig.screenHeight, SizeConfig.screenHeight),
+              SizedBox(height: 50),
+              ContinueButton(
+                SizeConfig.screenHeight,
+                SizeConfig.screenWidth,
+                buttonText: ' Continue',
+                onPressed: ContinueScreen,
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -1023,14 +1059,15 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-        ), SizedBox(
+        ),
+        SizedBox(
           height: 20,
         ),
         Container(
           height: parentHeight * 0.18,
           decoration: BoxDecoration(
             color: Colors.white,
-           /* gradient: LinearGradient(
+            /* gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
               colors: [
@@ -1038,151 +1075,156 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                 Color(0xffFEA3A3),
               ],
             ),*/
-               border: Border.all(width: 0.5, color: Color(0xffFE7F64)),
+            border: Border.all(width: 0.5, color: Color(0xffFE7F64)),
             borderRadius: BorderRadius.all(
               Radius.circular(15),
             ),
-          ),child: Padding(
-            padding:  EdgeInsets.only(top: 10,left: 10,right: 10),
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(top: 10, left: 10, right: 10),
             child: Column(
-            children: [
-
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  "Your Phone", // Dynamic Mobile Number / Email
-                  style: TextStyle(
-                    fontFamily: "okra_Medium",
-                    fontWeight: FontWeight.w400,
-                    fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                    color: Color(0xffFE7F64),
-                    //color: CommonColor.Black,
-                  ),
-                ),
-              ),
-
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding:  EdgeInsets.only(top: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "+91$phoneNumber", // Dynamic Mobile Number / Email
-                        style: /*TextStyle(
-                      fontFamily: "Roboto_Regular",
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Your Phone", // Dynamic Mobile Number / Email
+                    style: TextStyle(
+                      fontFamily: "okra_Medium",
                       fontWeight: FontWeight.w400,
-                      fontSize: SizeConfig.blockSizeHorizontal * 4.2,
-                      color: CommonColor.Black,
-                    ),*/
-                        TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontFamily: "okra_Light",
-                        ),
-                      ),
-                      Container(
-                        // color: Colors.red,
-                        width: 70,
-                        child: Row(
-
-
-                          children: [
-                            Image(image: AssetImage('assets/images/circle_check.png'),height: 15,),
-                            SizedBox(width: 5,),
-                            Text(
-                              "Verify", // Dynamic Mobile Number / Email
-                              style: TextStyle(
-                                fontFamily: "okra_Medium",
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.1,
-                                color: Color(0xfa1cb363),
-                                fontWeight: FontWeight.w200,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: SizeConfig.screenHeight * 0.0005,
-                color: CommonColor.SearchBar,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  "Your Email", // Dynamic Mobile Number / Email
-                  style: TextStyle(
-                    fontFamily: "okra_Medium",
-                    fontWeight: FontWeight.w400,
-                    fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                    color: Color(0xffFE7F64),
-                  ),
-                ),
-              ),
-
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding:  EdgeInsets.only(top: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "$email", // Dynamic Mobile Number / Email
-                        style: /*TextStyle(
-                      fontFamily: "Roboto_Regular",
-                      fontWeight: FontWeight.w400,
-                      fontSize: SizeConfig.blockSizeHorizontal * 4.2,
-                      color: CommonColor.Black,
-                    ),*/
-                        TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontFamily: "okra_Light",
-                        ),
-                      ),
-                      Container(
-                        // color: Colors.red,
-                        width: 70,
-                        child: Row(
-
-
-                          children: [
-                            Image(image: AssetImage('assets/images/circle_check.png'),height: 15,),
-                            SizedBox(width: 5,),
-                            Text(
-                              "Verify", // Dynamic Mobile Number / Email
-                              style: TextStyle(
-                                fontFamily: "okra_Medium",
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.1,
-                                color: Color(0xfa1cb363),
-                                fontWeight: FontWeight.w200,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-
-                    ],
-                  ),
-                ),
-              ),
-            ],
+                      fontSize: SizeConfig.blockSizeHorizontal * 4.1,
+                      color: Color(0xffFE7F64),
+                      //color: CommonColor.Black,
                     ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "+91$phoneNumber", // Dynamic Mobile Number / Email
+                          style: /*TextStyle(
+                      fontFamily: "Roboto_Regular",
+                      fontWeight: FontWeight.w400,
+                      fontSize: SizeConfig.blockSizeHorizontal * 4.2,
+                      color: CommonColor.Black,
+                    ),*/
+                              TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontFamily: "okra_Light",
+                          ),
+                        ),
+                        Container(
+                          // color: Colors.red,
+                          width: 70,
+                          child: Row(
+                            children: [
+                              Image(
+                                image: AssetImage(
+                                    'assets/images/circle_check.png'),
+                                height: 15,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Verify", // Dynamic Mobile Number / Email
+                                style: TextStyle(
+                                  fontFamily: "okra_Medium",
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 4.1,
+                                  color: Color(0xfa1cb363),
+                                  fontWeight: FontWeight.w200,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: SizeConfig.screenHeight * 0.0005,
+                  color: CommonColor.SearchBar,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Your Email", // Dynamic Mobile Number / Email
+                    style: TextStyle(
+                      fontFamily: "okra_Medium",
+                      fontWeight: FontWeight.w400,
+                      fontSize: SizeConfig.blockSizeHorizontal * 4.1,
+                      color: Color(0xffFE7F64),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "$email", // Dynamic Mobile Number / Email
+                          style: /*TextStyle(
+                      fontFamily: "Roboto_Regular",
+                      fontWeight: FontWeight.w400,
+                      fontSize: SizeConfig.blockSizeHorizontal * 4.2,
+                      color: CommonColor.Black,
+                    ),*/
+                              TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontFamily: "okra_Light",
+                          ),
+                        ),
+                        Container(
+                          // color: Colors.red,
+                          width: 70,
+                          child: Row(
+                            children: [
+                              Image(
+                                image: AssetImage(
+                                    'assets/images/circle_check.png'),
+                                height: 15,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Verify", // Dynamic Mobile Number / Email
+                                style: TextStyle(
+                                  fontFamily: "okra_Medium",
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 4.1,
+                                  color: Color(0xfa1cb363),
+                                  fontWeight: FontWeight.w200,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-
         SizedBox(
           height: 30,
         ),
@@ -1394,7 +1436,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         ),
         SizedBox(height: 30),
 
-        Row(
+        /*    Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             RichText(
@@ -1418,114 +1460,111 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                       ),
                     ])),
           ],
-        ),
-        SizedBox(height: 15),
-       /* TextFormField(
-          controller: ReferralCodeController,
-          keyboardType: TextInputType.text,
-          focusNode: _ReferralFocus,
-          // autocorrect: true,
-          textInputAction: TextInputAction.next,
-
-          decoration: InputDecoration(
-            prefixStyle: TextStyle(
-              color: Colors.black,
-              fontSize: 17,
-              fontWeight: FontWeight.w500,
-            ),
-            //labelText: 'Create Password',
-       *//*     labelStyle: TextStyle(
-              color: Color(0xffFE7F64),
-              fontSize: 19,
-              fontFamily: "okra_Medium",
-            ),*//*
-            contentPadding: const EdgeInsets.all(12),
-            isDense: true,
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                width: 1,
-                color: Color(0xffFE7F64),
-              ),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                width: 0.3,
-                color: Color(0xff000000),
-              ),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            hintText: 'Referral Code',
-            hintStyle: TextStyle(
-              color: Colors.grey,
-              fontSize: 15,
-              fontFamily: "okra_Light",
-            ),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-          ),
         ),*/
 
-        TextFormField(
-        controller: ReferralCodeController,
-    keyboardType: TextInputType.text,
-    focusNode: _ReferralFocus,
-    textInputAction: TextInputAction.next,
-    decoration: InputDecoration(
-    prefixStyle: TextStyle(
-    color: Colors.black,
-    fontSize: 17,
-    fontWeight: FontWeight.w500,
-    ),
-    contentPadding: const EdgeInsets.all(12),
-    isDense: true,
-    focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(
-    width: 1,
-    color: Color(0xffFE7F64),
-    ),
-    borderRadius: BorderRadius.circular(10.0),
-    ),
-    enabledBorder: OutlineInputBorder(
-    borderSide: const BorderSide(
-    width: 0.3,
-    color: Color(0xff000000),
-    ),
-    borderRadius: BorderRadius.circular(10.0),
-    ),
-    hintText: 'Referral Code',
-    hintStyle: TextStyle(
-    color: Colors.grey,
-    fontSize: 15,
-    fontFamily: "okra_Light",
-    ),
-    floatingLabelBehavior: FloatingLabelBehavior.always,
-    suffixIcon: GestureDetector(
-    onTap: () {
-    if (isCodeValid) {
-    // Implement verify action here
-    ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('Referral Code Verified!')),
-    );
-    }
-    },
-    child: Container(
-    padding: EdgeInsets.symmetric(horizontal: 16),
-    color: isCodeValid ? Colors.green : Colors.grey,
-    child: Text(
-    'Verify',
-    style: TextStyle(
-    color: Colors.white,
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-    ),
-    ),
-    ),
-    ),
-    ),
-    )
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              verifiedText,
+              style: TextStyle(
+                color: verifiedText == "Referral Code Verified! ✅"
+                    ? Colors.green // Green for valid
+                    : verifiedText == "Referral Code is Invalid!"
+                    ? Colors.red // Red for invalid
+                    : Colors.black, // Black for the default state
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Roboto-Regular',
+                fontSize: 17,
+              ),
+            ),
 
-      ],
+          ],
+        ),
+        SizedBox(height: 15),
+        TextFormField(
+            controller: ReferralCodeController,
+            keyboardType: TextInputType.text,
+            focusNode: _ReferralFocus,
+            maxLength: 6,
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+            counterText: "",
+            prefixStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+        ),
+        contentPadding: const EdgeInsets.all(12),
+        isDense: true,
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            width: 1,
+            color: Color(0xffFE7F64),
+          ),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            width: 0.3,
+            color: Color(0xff000000),
+          ),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        hintText: 'Referral Code',
+        hintStyle: TextStyle(
+          color: Colors.grey,
+          fontSize: 15,
+          fontFamily: "okra_Light",
+        ),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixIcon: GestureDetector(
+          onTap: () {
+            if (isCodeValid) {
+              ApiClients()
+                  .ReferralCode(ReferralCodeController.text)
+                  .then((value) {
+                print("API Response: $value");
+                if (mounted) {
+                  setState(() {});
+                }
+
+                if (value['success'] == true && value['response'] == true) {
+                  setState(() {
+                    verifiedText = "Referral Code Verified! ✅";
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Referral Code Verified! ✅')),
+                  );
+                } else {
+
+                  setState(() {
+                    verifiedText = "Referral Code is Invalid!";
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Invalid Referral Code!')),
+                  );
+                }
+              });
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Text(
+              'Verify',
+              style: TextStyle(
+                color: isCodeValid ? Colors.green : Colors.grey,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+    ))]
     );
+
   }
 
   Widget ContinueButton(double parentHeight, double parentWidth,

@@ -10,22 +10,22 @@ import '../ConstantData/Constant_data.dart';
 class ApiClients {
   final Dio _dio = Dio();
   final box = GetStorage();
-  Future<Map<String, dynamic>> registerDio(
-    String firstName,
-    String lastName,
-    String phoneNumber,
-    String email,
-    String password,
-    String cpassword,
-    File? profilePicture,
-    File? frontImages,
-    File? backImages,
-    String permanentAddress,
-  ) async {
+
+  Future<Map<String, dynamic>> registerDio(String firstName,
+      String lastName,
+      String phoneNumber,
+      String email,
+      String password,
+      String cpassword,
+      File? profilePicture,
+      File? frontImages,
+      File? backImages,
+      String permanentAddress,) async
+  {
     String url = ApiConstant().BaseUrl + ApiConstant().registerss;
 
     String? sessionToken =
-        GetStorage().read<String>(ConstantData.UserRegisterToken);
+    GetStorage().read<String>(ConstantData.UserRegisterToken);
     print("Session Token: $sessionToken");
 
     try {
@@ -40,17 +40,23 @@ class ApiClients {
         if (profilePicture != null)
           'profilePicture': await MultipartFile.fromFile(
             profilePicture.path,
-            filename: profilePicture.path.split('/').last,
+            filename: profilePicture.path
+                .split('/')
+                .last,
           ),
         if (frontImages != null)
           'frontImages': await MultipartFile.fromFile(
             frontImages.path,
-            filename: frontImages.path.split('/').last,
+            filename: frontImages.path
+                .split('/')
+                .last,
           ),
         if (backImages != null)
           'backImages': await MultipartFile.fromFile(
             backImages.path,
-            filename: backImages.path.split('/').last,
+            filename: backImages.path
+                .split('/')
+                .last,
           ),
       });
 
@@ -117,11 +123,13 @@ class ApiClients {
     try {
       Response response = await _dio.post(url, data: data);
 
-      print("📩 API Response: ${response.data}"); // API का पूरा रिस्पॉन्स प्रिंट करें
+      print("📩 API Response: ${response
+          .data}"); // API का पूरा रिस्पॉन्स प्रिंट करें
       print("📡 Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        String apiMessage = response.data['message']; // API से 'message' चेक करें
+        String apiMessage = response
+            .data['message']; // API से 'message' चेक करें
         print("✅ API Message: $apiMessage");
 
         if (apiMessage.contains("OTP sent successfully")) {
@@ -188,8 +196,9 @@ class ApiClients {
     }
   }
 
-  Future<Map<String, dynamic>?> sendEmailOtp(
-      String phoneNumber, String email) async {
+  Future<Map<String, dynamic>?> sendEmailOtp(String phoneNumber,
+      String email) async
+  {
     String url = ApiConstant().BaseUrl + ApiConstant().emailRegister;
 
     var data = {
@@ -207,7 +216,7 @@ class ApiClients {
       print("📡 Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        return response.data; // Return full JSON response
+        return response.data;
       } else {
         print("❌ HTTP Error Code: ${response.statusCode}");
         return null;
@@ -218,8 +227,8 @@ class ApiClients {
     }
   }
 
-  Future<bool> verifyEmailOtp(
-      String email, String phoneNumber, String otp) async {
+  Future<bool> verifyEmailOtp(String email, String phoneNumber,
+      String otp) async {
     String url = ApiConstant().BaseUrl + ApiConstant().emailOtp;
 
     var data = {
@@ -230,17 +239,9 @@ class ApiClients {
 
     print("🔍 Verifying OTP at: $url");
     print("📨 Request Data: $data");
-    String? sessionToken =
-        GetStorage().read<String>(ConstantData.UserAccessToken);
-    String? userId = GetStorage().read<String>(ConstantData.UserId);
 
-
-    print("sessionToken...${sessionToken}");
-    print("userId...${userId}");
     try {
       Response response = await _dio.post(url, data: data);
-
-      print('Response from backend: ${response}');
 
       print("📩 API Response: ${response.data}");
       print("📡 Status Code: ${response.statusCode}");
@@ -250,6 +251,15 @@ class ApiClients {
         print("✅ API Message: $apiMessage");
 
         if (apiMessage.contains("verified successfully")) {
+          // Extracting userId and token correctly
+          String userId = response.data['user']['id'];
+          String token = response.data['user']['token'];
+
+          // Storing userId and token in GetStorage
+          GetStorage().write('userId', userId);
+          GetStorage().write('token', token);
+
+          print("✅ User ID & Token stored successfully!");
           return true;
         } else {
           print("❌ API Error Message: $apiMessage");
@@ -264,7 +274,7 @@ class ApiClients {
 
       if (e is DioError) {
         if (e.response != null) {
-          print("❌ Server Responseeeeeeeeee: ${e.response?.data}");
+          print("❌ Server Response: ${e.response?.data}");
         } else {
           print("❌ Request Error: ${e.message}");
         }
@@ -274,10 +284,150 @@ class ApiClients {
     }
   }
 
+
+  Future<Map<String, dynamic>> ReferralCode(String referralCodes) async {
+    String url = ApiConstant().AdminBaseUrl + ApiConstant().ReferralCode;
+
+    String? sessionToken = GetStorage().read<String>('token'); // Token पढ़ना
+    String? id = GetStorage().read<String>('userId'); // User ID पढ़ना
+
+    var datas = jsonEncode({
+      'id': id,
+      'referralCodes': referralCodes,
+    });
+
+    print("data....>>>> $id");
+
+    try {
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: datas,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+      print("statusCode --> ${response.statusCode}");
+      print("data --> ${response.data}");
+
+      // Extract and store userId from the response
+      if (response.data != null) {
+        String userId = response.data['id']; // Assuming 'id' is in the response
+
+        // Store user ID in GetStorage
+        GetStorage().write('UserId', userId);
+
+        // Also, store referral code if needed
+        GetStorage().write('UserReferralCode', response.data['referralCodes']);
+      }
+      return response.data ?? {}; // Return empty map if no data is found
+    } on DioError catch (e) {
+      print("DioError: ${e.message}");
+      return e.response?.data ?? {}; // Ensure we don't get null response data
+    }
+  }
+
+
+
+
+
+  Future<Map<String, dynamic>> registerUser({
+    required String firstName,
+    required String lastName,
+    required String permanentAddress,
+    required String password,
+    required String gender,
+  }) async {
+    String? sessionToken = GetStorage().read<String>('token'); // Token पढ़ना
+    String? userId = GetStorage().read<String>('userId'); // User ID पढ़ना
+
+    print("📌 Stored User ID: $userId");
+    print("📌 Stored Session Token: $sessionToken");
+
+    if (userId == null || userId.isEmpty) {
+      print("❌ Error: User ID is missing.");
+      return {'success': false, 'message': 'User ID is missing'};
+    }
+
+    String url = ApiConstant().BaseUrl + ApiConstant().userRegister(userId);
+
+    var data = {
+      "firstName": firstName,
+      "lastName": lastName,
+      "permanentAddress": permanentAddress,
+      "password": password,
+      "gender": gender,
+    };
+
+    print("📡 API Request URL: $url");
+    print("🔍 Sending Data to API: $data");
+
+    try {
+      Response response = await _dio.post(url, data: data, options: Options(
+        headers: {
+          'Authorization': 'Bearer $sessionToken',
+        },
+      ));
+
+      print("📩 Response Data: ${response.data}");
+      print("📡 Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        print("✅ API Response: ${response.data}");
+
+        if (response.data.containsKey('user')) {
+          String userId = response.data['user']['id'];  // API से User ID लेना
+          String token = response.data['user']['token'];  // API से Token लेना
+
+          print("✅ Extracted User ID: $userId");
+          print("✅ Extracted Token: $token");
+
+          return {
+            'success': true,
+            'user': {
+              'id': userId,
+              'token': token,
+            },
+            'message': 'User registered successfully',
+          };
+        } else {
+          print("❌ Error: API Response does not contain 'user' key.");
+          return {
+            'success': false,
+            'message': 'User registration failed: No user data received',
+          };
+        }
+      } else {
+        print("❌ HTTP Error Code: ${response.statusCode}");
+        return {
+          'success': false,
+          'message': 'Registration failed with status code: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response != null) {
+          print("❌ Server Response: ${e.response?.data}");
+        } else {
+          print("❌ Request Error: ${e.message}");
+        }
+      }
+      return {
+        'success': false,
+        'message': 'Something went wrong. Please try again.',
+      };
+    }
+  }
+
+
+
+
   Future<Map<String, dynamic>> loginDio(
     String email,
     String password,
-  ) async {
+  ) async
+  {
     String url = ApiConstant().BaseUrl + ApiConstant().login;
 
     String? sessionToken =

@@ -7,7 +7,7 @@ class ApiConstant {
   String emailRegister = "/sendEmailOtp";
   String emailOtp = "/verifyEmailOtp";
   String PhoneOTP = "/verifyPhoneOtp";
-  String registerss = "/register";
+  String registerss = "update-details/67a45296163c23dde02d4a90";
   String login = "/login";
   String products = "/addproduct/jhdfs";
   String getAllCatagries = "/category123";
@@ -34,6 +34,7 @@ String AdminBaseUrl = "https://admin-fyu1.onrender.com/api/app";
 String AdminGetCatFAQ = "/knowledge";
 String AdminContactUsQuations = "/app-support/category";
 String AdminContactUsMessage = "/app-support/register";
+String ReferralCode = "/referral/verify";
 
 
   String getAllTicketsSupport(String userId) {
@@ -43,6 +44,11 @@ String AdminContactUsMessage = "/app-support/register";
 
   String getBigSupportTicket(String userId, String ticketNumber) {
     return "/app-support/$userId/$ticketNumber"; // No slash here
+  }
+
+
+  String userRegister(String userId) {
+    return "/update-details/$userId"; // No slash here
   }
 
   String deleteProducts(String ProductId) {
