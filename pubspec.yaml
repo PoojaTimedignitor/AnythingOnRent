@@ -62,7 +62,9 @@ dev_dependencies:
   dio: ^5.7.0
   intl: ^0.18.0
   video_player: ^2.4.5
-  url_launcher: ^6.1.5  # Ensure to use the latest version
+  keyboard_avoider: ^0.2.0
+  flutter_keyboard_visibility: ^5.0.0
+  url_launcher: ^6.1.5
 
   http:
   flutter_widget_from_html: ^0.14.7

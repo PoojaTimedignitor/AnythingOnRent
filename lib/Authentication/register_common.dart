@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,6 +11,9 @@ import 'package:get_storage/get_storage.dart';
 import '../ConstantData/Constant_data.dart';
 import '../MainHome.dart';
 import '../model/dio_client.dart';
+import 'forget_password.dart';
+import 'login_screen.dart';
+import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
 const fillColor = Color.fromRGBO(243, 246, 249, 0);
@@ -56,8 +60,12 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   TextEditingController passwordController = TextEditingController();
   TextEditingController permanentAddressController = TextEditingController();
   TextEditingController ReferralCodeController = TextEditingController();
+  TextEditingController PhoneEmailLoginController = TextEditingController();
+  TextEditingController passwordLoginController = TextEditingController();
   bool isCodeValid = false;
   final _firstNameFocus = FocusNode();
+  final _phoneEmailLoginFocus = FocusNode();
+  final _passwordLoginFocus = FocusNode();
   final _lastNameFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _ReferralFocus = FocusNode();
@@ -88,6 +96,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   String? email;
   String? _number;
   bool showOTPWidget = false;
+  bool showLoginWidget = false;
 
   String buttonText = "Verify OTP";
   bool isEmailVerification = false;
@@ -132,6 +141,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     // Animation start karna
     _animationController.forward();*/
 
+
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
@@ -150,7 +160,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         isCodeValid = ReferralCodeController.text.length == 6;
         if (!isCodeValid) {
           verifiedText =
-              "Referral Code (optional)"; // ✅ Hide text if not 6 characters
+              "Referral Code (optional)";
         }
       });
     });
@@ -198,6 +208,38 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send OTP. Try again!')),
+      );
+    }
+  }
+
+
+  Future<void> validateLogin() async {
+    final identifier = PhoneEmailLoginController.text.trim();
+    final password = passwordLoginController.text.trim();
+
+    if (identifier.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter valid credentials')),
+      );
+      return;
+    }
+    bool isLoggedIn = await authService.loginWithPhoneOrEmail(identifier, password);
+
+    if (isLoggedIn) {
+      GetStorage().write('identifier', identifier);
+      print("📌 Stored Identifier: ${GetStorage().read<String>('identifier')}");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login Successful!')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainHome()),
+      );
+      // Navigate to dashboard or home screen
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login Failed. Try again!')),
       );
     }
   }
@@ -370,81 +412,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
   }
 
-/*
-  Future<void> ContinueScreen() async {
-    final firstName = firstNameController.text.trim();
-    final lastName = lastNameController.text.trim();
-    final password = passwordController.text.trim();
-    final address = permanentAddressController.text.trim();
-    final gender = selectedGender;
-
-    // ✅ Regex Validations
-    final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
-    final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
-
-    // ✅ Validation Checks
-    if (firstName.isEmpty || !nameRegex.hasMatch(firstName)) {
-      showSnackbar('Please enter a valid First Name (only letters)');
-      return;
-    }
-
-    if (lastName.isEmpty || !nameRegex.hasMatch(lastName)) {
-      showSnackbar('Please enter a valid Last Name (only letters)');
-      return;
-    }
-
-   */
-/* if (password.isEmpty || !passwordRegex.hasMatch(password)) {
-      showSnackbar('Password must be at least 6 characters, include 1 letter & 1 number');
-      return;
-    }*/
-  /*
-
-
-    if (address.isEmpty || address.length < 5) {
-      showSnackbar('Please enter a valid Permanent Address (min 5 chars)');
-      return;
-    }
-
-    // ✅ Show Loading Indicator
- //   showLoadingIndicator();
-
-    try {
-      // ✅ Call API for user registration (No OTP, No Phone Number)
-      bool isRegistered = await authService.registerUser(
-
-        firstName: firstName,
-        lastName: lastName,
-        permanentAddress: address,
-        password: password,
-        gender: gender,
-      );
-
-      if (isRegistered) {
-       // hideLoadingIndicator();
-        GetStorage().write(ConstantData.UserRegisterId, ['user']['id']);
-        GetStorage()
-            .write(ConstantData.UserAccessToken, ['user']['token']);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration Successful!')),
-        );
-
-        // ✅ Navigate to Home Screen after successful registration
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MainHome()),
-        );
-      } else {
-       // hideLoadingIndicator();
-        showSnackbar('Registration Failed! Try again.');
-      }
-    } catch (e) {
-      //hideLoadingIndicator();
-      showSnackbar('Something went wrong. Please try again!');
-    }
-  }
-*/
-
   Future<void> ContinueScreen() async {
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
@@ -526,62 +493,77 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Positioned.fill(
-        child: Image.asset(
-          'assets/images/renttwo.jpg',
-          fit: BoxFit.cover,
+    return Scaffold(
+      backgroundColor: Color(0xfff36443),
+      body: SafeArea(
+        child: Column(
+          children: [
+            /// App Bar
+            AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  setState(() {
+                    if (showOTPWidget) {
+                      showOTPWidget = false;
+                      _animationController.reverse();
+                    } else if (isOTPEmailVerification) {
+                      otpController.clear();
+                      isOTPEmailVerification = false;
+                      _animationController.reverse();
+                    } else if (continueScreen) {
+                      continueScreen = false;
+                      _animationController.reverse();
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  });
+                },
+              ),
+              title: Center(
+                child: Text(
+                  "ANYTHING ON RENT",
+                  style: TextStyle(
+                    fontFamily: "okra_extrabold",
+                    fontSize: SizeConfig.blockSizeHorizontal * 5.5,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+
+            /// Content With Keyboard Avoidance
+            Expanded(
+              child: KeyboardAvoider(
+                autoScroll: true,  // Keyboard ke according adjust karega
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(40),
+                      topRight: Radius.circular(40),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: SingleChildScrollView(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                      child: _buildVerificationWidget(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      WillPopScope(
-        onWillPop: () async {
-          return handleBackPress();
-        },
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                //otpController.clear();
-                // emailOTPController.clear();
-                //     passwordController.clear();
-
-                setState(() {
-                  if (showOTPWidget) {
-                    showOTPWidget = false;
-                    _animationController.reverse();
-                  } else if (isOTPEmailVerification) {
-                    otpController.clear();
-                    isOTPEmailVerification = false;
-                    _animationController.reverse();
-                  } else if (continueScreen) {
-                    continueScreen = false;
-                    _animationController.reverse();
-                  } else {
-                    Navigator.pop(context);
-                  }
-                });
-              },
-            ), // Reusable back arrow widget
-          ),
-          body: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 150),
-                child: Container(
-                    height: 900,
-                    //  color: Colors.red,
-                    child: _buildVerificationWidget()),
-              ),
-              SizedBox(height: 50),
-            ],
-          ),
-        ),
-      )
-    ]);
+    );
   }
+
 
   Widget _buildVerificationWidget() {
     return SingleChildScrollView(
@@ -590,62 +572,313 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!showOTPWidget) ...[
-              _buildPhoneNumberWidget(),
-              SizedBox(height: 50),
-              ContinueButton(
-                SizeConfig.screenHeight,
-                SizeConfig.screenWidth,
-                buttonText: 'Send Mobile OTP',
-                onPressed: validatePhoneNumber,
-              ),
-            ] else if (!isEmailVerification) ...[
-              SlideTransition(
-                position: _slideAnimation,
-                child: _buildOTPWidget(),
-              ),
-              SizedBox(height: 20),
-              ContinueButton(
-                SizeConfig.screenHeight,
-                SizeConfig.screenWidth,
-                buttonText: ' Verify OTP',
-                onPressed: validateOTP,
-              ),
-            ] else if (!isOTPEmailVerification) ...[
-              SlideTransition(
-                position: _slideAnimation,
-                child: _buildEmailWidget(),
-              ),
-              SizedBox(height: 50),
-              ContinueButton(
-                SizeConfig.screenHeight,
-                SizeConfig.screenWidth,
-                buttonText: ' Send Email OTP',
-                onPressed: validateEmail,
-              ),
-            ] else if (!isNextScreen) ...[
-              _buildEmailOTPWidget(),
-              SizedBox(height: 50),
-              ContinueButton(
-                SizeConfig.screenHeight,
-                SizeConfig.screenWidth,
-                buttonText: ' Next',
-                onPressed: validateEmailOTP,
-              ),
-            ] else if (!continueScreen) ...[
-              _buildDetailsWidget(
-                  SizeConfig.screenHeight, SizeConfig.screenHeight),
-              SizedBox(height: 50),
-              ContinueButton(
-                SizeConfig.screenHeight,
-                SizeConfig.screenWidth,
-                buttonText: ' Continue',
-                onPressed: ContinueScreen,
-              ),
-            ],
+            Column(
+              children: [
+
+                if (!showLoginWidget) ...[
+                  if (!showOTPWidget) ...[
+                    _buildPhoneNumberWidget(),
+                    SizedBox(height: 50),
+                    ContinueButton(
+                      SizeConfig.screenHeight,
+                      SizeConfig.screenWidth,
+                      buttonText: 'Send Mobile OTP',
+                      onPressed: () {
+                        setState(() {
+                          showOTPWidget = true;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 25),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: "Already have an account?",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Roboto-Regular',
+                              fontSize: 17,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: " Login",
+                                style: TextStyle(
+                                  color: CommonColor.Blue,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Roboto-Regular',
+                                  fontSize: 18,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    setState(() {
+                                      showLoginWidget = true;
+                                      showOTPWidget = false;
+                                    });
+                                  },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else if (!isEmailVerification) ...[
+                    _buildOTPWidget(),
+                    SizedBox(height: 20),
+                    ContinueButton(
+                      SizeConfig.screenHeight,
+                      SizeConfig.screenWidth,
+                      buttonText: 'Verify OTP',
+                      onPressed: () {
+                        setState(() {
+                          isEmailVerification = true;
+                        });
+                      },
+                    ),
+                  ] else if (!isOTPEmailVerification) ...[
+                    _buildEmailWidget(),
+                    SizedBox(height: 50),
+                    ContinueButton(
+                      SizeConfig.screenHeight,
+                      SizeConfig.screenWidth,
+                      buttonText: 'Send Email OTP',
+                      onPressed: () {
+                        setState(() {
+                          isOTPEmailVerification = true; // Email OTP screen dikhao
+                        });
+                      },
+                    ),
+                  ] else if (!isNextScreen) ...[
+                    _buildEmailOTPWidget(),
+                    SizedBox(height: 50),
+                    ContinueButton(
+                      SizeConfig.screenHeight,
+                      SizeConfig.screenWidth,
+                      buttonText: 'Next',
+                      onPressed: () {
+                        setState(() {
+                          isNextScreen = true; // Next Screen dikhao
+                        });
+                      },
+                    ),
+                  ] else if (!continueScreen) ...[
+                    _buildDetailsWidget(SizeConfig.screenHeight, SizeConfig.screenHeight),
+                    SizedBox(height: 50),
+                    ContinueButton(
+                      SizeConfig.screenHeight,
+                      SizeConfig.screenWidth,
+                      buttonText: 'Continue',
+                      onPressed: () {
+                        setState(() {
+                          continueScreen = true;
+                        });
+                      },
+                    ),
+                  ],
+                ],
+
+                // 🔹 Login Form
+                if (showLoginWidget) ...[
+                  _buildLoginWidget(),
+                  SizedBox(height: 20),
+                 /* TextButton(
+                    onPressed: () {
+                      setState(() {
+                        showLoginWidget = false;
+                        showOTPWidget = false;
+                      });
+                    },
+                    child: Text("Back to OTP"),
+                  ),*/
+                ],
+              ],
+            ),
           ],
         ),
       ),
+    );
+  }
+
+
+  Widget _buildLoginWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'Login',
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            fontFamily: "okra_extrabold",
+            fontSize: ResponsiveUtil.fontSize(20), // Responsive font size
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        SizedBox(height: 20),
+        TextFormField(
+          controller: PhoneEmailLoginController,
+          keyboardType: TextInputType.text,
+          focusNode: _phoneEmailLoginFocus,
+          // autocorrect: true,
+          textInputAction: TextInputAction.next,
+          onChanged: (value) {
+            setState(() {
+              isButtonActive = PhoneEmailLoginController.text.isNotEmpty &&
+                  passwordLoginController.text.isNotEmpty;
+            });
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'email cannot be empty'; // Error message
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            prefixStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 17,
+              fontWeight: FontWeight.w500,
+            ),
+            labelText: 'Phone / email',
+            labelStyle: TextStyle(
+              color: Color(0xffFE7F64),
+              fontSize: 19,
+              fontFamily: "okra_Medium",
+            ),
+            contentPadding: const EdgeInsets.all(12),
+            isDense: true,
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 1,
+                color: Color(0xffFE7F64),
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                width: 0.3,
+                color: Color(0xff000000),
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            hintText: 'Enter Phone / Enter email',
+            hintStyle: TextStyle(
+              color: Colors.grey,
+              fontSize: 15,
+              fontFamily: "okra_Light",
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+          ),
+        ),
+        SizedBox(height: 30),
+        TextFormField(
+          controller: passwordLoginController,
+          keyboardType: TextInputType.text,
+          focusNode: _passwordLoginFocus,
+          // autocorrect: true,
+          textInputAction: TextInputAction.next,
+
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'password cannot be empty';
+            }
+            return null;
+          },
+          onChanged: (value) {
+            setState(() {
+              isButtonActive = PhoneEmailLoginController.text.isNotEmpty &&
+                  passwordLoginController.text.isNotEmpty;
+            });
+          },
+          decoration: InputDecoration(
+            prefixStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 17,
+              fontWeight: FontWeight.w500,
+            ),
+            labelText: 'Password',
+            labelStyle: TextStyle(
+              color: Color(0xffFE7F64),
+              fontSize: 19,
+              fontFamily: "okra_Medium",
+            ),
+            contentPadding: const EdgeInsets.all(12),
+            isDense: true,
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 1,
+                color: Color(0xffFE7F64),
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                width: 0.3,
+                color: Color(0xff000000),
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            hintText: 'Password',
+            hintStyle: TextStyle(
+              color: Colors.grey,
+              fontSize: 15,
+              fontFamily: "okra_Light",
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+          ),
+        ),
+        SizedBox(height: 20),
+        GestureDetector(
+          onTap: () {
+
+
+            showModalBottomSheet(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                context: context,
+                backgroundColor: Colors.white,
+                elevation: 10,
+                isScrollControlled: true,
+                isDismissible: true,
+                builder: (BuildContext bc) {
+                  return ForgetPassword();
+                });
+          },
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Text(
+              "Forget Password?",
+              style: TextStyle(
+                color: CommonColor.Black,
+                fontSize: ResponsiveUtil.fontSize(14),
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Roboto-Regular',
+              ),   textScaleFactor: 1.0,
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        ContinueButton(
+          SizeConfig.screenHeight,
+          SizeConfig.screenWidth,
+          buttonText: 'Login',
+          onPressed: () {
+            validateLogin();
+          },
+        ),
+        SizedBox(height: 15),
+       /* TextButton(
+          onPressed: () {
+            setState(() {
+              showLoginWidget = false;
+            });
+          },
+          child: Text("Back", style: TextStyle(fontSize: 16)),
+        ),*/
+      ],
     );
   }
 
@@ -936,7 +1169,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     required String contactInfo, // Dynamic Mobile Number / Email
     required VoidCallback onPressed,
     bool showOTPField = true, // Enable/Disable OTP Field
-  }) {
+  })
+  {
     print('Phone Number: ${widget.phoneNumber}');
     print('Contact Info: $contactInfo');
     return Center(
@@ -1469,10 +1703,10 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
               verifiedText,
               style: TextStyle(
                 color: verifiedText == "Referral Code Verified! ✅"
-                    ? Colors.green // Green for valid
+                    ? Colors.green
                     : verifiedText == "Referral Code is Invalid!"
-                    ? Colors.red // Red for invalid
-                    : Colors.black, // Black for the default state
+                    ? Colors.red
+                    : Colors.black,
                 fontWeight: FontWeight.w500,
                 fontFamily: 'Roboto-Regular',
                 fontSize: 17,
@@ -1488,6 +1722,12 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             focusNode: _ReferralFocus,
             maxLength: 6,
             textInputAction: TextInputAction.next,
+            enabled: verifiedText != "Referral Code Verified! ✅",
+            style: TextStyle(
+              color: verifiedText == "Referral Code Verified! ✅" ? Colors.grey : Colors.black, // Gray text if verified
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
             decoration: InputDecoration(
             counterText: "",
             prefixStyle: TextStyle(
@@ -1511,6 +1751,13 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           ),
           borderRadius: BorderRadius.circular(10.0),
         ),
+              disabledBorder: OutlineInputBorder( // Ensure border remains when disabled
+                borderSide: BorderSide(
+                  width: 0.3,
+                  color: Color(0xff000000),
+                ),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
         hintText: 'Referral Code',
         hintStyle: TextStyle(
           color: Colors.grey,
@@ -1534,18 +1781,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                     verifiedText = "Referral Code Verified! ✅";
                   });
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Referral Code Verified! ✅')),
-                  );
-                } else {
-
-                  setState(() {
-                    verifiedText = "Referral Code is Invalid!";
-                  });
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Invalid Referral Code!')),
-                  );
                 }
               });
             }
@@ -1569,11 +1804,14 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
   Widget ContinueButton(double parentHeight, double parentWidth,
       {required String buttonText, required VoidCallback onPressed}) {
+
     return GestureDetector(
       onTap: () {
         if (isButtonActive) {
           print("Button Clicked!");
           onPressed();
+          isButtonActive = PhoneEmailLoginController.text.isNotEmpty &&
+              passwordLoginController.text.isNotEmpty;
         }
       },
       child: Padding(

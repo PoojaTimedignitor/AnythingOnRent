@@ -1795,7 +1795,9 @@ class MainHomeState extends State<MainHome>
                                                   PhoneRegistrationPage(
                                                     mobileNumber: '',
                                                     email: '', phoneNumber: '',
-                                                  )));
+                                                  )
+                                          )
+                                      );
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

@@ -313,7 +313,8 @@ class ApiClients {
 
       // Extract and store userId from the response
       if (response.data != null) {
-        String userId = response.data['id']; // Assuming 'id' is in the response
+        String? userId = response.data['id']?.toString(); // Ensure it's a string
+        String? userReferralCode = response.data['referralCodes']?.toString(); // Assuming 'id' is in the response
 
         // Store user ID in GetStorage
         GetStorage().write('UserId', userId);
@@ -420,6 +421,54 @@ class ApiClients {
     }
   }
 
+
+  Future<bool> loginWithPhoneOrEmail(String identifier, String password) async {
+    String baseUrl = "https://rental-api-5vfa.onrender.com/";
+    String url;
+
+    if (identifier.contains('@')) {
+      // Email login
+      url = "${baseUrl}login";
+    } else {
+      // Phone login
+      url = "${baseUrl}loginWithPhone";
+    }
+
+    var data = {
+      identifier.contains('@') ? 'email' : 'phoneNumber': identifier,
+      'password': password,
+    };
+
+    print("📡 API Call: $url");
+    print("📨 Request Data: $data");
+
+    try {
+      Response response = await _dio.post(url, data: data);
+
+      print("📩 API Response: ${response.data}");
+      print("📡 Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        print("✅ Login Successful: ${response.data['message']}");
+        return true;
+      } else {
+        print("❌ Login Failed: ${response.data['message']}");
+        return false;
+      }
+    } catch (e) {
+      print("🔥 Exception: $e");
+
+      if (e is DioError) {
+        if (e.response != null) {
+          print("❌ Server Response: ${e.response?.data}");
+        } else {
+          print("❌ Request Error: ${e.message}");
+        }
+      }
+
+      return false;
+    }
+  }
 
 
 
