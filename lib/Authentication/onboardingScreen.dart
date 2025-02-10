@@ -1,5 +1,5 @@
 
-import 'package:anything/Authentication/register_screen.dart';
+import 'package:anything/Authentication/register_common.dart';
 import 'package:flutter/material.dart';
 
 import '../Common_File/SizeConfig.dart';
@@ -144,8 +144,8 @@ class _onboardingScreenState extends State<onboardingScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => RegisterScreen(
-                                          address: '',
+                                        builder: (context) => PhoneRegistrationPage(
+                                       /*   address: '',
                                           lat: '',
                                           long: '',
                                           ProfilePicture: '' ,
@@ -157,7 +157,7 @@ class _onboardingScreenState extends State<onboardingScreen> {
                                           permanetAddress: '',
                                           mobileNumber: '',
                                           FrontImage: '',
-                                          BackImage: '',
+                                          BackImage: '',*/ phoneNumber: '', mobileNumber: '', email: '',
                                         )
                                     ),
                                   );

@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'Authentication/onboardingScreen.dart';
+import 'Authentication/register_common.dart';
 import 'Authentication/register_screen.dart';
 import 'ConstantData/Constant_data.dart';
 
@@ -39,9 +40,9 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           routes: <String, WidgetBuilder>{
             '/frame': (BuildContext context) => onboardingScreen(),
-            '/dashboard': (BuildContext context) => MainHome(),
-            '/register': (BuildContext context) => RegisterScreen(
-              address: '',
+            '/dashboard': (BuildContext context) => MainHome(lat: '', long: '',),
+            '/register': (BuildContext context) => PhoneRegistrationPage(mobileNumber: '', email: '', phoneNumber: '',
+             /* address: '',
               lat: '',
               long: '',
               ProfilePicture: '',
@@ -53,7 +54,7 @@ class MyApp extends StatelessWidget {
               permanetAddress: '',
               mobileNumber: '',
               FrontImage: '',
-              BackImage: '',
+              BackImage: '',*/
             ),
           },
         );
@@ -64,6 +65,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
+//image: AssetImage("assets/images/renttwo.jpg"),
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 

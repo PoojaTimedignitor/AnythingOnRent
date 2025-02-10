@@ -800,7 +800,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                      phoneController.text,
                      emailController.text,
                   addressController.text,
-_image
+                  _image
                     )
                     .then((value) {
                   /*if (value.containsKey("message") && value["message"] == "Authorization token missing") {
@@ -836,7 +836,7 @@ _image
 
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => MainHome()),
+                      MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '',)),
                     );
                   });
                   }).catchError((error) {

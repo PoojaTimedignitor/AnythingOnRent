@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'Admin/UserFeedback.dart';
 import 'Admin/helpCentre.dart';
 import 'Admin/vedio_player.dart';
-import 'Authentication/Register_Phone.dart';
+import 'package:geolocator/geolocator.dart';
 import 'Authentication/login_screen.dart';
 import 'Authentication/register_common.dart';
 import 'City_Create.dart';
@@ -33,9 +33,18 @@ import 'package:carousel_slider/carousel_slider.dart' as cs;
 
 import 'package:get_storage/get_storage.dart';
 
-import 'fff.dart';
+import 'package:geocoding/geocoding.dart';
+
+import 'location_map.dart';
 
 class MainHome extends StatefulWidget {
+  final String lat;
+  final String long;
+  const MainHome({
+    super.key,
+    required this.lat,
+    required this.long,
+  });
   @override
   State<StatefulWidget> createState() => MainHomeState();
 }
@@ -61,10 +70,12 @@ class MainHomeState extends State<MainHome>
       fetchCategories();
       fetchProductsList();
       fetchBusinessAds();
-      firstname = GetStorage().read(ConstantData.UserFirstName) ?? "Guest";
+      _getCityName();
+      firstname = GetStorage().read<String>(ConstantData.firstName,) ?? "Guest";
+      updatedCity = GetStorage().read<String>("selectedCity") ?? "Select City";
 
       _tabController = TabController(length: 2, vsync: this);
-      updatedCity = GetStorage().read('selectedCity') ?? "No city selected";
+      //  updatedCity = GetStorage().read('selectedCity') ?? "No city selected";
     });
   }
 
@@ -82,9 +93,10 @@ class MainHomeState extends State<MainHome>
   List<Products> itemss = [];
   List<String> adsUrlsList = [];
   List<Products> filteredItemss = [];
-  int selectedIndex = 0; // To track selected tab
+  int selectedIndex = 0;
+  final ApiClients authService = ApiClients();
 
-  final box = GetStorage();
+  //final box = GetStorage();
 
   late TabController _tabController;
 
@@ -187,6 +199,72 @@ class MainHomeState extends State<MainHome>
         isLoading = false;
       });
       print("Error fetching business ads: $e");
+    }
+  }
+
+  void _showLocationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Enable Location"),
+        content: Text("Please enable location services to continue."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await Geolocator.openLocationSettings();
+            },
+            child: Text("Open Settings"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _getCityName() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showLocationDialog();
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _showLocationDialog();
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _showLocationDialog();
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      setState(() {
+        updatedCity = placemarks.isNotEmpty
+            ? placemarks[0].locality ?? "City not found"
+            : "City not found";
+      });
+    } catch (e) {
+      setState(() {
+        updatedCity = "Failed to fetch city: $e";
+      });
     }
   }
 
@@ -420,12 +498,12 @@ class MainHomeState extends State<MainHome>
 
   String updatedCity = "No city selected";
 
-  void updateCity(String newCity) {
+/*  void updateCity(String newCity) {
     setState(() {
       updatedCity = newCity;
       GetStorage().write('selectedCity', newCity);
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -1054,7 +1132,7 @@ class MainHomeState extends State<MainHome>
                         ),
                       ),
                       GestureDetector(
-                        onTap: () async {
+                        /*      onTap: () async {
                           final String? result = await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1063,7 +1141,7 @@ class MainHomeState extends State<MainHome>
                           if (result != null) {
                             updateCity(result); // Update city if selected
                           }
-                        },
+                        },*/
                         child: Padding(
                           padding: EdgeInsets.only(
                               top: SizeConfig.screenHeight * 0.285, left: 30),
@@ -1075,20 +1153,62 @@ class MainHomeState extends State<MainHome>
                                 color: Color(0xfff44343),
                               ),
                               Flexible(
-                                child: Container(
-                                  width: 120,
-                                  child: Text(
-                                    (updatedCity),
-                                    style: TextStyle(
-                                      color: Color(0xfff44343),
-                                      letterSpacing: 0.0,
-                                      fontFamily: "okra_Medium",
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.7,
-                                      fontWeight: FontWeight.w400,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    String? selectedCity = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              LocationMapScreen()),
+                                    );
+
+                                    /*  if (selectedCity != null) {
+                                      print("Received City: $selectedCity");
+                                      setState(() {
+                                        updatedCity = selectedCity; // UI update ke liye
+                                      });
+                                    }*/
+                                    if (selectedCity != null) {
+                                      print("✅ Received City: $selectedCity");
+
+                                      setState(() {
+                                        updatedCity = selectedCity;
+                                      });
+                                      String? id = GetStorage().read<String>('userId');
+                                      print("jjjjjjjj  ${id}");
+                                      bool success =
+                                          await authService.storeUserCity(
+                                            id!, // User ID
+                                        18.5204, // Latitude
+                                        73.8567, // Longitude
+                                        selectedCity, // City
+                                      );
+
+                                      if (success) {
+                                        print(
+                                            "✅ City successfully updated in backend!");
+                                      } else {
+                                        print(
+                                            "❌ Failed to update city in backend.");
+                                      }
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 120,
+                                    child: Text(
+                                      updatedCity,
+                                      style: TextStyle(
+                                        color: Color(0xfff44343),
+                                        letterSpacing: 0.0,
+                                        fontFamily: "okra_Medium",
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal *
+                                                3.7,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
                                   ),
                                 ),
                               ),
@@ -1794,10 +1914,9 @@ class MainHomeState extends State<MainHome>
                                               builder: (context) =>
                                                   PhoneRegistrationPage(
                                                     mobileNumber: '',
-                                                    email: '', phoneNumber: '',
-                                                  )
-                                          )
-                                      );
+                                                    email: '',
+                                                    phoneNumber: '',
+                                                  )));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

@@ -2,6 +2,7 @@
 import 'dart:async';
 
 
+import 'package:anything/MainHome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoding/geocoding.dart';
@@ -19,17 +20,8 @@ import 'Common_File/common_color.dart';
 
 class LocationMapScreen extends StatefulWidget {
 
-final String firstName;
-final String lastname;
-final String email;
-final String password;
-final String cpassword;
-final String permanetAddress;
-final String mobileNumber;
-final String frontImage;
-final String BackImage;
-final String ProfileImage;
-  const LocationMapScreen({super.key, required this.firstName, required this.lastname, required this.email, required this.password, required this.cpassword, required this.permanetAddress, required this.mobileNumber,/* required this.frontImage, required this.FileBackImage,*/ required this.ProfileImage, required this.frontImage, required this.BackImage});
+
+  const LocationMapScreen({super.key,});
 
   @override
   State<LocationMapScreen> createState() => _LocationMapScreenState();
@@ -102,7 +94,6 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
 
       placeMark = await placemarkFromCoordinates(selectLat, selectLong);
 
-      // Check if the widget is still mounted before calling setState
       if (mounted) {
         setState(() {});
       }
@@ -130,7 +121,6 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
       selectLong = target.longitude;
 
       placemarkFromCoordinates(selectLat, selectLong).then((value) {
-        // Check if the widget is still mounted before calling setState
         if (mounted) {
           setState(() {
             name = value[0].name.toString();
@@ -295,16 +285,20 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
             ),
             GestureDetector(
               onTap: (){
-                print("Street firstName: ${widget.firstName}");
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>  RegisterScreen(
-                      address: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
+             //   print("Street firstName: ${widget.firstName}");
+
+                Navigator.pop(context, locality);
+               /* Navigator.push(context,
+                    MaterialPageRoute(builder: (context) =>  MainHome(
+                     // address: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
+
                       lat: "$selectLat",
-                      long: "$selectLong", ProfilePicture: widget.ProfileImage, firstName: widget.firstName, lastname: widget.lastname, email: widget.email, password: widget.password, cpassword: widget.cpassword, permanetAddress: widget.mobileNumber, mobileNumber: widget.mobileNumber, FrontImage: widget.frontImage, BackImage: widget.BackImage,
+                      long: "$selectLong",
+                      //ProfilePicture: widget.ProfileImage, firstName: widget.firstName, lastname: widget.lastname, email: widget.email, password: widget.password, cpassword: widget.cpassword, permanetAddress: widget.mobileNumber, mobileNumber: widget.mobileNumber, FrontImage: widget.frontImage, BackImage: widget.BackImage,
 
 
-                    )
-                    ));
+                    )*/
+
               },
               child: Align(
                 alignment: Alignment.bottomCenter,

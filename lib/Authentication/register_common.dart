@@ -193,9 +193,13 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     bool isRegistered = await authService.sendMobileOtp(phoneNumber);
 
     if (isRegistered) {
-      GetStorage().write('phoneNumber', phoneNumber);
+    //  GetStorage().write('phoneNumber', phoneNumber);
+
+      GetStorage().write(ConstantData.UserMobile, 'phoneNumber');
       print(
-          "📌 Stored Phone Number: ${GetStorage().read<String>('phoneNumber')}");
+          "Stored Phone Number: ${GetStorage().read<String>(ConstantData.UserMobile)}");
+
+
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('OTP sent successfully!')),
@@ -213,36 +217,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   }
 
 
-  Future<void> validateLogin() async {
-    final identifier = PhoneEmailLoginController.text.trim();
-    final password = passwordLoginController.text.trim();
-
-    if (identifier.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter valid credentials')),
-      );
-      return;
-    }
-    bool isLoggedIn = await authService.loginWithPhoneOrEmail(identifier, password);
-
-    if (isLoggedIn) {
-      GetStorage().write('identifier', identifier);
-      print("📌 Stored Identifier: ${GetStorage().read<String>('identifier')}");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login Successful!')),
-      );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainHome()),
-      );
-      // Navigate to dashboard or home screen
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login Failed. Try again!')),
-      );
-    }
-  }
 
   Future<void> validateOTP() async {
     final otp = otpController.text.trim();
@@ -253,6 +227,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       );
       return;
     }
+
+
 
     String? phoneNumber = GetStorage().read<String>(ConstantData.UserMobile);
     print("📌 Retrieved Phone Number: $phoneNumber");
@@ -451,14 +427,29 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       print("📩 Response Data: $response");
 
       if (response['success'] == true) {
-        String userId = response['user']['id'];
+        final user = response['user'];
+      /*  String userId = response['user']['id'];
         String token = response['user']['token'];
+*/
+        print("✅ Storing User ID: $firstName");
+        print("✅ Storing Token: $lastName");
 
-        print("✅ Storing User ID: $userId");
-        print("✅ Storing Token: $token");
 
-        GetStorage().write('userId', userId);
+
+
+       GetStorage().write(ConstantData.userId, user['id']);
+        GetStorage().write(ConstantData.userToken, user['token']);
+        GetStorage().write(ConstantData.firstName, user['firstName']);
+        GetStorage().write(ConstantData.lastName, user['lastName']);
+        GetStorage().write(ConstantData.userGender, user['gender']);
+        GetStorage().write(ConstantData.permanentAddress, user['permanentAddress']);
+        GetStorage().write(ConstantData.userEmail, user['email']);
+
+
+
+       /* GetStorage().write('userId', userId);
         GetStorage().write('token', token);
+        GetStorage().write('token', token);*/
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Registration Successful!')),
@@ -466,7 +457,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainHome()),
+          MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '',)),
         );
       } else {
         print("❌ Unexpected API Response: $response");
@@ -477,6 +468,63 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       showSnackbar('Something went wrong. Please try again!');
     }
   }
+
+
+  Future<void> validateLogin() async {
+    final identifier = PhoneEmailLoginController.text.trim();
+    final password = passwordLoginController.text.trim();
+
+
+    if (identifier.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('कृपया सही लॉगिन जानकारी भरें')),
+      );
+      return;
+    }
+
+    try {
+
+      final response = await authService.loginWithPhoneOrEmail(identifier, password);
+
+      print("📩 API से रिस्पॉन्स: $response");
+
+
+      if (response?['success'] == true) {
+        final user = response?['user'];
+
+        print("✅ यूज़र आईडी सेव कर रहे हैं: ${user['_id']}");
+        print("✅ टोकन सेव कर रहे हैं: ${user['token']}");
+
+
+        GetStorage().write(ConstantData.userId, user['_id']);
+        GetStorage().write(ConstantData.userToken, user['token']);
+        GetStorage().write(ConstantData.firstName, user['firstName']);
+        GetStorage().write(ConstantData.lastName, user['lastName']);
+        GetStorage().write(ConstantData.userGender, user['userType']);
+        GetStorage().write(ConstantData.permanentAddress, user['listingId']);
+        GetStorage().write(ConstantData.userEmail, user['email']);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('लॉगिन सफल हुआ!')),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '',)),
+        );
+      } else {
+        print("❌ DCD: $response");
+        showSnackbar('SDGDFGH');
+      }
+
+
+
+    } catch (e) {
+      print("🔥 RTYRTY: $e");
+      showSnackbar('TYRYHTY!');
+    }
+  }
+
 
   void showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -494,17 +542,25 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff36443),
-      body: SafeArea(
-        child: Column(
-          children: [
-            /// App Bar
-            AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/renttwo.jpg",
+              fit: BoxFit.cover,
+            ),
+          ),
+
+
+          if (!showLoginWidget && (showOTPWidget || isOTPEmailVerification || continueScreen))
+            Positioned(
+              top: 50,
+              left: 20,
+              child: GestureDetector(
+                onTap: () {
+                  debugPrint('Back button pressed');
                   setState(() {
                     if (showOTPWidget) {
                       showOTPWidget = false;
@@ -521,182 +577,180 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                     }
                   });
                 },
-              ),
-              title: Center(
-                child: Text(
-                  "ANYTHING ON RENT",
-                  style: TextStyle(
-                    fontFamily: "okra_extrabold",
-                    fontSize: SizeConfig.blockSizeHorizontal * 5.5,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                child: Container(
+                  padding: const EdgeInsets.all(0),
+                  decoration: BoxDecoration(
+
+                    shape: BoxShape.circle,
                   ),
+                  child: const Icon(Icons.arrow_back, color: Colors.black, size: 24),
                 ),
               ),
             ),
 
-            /// Content With Keyboard Avoidance
-            Expanded(
-              child: KeyboardAvoider(
-                autoScroll: true,  // Keyboard ke according adjust karega
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
-                    ),
-                  ),
+          /// 🔹 Main Content
+          Column(
+            children: [
+              /// 🔹 Content With Keyboard Avoidance
+              Expanded(
+                child: KeyboardAvoider(
+                 
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    padding:  EdgeInsets.only(top: SizeConfig.screenHeight*0.3,left: 10,right: 10),
                     child: SingleChildScrollView(
-                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                      child: _buildVerificationWidget(),
+                      child: Container(
+                     // height: 200,
+                         // color: Colors.red,
+                          child: _buildVerificationWidget()),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
+
   }
 
 
   Widget _buildVerificationWidget() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Column(
-              children: [
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            children: [
 
-                if (!showLoginWidget) ...[
-                  if (!showOTPWidget) ...[
-                    _buildPhoneNumberWidget(),
-                    SizedBox(height: 50),
-                    ContinueButton(
-                      SizeConfig.screenHeight,
-                      SizeConfig.screenWidth,
-                      buttonText: 'Send Mobile OTP',
-                      onPressed: () {
-                        setState(() {
-                          showOTPWidget = true;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 25),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text: "Already have an account?",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Roboto-Regular',
-                              fontSize: 17,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: " Login",
-                                style: TextStyle(
-                                  color: CommonColor.Blue,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'Roboto-Regular',
-                                  fontSize: 18,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    setState(() {
-                                      showLoginWidget = true;
-                                      showOTPWidget = false;
-                                    });
-                                  },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ] else if (!isEmailVerification) ...[
-                    _buildOTPWidget(),
-                    SizedBox(height: 20),
-                    ContinueButton(
-                      SizeConfig.screenHeight,
-                      SizeConfig.screenWidth,
-                      buttonText: 'Verify OTP',
-                      onPressed: () {
-                        setState(() {
-                          isEmailVerification = true;
-                        });
-                      },
-                    ),
-                  ] else if (!isOTPEmailVerification) ...[
-                    _buildEmailWidget(),
-                    SizedBox(height: 50),
-                    ContinueButton(
-                      SizeConfig.screenHeight,
-                      SizeConfig.screenWidth,
-                      buttonText: 'Send Email OTP',
-                      onPressed: () {
-                        setState(() {
-                          isOTPEmailVerification = true; // Email OTP screen dikhao
-                        });
-                      },
-                    ),
-                  ] else if (!isNextScreen) ...[
-                    _buildEmailOTPWidget(),
-                    SizedBox(height: 50),
-                    ContinueButton(
-                      SizeConfig.screenHeight,
-                      SizeConfig.screenWidth,
-                      buttonText: 'Next',
-                      onPressed: () {
-                        setState(() {
-                          isNextScreen = true; // Next Screen dikhao
-                        });
-                      },
-                    ),
-                  ] else if (!continueScreen) ...[
-                    _buildDetailsWidget(SizeConfig.screenHeight, SizeConfig.screenHeight),
-                    SizedBox(height: 50),
-                    ContinueButton(
-                      SizeConfig.screenHeight,
-                      SizeConfig.screenWidth,
-                      buttonText: 'Continue',
-                      onPressed: () {
-                        setState(() {
-                          continueScreen = true;
-                        });
-                      },
-                    ),
-                  ],
-                ],
-
-                // 🔹 Login Form
-                if (showLoginWidget) ...[
-                  _buildLoginWidget(),
-                  SizedBox(height: 20),
-                 /* TextButton(
+              if (!showLoginWidget) ...[
+                if (!showOTPWidget) ...[
+                  _buildPhoneNumberWidget(),
+                  SizedBox(height: 50),
+                  ContinueButton(
+                    SizeConfig.screenHeight,
+                    SizeConfig.screenWidth,
+                    buttonText: 'Send Mobile OTP',
                     onPressed: () {
                       setState(() {
-                        showLoginWidget = false;
-                        showOTPWidget = false;
+                        validatePhoneNumber();
+                        showOTPWidget = true;
                       });
                     },
-                    child: Text("Back to OTP"),
-                  ),*/
+                  ),
+                  SizedBox(height: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: "Already have an account?",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Roboto-Regular',
+                            fontSize: 17,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: " Login",
+                              style: TextStyle(
+                                color: CommonColor.Blue,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Roboto-Regular',
+                                fontSize: 18,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  setState(() {
+
+                                    showLoginWidget = true;
+                                    showOTPWidget = false;
+                                  });
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ] else if (!isEmailVerification) ...[
+                  _buildOTPWidget(),
+                  SizedBox(height: 20),
+                  ContinueButton(
+                    SizeConfig.screenHeight,
+                    SizeConfig.screenWidth,
+                    buttonText: 'Verify OTP',
+                    onPressed: () {
+                      setState(() {
+                        validateOTP();
+                        isEmailVerification = true;
+                      });
+                    },
+                  ),
+                ] else if (!isOTPEmailVerification) ...[
+                  _buildEmailWidget(),
+                  SizedBox(height: 50),
+                  ContinueButton(
+                    SizeConfig.screenHeight,
+                    SizeConfig.screenWidth,
+                    buttonText: 'Send Email OTP',
+                    onPressed: () {
+                      setState(() {
+                        validateEmail();
+                        isOTPEmailVerification = true;
+                      });
+                    },
+                  ),
+                ] else if (!isNextScreen) ...[
+                  _buildEmailOTPWidget(),
+                  SizedBox(height: 50),
+                  ContinueButton(
+                    SizeConfig.screenHeight,
+                    SizeConfig.screenWidth,
+                    buttonText: 'Next',
+                    onPressed: () {
+                      setState(() {
+                        validateEmailOTP();
+                        isNextScreen = true;
+                      });
+                    },
+                  ),
+                ] else if (!continueScreen) ...[
+                  _buildDetailsWidget(SizeConfig.screenHeight, SizeConfig.screenHeight),
+                  SizedBox(height: 50),
+                  ContinueButton(
+                    SizeConfig.screenHeight,
+                    SizeConfig.screenWidth,
+                    buttonText: 'Continue',
+                    onPressed: () {
+                      setState(() {
+                        ContinueScreen();
+                        continueScreen = true;
+                      });
+                    },
+                  ),
                 ],
               ],
-            ),
-          ],
-        ),
+
+              // 🔹 Login Form
+              if (showLoginWidget) ...[
+                _buildLoginWidget(),
+                SizedBox(height: 20),
+               /* TextButton(
+                  onPressed: () {
+                    setState(() {
+                      showLoginWidget = false;
+                      showOTPWidget = false;
+                    });
+                  },
+                  child: Text("Back to OTP"),
+                ),*/
+              ],
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -997,6 +1051,11 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             _number = value;
           },*/
 
+          onChanged: (value) {
+            setState(() {
+              isButtonActive = emailController.text.isNotEmpty;
+            });
+          },
           decoration: InputDecoration(
             prefixIcon: Padding(
               padding: const EdgeInsets.only(top: 14, left: 1, bottom: 10),
@@ -1097,7 +1156,9 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           SizeConfig.screenWidth,
           title: "Send to",
           contactInfo: "$email",
-          onPressed: () {},
+          onPressed: () {
+            print("hhhh$email");
+          },
           showOTPField: true,
         ),
       ],
@@ -1105,7 +1166,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   }
 
   Widget _buildOTPWidget() {
-    String? phoneNumber = GetStorage().read<String>('phoneNumber');
+    String? phoneNumber = GetStorage().read<String>(ConstantData.UserMobile);
     return Column(
       children: [
         Row(
@@ -1237,10 +1298,15 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                         onCompleted: (pin) {
                           debugPrint('✅ OTP Entered: $pin');
                         },
+
                         onChanged: (value) {
-                          debugPrint('🔄 OTP Changed: $value');
-                          code = value;
+                          setState(() {
+                            isButtonActive = otpController.text.length == 4 || emailOTPController.text.length == 4;
+                            code = value;
+                          });
                         },
+
+
                         cursor: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -1340,7 +1406,9 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                       children: [
                         Text(
                           "+91$phoneNumber", // Dynamic Mobile Number / Email
-                          style: /*TextStyle(
+                          style:
+
+                          /*TextStyle(
                       fontFamily: "Roboto_Regular",
                       fontWeight: FontWeight.w400,
                       fontSize: SizeConfig.blockSizeHorizontal * 4.2,
@@ -1812,6 +1880,11 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           onPressed();
           isButtonActive = PhoneEmailLoginController.text.isNotEmpty &&
               passwordLoginController.text.isNotEmpty;
+
+          isButtonActive = otpController.text.isNotEmpty;
+          isButtonActive = emailOTPController.text.isNotEmpty;
+          isButtonActive = emailController.text.isNotEmpty;
+
         }
       },
       child: Padding(

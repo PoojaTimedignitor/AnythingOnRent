@@ -1,3 +1,4 @@
+import 'package:anything/Authentication/register_common.dart';
 import 'package:anything/Authentication/register_screen.dart';
 import 'package:anything/ConstantData/Constant_data.dart';
 import 'package:anything/model/dio_client.dart';
@@ -23,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  bool isLoading = false;
 
   bool passwordVisible = true;
   bool isObscure = false;
@@ -390,7 +392,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 print("Navigating to MainHome...");
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MainHome()),
+                  MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '',)),
                 );
               } else {
                 print("Login failed: ${value['message']}");
@@ -515,7 +517,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) => RegisterScreen(address: '', lat: '', long: '', ProfilePicture: '', firstName: '', lastname: '', email: '', password: '', cpassword: '', permanetAddress: '', mobileNumber: '', FrontImage: '', BackImage: '')));                          },
+                                MaterialPageRoute(builder: (context) =>
+                                    PhoneRegistrationPage(mobileNumber: '', email: '', phoneNumber: '',
+                                      /*  address: '',
+                                        lat: '',
+                                        long: '',
+                                        ProfilePicture: '',
+                                        firstName: '',
+                                        lastname: '',
+                                        email: '',
+                                        password: '',
+                                        cpassword: '',
+                                        permanetAddress: '',
+                                        mobileNumber: '',
+                                        FrontImage: '',
+                                        BackImage: ''
+*/
+                                    )));                          },
                       ),
                     ])),
               ),

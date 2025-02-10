@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
 
   // Define the content for each screen/tab
   static final List<Widget> _screens = <Widget>[
-    MainHome(),
+    MainHome(lat: '', long: '',),
     AllProductList(),
     ProfileScreen(),
   ];

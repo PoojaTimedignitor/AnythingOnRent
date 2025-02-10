@@ -4,6 +4,7 @@ class ApiConstant {
   String BaseUrlGetAllCat = "https://admin-fyu1.onrender.com/api";
   String BaseUrlGetAllCats = "https://rental-api-5vfa.onrender.com";
   String PhoneRegister = "/sendPhoneOtp";
+  String storeLocation = "/update-locations";
   String emailRegister = "/sendEmailOtp";
   String emailOtp = "/verifyEmailOtp";
   String PhoneOTP = "/verifyPhoneOtp";

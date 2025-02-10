@@ -85,7 +85,7 @@ class ApiClients {
     }
   }
 
-  /*Future<bool> sendMobileOtp(String phoneNumber) async {
+  Future<bool> sendMobileOtp(String phoneNumber) async {
     String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
 
     var data = {
@@ -107,52 +107,56 @@ class ApiClients {
       return false;
     }
   }
-*/
 
 
-  Future<bool> sendMobileOtp(String phoneNumber) async {
-    String url = ApiConstant().BaseUrl + ApiConstant().PhoneRegister;
+
+
+  Future<bool> storeUserCity(String userId, double latitude, double longitude, String city) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().storeLocation;
+
+    String? sessionToken = GetStorage().read<String>('token'); // Token पढ़ना
+    String? userId = GetStorage().read<String>('userId');
 
     var data = {
-      'phoneNumber': phoneNumber,
+      'userId': userId, // Backend ko user identify karne ke liye
+      'latitude': latitude,
+      'longitude': longitude,
+      'city': city,
     };
 
-    print("📡 API को OTP भेजा जा रहा है: $url");
+    print("📡 seeeeeeeeeeeeeeee: $sessionToken");
     print("📨 Request Data: $data");
 
     try {
-      Response response = await _dio.post(url, data: data);
 
-      print("📩 API Response: ${response
-          .data}"); // API का पूरा रिस्पॉन्स प्रिंट करें
-      print("📡 Status Code: ${response.statusCode}");
+      Response response = await _dio.post(
+        url,
+        data: data,
+        options: Options(
+          headers: {
+         'Authorization': 'Bearer $sessionToken',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+
+    /*  Response response = await _dio.post(url, data: data);*/
 
       if (response.statusCode == 200) {
-        String apiMessage = response
-            .data['message']; // API से 'message' चेक करें
-        print("✅ API Message: $apiMessage");
+        print("✅ Location updated: ${response.data}");
 
-        if (apiMessage.contains("OTP sent successfully")) {
-          return true;
-        } else {
-          print("❌ API Error Message: $apiMessage");
-          return false;
-        }
+
+        GetStorage().write('selectedCity', city);
+        print("🗄️ City stored locally: $city");
+
+        return true;
       } else {
-        print("❌ HTTP Error Code: ${response.statusCode}");
+        print("❌ Error: ${response.statusCode}");
         return false;
       }
     } catch (e) {
       print("🔥 Exception: $e");
-
-      if (e is DioError) {
-        if (e.response != null) {
-          print("❌ Server Response: ${e.response?.data}");
-        } else {
-          print("❌ Request Error: ${e.message}");
-        }
-      }
-
       return false;
     }
   }
@@ -339,7 +343,8 @@ class ApiClients {
     required String permanentAddress,
     required String password,
     required String gender,
-  }) async {
+  }) async
+  {
     String? sessionToken = GetStorage().read<String>('token'); // Token पढ़ना
     String? userId = GetStorage().read<String>('userId'); // User ID पढ़ना
 
@@ -422,15 +427,13 @@ class ApiClients {
   }
 
 
-  Future<bool> loginWithPhoneOrEmail(String identifier, String password) async {
+  Future<Map<String, dynamic>?> loginWithPhoneOrEmail(String identifier, String password) async {
     String baseUrl = "https://rental-api-5vfa.onrender.com/";
     String url;
 
     if (identifier.contains('@')) {
-      // Email login
       url = "${baseUrl}login";
     } else {
-      // Phone login
       url = "${baseUrl}loginWithPhone";
     }
 
@@ -448,11 +451,57 @@ class ApiClients {
       print("📩 API Response: ${response.data}");
       print("📡 Status Code: ${response.statusCode}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.data['success'] == true) {
         print("✅ Login Successful: ${response.data['message']}");
-        return true;
+        return response.data; // ✅ पूरा JSON डेटा रिटर्न करें
       } else {
         print("❌ Login Failed: ${response.data['message']}");
+        return null;
+      }
+    } catch (e) {
+      print("🔥 Exception: $e");
+
+      if (e is DioError) {
+        if (e.response != null) {
+          print("❌ Server Response: ${e.response?.data}");
+        } else {
+          print("❌ Request Error: ${e.message}");
+        }
+      }
+      return null;
+    }
+  }
+
+  Future<bool> userLocationStore(String phoneNumber) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().storeLocation;
+
+    var data = {
+      'phoneNumber': phoneNumber,
+    };
+
+    print("📡 API को OTP भेजा जा रहा है: $url");
+    print("📨 Request Data: $data");
+
+    try {
+      Response response = await _dio.post(url, data: data);
+
+      print("📩 API Response: ${response
+          .data}");
+      print("📡 Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        String apiMessage = response
+            .data['message'];
+        print("✅ API Message: $apiMessage");
+
+        if (apiMessage.contains("OTP sent successfully")) {
+          return true;
+        } else {
+          print("❌ API Error Message: $apiMessage");
+          return false;
+        }
+      } else {
+        print("❌ HTTP Error Code: ${response.statusCode}");
         return false;
       }
     } catch (e) {
@@ -469,6 +518,7 @@ class ApiClients {
       return false;
     }
   }
+
 
 
 
