@@ -1075,26 +1075,23 @@ class ApiClients {
     }
   }*/
 
-  Future<Map<String, dynamic>> getLogoutUser(
-      String email, String password) async {
+  Future<Map<String, dynamic>> getLogoutUser() async
+  {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
-    String? sessionToken =
-        GetStorage().read<String>(ConstantData.UserAccessToken);
+    String? sessionToken = GetStorage().read<String>('token');
+
 
     if (sessionToken == null || sessionToken.isEmpty) {
       return {"error": "Session token is missing. Please log in again."};
     }
 
-    print("Final API URL: $url");
-    print("Session Token: $sessionToken");
+    print("vvvvvvv $url");
+    print("xxxxxx: $sessionToken");
 
     try {
       Response response = await _dio.post(
         url,
-        data: {
-          "email": email,
-          "password": password,
-        },
+
         options: Options(
           headers: {
             'Authorization': 'Bearer $sessionToken',
@@ -1103,17 +1100,13 @@ class ApiClients {
       );
 
       if (response.statusCode == 200) {
+        print("✅ Logout Successful: ${response.data}");
         return response.data;
       } else {
         return {"error": "Unexpected response code: ${response.statusCode}"};
       }
     } on DioError catch (e) {
-      if (e.response != null) {
-        print("DioError Response: ${e.response?.data}");
-        print("Error Status Code: ${e.response?.statusCode}");
-      } else {
-        print("DioError Message: ${e.message}");
-      }
+      print("❌ Logout API Error: ${e.response?.data}");
       return {"error": "Exception: ${e.message}"};
     }
   }
@@ -1204,12 +1197,12 @@ class ApiClients {
 
       // Check if the response status is 200 (success)
       if (response.statusCode == 200) {
-        // Extracting the entire response data and returning it as Map<String, dynamic>
+
         return response.data
-            as Map<String, dynamic>; // Return the response data
+            as Map<String, dynamic>;
       } else {
         print("Error fetching business ads: ${response.statusCode}");
-        return {}; // Return an empty map if there is an error
+        return {};
       }
     } catch (e) {
       print("Error fetching business ads: $e");

@@ -40,8 +40,8 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           routes: <String, WidgetBuilder>{
             '/frame': (BuildContext context) => onboardingScreen(),
-            '/dashboard': (BuildContext context) => MainHome(lat: '', long: '',),
-            '/register': (BuildContext context) => PhoneRegistrationPage(mobileNumber: '', email: '', phoneNumber: '',
+            '/dashboard': (BuildContext context) => MainHome(lat: '', long: '', showLoginWidget: false,),
+            '/register': (BuildContext context) => PhoneRegistrationPage(mobileNumber: '', email: '', phoneNumber: '', showLoginWidget: false,
              /* address: '',
               lat: '',
               long: '',

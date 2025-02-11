@@ -392,7 +392,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 print("Navigating to MainHome...");
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '',)),
+                  MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false,)),
                 );
               } else {
                 print("Login failed: ${value['message']}");
@@ -518,7 +518,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ..onTap = () {
                             Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) =>
-                                    PhoneRegistrationPage(mobileNumber: '', email: '', phoneNumber: '',
+                                    PhoneRegistrationPage(mobileNumber: '', email: '', phoneNumber: '', showLoginWidget: false,
                                       /*  address: '',
                                         lat: '',
                                         long: '',

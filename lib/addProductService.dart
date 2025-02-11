@@ -2474,7 +2474,7 @@ class _CreateProductServiceState extends State<CreateProductService>
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => MainHome(lat: '', long: '',)));
+                                          builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false,)));
 
                                   if (value['success'] == true) {
                                     setState(() {

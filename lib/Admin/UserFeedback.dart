@@ -235,7 +235,7 @@ class _UserfeedbackState extends State<Userfeedback> {
                               Navigator.pop(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MainHome(lat: '', long: '',)),
+                                    builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false)),
                               );
                             }
                           });

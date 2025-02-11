@@ -37,13 +37,14 @@ final defaultPinTheme = PinTheme(
 class PhoneRegistrationPage extends StatefulWidget {
   late final String mobileNumber;
   late final String email;
+  final bool showLoginWidget;
   final String phoneNumber;
 
   PhoneRegistrationPage({
     Key? key,
     required this.mobileNumber,
     required this.email,
-    required this.phoneNumber,
+    required this.phoneNumber, required this.showLoginWidget,
   }) : super(key: key);
   @override
   _PhoneRegistrationPageState createState() => _PhoneRegistrationPageState();
@@ -119,6 +120,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
         print("Is Button Active: $isButtonActive");
       });
+
     /* String? phoneNumber = GetStorage().read<String>(ConstantData.UserMobile);
     print("phoneNumber: $phoneNumber");*/
 
@@ -140,7 +142,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
     // Animation start karna
     _animationController.forward();*/
-
+    showLoginWidget = widget.showLoginWidget;
 
     _animationController = AnimationController(
       vsync: this,
@@ -176,6 +178,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     _phoneFocus.dispose();
     focusNode.dispose();
     ReferralCodeController.dispose(); // Cleanup
+    ReferralCodeController.dispose(); // Cleanup
 
     super.dispose();
   }
@@ -193,9 +196,9 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     bool isRegistered = await authService.sendMobileOtp(phoneNumber);
 
     if (isRegistered) {
-    //  GetStorage().write('phoneNumber', phoneNumber);
+      GetStorage().write('phoneNumber', phoneNumber);
 
-      GetStorage().write(ConstantData.UserMobile, 'phoneNumber');
+     // GetStorage().write(ConstantData.UserMobile, 'phoneNumber');
       print(
           "Stored Phone Number: ${GetStorage().read<String>(ConstantData.UserMobile)}");
 
@@ -231,11 +234,12 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
 
     String? phoneNumber = GetStorage().read<String>(ConstantData.UserMobile);
-    print("📌 Retrieved Phone Number: $phoneNumber");
+    print("mmm Phone Number: $phoneNumber");
 
     bool isVerified = await authService.verifyMobileOtp(phoneNumber!, otp);
 
     if (isVerified) {
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('OTP verified successfully!')),
       );
@@ -369,6 +373,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
       /* String userId = response['user']['id']; // User ID from response
       String token = response['user']['token'];*/ // Token from response
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('OTP verified successfully!')),
       );
@@ -395,7 +400,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     final address = permanentAddressController.text.trim();
     final gender = selectedGender;
 
-    // ✅ Regex Validations
     final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
     final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
 
@@ -457,7 +461,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '',)),
+          MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false,)),
         );
       } else {
         print("❌ Unexpected API Response: $response");
@@ -477,7 +481,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
     if (identifier.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('कृपया सही लॉगिन जानकारी भरें')),
+        SnackBar(content: Text('Incorrect Login')),
       );
       return;
     }
@@ -510,7 +514,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '',)),
+          MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false,)),
         );
       } else {
         print("❌ DCD: $response");
@@ -554,7 +558,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           ),
 
 
-          if (!showLoginWidget && (showOTPWidget || isOTPEmailVerification || continueScreen))
+          if (!showLoginWidget &&   (showLoginWidget || showOTPWidget || isOTPEmailVerification || continueScreen))
             Positioned(
               top: 50,
               left: 20,
@@ -562,8 +566,16 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                 onTap: () {
                   debugPrint('Back button pressed');
                   setState(() {
+
                     if (showOTPWidget) {
                       showOTPWidget = false;
+                      _animationController.reverse();
+                    } else if (showLoginWidget) {
+
+                      showLoginWidget = false;
+
+
+
                       _animationController.reverse();
                     } else if (isOTPEmailVerification) {
                       otpController.clear();
@@ -795,7 +807,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
               fontSize: 17,
               fontWeight: FontWeight.w500,
             ),
-            labelText: 'Phone / email',
+            labelText: 'Phone Or email',
             labelStyle: TextStyle(
               color: Color(0xffFE7F64),
               fontSize: 19,
@@ -817,7 +829,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
               ),
               borderRadius: BorderRadius.circular(10.0),
             ),
-            hintText: 'Enter Phone / Enter email',
+            hintText: 'Enter Phone / Email',
             hintStyle: TextStyle(
               color: Colors.grey,
               fontSize: 15,
@@ -1166,7 +1178,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   }
 
   Widget _buildOTPWidget() {
-    String? phoneNumber = GetStorage().read<String>(ConstantData.UserMobile);
+    print("mmmm ${ GetStorage().read<String>('phoneNumber')}");
+    String? phoneNumber = GetStorage().read<String>('phoneNumber');
     return Column(
       children: [
         Row(
@@ -1910,6 +1923,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             )),
       ),
     );
+
+
   }
 
   Widget _buildGenderOption(String gender) {

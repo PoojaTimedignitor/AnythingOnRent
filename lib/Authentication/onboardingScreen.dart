@@ -157,7 +157,7 @@ class _onboardingScreenState extends State<onboardingScreen> {
                                           permanetAddress: '',
                                           mobileNumber: '',
                                           FrontImage: '',
-                                          BackImage: '',*/ phoneNumber: '', mobileNumber: '', email: '',
+                                          BackImage: '',*/ phoneNumber: '', mobileNumber: '', email: '', showLoginWidget: false,
                                         )
                                     ),
                                   );

@@ -26,7 +26,7 @@ class ApiConstant {
   String BaseUrlCreateProdcut = "https://rental-api-5vfa.onrender.com/api/addon";
   String createProduct = "/hgsd";
 
-String logout = "/users/logout";
+String logout = "/logout";
 
 String getDisplayProductList = "/products";
 

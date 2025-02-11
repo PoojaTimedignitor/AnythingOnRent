@@ -40,10 +40,11 @@ import 'location_map.dart';
 class MainHome extends StatefulWidget {
   final String lat;
   final String long;
+  final bool showLoginWidget;
   const MainHome({
     super.key,
     required this.lat,
-    required this.long,
+    required this.long, required this.showLoginWidget,
   });
   @override
   State<StatefulWidget> createState() => MainHomeState();
@@ -177,7 +178,7 @@ class MainHomeState extends State<MainHome>
       setState(() {
         isLoading = false;
       });
-      print("loder $isLoading");
+      print("loader $isLoading");
     }
   }
 
@@ -192,7 +193,7 @@ class MainHomeState extends State<MainHome>
 
       setState(() {
         isLoading = false;
-        adsUrlsList = adsUrls ?? []; // Handle null case
+        adsUrlsList = adsUrls ?? [];
       });
     } catch (e) {
       setState(() {
@@ -319,104 +320,39 @@ class MainHomeState extends State<MainHome>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  /*    GestureDetector(
-                    onTap: () async {
 
-                      String email =
-                          GetStorage().read<String>(ConstantData.Useremail) ??
-                              "";
-                      String password = GetStorage()
-                              .read<String>(ConstantData.Userpassword) ??
-                          "";
-
-                      final response =
-                          await ApiClients().getLogoutUser(email, password);
-                      if (response['success'] == true) {
-                        print("Logout Successful");
-
-                        GetStorage().remove(ConstantData.UserAccessToken);
-                        GetStorage().remove(ConstantData.Useremail);
-                        GetStorage().remove(ConstantData.UserCpassword);
-
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                          (route) => false,
-                        );
-                      }
-                    },
-                    child: Padding(
-                      padding:
-                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
-                      child: Container(
-                        width: SizeConfig.screenWidth * 0.3,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              Color(0xffFEBA69),
-                              Color(0xffFE7F64),
-                            ],
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Yes",
-                            style: TextStyle(
-                                height: 2,
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                fontFamily: 'Roboto_Medium',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),*/
 
                   GestureDetector(
                     onTap: () async {
-                      String email =
-                          GetStorage().read<String>(ConstantData.Useremail) ??
-                              "";
-                      String password = GetStorage()
-                              .read<String>(ConstantData.Userpassword) ??
-                          "";
                       print("Logout initiated...");
 
-                      // Retrieve the session token
-                      String? sessionToken = GetStorage()
-                          .read<String>(ConstantData.UserAccessToken);
 
-                      // Validate token existence
+                      String? sessionToken = GetStorage()
+                          .read<String>(ConstantData.userToken);
+
+
                       if (sessionToken == null || sessionToken.isEmpty) {
                         print("No session token found. Redirecting to login.");
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                          (route) => false,
-                        );
+
                         return;
                       }
 
                       // Call the logout API
                       final response =
-                          await ApiClients().getLogoutUser(email, password);
+                          await ApiClients().getLogoutUser();
 
                       if (response['success'] == true) {
                         print("Logout Successful");
-
-                        await GetStorage().remove(ConstantData.UserAccessToken);
-                        await GetStorage().remove(ConstantData.Useremail);
-                        await GetStorage().remove(ConstantData.Userpassword);
+                        await GetStorage().erase();
 
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                          (route) => false,
+                              builder: (context) =>  PhoneRegistrationPage( showLoginWidget: true, mobileNumber: '', email: '', phoneNumber: '',)),
+
+                           (route) => false,
                         );
+
+
                       } else {
                         print("Logout failed: ${response['error']}");
                       }
@@ -1026,7 +962,7 @@ class MainHomeState extends State<MainHome>
                   Stack(
                     children: [
                       Container(
-                        height: 250,
+                        height: 240,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage('assets/images/dashtwo.png'),
@@ -1104,7 +1040,7 @@ class MainHomeState extends State<MainHome>
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
                       Padding(
                         padding:
-                            EdgeInsets.only(top: SizeConfig.screenHeight * 0.2),
+                            EdgeInsets.only(top: SizeConfig.screenHeight * 0.19),
                         child: Text(
                           "     ANYTHING ON RENT",
                           style: TextStyle(
@@ -1118,7 +1054,7 @@ class MainHomeState extends State<MainHome>
                       Center(
                         child: Padding(
                           padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.26),
+                              top: SizeConfig.screenHeight * 0.25),
                           child: Container(
                             height: SizeConfig.screenHeight * 0.07,
                             width: SizeConfig.screenWidth * 0.9,
@@ -1132,6 +1068,39 @@ class MainHomeState extends State<MainHome>
                         ),
                       ),
                       GestureDetector(
+
+                        onTap: () async {
+                          String? selectedCity = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    LocationMapScreen()),
+                          );
+                          if (selectedCity != null) {
+                            print("✅ Received City: $selectedCity");
+
+                            setState(() {
+                              updatedCity = selectedCity;
+                            });
+                            String? id = GetStorage().read<String>('userId');
+                            print("jjjjjjjj  ${id}");
+                            bool success =
+                            await authService.storeUserCity(
+                              id!, // User ID
+                              18.5204, // Latitude
+                              73.8567, // Longitude
+                              selectedCity, // City
+                            );
+
+                            if (success) {
+                              print(
+                                  "✅ City successfully updated in backend!");
+                            } else {
+                              print(
+                                  "❌ Failed to update city in backend.");
+                            }
+                          }
+                        },
                         /*      onTap: () async {
                           final String? result = await Navigator.push(
                             context,
@@ -1144,7 +1113,7 @@ class MainHomeState extends State<MainHome>
                         },*/
                         child: Padding(
                           padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.285, left: 30),
+                              top: SizeConfig.screenHeight * 0.275, left: 30),
                           child: Row(
                             children: [
                               Icon(
@@ -1153,62 +1122,21 @@ class MainHomeState extends State<MainHome>
                                 color: Color(0xfff44343),
                               ),
                               Flexible(
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    String? selectedCity = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              LocationMapScreen()),
-                                    );
-
-                                    /*  if (selectedCity != null) {
-                                      print("Received City: $selectedCity");
-                                      setState(() {
-                                        updatedCity = selectedCity; // UI update ke liye
-                                      });
-                                    }*/
-                                    if (selectedCity != null) {
-                                      print("✅ Received City: $selectedCity");
-
-                                      setState(() {
-                                        updatedCity = selectedCity;
-                                      });
-                                      String? id = GetStorage().read<String>('userId');
-                                      print("jjjjjjjj  ${id}");
-                                      bool success =
-                                          await authService.storeUserCity(
-                                            id!, // User ID
-                                        18.5204, // Latitude
-                                        73.8567, // Longitude
-                                        selectedCity, // City
-                                      );
-
-                                      if (success) {
-                                        print(
-                                            "✅ City successfully updated in backend!");
-                                      } else {
-                                        print(
-                                            "❌ Failed to update city in backend.");
-                                      }
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 120,
-                                    child: Text(
-                                      updatedCity,
-                                      style: TextStyle(
-                                        color: Color(0xfff44343),
-                                        letterSpacing: 0.0,
-                                        fontFamily: "okra_Medium",
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal *
-                                                3.7,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                                child: Container(
+                                  width: 120,
+                                  child: Text(
+                                    updatedCity,
+                                    style: TextStyle(
+                                      color: Color(0xfff44343),
+                                      letterSpacing: 0.0,
+                                      fontFamily: "okra_Medium",
+                                      fontSize:
+                                          SizeConfig.blockSizeHorizontal *
+                                              3.7,
+                                      fontWeight: FontWeight.w400,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
                                 ),
                               ),
@@ -1220,8 +1148,8 @@ class MainHomeState extends State<MainHome>
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ],
                   ),
-                  PopularCategories(
-                      SizeConfig.screenHeight, SizeConfig.screenWidth),
+               /*   PopularCategories(
+                      SizeConfig.screenHeight, SizeConfig.screenWidth),*/
                   sliderData(
                     images,
                     SizeConfig.screenHeight,
@@ -1432,7 +1360,7 @@ class MainHomeState extends State<MainHome>
         padding: EdgeInsets.only(
             left: parentWidth * 0.62,
             right: parentWidth * 0.09,
-            top: SizeConfig.screenHeight * 0.275),
+            top: SizeConfig.screenHeight * 0.265),
         child: Container(
           height: parentHeight * 0.040,
           decoration: BoxDecoration(
@@ -1915,7 +1843,7 @@ class MainHomeState extends State<MainHome>
                                                   PhoneRegistrationPage(
                                                     mobileNumber: '',
                                                     email: '',
-                                                    phoneNumber: '',
+                                                    phoneNumber: '', showLoginWidget: false,
                                                   )));
                                     },
                                     child: Padding(

@@ -836,7 +836,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
 
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '',)),
+                      MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false,)),
                     );
                   });
                   }).catchError((error) {
