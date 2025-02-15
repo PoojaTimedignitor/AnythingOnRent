@@ -1,6 +1,8 @@
 import 'package:anything/All_Product_List.dart';
 import 'package:anything/CatagrioesList.dart';
+import 'package:anything/ConstantData/AuthStorage.dart';
 import 'package:anything/model/dio_client.dart';
+import 'package:anything/newGetStorage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Admin/UserFeedback.dart';
@@ -10,11 +12,13 @@ import 'package:geolocator/geolocator.dart';
 import 'Authentication/login_screen.dart';
 import 'Authentication/register_common.dart';
 import 'City_Create.dart';
+import 'Common_File/ResponsiveUtil.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 import 'ConstantData/Constant_data.dart';
 import 'MyBehavior.dart';
 import 'package:anything/ResponseModule/getAllCatList.dart' as catData;
+import 'NewDioClient.dart';
 import 'ProductConfirmation.dart';
 import 'ResponseModule/BusniessAdsResponseModel.dart';
 import 'ResponseModule/getAllCatList.dart';
@@ -35,6 +39,8 @@ import 'package:get_storage/get_storage.dart';
 
 import 'package:geocoding/geocoding.dart';
 
+import 'change_home.dart';
+import 'createCity.dart';
 import 'location_map.dart';
 
 class MainHome extends StatefulWidget {
@@ -60,6 +66,7 @@ class MainHomeState extends State<MainHome>
 
   bool isLoading = true;
   bool isSearchingData = false;
+  String locationName = "";
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -72,9 +79,13 @@ class MainHomeState extends State<MainHome>
       fetchProductsList();
       fetchBusinessAds();
       _getCityName();
-      firstname = GetStorage().read<String>(ConstantData.firstName,) ?? "Guest";
-      updatedCity = GetStorage().read<String>("selectedCity") ?? "Select City";
+      _getLocation();
 
+    //  firstname = GetStorage().read<String>(ConstantData.firstName,) ?? "Guest";
+      firstname = AuthStorage.getFirstName() ?? "Guest";
+    //  firstname = AuthStorage().
+      updatedCity = GetStorage().read<String>("selectedCity") ?? "Select City";
+      print("name   $firstname");
       _tabController = TabController(length: 2, vsync: this);
       //  updatedCity = GetStorage().read('selectedCity') ?? "No city selected";
     });
@@ -269,6 +280,61 @@ class MainHomeState extends State<MainHome>
     }
   }
 
+
+  Future<void> _getLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showLocationDialog();
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _showLocationDialog();
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _showLocationDialog();
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+
+        String fullAddress =
+            "${place.name}, ${place.street}, ${place.subLocality}, ${place.locality}, "
+            "${place.administrativeArea}, ${place.postalCode}, ${place.country}";
+
+        setState(() {
+          locationName = fullAddress;
+        });
+      } else {
+        setState(() {
+          locationName = "Address not found";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        locationName = "Failed to fetch address: $e";
+      });
+    }
+  }
+
+
   void LogoutDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
@@ -326,12 +392,13 @@ class MainHomeState extends State<MainHome>
                     onTap: () async {
                       print("Logout initiated...");
 
+                      String? accessToken = AuthStorage.getAccessToken();
+                      print("📌 Stored Access Token: $accessToken");
+                      /*String? sessionToken = GetStorage()
+                          .read<String>(ConstantData.userToken);*/
 
-                      String? sessionToken = GetStorage()
-                          .read<String>(ConstantData.userToken);
 
-
-                      if (sessionToken == null || sessionToken.isEmpty) {
+                      if (accessToken == null || accessToken.isEmpty) {
                         print("No session token found. Redirecting to login.");
 
                         return;
@@ -339,11 +406,11 @@ class MainHomeState extends State<MainHome>
 
                       // Call the logout API
                       final response =
-                          await ApiClients().getLogoutUser();
+                          await NewApiClients().getNewLogoutUser();
 
                       if (response['success'] == true) {
                         print("Logout Successful");
-                        await GetStorage().erase();
+                        NewAuthStorage.clearStorage();
 
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
@@ -434,12 +501,7 @@ class MainHomeState extends State<MainHome>
 
   String updatedCity = "No city selected";
 
-/*  void updateCity(String newCity) {
-    setState(() {
-      updatedCity = newCity;
-      GetStorage().write('selectedCity', newCity);
-    });
-  }*/
+
 
   @override
   Widget build(BuildContext context) {
@@ -449,11 +511,12 @@ class MainHomeState extends State<MainHome>
       resizeToAvoidBottomInset: false,
       drawer: Drawer(
         backgroundColor: Color(0xffffffff),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          physics: NeverScrollableScrollPhysics(),
+        child: Column(
+        //  padding: EdgeInsets.zero,
+        //  physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
-            Container(
+
+           /* Container(
               height: 160,
               color: Color(0xfff1f2fd),
               child: Stack(
@@ -482,74 +545,131 @@ class MainHomeState extends State<MainHome>
                       ),
                     ),
                   ),
-                  Container(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          top: SizeConfig.screenHeight * 0.08, left: 23),
+
+                  Padding(
+                    padding:  EdgeInsets.only(top: 40,right: 20),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        width: 33,
+                        height: 33,
+                        child: Center(
+                          child: Icon(
+                            Icons.settings,
+                            size: 18,
+                            color: Colors.black,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffe4b4fb),
+                              Color(0xfffddfdf),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Myprofiledetails()),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.08, left: 10),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: CircleAvatar(
-                              radius: 29.0,
-                              backgroundColor: Colors.white,
-                              child: CircleAvatar(
-                                radius: 25.0,
-                                backgroundColor: Colors.transparent,
-                                backgroundImage: (profileImage != null &&
+
+                          Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: CircleAvatar(
+                                  radius: 29.0,
+                                  backgroundColor: Colors.white,
+                                  child: CircleAvatar(
+                                    radius: 25.0,
+                                    backgroundColor: Colors.transparent,
+                                    backgroundImage: (profileImage != null &&
                                         profileImage!.isNotEmpty)
-                                    ? NetworkImage(profileImage!)
-                                    : AssetImage('assets/images/profiless.png')
-                                        as ImageProvider,
-                                // Profile image
+                                        ? NetworkImage(profileImage!)
+                                        : AssetImage('assets/images/profiless.png') as ImageProvider,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  *//*decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    shape: BoxShape.circle,
+                                  ),*//*
+                                  padding: EdgeInsets.all(4),
+                                  child: Image(image: AssetImage('assets/images/pro_edit.png'),height: 16,)      *//* Icon(
+                                    Icons.edit,
+                                    //color: Colors.white,
+                                    size: 16,
+                                  ),*//*
+                                ),
+                              ),
+                            ],
                           ),
+
+
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding:  EdgeInsets.only(top: 14,left: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "Hii, $firstname",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: "okra_Medium",
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
+
+                                Container(
+                                  width:150,
+                                  child: Text(
+                                    "Hii, $firstname",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                    ),overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 SizedBox(height: 2),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Wrap(
-                                    spacing: 4,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 3),
-                                        child: const Image(
-                                          image: AssetImage(
-                                              'assets/images/location.png'),
-                                          height: 13,
+
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 3),
+                                      child: const Image(
+                                        image: AssetImage('assets/images/location.png'),
+                                        height: 13,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(width: 4),
+                                    // Location Text (Tappable)
+                                    Container(
+                                      width: 190,
+                                      child: Text(
+                                        locationName,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontFamily: 'Montserrat_Medium',
+                                          fontWeight: FontWeight.w500,
                                           color: Colors.black54,
                                         ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      Container(
-                                        width: 170,
-                                        child: Text(
-                                          "Park pashan pune, 2004 pune pashan... ",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontFamily: 'Montserrat_Medium',
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black54,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -557,396 +677,782 @@ class MainHomeState extends State<MainHome>
                         ],
                       ),
                     ),
-                  ),
+                  )
+
                 ],
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 30, left: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()));
-                    },
-                    child: Wrap(
-                      spacing: 13,
-                      children: [
-                        SizedBox(width: 03),
-                        Image(
-                          image: AssetImage('assets/images/userprofile.png'),
-                          height: 22,
-                        ),
-                        Text("My Profile",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.9,
-                                fontFamily: "okra_Regular",
-                                color: CommonColor.Black,
-                                fontWeight: FontWeight.w400)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyCollection()));
-                    },
-                    child: Wrap(
-                      spacing: 13,
-                      children: [
-                        SizedBox(width: 01),
-                        Image(
-                          image: AssetImage('assets/images/myads.png'),
-                          height: 22,
-                        ),
-                        Text("My Collection",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.9,
-                                fontFamily: "okra_Regular",
-                                color: Colors.black,
-                                fontWeight: FontWeight.w400)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => AddToCart()));
-                    },
-                    child: Wrap(
-                      spacing: 13,
-                      children: [
-                        SizedBox(width: 02),
-                        Image(
-                          image: AssetImage('assets/images/like.png'),
-                          height: 20,
-                          color: Colors.black54,
-                        ),
-                        Text(
-                            // the text of the row.
-                            "My Favorites",
-                            style: TextStyle(
-                                fontSize: SizeConfig.blockSizeHorizontal * 3.9,
-                                fontFamily: "okra_Regular",
-                                color: CommonColor.Black,
-                                fontWeight: FontWeight.w400)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyTransaction()));
-                    },
-                    child: Wrap(
-                      spacing: 10,
-                      children: [
-                        SizedBox(width: 0),
-                        const Image(
-                          image: AssetImage('assets/images/transaction.png'),
-                          height: 27,
-                        ),
-                        Container(
-                          width: 180,
-                          //  color: Colors.red,
-                          child: Text(
-                              // the text of the row.
-                              "My Transaction History",
-                              style: TextStyle(
-                                  fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
-                                  fontFamily: "okra_Regular",
-                                  color: CommonColor.Black,
-                                  fontWeight: FontWeight.w400),
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MyRatings()));
-                    },
-                    child: Wrap(
-                      spacing: 11,
-                      children: [
-                        SizedBox(height: 10),
-                        const Image(
-                          image: AssetImage('assets/images/rating.png'),
-                          height: 27,
-                        ),
-                        Container(
-                          width: 108,
-                          //  color: Colors.red,
-                          child: Text("My Ratings",
-                              style: TextStyle(
-                                  fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
-                                  fontFamily: "okra_Regular",
-                                  color: CommonColor.Black,
-                                  fontWeight: FontWeight.w400),
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => chat()));
-                    },
-                    child: Wrap(
-                      spacing: 13,
-                      children: [
-                        SizedBox(width: 0),
-                        const Image(
-                          image: AssetImage('assets/images/chat.png'),
-                          height: 20,
-                        ),
-                        Container(
-                          width: 108,
-                          //  color: Colors.red,
-                          child: Text(
-                              // the text of the row.
-                              "Chat",
-                              style: TextStyle(
-                                  fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
-                                  fontFamily: "okra_Regular",
-                                  color: CommonColor.Black,
-                                  fontWeight: FontWeight.w400),
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                        SizedBox(width: 50),
-                        Container(
-                          height: 23,
-                          width: 23,
-                          decoration: BoxDecoration(
-                            color: Color(0xffF8C5C2),
-                            borderRadius: BorderRadius.all(Radius.circular(6)),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "12",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "okra_Medium",
-                                  color: CommonColor.Black,
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20),
-                            ),
-                          ),
-                          context: context,
-                          backgroundColor: Colors.white,
-                          elevation: 10,
-                          isScrollControlled: true,
-                          isDismissible: true,
-                          builder: (BuildContext bc) {
-                            return Userfeedback();
-                          });
+            ),*/
 
-                      /*   Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => AppImprov()));*/
-                    },
-                    child: Wrap(
-                      spacing: 13,
-                      children: [
-                        SizedBox(width: 0),
-                        const Image(
-                          image: AssetImage('assets/images/chat.png'),
-                          height: 20,
-                        ),
-                        Container(
-                          width: 130,
-                          //  color: Colors.red,
-                          child: Text(
-                              // the text of the row.
-                              "Feedback",
-                              style: TextStyle(
-                                  fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
-                                  fontFamily: "okra_Regular",
-                                  color: CommonColor.Black,
-                                  fontWeight: FontWeight.w400),
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
-                    ),
+
+
+        Container(
+        height: ResponsiveUtil.height(160),
+        color: const Color(0xfff1f2fd),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                width: ResponsiveUtil.width(108),
+                height: ResponsiveUtil.height(120),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(bottomRight: Radius.circular(100)),
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                width: ResponsiveUtil.width(85),
+                height: ResponsiveUtil.height(95),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(bottomRight: Radius.circular(100)),
+                  color: Color(0xfff1f2fd),
+                ),
+              ),
+            ),
+            Positioned(
+              top: ResponsiveUtil.height(40),
+              right: ResponsiveUtil.width(20),
+              child: Container(
+                width: ResponsiveUtil.width(33),
+                height: ResponsiveUtil.width(33),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      Color(0xffe4b4fb),
+                      Color(0xfffddfdf),
+                    ],
                   ),
-                  SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HelpCenterScreen()));
-                    },
-                    child: Wrap(
-                      spacing: 12,
+                ),
+                child: const Center(
+                  child: Icon(Icons.settings, size: 18, color: Colors.black),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Myprofiledetails()),
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: ResponsiveUtil.height(80),
+                  left: ResponsiveUtil.width(10),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
                       children: [
-                        SizedBox(width: 02),
-                        const Image(
-                          image: AssetImage('assets/images/terms.png'),
-                          height: 20,
-                          color: Colors.black54,
-                        ),
-                        Container(
-                          width: 108,
-                          //  color: Colors.red,
-                          child: Text("Help",
-                              style: TextStyle(
-                                  fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
-                                  fontFamily: "okra_Regular",
-                                  color: CommonColor.Black,
-                                  fontWeight: FontWeight.w400),
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProductConfigurations()));
-                    },
-                    child: Wrap(
-                      spacing: 09,
-                      children: [
-                        SizedBox(width: 03),
-                        const Image(
-                          image: AssetImage('assets/images/setting.png'),
-                          height: 20,
-                        ),
-                        Container(
-                          width: 108,
-                          //  color: Colors.red,
-                          child: Text(
-                              // the text of the row.
-                              "Setting",
-                              style: TextStyle(
-                                  fontSize:
-                                      SizeConfig.blockSizeHorizontal * 3.9,
-                                  fontFamily: "okra_Regular",
-                                  color: CommonColor.Black,
-                                  fontWeight: FontWeight.w400),
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 25),
-                  GestureDetector(
-                    onTap: () {
-                      LogoutDialogBox(context);
-                    },
-                    child: Row(
-                      children: [
-                        //  Spacer(),
-                        Container(
-                          child: Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Row(
-                              children: [
-                                Image(
-                                  image: AssetImage('assets/images/logout.png'),
-                                  height: 20,
-                                  color: Colors.pink,
-                                ),
-                                Text(
-                                  "    Logout    ",
-                                  style: TextStyle(
-                                      color: Colors.pink,
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.9),
-                                )
-                              ],
-                            ),
+                        CircleAvatar(
+                          radius: ResponsiveUtil.width(29),
+                          backgroundColor: Colors.white,
+                          child: CircleAvatar(
+                            radius: ResponsiveUtil.width(25),
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: profileImage != null && profileImage!.isNotEmpty
+                                ? NetworkImage(profileImage!)
+                                : const AssetImage('assets/images/profiless.png') as ImageProvider,
                           ),
                         ),
-                        Spacer()
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(ResponsiveUtil.width(4)),
+                            child: Image.asset('assets/images/pro_edit.png', height: ResponsiveUtil.width(16)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: ResponsiveUtil.width(10)),
+                    Padding(
+                      padding:  EdgeInsets.only(
+                          top: ResponsiveUtil.height(10),
+                          left: ResponsiveUtil.width(3)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: ResponsiveUtil.width(150),
+                            child: Text(
+                              "Hii, $firstname",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "okra_Medium",
+                                fontSize: ResponsiveUtil.fontSize(15),
+                                fontWeight: FontWeight.w400,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              const Image(
+                                image: AssetImage('assets/images/location.png'),
+                                height: 13,
+                                color: Colors.black54,
+                              ),
+                              const SizedBox(width: 4),
+                              SizedBox(
+                                width: ResponsiveUtil.width(190),
+                                child: Text(
+                                  locationName,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveUtil.fontSize(13),
+                                    fontFamily: 'Montserrat_Medium',
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black54,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        ),
+
+            Expanded(
+              child:  ScrollConfiguration(
+                behavior: MyBehavior(),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 20, left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyCollection()));
+                          },
+                          child: Wrap(
+                            spacing: 13,
+                            children: [
+                              SizedBox(width: 01),
+                              Image(
+                                image: AssetImage('assets/images/myads.png'),
+                                height: 22,
+                              ),
+                              Text("Manage Posts",
+                                  /*style: TextStyle(
+                                      fontSize: SizeConfig.blockSizeHorizontal * 3.93,
+                                      fontFamily: "okra_Regular",
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400)*/
+
+                                style: TextStyle(
+                                  color: Color(0xff2B2B2B),
+                                  fontFamily: "okra_Medium",
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+
+
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => AddToCart()));
+                          },
+                          child: Wrap(
+                            spacing: 13,
+                            children: [
+                              SizedBox(width: 02),
+                              Image(
+                                image: AssetImage('assets/images/like.png'),
+                                height: 20,
+                                color: Colors.black54,
+                              ),
+                              Text(
+                                  // the text of the row.
+                                  "My Favorites",
+                                 /* style: TextStyle(
+                                      fontSize: SizeConfig.blockSizeHorizontal * 3.9,
+                                      fontFamily: "okra_Regular",
+                                      color: CommonColor.Black,
+                                      fontWeight: FontWeight.w400)*/
+                                style: TextStyle(
+                                  color: Color(0xff2B2B2B),
+                                  fontFamily: "okra_Medium",
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyTransaction()));
+                          },
+                          child: Wrap(
+                            spacing: 10,
+                            children: [
+                              SizedBox(width: 0),
+                              const Image(
+                                image: AssetImage('assets/images/transaction.png'),
+                                height: 27,
+                              ),
+                              Container(
+                                width: 180,
+                                //  color: Colors.red,
+                                child: Text(
+                                    // the text of the row.
+                                    "Contacted History",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyTransaction()));
+                          },
+                          child: Wrap(
+                            spacing: 10,
+                            children: [
+                              SizedBox(width: 0),
+                              const Image(
+                                image: AssetImage('assets/images/transaction.png'),
+                                height: 27,
+                              ),
+                              Container(
+                                width: 180,
+                                //  color: Colors.red,
+                                child: Text(
+                                  // the text of the row.
+                                    "Users Contacted",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => MyRatings()));
+                          },
+                          child: Wrap(
+                            spacing: 11,
+                            children: [
+                              SizedBox(height: 10),
+                              const Image(
+                                image: AssetImage('assets/images/rating.png'),
+                                height: 27,
+                              ),
+                              Container(
+                                width: 108,
+                                //  color: Colors.red,
+                                child: Text("My Ratings",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 15),
+
+                        Center(
+                          child: Container(
+                            height: 0.4,
+                            // width:  0.95,
+                            color: CommonColor.bottomsheet,
+                          ),
+                        ),
+                        SizedBox(height: 3),
+                        Center(
+                          child: Container(
+                            height: 0.4,
+                            // width:  0.95,
+                            color: CommonColor.bottomsheet,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => chat()));
+                          },
+                          child: Wrap(
+                            spacing: 13,
+                            children: [
+                              SizedBox(width: 0),
+                              const Image(
+                                image: AssetImage('assets/images/chat.png'),
+                                height: 20,
+                              ),
+                              Container(
+                               // width: 125,
+                                //  color: Colors.red,
+                                child: Text(
+                                    // the text of the row.
+                                    "Subscription History",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                              SizedBox(width: 50),
+                             /* Container(
+                                height: 23,
+                                width: 23,
+                                decoration: BoxDecoration(
+                                  color: Color(0xffF8C5C2),
+                                  borderRadius: BorderRadius.all(Radius.circular(6)),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "12",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: "okra_Medium",
+                                        color: CommonColor.Black,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                ),
+                              )*/
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                  ),
+                                ),
+                                context: context,
+                                backgroundColor: Colors.white,
+                                elevation: 10,
+                                isScrollControlled: true,
+                                isDismissible: true,
+                                builder: (BuildContext bc) {
+                                  return Userfeedback();
+                                });
+
+                            /*   Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => AppImprov()));*/
+                          },
+                          child: Wrap(
+                            spacing: 13,
+                            children: [
+                              SizedBox(width: 0),
+                              const Image(
+                                image: AssetImage('assets/images/chat.png'),
+                                height: 20,
+                              ),
+                              Container(
+                                width: 130,
+                                //  color: Colors.red,
+                                child: Text(
+                                    // the text of the row.
+                                    "Due for renewal",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HelpCenterScreen()));
+                          },
+                          child: Wrap(
+                            spacing: 12,
+                            children: [
+                              SizedBox(width: 02),
+                              const Image(
+                                image: AssetImage('assets/images/terms.png'),
+                                height: 20,
+                                color: Colors.black54,
+                              ),
+                              Container(
+                               // width: 108,
+                                //  color: Colors.red,
+                                child: Text("Help & Support",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductConfigurations()));
+                          },
+                          child: Wrap(
+                            spacing: 09,
+                            children: [
+                              SizedBox(width: 03),
+                              const Image(
+                                image: AssetImage('assets/images/setting.png'),
+                                height: 20,
+                              ),
+                              Container(
+                                width: 108,
+                                //  color: Colors.red,
+                                child: Text(
+                                    // the text of the row.
+                                    "FeedBack",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductConfigurations()));
+                          },
+                          child: Wrap(
+                            spacing: 09,
+                            children: [
+                              SizedBox(width: 03),
+                              const Image(
+                                image: AssetImage('assets/images/setting.png'),
+                                height: 20,
+                              ),
+                              Container(
+                               // width: 108,
+                                //  color: Colors.red,
+                                child: Text(
+                                  // the text of the row.
+                                    "Report & Suggestions",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 15),
+
+                        Center(
+                          child: Container(
+                            height: 0.4,
+                           // width:  0.95,
+                            color: CommonColor.bottomsheet,
+                          ),
+                        ), SizedBox(height: 3),
+                        Center(
+                          child: Container(
+                            height: 0.4,
+                            // width:  0.95,
+                            color: CommonColor.bottomsheet,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductConfigurations()));
+                          },
+                          child: Wrap(
+                            spacing: 09,
+                            children: [
+                              SizedBox(width: 03),
+                              const Image(
+                                image: AssetImage('assets/images/setting.png'),
+                                height: 20,
+                              ),
+                              Container(
+                                // width: 108,
+                                //  color: Colors.red,
+                                child: Text(
+
+
+                                    "About Us",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductConfigurations()));
+                          },
+                          child: Wrap(
+                            spacing: 09,
+                            children: [
+                              SizedBox(width: 03),
+                              const Image(
+                                image: AssetImage('assets/images/setting.png'),
+                                height: 20,
+                              ),
+                              Container(
+                                // width: 108,
+                                //  color: Colors.red,
+                                child: Text(
+                                  // the text of the row.
+                                    "Rate Us",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductConfigurations()));
+                          },
+                          child: Wrap(
+                            spacing: 09,
+                            children: [
+                              SizedBox(width: 03),
+                              const Image(
+                                image: AssetImage('assets/images/setting.png'),
+                                height: 20,
+                              ),
+                              Container(
+                                // width: 108,
+                                //  color: Colors.red,
+                                child: Text(
+                                  // the text of the row.
+                                    "Follow Us",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => chat()));
+                          },
+                          child: Wrap(
+                            spacing: 13,
+                            children: [
+                              SizedBox(width: 0),
+                              const Image(
+                                image: AssetImage('assets/images/chat.png'),
+                                height: 20,
+                              ),
+                              Container(
+                                // width: 125,
+                                //  color: Colors.red,
+                                child: Text(
+                                  // the text of the row.
+                                    "Share App",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+
+                               Container(
+                                height: 23,
+                                width: 23,
+                                child: Center(
+                                  child:
+                                  Icon(Icons.share_sharp,size: 18,)
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => chat()));
+                          },
+                          child: Wrap(
+                            spacing: 13,
+                            children: [
+                              SizedBox(width: 0),
+                              Image(
+                                image: AssetImage('assets/images/chat.png'),
+                                height: 20,
+                              ),
+                              Container(
+                                // width: 125,
+                                //  color: Colors.red,
+                                child: Text(
+                                  // the text of the row.
+                                    "Legal",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 15),
+
+                        GestureDetector(
+                          onTap: () {
+                            LogoutDialogBox(context);
+                          },
+                          child: Row(
+                            children: [
+                              //  Spacer(),
+                              Container(
+                                child: Padding(
+                                  padding: EdgeInsets.all(5),
+                                  child: Row(
+                                    children: [
+                                      Image(
+                                        image: AssetImage('assets/images/logout.png'),
+                                        height: 20,
+                                        color: Colors.pink,
+                                      ),
+                                      Text(
+                                        "    Logout    ",
+                                        style: TextStyle(
+                                          color: Colors.pink,
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+
+                                       /* style: TextStyle(
+                                            color: Colors.pink,
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal * 3.9),*/
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Spacer()
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 30),
                       ],
                     ),
                   ),
-                  SizedBox(height: 30),
-                ],
+                ),
               ),
             ),
           ],
         ),
       ),
-      /* floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: FloatingActionButton(
-          backgroundColor: Colors.transparent,
-          onPressed: () {
-            showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.white,
-                elevation: 2,
-                isScrollControlled: true,
-                isDismissible: true,
-                builder: (BuildContext bc) {
-                  return CreateProductService();
-                });
-          },
-          tooltip: 'Cool FAB',
-          elevation: 009,
-          child: Container(
-            width: 56,
-            height: 56,
-            child: Center(
-              child: Icon(
-                Icons.add,
-                color: Colors.black,
-              ),
-            ),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Color(0xfff44343),
-                  Color(0xffFEA3A3),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),*/
-      body: ScrollConfiguration(
+
+      body:/* ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView(
           shrinkWrap: true,
@@ -971,7 +1477,7 @@ class MainHomeState extends State<MainHome>
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.only(top: 40, left: 10),
+                          padding: EdgeInsets.only(top: 40, left: 15),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -989,7 +1495,7 @@ class MainHomeState extends State<MainHome>
                                     Text(
                                       " Hi, $firstname",
                                       style: TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 16,
                                         fontFamily: 'okra_extrabold',
                                         fontWeight: FontWeight.w400,
                                         color: Colors.black,
@@ -1006,18 +1512,22 @@ class MainHomeState extends State<MainHome>
                                           color: CupertinoColors.black,
                                         ),
                                         SizedBox(width: 7),
-                                        Text(
-                                          "Park Street, Kolkata, 700021",
-                                          style: TextStyle(
-                                            fontSize:
-                                                13, // Adjusted for clarity
-                                            fontFamily: 'Poppins_Bold',
-                                            fontWeight: FontWeight.w400,
-                                            letterSpacing: 0.5,
-                                            color: CupertinoColors.black,
+                                        Container(
+                                          width: ResponsiveUtil.width(250),
+
+                                          child: Text(
+                                            locationName,
+                                            style: TextStyle(
+                                              fontSize:
+                                                  14, // Adjusted for clarity
+                                              fontFamily: 'Poppins_Bold',
+                                              fontWeight: FontWeight.w400,
+                                              letterSpacing: 0.5,
+                                              color: CupertinoColors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
                                         ),
                                       ],
                                     ),
@@ -1025,7 +1535,7 @@ class MainHomeState extends State<MainHome>
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(top: 3, left: 110),
+                                padding: EdgeInsets.only(top: 3, left: 30),
                                 child: const Image(
                                   image: AssetImage(
                                       'assets/images/notification.png'),
@@ -1101,7 +1611,8 @@ class MainHomeState extends State<MainHome>
                             }
                           }
                         },
-                        /*      onTap: () async {
+                        */
+      /*      onTap: () async {
                           final String? result = await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1110,7 +1621,7 @@ class MainHomeState extends State<MainHome>
                           if (result != null) {
                             updateCity(result); // Update city if selected
                           }
-                        },*/
+                        },*//*
                         child: Padding(
                           padding: EdgeInsets.only(
                               top: SizeConfig.screenHeight * 0.275, left: 30),
@@ -1148,9 +1659,8 @@ class MainHomeState extends State<MainHome>
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ],
                   ),
-               /*   PopularCategories(
-                      SizeConfig.screenHeight, SizeConfig.screenWidth),*/
-                  sliderData(
+
+             *//*     sliderData(
                     images,
                     SizeConfig.screenHeight,
                     SizeConfig.screenWidth,
@@ -1161,42 +1671,223 @@ class MainHomeState extends State<MainHome>
                     child: getAddGameTabLayout(
                         SizeConfig.screenHeight, SizeConfig.screenWidth),
                   ),
+*//*
 
-                  /* Stack(
-                    children: [
-                   Padding(
-                    padding: EdgeInsets.only(
-                        left: SizeConfig.screenWidth * 0.68, top: 200),
-                    child: Image(
-                      image: AssetImage('assets/images/home.png'),
-                      height: SizeConfig.screenHeight * 0.280,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.30),
-                    child: Image(
-                      image: AssetImage('assets/images/homecircle.png'),
-                      height: SizeConfig.screenHeight * 0.120,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: SizeConfig.screenWidth * 0.40),
-                    child: Image(
-                      image: AssetImage('assets/images/homecircle.png'),
-                      height: SizeConfig.screenHeight * 0.120,
-                    ),
-                  ),
-
-
-                      // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
-                    ],
-                  ),*/
                 ],
               ),
             ),
           ],
         ),
+      ),*/
+
+
+
+     LayoutBuilder(
+        builder: (context, constraints) {
+          return ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  /// **Top Banner Section**
+                  Stack(
+                    children: [
+                      /// **Background Image**
+                      Container(
+                        height: ResponsiveUtil.height(320),
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/dashtwo.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                        ),
+                      ),
+
+                      /// **Header Row (Menu, Name, Notification)**
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: ResponsiveUtil.height(60),
+                          left: ResponsiveUtil.width(20),
+                          right: ResponsiveUtil.width(20),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                _scaffoldKey.currentState?.openDrawer();
+                              },
+                              child: Icon(Icons.menu,
+                                  size: ResponsiveUtil.fontSize(28),
+                                  color: Colors.black),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Hi, $firstname",
+                                  style: TextStyle(
+                                    fontSize: ResponsiveUtil.fontSize(22),
+                                    fontFamily: 'okra_extrabold',
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                SizedBox(height: ResponsiveUtil.height(5)),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/location.png',
+                                      height: ResponsiveUtil.height(22),
+                                      color: CupertinoColors.black,
+                                    ),
+                                    SizedBox(width: ResponsiveUtil.width(10)),
+                                    Container(
+                                      width: ResponsiveUtil.width(220),
+                                      child: Text(
+                                        locationName,
+                                        style: TextStyle(
+                                          fontSize: ResponsiveUtil.fontSize(18),
+                                          fontFamily: 'Poppins_Bold',
+                                          fontWeight: FontWeight.w500,
+                                          color: CupertinoColors.black,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Image.asset(
+                              'assets/images/notification.png',
+                              height: ResponsiveUtil.height(26),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// **Search Bar**
+                      Positioned(
+                        top: ResponsiveUtil.height(100),
+                        left: 0,
+                        right: 0,
+                        child: HomeSearchBar(SizeConfig.screenHeight,SizeConfig.screenWidth),
+                      ),
+
+                      /// **Main Title**
+                      Positioned(
+                        top: ResponsiveUtil.height(260),
+                        left: ResponsiveUtil.width(25),
+                        child: Text(
+                          "ANYTHING ON RENT",
+                          style: TextStyle(
+                            fontSize: ResponsiveUtil.fontSize(26),
+                            fontFamily: "okra_extrabold",
+                            color: CupertinoColors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+
+                      /// **Location Update Button**
+                      Positioned(
+                        top: ResponsiveUtil.height(300),
+                        left: ResponsiveUtil.width(25),
+                        child: GestureDetector(
+                          onTap: () async {
+                            String? selectedCity = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LocationMapScreen()),
+                            );
+                            if (selectedCity != null) {
+                              setState(() {
+                                updatedCity = selectedCity;
+                              });
+                              String? id = GetStorage().read<String>('userId');
+                              bool success = await authService.storeUserCity(
+                                id!,
+                                18.5204,
+                                73.8567,
+                                selectedCity,
+                              );
+                              if (success) {
+                                print("✅ City successfully updated!");
+                              } else {
+                                print("❌ Failed to update city.");
+                              }
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                size: ResponsiveUtil.fontSize(24),
+                                color: Color(0xfff44343),
+                              ),
+                              SizedBox(width: ResponsiveUtil.width(5)),
+                              Container(
+                                width: ResponsiveUtil.width(140),
+                                child: Text(
+                                  updatedCity,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveUtil.fontSize(20),
+                                    fontFamily: "okra_Medium",
+                                    color: Color(0xfff44343),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      /// **Add Post Button**
+                      Positioned(
+                        top: ResponsiveUtil.height(340),
+                        left: 0,
+                        right: 0,
+                        child: AddPostButton(
+                            SizeConfig.screenHeight, SizeConfig.screenWidth),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: ResponsiveUtil.height(20)),
+
+                  /// **Additional Sections**
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveUtil.width(20)),
+                    child: Column(
+                      children: [
+                        /// **Slider Section**
+                        sliderData(images,SizeConfig.screenHeight, SizeConfig.screenWidth),
+
+                        SizedBox(height: ResponsiveUtil.height(30)),
+
+                        /// **Tab Layout**
+                        getAddGameTabLayout(SizeConfig.screenHeight,SizeConfig.screenWidth),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
+
+
+
+
     );
   }
 
@@ -1836,7 +2527,7 @@ class MainHomeState extends State<MainHome>
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      Navigator.push(
+                                      /*Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
@@ -1844,7 +2535,17 @@ class MainHomeState extends State<MainHome>
                                                     mobileNumber: '',
                                                     email: '',
                                                     phoneNumber: '', showLoginWidget: false,
-                                                  )));
+                                                  )));*/
+
+
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    RegisterScreenssss()));
+
+
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(
@@ -2027,7 +2728,7 @@ class MainHomeState extends State<MainHome>
                                                                 ),
                                                                 Flexible(
                                                                   child: Text(
-                                                                    ' Park Street,pune banner 20023',
+                                                                    'park Street pune 004120',
                                                                     style:
                                                                         TextStyle(
                                                                       color: Colors
@@ -2122,7 +2823,7 @@ class MainHomeState extends State<MainHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  AllProductList()));
+                                                  ChangeHome()));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

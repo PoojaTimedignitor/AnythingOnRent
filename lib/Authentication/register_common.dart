@@ -1,3 +1,5 @@
+import 'package:anything/GetStoragesss.dart';
+import 'package:anything/newGetStorage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,11 +10,12 @@ import '../Common_File/common_color.dart';
 import 'package:pinput/pinput.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../ConstantData/AuthStorage.dart';
 import '../ConstantData/Constant_data.dart';
 import '../MainHome.dart';
+import '../NewDioClient.dart';
 import '../model/dio_client.dart';
 import 'forget_password.dart';
-import 'login_screen.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
@@ -105,6 +108,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   bool isNextScreen = false;
   bool continueScreen = false;
   final ApiClients authService = ApiClients();
+  final NewApiClients newauthService = NewApiClients();
 
   @override
   void initState() {
@@ -121,27 +125,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         print("Is Button Active: $isButtonActive");
       });
 
-    /* String? phoneNumber = GetStorage().read<String>(ConstantData.UserMobile);
-    print("phoneNumber: $phoneNumber");*/
-
-    /* _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 5000), // Duration of animation
-    );
-
-    // SlideAnimation ki setup
-    _slideAnimation = Tween<Offset>(
-      begin: Offset(1.0, 0.0), // Slide from right
-      end: Offset(0.0, 0.0),    // Slide to the original position
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    // Animation start karna
-    _animationController.forward();*/
     showLoginWidget = widget.showLoginWidget;
 
     _animationController = AnimationController(
@@ -162,10 +145,11 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         isCodeValid = ReferralCodeController.text.length == 6;
         if (!isCodeValid) {
           verifiedText =
-              "Referral Code (optional)";
+          "Referral Code (optional)";
         }
       });
-    });
+    }
+    );
   }
 
   @override
@@ -177,13 +161,13 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     emailOTPController.dispose();
     _phoneFocus.dispose();
     focusNode.dispose();
-    ReferralCodeController.dispose(); // Cleanup
-    ReferralCodeController.dispose(); // Cleanup
+    ReferralCodeController.dispose();
+    ReferralCodeController.dispose();
 
     super.dispose();
   }
 
-  Future<void> validatePhoneNumber() async {
+  /* Future<void> validatePhoneNumber() async {
     final phoneNumber = phoneController.text.trim();
 
     if (phoneNumber.isEmpty || phoneNumber.length != 10) {
@@ -196,13 +180,48 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     bool isRegistered = await authService.sendMobileOtp(phoneNumber);
 
     if (isRegistered) {
-      GetStorage().write('phoneNumber', phoneNumber);
+     // GetStorage().write('phoneNumber', phoneNumber);
+      // 📌 Phone Number को AuthStorage में Store करो
+      AuthStorage.setPhoneNumber(phoneNumber);
+      print("📌 Phone Number Stored in AuthStorage: $phoneNumber");
 
-     // GetStorage().write(ConstantData.UserMobile, 'phoneNumber');
-      print(
-          "Stored Phone Number: ${GetStorage().read<String>(ConstantData.UserMobile)}");
+      // 📌 Stored Phone Number को Read करो और Print करो
+      String? storedPhone = AuthStorage.getPhoneNumber();
+      print("📌 Retrieved Phone Number from AuthStorage: $storedPhone");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('OTP sent successfully!')),
+      );
+
+      setState(() {
+        showOTPWidget = true;
+        _animationController.forward();
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send OTP. Try again!')),
+      );
+    }
+  }*/
 
 
+  //new code
+  /// 📌 Validate and Send OTP
+  Future<void> validatePhoneNumber() async {
+    final phoneNumber = phoneController.text.trim();
+
+    if (phoneNumber.isEmpty || phoneNumber.length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid 10-digit phone number')),
+      );
+      return;
+    }
+
+    bool isRegistered = await newauthService.sendNewMobileOtp(phoneNumber);
+
+    if (isRegistered) {
+      String? storedPhone = NewAuthStorage.getPhoneNumber();
+      print("📌 Retrieved Phone Number from AuthStorage: $storedPhone");
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('OTP sent successfully!')),
@@ -219,30 +238,29 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
   }
 
-
-
   Future<void> validateOTP() async {
     final otp = otpController.text.trim();
 
+    // 🔹 Validate OTP format
     if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid 4-digit OTP')),
-      );
+      _showSnackBar('❌ Please enter a valid 4-digit OTP');
       return;
     }
 
+    // 🔹 Retrieve stored phone number
+    String? storedPhone = NewAuthStorage.getPhoneNumber();
+    print("📌 Retrieved Phone Number: $storedPhone");
 
+    if (storedPhone == null) {
+      _showSnackBar('❌ Error: No phone number found.');
+      return;
+    }
 
-    String? phoneNumber = GetStorage().read<String>(ConstantData.UserMobile);
-    print("mmm Phone Number: $phoneNumber");
-
-    bool isVerified = await authService.verifyMobileOtp(phoneNumber!, otp);
+    // 🔹 Verify OTP
+    bool isVerified = await newauthService.phoneOtpVerify(storedPhone, otp);
 
     if (isVerified) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP verified successfully!')),
-      );
+      _showSnackBar('✅ OTP verified successfully!');
 
       setState(() {
         isEmailVerification = true;
@@ -250,10 +268,15 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         _animationController.forward();
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid OTP. Try again!')),
-      );
+      _showSnackBar('❌ Invalid OTP. Try again!');
     }
+  }
+
+// 🔹 Helper function for showing SnackBar
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   bool handleBackPress() {
@@ -278,122 +301,200 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
   }
 
-  Future<void> validateEmail() async {
+  // Future<void> validateEmail() async {
+  //   final email = emailController.text.trim();
+  //
+  //   final emailRegex =
+  //       RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+  //
+  //   // 🔹 Validate Email
+  //   if (email.isEmpty || !emailRegex.hasMatch(email)) {
+  //     _showSnackBar('Please enter a valid email address');
+  //     return;
+  //   }
+  //
+  //   // 🔹 Retrieve Stored Phone Number
+  //   String? storedPhone = AuthStorage.getPhoneNumber();
+  //   print("📌 Retrieved Phone Number from AuthStorage: $storedPhone");
+  //
+  //   if (storedPhone == null || storedPhone.isEmpty) {
+  //     _showSnackBar('❌ Phone number is not found in storage!');
+  //     return;
+  //   }
+  //
+  //   print("📞 Sending OTP to: $phoneNumber");
+  //
+  //   var response = await authService.sendEmailOtp(storedPhone, email);
+  //
+  //   print('API Response: $response');
+  //
+  //   if (response != null && response.containsKey('message')) {
+  //     String apiMessage = response['message'];
+  //
+  //     if (apiMessage.contains("OTP sent successfully")) {
+  //       print("✅ OTP Sent Successfully");
+  //
+  //       AuthStorage.setEmail(email);
+  //       print("📌 Phone Number Stored in AuthStorage: $email");
+  //
+  //
+  //       //GetStorage().write('email', email);
+  //
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('OTP sent to email successfully!')),
+  //       );
+  //
+  //       setState(() {
+  //         isOTPEmailVerification = true;
+  //         _animationController.forward();
+  //       });
+  //     } else {
+  //       print("❌ Failed to send OTP: $apiMessage");
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text(apiMessage)),
+  //       );
+  //     }
+  //   } else {
+  //     print("❌ Failed to send OTP, showing SnackBar");
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to send email OTP. Try again!')),
+  //     );
+  //   }
+  // }
+
+
+  Future<void> validateNewEmailOTP() async {
     final email = emailController.text.trim();
 
-    final emailRegex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    final emailRegex = RegExp(
+        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 
+    // 🔹 Validate Email Format
     if (email.isEmpty || !emailRegex.hasMatch(email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid email address')),
-      );
+      _showSnackBar('Please enter a valid email address');
       return;
     }
 
-    String? phoneNumber = GetStorage().read<String>('phoneNumber');
+    // 🔹 Retrieve Stored Phone Number
+    String? storedPhone = NewAuthStorage.getPhoneNumber();
+    print("📌 Retrieved Phone Number from AuthStorage: $storedPhone");
 
-    if (phoneNumber == null || phoneNumber.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Phone number is not found in storage!')),
-      );
+    if (storedPhone == null || storedPhone.isEmpty) {
+      _showSnackBar('❌ Phone number is not found in storage!');
       return;
     }
 
-    print("📞 Sending OTP to: $phoneNumber");
+    print("📞 Sending OTP to: $email");
 
-    var response = await authService.sendEmailOtp(phoneNumber, email);
+    bool isOtpSent = await newauthService.sendNewEmailOtp(storedPhone, email);
 
-    print('API Response: $response'); // Debugging
+    if (isOtpSent) {
+      print("✅ Email OTP Sent Successfully!");
 
-    if (response != null && response.containsKey('message')) {
-      String apiMessage = response['message'];
+      // ✅ Store Email in GetStorage
+      NewAuthStorage.setEmail(email);
 
-      if (apiMessage.contains("OTP sent successfully")) {
-        print("✅ OTP Sent Successfully");
-        GetStorage().write('email', email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('OTP sent to email successfully!')),
+      );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('OTP sent to email successfully!')),
-        );
-
-        setState(() {
-          isOTPEmailVerification = true;
-          _animationController.forward(); // Ensure this is working
-        });
-      } else {
-        print("❌ Failed to send OTP: $apiMessage");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(apiMessage)), // Show API error message
-        );
-      }
+      setState(() {
+        isOTPEmailVerification = true;
+        _animationController.forward();
+      });
     } else {
-      print("❌ Failed to send OTP, showing SnackBar");
+      print("❌ Failed to send Email OTP");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send email OTP. Try again!')),
       );
     }
   }
 
+/*
   Future<void> validateEmailOTP() async {
-    final otps = emailOTPController.text.trim();
-    print("📩 Entered OTP: $otps");
+    final String otp = emailOTPController.text.trim();
+    print("📩 Entered OTP: $otp");
 
-    if (otps.isEmpty ||
-        otps.length != 4 ||
-        !RegExp(r'^\d{4}$').hasMatch(otps)) {
+    if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter a valid 4-digit OTP')),
       );
       return;
     }
 
-    String? phoneNumber = GetStorage().read<String>('phoneNumber');
-    String? email = GetStorage().read<String>('email');
+    String? userId = AuthStoragesss.getUserId();
 
-    if (email == null) {
-      var response = await authService.sendEmailOtp(
-          phoneNumber!, ""); // Empty email if not known
-      if (response != null && response.containsKey('email')) {
-        email = response['email']; // Extract email from response
-        print("📩 Email fetched from API: $email");
-      } else {
-        print("❌ No email found in response!");
-      }
+    if (userId == null || userId.isEmpty) {
+      print("❌ ERROR: User ID missing!");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unexpected error. Try again!')),
+      );
+      return;
     }
 
-    print("🔢 Verifying OTP: $otps for phone: $phoneNumber, email: $email");
+    Map<String, dynamic> result = await authService.verifyEmailOtp(userId, otp);
 
-    bool isVerified =
-        await authService.verifyEmailOtp(email!, phoneNumber!, otps);
-
-    if (isVerified) {
-      GetStorage().write('phoneNumber', phoneNumber);
-      GetStorage().write('phoneNumber', phoneNumber);
-
-      /* String userId = response['user']['id']; // User ID from response
-      String token = response['user']['token'];*/ // Token from response
-
+    if (result['success']) {
+      print("✅ OTP Verified Successfully!");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('OTP verified successfully!')),
       );
-
-      if (isOTPEmailVerification) {
-        otpController.clear();
-      }
 
       setState(() {
         isNextScreen = true;
         _animationController.forward();
       });
     } else {
+      print("❌ ERROR: ${result['message']}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message'] ?? 'Invalid OTP. Try again!')),
+      );
+    }
+  }
+*/
+
+
+  Future<void> validateEmailOTP() async {
+    final String otp = emailOTPController.text.trim();
+    print("📩 Entered OTP: $otp");
+
+    if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid 4-digit OTP')),
+      );
+      return;
+    }
+
+    String? email = NewAuthStorage.getEmail();
+    if (email == null) {
+      print("❌ ERROR: Email missing!");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unexpected error. Try again!')),
+      );
+      return;
+    }
+    //bool isVerified = await newauthService.sendNewEmailOtp(storedPhone, email);
+    bool isVerified = await newauthService.verifyNewEmailOtp(email, otp);
+
+    if (isVerified) {
+      print("✅ Email OTP Verified!");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email verified successfully!')),
+      );
+
+      setState(() {
+        isNextScreen = true;
+        _animationController.forward();
+      });
+    } else {
+      print("❌ ERROR: OTP verification failed!");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Invalid OTP. Try again!')),
       );
     }
   }
 
-  Future<void> ContinueScreen() async {
+  Future<void> ContinueScreen(BuildContext context) async {
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
     final password = passwordController.text.trim();
@@ -403,7 +504,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
     final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
 
-    // ✅ Validation Checks
     if (firstName.isEmpty || !nameRegex.hasMatch(firstName)) {
       showSnackbar('Please enter a valid First Name (only letters)');
       return;
@@ -419,59 +519,63 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       return;
     }
 
+    //   AuthService authService = AuthService();
+
     try {
-      final response = await authService.registerUser(
+      final response = await newauthService.fetchAndStoreUserDetails(
+        //userId: "someUserId",
+        // 🔴 Isko actual userId se replace karna
+        phoneNumber: "somePhoneNumber",
+        // 🔴 Isko actual phoneNumber se replace karna
         firstName: firstName,
         lastName: lastName,
+        gender: gender,
         permanentAddress: address,
         password: password,
-        gender: gender,
       );
 
-      print("📩 Response Data: $response");
+      print("📩 Full API Response: $response");
 
-      if (response['success'] == true) {
+      if (response['success'] == true && response.containsKey('user')) {
         final user = response['user'];
-      /*  String userId = response['user']['id'];
-        String token = response['user']['token'];
-*/
-        print("✅ Storing User ID: $firstName");
-        print("✅ Storing Token: $lastName");
 
+        if (user != null) {
+          await NewAuthStorage.saveUserDetails(
+            userId: user['id']?.toString() ?? '',
+            phoneNumber: user['phoneNumber']?.toString() ?? '',
+            firstName: firstName,
+            lastName: lastName,
+            gender: gender,
+            permanentAddress: address,
+            accessToken: user['accessToken']?.toString() ?? '',
+            refreshToken: user['refreshToken']?.toString() ?? '',
+            password: '', emailss: user['email']?.toString() ?? '',
+          );
 
+          showSnackbar('Registration Successful!');
 
-
-       GetStorage().write(ConstantData.userId, user['id']);
-        GetStorage().write(ConstantData.userToken, user['token']);
-        GetStorage().write(ConstantData.firstName, user['firstName']);
-        GetStorage().write(ConstantData.lastName, user['lastName']);
-        GetStorage().write(ConstantData.userGender, user['gender']);
-        GetStorage().write(ConstantData.permanentAddress, user['permanentAddress']);
-        GetStorage().write(ConstantData.userEmail, user['email']);
-
-
-
-       /* GetStorage().write('userId', userId);
-        GetStorage().write('token', token);
-        GetStorage().write('token', token);*/
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration Successful!')),
-        );
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false,)),
-        );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  MainHome(lat: '', long: '', showLoginWidget: false),
+            ),
+          );
+        } else {
+          print("❌ ERROR: User object is null.");
+          showSnackbar('Error: Invalid response from server.');
+        }
       } else {
         print("❌ Unexpected API Response: $response");
-        showSnackbar('Registration Failed! Try again.');
+        showSnackbar(response['message'] ?? 'Registration Failed! Try again.');
       }
     } catch (e) {
       print("🔥 Exception: $e");
       showSnackbar('Something went wrong. Please try again!');
     }
   }
+
+
 
 
   Future<void> validateLogin() async {
@@ -488,26 +592,29 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
     try {
 
-      final response = await authService.loginWithPhoneOrEmail(identifier, password);
-
+    //  final response = await newauthService(identifier, password);
+      final response = await newauthService.newloginWithPhoneOrEmail(identifier,password);
       print("📩 API से रिस्पॉन्स: $response");
 
 
       if (response?['success'] == true) {
         final user = response?['user'];
 
-        print("✅ यूज़र आईडी सेव कर रहे हैं: ${user['_id']}");
-        print("✅ टोकन सेव कर रहे हैं: ${user['token']}");
+        print("✅ यूज़र आईडी सेव कर रहे हैं: ${user['id']}");
+        print("✅ टोकन सेव कर रहे हैं: ${user['accessToken']}");
 
 
-        GetStorage().write(ConstantData.userId, user['_id']);
-        GetStorage().write(ConstantData.userToken, user['token']);
-        GetStorage().write(ConstantData.firstName, user['firstName']);
-        GetStorage().write(ConstantData.lastName, user['lastName']);
-        GetStorage().write(ConstantData.userGender, user['userType']);
-        GetStorage().write(ConstantData.permanentAddress, user['listingId']);
-        GetStorage().write(ConstantData.userEmail, user['email']);
-
+        AuthStorage.saveUserData(
+          userId: user['id'],
+          accessToken: user['accessToken'],
+          refreshToken: user['refreshToken'],
+          firstName: user['firstName'],
+          lastName: user['lastName'],
+          gender: user['userType'],
+          permanentAddress: user['permanentAddress'],
+          phoneNumbers: user['phoneNumber'],
+          emalisss: user['email'],
+        );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('लॉगिन सफल हुआ!')),
         );
@@ -710,7 +817,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                     buttonText: 'Send Email OTP',
                     onPressed: () {
                       setState(() {
-                        validateEmail();
+                        validateNewEmailOTP();
                         isOTPEmailVerification = true;
                       });
                     },
@@ -738,7 +845,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                     buttonText: 'Continue',
                     onPressed: () {
                       setState(() {
-                        ContinueScreen();
+                        ContinueScreen(context);
                         continueScreen = true;
                       });
                     },
@@ -1118,8 +1225,10 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   }
 
   Widget _buildEmailOTPWidget() {
-    String? email = GetStorage().read<String>('email');
-
+   // String? email = GetStorage().read<String>('email');
+    print("mmmm ${ NewAuthStorage.getEmail()}");
+    //  String? phoneNumber = GetStorage().read<String>('phoneNumber');
+    String? email = NewAuthStorage.getEmail();
     return Column(
       children: [
         Row(
@@ -1178,8 +1287,10 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   }
 
   Widget _buildOTPWidget() {
-    print("mmmm ${ GetStorage().read<String>('phoneNumber')}");
-    String? phoneNumber = GetStorage().read<String>('phoneNumber');
+
+    print("mmmm ${ NewAuthStorage.getPhoneNumber()}");
+  // String? phoneNumber = GetStorage().read<String>('phoneNumber');
+    String? phoneNumber = NewAuthStorage.getPhoneNumber();
     return Column(
       children: [
         Row(
@@ -1358,8 +1469,14 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   }
 
   Widget _buildDetailsWidget(double parentHeight, double parentWidth) {
+
+    print("mmmm ${ AuthStorage.getPhoneNumber()}");
+    //  String? phoneNumber = GetStorage().read<String>('phoneNumber');
+    String? email = AuthStorage.getEmail();
+    String? phoneNumber = AuthStorage.getPhoneNumber();
+/*
     String? phoneNumber = GetStorage().read<String>('phoneNumber');
-    String? email = GetStorage().read<String>('email');
+    String? email = GetStorage().read<String>('email');*/
 
     return Column(
       children: [

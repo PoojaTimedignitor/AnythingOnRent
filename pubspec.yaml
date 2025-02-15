@@ -47,6 +47,7 @@ dev_dependencies:
   google_maps_flutter: ^2.1.1
   dotted_border:
   geocoding: ^3.0.0
+
   flutter_zoom_drawer:
   carousel_slider:
   pinput:
@@ -60,12 +61,13 @@ dev_dependencies:
   get_storage: ^2.1.1
   persistent_bottom_nav_bar: ^5.0.2
   dio: ^5.7.0
-  intl: ^0.18.0
+  get: ^4.6.5
+  intl: ^0.19.0
   video_player: ^2.4.5
   keyboard_avoider: ^0.2.0
   flutter_keyboard_visibility: ^5.0.0
   url_launcher: ^6.1.5
-
+  device_preview: ^1.1.0
   http:
   flutter_widget_from_html: ^0.14.7
   form_field_validator: ^1.0.1

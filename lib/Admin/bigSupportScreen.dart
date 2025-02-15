@@ -1,6 +1,5 @@
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/ResponseModule/getBigSupportViewResponse.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Common_File/ResponsiveUtil.dart';

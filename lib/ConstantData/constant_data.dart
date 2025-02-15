@@ -22,7 +22,8 @@ class ConstantData{
 
   static const String UserMobile = "phoneNumber";
   static const String userId = "userId";
-  static const String userToken = "token";
+  static const String userToken = "accessToken";
+  static const String refreshToken = "refreshToken";
   static const String userEmail = "userEmail";
   static const String firstName = "firstName";
   static const String lastName = "lastName";

@@ -13,7 +13,7 @@ class ApiConstant {
   String products = "/addproduct/jhdfs";
   String getAllCatagries = "/category123";
   String getAllSubCatagries(String categoryId) {
-    return "/subcategories/$categoryId";
+    return "/subcatetgories/$categoryId";
   }
 
   String userProfile = "/users/profile";
@@ -27,6 +27,8 @@ class ApiConstant {
   String createProduct = "/hgsd";
 
 String logout = "/logout";
+String getEditProfile = "/profile";
+String putEditProfile = "/profile";
 
 String getDisplayProductList = "/products";
 
@@ -36,6 +38,7 @@ String AdminGetCatFAQ = "/knowledge";
 String AdminContactUsQuations = "/app-support/category";
 String AdminContactUsMessage = "/app-support/register";
 String ReferralCode = "/referral/verify";
+String RefreshToken = "/refresh-token";
 
 
   String getAllTicketsSupport(String userId) {

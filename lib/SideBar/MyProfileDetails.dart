@@ -2,17 +2,20 @@ import 'dart:io';
 
 import 'package:anything/MainHome.dart';
 import 'package:anything/model/dio_client.dart';
+import 'package:anything/newGetStorage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../Authentication/forget_pass_OTP_verify.dart';
+import '../Common_File/ResponsiveUtil.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../ConstantData/Constant_data.dart';
 import '../MyBehavior.dart';
-import '../dummyData.dart';
+import '../NewDioClient.dart';
+
 
 class Myprofiledetails extends StatefulWidget {
   const Myprofiledetails({super.key});
@@ -22,9 +25,14 @@ class Myprofiledetails extends StatefulWidget {
 }
 
 class _MyprofiledetailsState extends State<Myprofiledetails> {
-  late final String firstname;
-  late final String phoneNumber;
-  late final String email;
+  String firstname = "Guest";
+  String lastname = "Guest";
+  String phoneNumber = "Guest";
+  String email = "Guest";
+  String address = "Guest";
+  String gender = "Guest";
+ // String profileImage = "";
+  Map<String, dynamic>? profileData;
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
 
   File? _image;
@@ -52,9 +60,9 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     }
   }
 
-  bool isEditing = false; // Controls edit mode
+  bool isEditing = false;
 
-  String address = "123 Main Street, City, Country";
+  //String address = "123 Main Street, City, Country";
 
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -63,24 +71,11 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
 
   @override
   void initState() {
-    setState(() {
-      print("Saved image: ${GetStorage().read(ConstantData.UserMobile)}");
-
-      firstname = GetStorage().read(ConstantData.UserFirstName) ?? "Guest";
-      phoneNumber = GetStorage().read(ConstantData.UserMobile) ?? "Guest";
-      email = GetStorage().read(ConstantData.Useremail) ?? "Guest";
-      profileImage = GetStorage().read(ConstantData.UserProfileImage);
-
-    });
-
-    nameController.text = firstname;
-    phoneController.text = phoneNumber;
-    emailController.text = email;
-    addressController.text = address;
-    // TODO: implement initState
     super.initState();
-  }
 
+    // Load user profile when the widget is initialized
+    loadUserProfile();
+  }
   void _showGallaryDialogBox(BuildContext context) {
     SizeConfig().init(context);
     showDialog(
@@ -211,6 +206,41 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     );
   }
 
+  Future<void> loadUserProfile() async {
+    try {
+      Map<String, dynamic> response = await NewApiClients().getNewProfileData();
+
+      print("API Response: $response"); // Debugging statement
+
+      if (response.containsKey("error")) {
+        print("❌ API Error: ${response["error"]}");
+        return;
+      }
+
+      if (response.containsKey("profileData")) {
+        Map<String, dynamic> profile = response["profileData"];
+
+        setState(() {
+          firstname = profile["firstName"] ?? "Guest";
+          lastname = profile["lastName"] ?? "Guest";
+          phoneNumber = profile["phoneNumber"] ?? "Guest";
+          email = profile["email"] ?? "Guest";
+          address = profile["permanentAddress"] ?? "Guest";
+          gender = profile["gender"] ?? "Guest";
+          profileImage = profile["profilePicture"] ?? "";
+        });
+
+        print("✅ Profile Data Updated!");
+      } else {
+        print("❌ Error: Profile data not found in response");
+      }
+    } catch (e) {
+      print("❌ Error Loading Profile: $e");
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,100 +260,99 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       ),
       body: Stack(
         children: [
-          ListView(
 
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 100),
-                child: Container(
-                  height: 300,
-                  width: 400,
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          right: 240,
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  "assets/images/anythingsAdss.png"), // Replace with your image path
-                              // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+          Container(
+          //  height: ResponsiveUtil.height(MediaQuery.of(context).size.height * 0.76),
+height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                color: Color(0xfff1f2fd),
+                borderRadius: BorderRadius.all(Radius.circular(20))
+                //  borderRadius: BorderRadius.circular(15)
+                ),
+            child:  ListView(
+
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Container(
+                    height: 300,
+                    width: 400,
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            right: 240,
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    "assets/images/anythingsAdss.png"), // Replace with your image path
+                                // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 270),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  "assets/images/anthingsAds.png"), // Replace with your image path
-                              // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+                        Padding(
+                          padding: EdgeInsets.only(right: 270),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    "assets/images/anthingsAds.png"), // Replace with your image path
+                                // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 50),
-                child: Container(
-                  height: 250,
-                  width: 400,
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 290),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  "assets/images/anyone.png"), // Replace with your image path
-                              // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+                Padding(
+                  padding: EdgeInsets.only(top: 150),
+                  child: Container(
+                    height: 250,
+                    width: 400,
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 290),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    "assets/images/anyone.png"), // Replace with your image path
+                                // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 310),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  "assets/images/anytwo.png"), // Replace with your image path
+                        Padding(
+                          padding: EdgeInsets.only(left: 310),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    "assets/images/anytwo.png"), // Replace with your image path
 
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.76,
-              width: MediaQuery.of(context).size.width * 0.95,
-              decoration: BoxDecoration(
-                  color: Color(0xfff1f2fd),
-                  borderRadius: BorderRadius.all(Radius.circular(20))
-                  //  borderRadius: BorderRadius.circular(15)
-                  ),
-              child: AllDetalisContaine(
-                  SizeConfig.screenHeight, SizeConfig.screenWidth),
+              ],
             ),
-          )
+          )  ,
+         AllDetalisContaine(
+              SizeConfig.screenHeight, SizeConfig.screenWidth),
         ],
       ),
     );
@@ -335,170 +364,132 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       child: ListView(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
-
-       // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.only(left: SizeConfig.screenWidth * 0.33),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Stack(
+          Column( // Row को Column में बदला
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: ResponsiveUtil.height(10)), // Row में width थी, अब Column में height दी
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isEditing = !isEditing;
+                  });
+                },
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    height: ResponsiveUtil.height(45),
+                    width: ResponsiveUtil.width(100),
+                    margin: EdgeInsets.only(right: ResponsiveUtil.width(15)),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Edit",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "Montserrat-Medium",
+                          fontSize: ResponsiveUtil.fontSize(14),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Center(
+                child: Stack(
+                  alignment: Alignment.center, // 👈 Centers the whole Stack
+
                   children: [
-                    _image != null
-                        ? Padding(
-                            padding: EdgeInsets.only(top: parentHeight * 0.05),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black
-                                        .withOpacity(0.1), // Shadow color
-                                    blurRadius: 5, // Shadow blur
-                                    offset:
-                                        Offset(0, 2), // Shadow position (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: CircleAvatar(
-                                radius: 35.0,
-                                backgroundColor: Colors.white,
-                                child: CircleAvatar(
-                                  radius: 32.0,
-                                  backgroundColor: Colors.transparent,
-                                  backgroundImage:FileImage(_image!)
-                                  // Profile image
-                                ),
-                              ),
+                    Padding(
+                      padding: EdgeInsets.only(top: ResponsiveUtil.height(5)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 5,
+                              offset: Offset(0, 2),
                             ),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.only(top: parentHeight * 0.05),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black
-                                        .withOpacity(0.1), // Shadow color
-                                    blurRadius: 5, // Shadow blur
-                                    offset:
-                                        Offset(0, 2), // Shadow position (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: CircleAvatar(
-                                radius: 35.0,
-                                backgroundColor: Colors.white,
-                                child: CircleAvatar(
-                                  radius: 32.0,
-                                  backgroundColor: Colors.transparent,
-                                  backgroundImage: (profileImage != null &&
-                                          profileImage!.isNotEmpty)
-                                      ? NetworkImage(
-                                          profileImage!) // Display image from URL
-                                      : AssetImage('assets/images/profiless.png')
-                                          as ImageProvider,
-                                  // Profile image
-                                ),
-                              ),
-                            ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: ResponsiveUtil.width(45),
+                          backgroundColor: Colors.white,
+                          child: CircleAvatar(
+                            radius: ResponsiveUtil.width(42),
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: _image != null
+                                ? FileImage(_image!)
+                                : (profileImage != null && profileImage!.isNotEmpty)
+                                ? NetworkImage(profileImage!)
+                                : AssetImage('assets/images/profiless.png')
+                            as ImageProvider,
                           ),
+                        ),
+                      ),
+                    ),
                     if (isEditing)
                       Positioned(
-                        bottom: 0,
-                        right: 0,
+                        bottom: ResponsiveUtil.height(0), // 👈 Adjust if needed
+                        right: ResponsiveUtil.width(0), // 👈 Adjust if needed
                         child: GestureDetector(
                           onTap: () {
                             _showGallaryDialogBox(context);
-                            // Handle camera icon tap here
-                            print("Camera Icon Tapped");
                           },
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.blue,
                               shape: BoxShape.circle,
                             ),
-                            padding: EdgeInsets.all(6),
+                            padding: EdgeInsets.all(ResponsiveUtil.width(6)),
                             child: Icon(
                               Icons.camera_alt,
                               color: Colors.white,
-                              size: 16,
+                              size: ResponsiveUtil.fontSize(16),
                             ),
                           ),
                         ),
                       ),
                   ],
                 ),
-                SizedBox(
-                    width:
-                        10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UserProfileScreen()));
-                  },
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isEditing = !isEditing; // Toggle editing mode
-                      });
-                    },
-                    child: Padding(
-                      padding:
-                          EdgeInsets.only(left: SizeConfig.screenWidth * 0.1),
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.045,
-                        width: MediaQuery.of(context).size.width * 0.22,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Edit",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "Montserrat-Medium",
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
+
+            ],
+          ),
+
+          /* SizedBox(height: ResponsiveUtil.height(10)),
+          Center(
+            child: Text(
+              "Listing ID:",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: ResponsiveUtil.fontSize(16),
+                letterSpacing: 0.9,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: ResponsiveUtil.height(5)),
           Center(
-            child: Text("Listing ID:",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "okra_Medium",
-                  fontSize: 16,
-                  letterSpacing: 0.9,
-                  fontWeight: FontWeight.w600,
-                )),
-          ),
-          SizedBox(height: 5),
-          Center(
-            child: Text("AB2345",
-                style: TextStyle(
-                  color: Color(0xff3684F0),
-                  fontFamily: "okra_Regular",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                )),
-          ),
-          SizedBox(height: 20),
+            child: Text(
+              "AB2345",
+              style: TextStyle(
+                color: Color(0xff3684F0),
+                fontFamily: "okra_Regular",
+                fontSize: ResponsiveUtil.fontSize(16),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),*/
+          SizedBox(height: ResponsiveUtil.height(20)),
           isEditing
               ? _buildEditForm(SizeConfig.screenHeight, SizeConfig.screenWidth)
               : mainData(),
@@ -507,26 +498,41 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     );
   }
 
+
+
   Widget mainData() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.3,
-      width: MediaQuery.of(context).size.width * 0.96,
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: ResponsiveUtil.height(360), // Height made responsive
+        width: ResponsiveUtil.width(96),  // Width made responsive
+        decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoRow("Name", firstname),
-            SizedBox(height: 10),
-            _buildInfoRow("Phone Number", phoneNumber),
-            SizedBox(height: 10),
-            _buildInfoRow("Email", email),
-            SizedBox(height: 10),
-            _buildInfoRow("Address", address),
-          ],
+          borderRadius: BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveUtil.width(18),
+            vertical: ResponsiveUtil.height(3),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoRow("First Name", firstname),
+              _buildInfoRow("Last Name", lastname),
+              _buildInfoRow("Phone Number", phoneNumber),
+              _buildInfoRow("Email", email),
+              _buildInfoRow("Permanent Address", address),
+              _buildInfoRow("Gender", gender),
+              _buildInfoRow("Dob", '29-0-1999'),
+              SizedBox(height: ResponsiveUtil.height(10)),
+              Container(
+                height: SizeConfig.screenHeight * 0.0005,
+                color: CommonColor.SearchBar,
+              ),
+              AadhaarVerification()
+            ],
+          ),
         ),
       ),
     );
@@ -534,33 +540,87 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: EdgeInsets.only(top: 10, left: 10),
+      padding: EdgeInsets.symmetric(vertical: ResponsiveUtil.height(10)),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("$label :",
+          Expanded(
+            flex: 7,
+            child: Text(
+              "$label :",
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "okra_Medium",
-                fontSize: 15,
+                fontSize: ResponsiveUtil.fontSize(14),
                 fontWeight: FontWeight.w600,
-              )),
-          SizedBox(width: 20),
-          Flexible(
-            flex: 2, // Adjusts space for the value
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 6, // Value के लिए ज्यादा space
             child: Text(
-              value, // Replace with actual user name
+              value,
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "Montserrat-Medium",
-                fontSize: 13,
+                fontSize: ResponsiveUtil.fontSize(13),
                 fontWeight: FontWeight.w500,
               ),
+              overflow: TextOverflow.ellipsis, // अगर text लंबा हो तो "..." दिखाए
+              maxLines: 1,
             ),
           ),
         ],
       ),
     );
   }
+  Widget AadhaarVerification() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: EdgeInsets.only(top: ResponsiveUtil.height(16)), // Responsive top padding
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 6, // Label के लिए space
+              child: Text(
+                "Aadhaar Verification",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: ResponsiveUtil.fontSize(14),
+                  fontFamily: "okra_Medium",
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3, // Verify section के लिए space
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/images/circle_check.png',
+                    height: ResponsiveUtil.height(16), // Responsive height
+                  ),
+                  SizedBox(width: ResponsiveUtil.width(4)), // Dynamic spacing
+                  Text(
+                    "Verify",
+                    style: TextStyle(
+                      fontFamily: "okra_Medium",
+                      fontSize: ResponsiveUtil.fontSize(16),
+                      color: Color(0xff1cb363),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
   Widget _buildEditForm(double parentHeight, double parentWidth) {
     return Padding(

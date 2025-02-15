@@ -41,14 +41,24 @@ class _RegisterScreenssssState extends State<RegisterScreenssss> {
         position.longitude,
       );
 
-      setState(() {
-        cityName = placemarks.isNotEmpty
-            ? placemarks[0].locality ?? "City not found"
-            : "City not found";
-      });
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+
+        String fullAddress =
+            "${place.name}, ${place.street}, ${place.subLocality}, ${place.locality}, "
+            "${place.administrativeArea}, ${place.postalCode}, ${place.country}";
+
+        setState(() {
+          cityName = fullAddress;
+        });
+      } else {
+        setState(() {
+          cityName = "Address not found";
+        });
+      }
     } catch (e) {
       setState(() {
-        cityName = "Failed to fetch city: $e";
+        cityName = "Failed to fetch address: $e";
       });
     }
   }
