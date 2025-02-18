@@ -610,7 +610,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           refreshToken: user['refreshToken'],
           firstName: user['firstName'],
           lastName: user['lastName'],
-          gender: user['userType'],
+          gender: user['gender'],
           permanentAddress: user['permanentAddress'],
           phoneNumbers: user['phoneNumber'],
           emalisss: user['email'],

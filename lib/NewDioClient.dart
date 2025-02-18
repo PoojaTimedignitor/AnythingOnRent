@@ -2,17 +2,22 @@
 import 'package:anything/api_constants.dart';
 import 'package:anything/newGetStorage.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../ApiConstant/api_constant.dart';
-import 'model/dio_client.dart';
+import 'Authentication/login_screen.dart';
 
 class NewDioClient {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   static final Dio dio = Dio(BaseOptions(
     baseUrl: "https://rental-api-5vfa.onrender.com/",
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
-  ));
+  )
+
+  );
 
   static void setupInterceptors() {
     dio.interceptors.add(InterceptorsWrapper(
@@ -28,6 +33,7 @@ class NewDioClient {
       onError: (DioError e, handler) async {
         if (e.response?.statusCode == 401) {
           print("🔄 Access Token Expired, Refreshing...");
+
           bool refreshed = await _refreshToken();
           if (refreshed) {
             String? newAccessToken = await NewAuthStorage.getAccessToken();
@@ -35,13 +41,21 @@ class NewDioClient {
 
             print("✅ Retrying Request...");
             return handler.resolve(await dio.fetch(e.requestOptions));
+          } else {
+            print("❌ Refresh Token Expired! Logging out...");
+            await NewAuthStorage.clearStorage();
+
+            // Navigate to the login screen after session expiry
+            navigatorKey.currentState?.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (Route<dynamic> route) => false,
+            );
           }
         }
         return handler.next(e);
       },
     ));
   }
-
 
   static Future<bool> _refreshToken() async {
     try {
@@ -74,8 +88,7 @@ class NewDioClient {
 
 class NewApiClients {
   static final NewApiClients _instance = NewApiClients
-      ._internal(); // Singleton instance
-
+      ._internal();
   final Dio _dio = Dio();
   final box = GetStorage();
 
@@ -84,8 +97,8 @@ class NewApiClients {
   }
 
   NewApiClients._internal() {
-    // Yahan Dio ya aur config set karo
-    _dio.options.baseUrl = "https://example.com"; // Example
+
+    _dio.options.baseUrl = "https://example.com";
     print("ApiClients initialized");
   }
 
@@ -97,15 +110,15 @@ class NewApiClients {
     var data = {'phoneNumber': phoneNumber};
 
     try {
-      //await NewAuthStorage.clearStorage();  // ✅ Purana data hatao
+
       Response response = await _dio.post(url, data: data);
 
       print("Api URl res   :$url");
       print("Response: ${response.data}");
-      print("OTP Send Response: ${response.data}"); // Debugging Print
+      print("OTP Send Response: ${response.data}");
 
       if (response.statusCode == 200) {
-        NewAuthStorage.setPhoneNumber(phoneNumber); // ✅ Naya phone number store karo
+        NewAuthStorage.setPhoneNumber(phoneNumber);
         print("📌 Phone Number Stored in AuthStorage: $phoneNumber");
         return true;
       } else {
@@ -322,7 +335,7 @@ class NewApiClients {
       print("📡 Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200 && response.data['success'] == true) {
-        print("✅ Login Successful: ${response.data['message']}");
+          print("✅ Login Successful: ${response.data['message']}");
         return response.data;
       } else {
         print("❌ Login Failed: ${response.data['message']}");
@@ -356,7 +369,7 @@ class NewApiClients {
     }
 
     try {
-      Response response = await NewDioClient.dio.get(
+      Response response = await _dio.get(
         url,
         options: Options(
           headers: {
@@ -441,7 +454,7 @@ class NewApiClients {
     }
 
     try {
-      Response response = await NewDioClient.dio.post(
+      Response response = await _dio.post(
         url,
         options: Options(
           headers: {

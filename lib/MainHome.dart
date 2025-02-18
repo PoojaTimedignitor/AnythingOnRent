@@ -82,7 +82,7 @@ class MainHomeState extends State<MainHome>
       _getLocation();
 
     //  firstname = GetStorage().read<String>(ConstantData.firstName,) ?? "Guest";
-      firstname = AuthStorage.getFirstName() ?? "Guest";
+      firstname = NewAuthStorage.getFName() ?? "Guest";
     //  firstname = AuthStorage().
       updatedCity = GetStorage().read<String>("selectedCity") ?? "Select City";
       print("name   $firstname");
@@ -1070,26 +1070,7 @@ class MainHomeState extends State<MainHome>
                         ),
                         SizedBox(height: 25),
                         GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                  ),
-                                ),
-                                context: context,
-                                backgroundColor: Colors.white,
-                                elevation: 10,
-                                isScrollControlled: true,
-                                isDismissible: true,
-                                builder: (BuildContext bc) {
-                                  return Userfeedback();
-                                });
 
-                            /*   Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => AppImprov()));*/
-                          },
                           child: Wrap(
                             spacing: 13,
                             children: [
@@ -1150,11 +1131,29 @@ class MainHomeState extends State<MainHome>
                         SizedBox(height: 25),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProductConfigurations()));
+
+                              showModalBottomSheet(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                  ),
+                                  context: context,
+                                  backgroundColor: Colors.white,
+                                  elevation: 10,
+                                  isScrollControlled: true,
+                                  isDismissible: true,
+                                  builder: (BuildContext bc) {
+                                    return Userfeedback();
+                                  });
+
+                              /*   Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => AppImprov()));*/
+
                           },
+
+
                           child: Wrap(
                             spacing: 09,
                             children: [
@@ -1452,7 +1451,7 @@ class MainHomeState extends State<MainHome>
         ),
       ),
 
-      body:/* ScrollConfiguration(
+      body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView(
           shrinkWrap: true,
@@ -1611,8 +1610,7 @@ class MainHomeState extends State<MainHome>
                             }
                           }
                         },
-                        */
-      /*      onTap: () async {
+/*            onTap: () async {
                           final String? result = await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1621,7 +1619,7 @@ class MainHomeState extends State<MainHome>
                           if (result != null) {
                             updateCity(result); // Update city if selected
                           }
-                        },*//*
+                        },*/
                         child: Padding(
                           padding: EdgeInsets.only(
                               top: SizeConfig.screenHeight * 0.275, left: 30),
@@ -1660,7 +1658,7 @@ class MainHomeState extends State<MainHome>
                     ],
                   ),
 
-             *//*     sliderData(
+                  sliderData(
                     images,
                     SizeConfig.screenHeight,
                     SizeConfig.screenWidth,
@@ -1671,18 +1669,18 @@ class MainHomeState extends State<MainHome>
                     child: getAddGameTabLayout(
                         SizeConfig.screenHeight, SizeConfig.screenWidth),
                   ),
-*//*
+
 
                 ],
               ),
             ),
           ],
         ),
-      ),*/
+      ),
 
 
 
-     LayoutBuilder(
+   /*  LayoutBuilder(
         builder: (context, constraints) {
           return ScrollConfiguration(
             behavior: MyBehavior(),
@@ -1772,13 +1770,13 @@ class MainHomeState extends State<MainHome>
 
                       /// **Search Bar**
                       Positioned(
-                        top: ResponsiveUtil.height(100),
-                        left: 0,
+                        top: ResponsiveUtil.height(10),
+                        left: 2,
                         right: 0,
                         child: HomeSearchBar(SizeConfig.screenHeight,SizeConfig.screenWidth),
                       ),
 
-                      /// **Main Title**
+
                       Positioned(
                         top: ResponsiveUtil.height(260),
                         left: ResponsiveUtil.width(25),
@@ -1851,7 +1849,7 @@ class MainHomeState extends State<MainHome>
 
                       /// **Add Post Button**
                       Positioned(
-                        top: ResponsiveUtil.height(340),
+                        top: ResponsiveUtil.height(140),
                         left: 0,
                         right: 0,
                         child: AddPostButton(
@@ -1883,7 +1881,7 @@ class MainHomeState extends State<MainHome>
             ),
           );
         },
-      ),
+      ),*/
 
 
 
@@ -1944,7 +1942,8 @@ class MainHomeState extends State<MainHome>
   }
 
   Widget sliderData(
-      List<String> images, double parentHeight, double parentWidth) {
+      List<String> images, double parentHeight, double parentWidth)
+  {
     return Column(
       children: [
         isLoading
@@ -2543,7 +2542,7 @@ class MainHomeState extends State<MainHome>
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    RegisterScreenssss()));
+                                                    AllProductList()));
 
 
                                     },

@@ -16,7 +16,6 @@ import '../ConstantData/Constant_data.dart';
 import '../MyBehavior.dart';
 import '../NewDioClient.dart';
 
-
 class Myprofiledetails extends StatefulWidget {
   const Myprofiledetails({super.key});
 
@@ -25,13 +24,13 @@ class Myprofiledetails extends StatefulWidget {
 }
 
 class _MyprofiledetailsState extends State<Myprofiledetails> {
-  String firstname = "Guest";
-  String lastname = "Guest";
+  late String firstname;
+  late String lastname;
   String phoneNumber = "Guest";
   String email = "Guest";
-  String address = "Guest";
-  String gender = "Guest";
- // String profileImage = "";
+  late String gender;
+  late String address;
+  // String profileImage = "";
   Map<String, dynamic>? profileData;
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
 
@@ -59,9 +58,11 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       });
     }
   }
-
+  bool isTablet(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    return width >= 600; // Tablet ke liye width 600px se zyada hona chahiye
+  }
   bool isEditing = false;
-
   //String address = "123 Main Street, City, Country";
 
   TextEditingController nameController = TextEditingController();
@@ -73,54 +74,54 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   void initState() {
     super.initState();
 
-    // Load user profile when the widget is initialized
+    firstname = NewAuthStorage.getFName() ?? "Guest";
+    lastname = NewAuthStorage.getLName() ?? "Guest";
+    address = NewAuthStorage.getAddress() ?? "Guest";
+    gender = NewAuthStorage.getGender() ?? "Guest";
+    print("gender    $gender");
     loadUserProfile();
   }
+
   void _showGallaryDialogBox(BuildContext context) {
-    SizeConfig().init(context);
     showDialog(
       context: context,
-      builder: (
-        BuildContext context,
-      ) {
+      builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(ResponsiveUtil.height(10)),
           ),
           title: Column(
             children: [
               Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
-
                       _captureImageFromCamera();
-                      /*    _pickImageFront(ImageSource.camera, false);
-                      _pickImageFront(ImageSource.camera, true);*/
                     },
                     child: Row(
                       children: [
                         Padding(
-                            padding: EdgeInsets.only(
-                                top: SizeConfig.screenHeight * 0.024),
-                            child: Image(
-                              image: AssetImage('assets/images/camerapop.png'),
-                              height: 20,
-                            )),
+                          padding: EdgeInsets.only(top: ResponsiveUtil.height(20)),
+                          child: Image(
+                            image: AssetImage('assets/images/camerapop.png'),
+                            height: ResponsiveUtil.height(20),
+                          ),
+                        ),
                         Padding(
                           padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.024,
-                              left: SizeConfig.screenHeight * 0.024),
+                            top: ResponsiveUtil.height(20),
+                            left: ResponsiveUtil.width(13),
+                          ),
                           child: Text(
                             "Camera",
                             style: TextStyle(
-                                height: 2.5,
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                fontFamily: 'Roboto_Regular',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
+                              height: 2.5,
+                              fontSize: ResponsiveUtil.fontSize(16),
+                              fontFamily: 'Roboto_Regular',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ],
@@ -130,30 +131,30 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                     onTap: () {
                       Navigator.of(context).pop();
                       _pickImageFromGallery();
-                      /*  _pickImageFront(ImageSource.gallery, false);
-                      _pickImageFront(ImageSource.gallery, true);*/
                     },
                     child: Row(
                       children: [
                         Padding(
-                            padding: EdgeInsets.only(
-                                top: SizeConfig.screenHeight * 0.0),
-                            child: Image(
-                              image: AssetImage('assets/images/gallerypop.png'),
-                              height: 20,
-                            )),
+                          padding: EdgeInsets.only(top: ResponsiveUtil.height(5)),
+                          child: Image(
+                            image: AssetImage('assets/images/gallerypop.png'),
+                            height: ResponsiveUtil.height(20),
+                          ),
+                        ),
                         Padding(
                           padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.0,
-                              left: SizeConfig.screenHeight * 0.024),
+                            top: ResponsiveUtil.height(5),
+                            left: ResponsiveUtil.width(13),
+                          ),
                           child: Text(
                             "Photos And Gallery Library",
                             style: TextStyle(
-                                height: 2.5,
-                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                                fontFamily: 'Roboto_Regular',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
+                              height: 2.5,
+                              fontSize: ResponsiveUtil.fontSize(16),
+                              fontFamily: 'Roboto_Regular',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ],
@@ -164,36 +165,30 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
-
-                  /* AppPreferences.clearAppPreference();
-                  Get.to(() => const  SignIn());*/
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                  padding: EdgeInsets.only(top: ResponsiveUtil.height(20)),
                   child: Container(
-                    width: SizeConfig.screenWidth * 0.3,
+                    width: ResponsiveUtil.width(120),
+                    height: ResponsiveUtil.height(40),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      // color: Colors.white,
-
+                      borderRadius: BorderRadius.circular(ResponsiveUtil.height(10)),
                       gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
-                        // stops: [0.8, 0.9],
                         colors: [Color(0xffFF8B8B), Color(0xffFD6B6B)],
                       ),
-
-                      color: Color(0xffFF8B8B),
                     ),
                     child: Center(
                       child: Text(
                         "Cancel",
                         style: TextStyle(
-                            height: 2,
-                            fontSize: SizeConfig.blockSizeHorizontal * 4.3,
-                            fontFamily: 'Roboto_Medium',
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white),
+                          height: 2,
+                          fontSize: ResponsiveUtil.fontSize(16),
+                          fontFamily: 'Roboto_Medium',
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -210,7 +205,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     try {
       Map<String, dynamic> response = await NewApiClients().getNewProfileData();
 
-      print("API Response: $response"); // Debugging statement
+      print("API Response: $response");
 
       if (response.containsKey("error")) {
         print("❌ API Error: ${response["error"]}");
@@ -221,12 +216,8 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
         Map<String, dynamic> profile = response["profileData"];
 
         setState(() {
-          firstname = profile["firstName"] ?? "Guest";
-          lastname = profile["lastName"] ?? "Guest";
           phoneNumber = profile["phoneNumber"] ?? "Guest";
           email = profile["email"] ?? "Guest";
-          address = profile["permanentAddress"] ?? "Guest";
-          gender = profile["gender"] ?? "Guest";
           profileImage = profile["profilePicture"] ?? "";
         });
 
@@ -239,13 +230,10 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-
       appBar: AppBar(
         title: Text(
           "Profile Details",
@@ -260,99 +248,97 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       ),
       body: Stack(
         children: [
-
           Container(
-          //  height: ResponsiveUtil.height(MediaQuery.of(context).size.height * 0.76),
-height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                color: Color(0xfff1f2fd),
-                borderRadius: BorderRadius.all(Radius.circular(20))
-                //  borderRadius: BorderRadius.circular(15)
-                ),
-            child:  ListView(
-
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Container(
-                    height: 300,
-                    width: 400,
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            right: 240,
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    "assets/images/anythingsAdss.png"), // Replace with your image path
-                                // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+              //  height: ResponsiveUtil.height(MediaQuery.of(context).size.height * 0.76),
+              height: double.infinity,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: Color(0xfff1f2fd),
+                  borderRadius: BorderRadius.all(Radius.circular(20))
+                  //  borderRadius: BorderRadius.circular(15)
+                  ),
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
+                    child: Container(
+                      height: ResponsiveUtil.height(300),
+                      width: ResponsiveUtil.width(400),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            right: ResponsiveUtil.width(240),
+                            child: Container(
+                              height: ResponsiveUtil.height(
+                                  300), // Adjust image container height
+                              width: ResponsiveUtil.width(
+                                  160), // Adjust width if needed
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      "assets/images/anythingsAdss.png"),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 270),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    "assets/images/anthingsAds.png"), // Replace with your image path
-                                // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+                          Positioned(
+                            right: ResponsiveUtil.width(270),
+                            child: Container(
+                              height: ResponsiveUtil.height(300),
+                              width: ResponsiveUtil.width(160),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      "assets/images/anthingsAds.png"),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 150),
-                  child: Container(
-                    height: 250,
-                    width: 400,
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 290),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    "assets/images/anyone.png"), // Replace with your image path
-                                // fit: BoxFit.cover, // Adjusts the image to cover the entire screen
+                  Padding(
+                    padding: EdgeInsets.only(top: ResponsiveUtil.height(150)),
+                    child: Container(
+                      height: ResponsiveUtil.height(250),
+                      width: ResponsiveUtil.width(400),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            left: ResponsiveUtil.width(290),
+                            child: Container(
+                              height: ResponsiveUtil.height(250),
+                              width: ResponsiveUtil.width(160),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage("assets/images/anyone.png"),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 310),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    "assets/images/anytwo.png"), // Replace with your image path
-
+                          Positioned(
+                            left: ResponsiveUtil.width(310),
+                            child: Container(
+                              height: ResponsiveUtil.height(250),
+                              width: ResponsiveUtil.width(160),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage("assets/images/anytwo.png"),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          )  ,
-         AllDetalisContaine(
-              SizeConfig.screenHeight, SizeConfig.screenWidth),
+                ],
+              )),
+          AllDetalisContaine(SizeConfig.screenHeight, SizeConfig.screenWidth),
         ],
       ),
     );
@@ -365,11 +351,11 @@ height: double.infinity,
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         children: [
-          Column( // Row को Column में बदला
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: ResponsiveUtil.height(10)), // Row में width थी, अब Column में height दी
+              SizedBox(height: ResponsiveUtil.height(10)),
               GestureDetector(
                 onTap: () {
                   setState(() {
@@ -403,8 +389,7 @@ height: double.infinity,
               ),
               Center(
                 child: Stack(
-                  alignment: Alignment.center, // 👈 Centers the whole Stack
-
+                  alignment: Alignment.center,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(top: ResponsiveUtil.height(5)),
@@ -427,18 +412,19 @@ height: double.infinity,
                             backgroundColor: Colors.transparent,
                             backgroundImage: _image != null
                                 ? FileImage(_image!)
-                                : (profileImage != null && profileImage!.isNotEmpty)
-                                ? NetworkImage(profileImage!)
-                                : AssetImage('assets/images/profiless.png')
-                            as ImageProvider,
+                                : (profileImage != null &&
+                                        profileImage!.isNotEmpty)
+                                    ? NetworkImage(profileImage!)
+                                    : AssetImage('assets/images/profiless.png')
+                                        as ImageProvider,
                           ),
                         ),
                       ),
                     ),
                     if (isEditing)
                       Positioned(
-                        bottom: ResponsiveUtil.height(0), // 👈 Adjust if needed
-                        right: ResponsiveUtil.width(0), // 👈 Adjust if needed
+                        bottom: ResponsiveUtil.height(0),
+                        right: ResponsiveUtil.width(0),
                         child: GestureDetector(
                           onTap: () {
                             _showGallaryDialogBox(context);
@@ -460,7 +446,6 @@ height: double.infinity,
                   ],
                 ),
               ),
-
             ],
           ),
 
@@ -498,17 +483,16 @@ height: double.infinity,
     );
   }
 
-
-
   Widget mainData() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
         height: ResponsiveUtil.height(360), // Height made responsive
-        width: ResponsiveUtil.width(96),  // Width made responsive
+        width: ResponsiveUtil.width(96), // Width made responsive
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),
+          borderRadius:
+              BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(
@@ -557,7 +541,7 @@ height: double.infinity,
             ),
           ),
           Expanded(
-            flex: 6, // Value के लिए ज्यादा space
+            flex: 6,
             child: Text(
               value,
               style: TextStyle(
@@ -566,7 +550,7 @@ height: double.infinity,
                 fontSize: ResponsiveUtil.fontSize(13),
                 fontWeight: FontWeight.w500,
               ),
-              overflow: TextOverflow.ellipsis, // अगर text लंबा हो तो "..." दिखाए
+              overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
           ),
@@ -574,16 +558,18 @@ height: double.infinity,
       ),
     );
   }
+
   Widget AadhaarVerification() {
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(
-        padding: EdgeInsets.only(top: ResponsiveUtil.height(16)), // Responsive top padding
+        padding: EdgeInsets.only(
+            top: ResponsiveUtil.height(16)), // Responsive top padding
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              flex: 6, // Label के लिए space
+              flex: 6,
               child: Text(
                 "Aadhaar Verification",
                 style: TextStyle(
@@ -594,14 +580,14 @@ height: double.infinity,
               ),
             ),
             Expanded(
-              flex: 3, // Verify section के लिए space
+              flex: 3,
               child: Row(
                 children: [
                   Image.asset(
                     'assets/images/circle_check.png',
-                    height: ResponsiveUtil.height(16), // Responsive height
+                    height: ResponsiveUtil.height(16),
                   ),
-                  SizedBox(width: ResponsiveUtil.width(4)), // Dynamic spacing
+                  SizedBox(width: ResponsiveUtil.width(4)),
                   Text(
                     "Verify",
                     style: TextStyle(
@@ -620,15 +606,14 @@ height: double.infinity,
     );
   }
 
-
-
+/*
   Widget _buildEditForm(double parentHeight, double parentWidth) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Name",
+          Text("Phone Number",
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "okra_Medium",
@@ -642,7 +627,7 @@ height: double.infinity,
             child: Container(
                 child: TextFormField(
               // focusNode: _emailFocus,
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.phone,
               controller: nameController,
               autocorrect: true,
               textInputAction: TextInputAction.next,
@@ -683,7 +668,7 @@ height: double.infinity,
             )),
           ),
           SizedBox(height: parentHeight * 0.02),
-          Text("Phone Number",
+          Text("Email",
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "okra_Medium",
@@ -697,7 +682,7 @@ height: double.infinity,
             child: Container(
                 child: TextFormField(
               // focusNode: _emailFocus,
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.emailAddress,
               controller: phoneController,
               autocorrect: true,
               textInputAction: TextInputAction.next,
@@ -738,7 +723,7 @@ height: double.infinity,
             )),
           ),
           SizedBox(height: parentHeight * 0.02),
-          Text("Email",
+          Text("Current Location",
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "okra_Medium",
@@ -792,7 +777,7 @@ height: double.infinity,
             )),
           ),
           SizedBox(height: parentHeight * 0.02),
-          Text("Current Location",
+          Text("DOB",
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "okra_Medium",
@@ -855,61 +840,66 @@ height: double.infinity,
                 isEditing = false;
                 isLoading = true;
                 ApiClients()
-                    .editUserProfile(
-                     nameController.text,
-                     phoneController.text,
-                     emailController.text,
-                  addressController.text,
-                  _image
-                    )
-                    .then((value) {
-                  /*if (value.containsKey("message") && value["message"] == "Authorization token missing") {
+                    .editUserProfile(nameController.text, phoneController.text,
+                        emailController.text, addressController.text, _image)
+                    .then(
+                  (value) {
+                    */
+/*if (value.containsKey("message") && value["message"] == "Authorization token missing") {
                     print("User is not authorized. Redirect to login.");
                     // Handle redirection or error notification
                     return;
-                  }*/
+                  }*//*
 
-                  if (mounted) {
-                    setState(() => isLoading = false);
-                  }
 
-                  ApiClients().getUserProfileData().then((value) {
-                    if (!value.containsKey('user')) {
-                      print("Invalid user data received.");
-                      return;
+                    if (mounted) {
+                      setState(() => isLoading = false);
                     }
-                  ApiClients().getUserProfileData().then((value) {
-                    if (value.isEmpty) return;
 
-                    GetStorage()
-                        .write(ConstantData.UserId, value['user']['userId']);
-                    GetStorage().write(
-                        ConstantData.UserFirstName, value['user']['firstName']);
-                    GetStorage().write(
-                        ConstantData.UserMobile, value['user']['phoneNumber']);
-                    GetStorage().write(
-                        ConstantData.Useremail  , value['user']['email']);
+                    ApiClients().getUserProfileData().then((value) {
+                      if (!value.containsKey('user')) {
+                        print("Invalid user data received.");
+                        return;
+                      }
+                      ApiClients().getUserProfileData().then((value) {
+                        if (value.isEmpty) return;
 
-                    GetStorage().write(ConstantData.UserProfileImage,
-                        value['user']['profilePicture']);
+                        GetStorage().write(
+                            ConstantData.UserId, value['user']['userId']);
+                        GetStorage().write(ConstantData.UserFirstName,
+                            value['user']['firstName']);
+                        GetStorage().write(ConstantData.UserMobile,
+                            value['user']['phoneNumber']);
+                        GetStorage().write(
+                            ConstantData.Useremail, value['user']['email']);
 
+                        GetStorage().write(ConstantData.UserProfileImage,
+                            value['user']['profilePicture']);
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false,)),
-                    );
-                  });
-                  }).catchError((error) {
-                    print("Error during profile update: $error");
-                    setState(() => isLoading = false);
-                  });
-                },);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MainHome(
+                                    lat: '',
+                                    long: '',
+                                    showLoginWidget: false,
+                                  )),
+                        );
+                      });
+                    }).catchError((error) {
+                      print("Error during profile update: $error");
+                      setState(() => isLoading = false);
+                    });
+                  },
+                );
 
-               /* firstname = nameController.text;
+                */
+/* firstname = nameController.text;
                 phoneNumber = phoneController.text;
                 email = emailController.text;
                 address = addressController.text;
-                isEditing = false;*/ // Exit edit mode
+                isEditing = false;*//*
+ // Exit edit mode
               });
             },
             child: Padding(
@@ -934,7 +924,6 @@ height: double.infinity,
                         Color(0xffFE7F64),
                       ],
                     ),
-
                     borderRadius: const BorderRadius.all(
                       Radius.circular(30),
                     ),
@@ -954,4 +943,321 @@ height: double.infinity,
       ),
     );
   }
-}
+*/
+
+
+  Widget _buildEditForm(double parentHeight, double parentWidth) {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: ResponsiveUtil.width(16)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Phone Number",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: ResponsiveUtil.height(15),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
+              child: Container(
+                child: TextFormField(
+                  controller: nameController,
+                  autocorrect: true,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    prefixIcon: IconButton(
+                        onPressed: () {},
+                        icon: Image(
+                          image: AssetImage('assets/images/email.png'),
+                          height: ResponsiveUtil.height(20),
+                        )),
+                    contentPadding: EdgeInsets.only(
+                        left: ResponsiveUtil.width(16)),
+                    hintStyle: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Montserrat-Medium",
+                      fontSize: ResponsiveUtil.height(13),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    fillColor: Color(0xffFFfffff),
+                    hoverColor: Colors.white,
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0)),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black12, width: 1),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Montserrat-Medium",
+                    fontSize: ResponsiveUtil.height(13),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: ResponsiveUtil.height(20)),
+            Text(
+              "Email",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: ResponsiveUtil.height(15),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
+              child: Container(
+                child: TextFormField(
+                  controller: phoneController,
+                  autocorrect: true,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    prefixIcon: IconButton(
+                        onPressed: () {},
+                        icon: Image(
+                          image: AssetImage('assets/images/email.png'),
+                          height: ResponsiveUtil.height(20),
+                        )),
+                    contentPadding: EdgeInsets.only(
+                        left: ResponsiveUtil.width(16)),
+                    hintStyle: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Montserrat-Medium",
+                      fontSize: ResponsiveUtil.height(13),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    fillColor: Color(0xffFFfffff),
+                    hoverColor: Colors.white,
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0)),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black12, width: 1),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Montserrat-Medium",
+                    fontSize: ResponsiveUtil.height(13),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: ResponsiveUtil.height(20)),
+            Text(
+              "Current Location",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: ResponsiveUtil.height(15),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
+              child: Container(
+                child: TextFormField(
+                  controller: emailController,
+                  autocorrect: true,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    prefixIcon: IconButton(
+                        onPressed: () {},
+                        icon: Image(
+                          image: AssetImage('assets/images/email.png'),
+                          height: ResponsiveUtil.height(20),
+                        )),
+                    contentPadding: EdgeInsets.only(
+                        left: ResponsiveUtil.width(16)),
+                    hintStyle: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Montserrat-Medium",
+                      fontSize: ResponsiveUtil.height(13),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    fillColor: Color(0xffFFfffff),
+                    hoverColor: Colors.white,
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0)),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black12, width: 1),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Montserrat-Medium",
+                    fontSize: ResponsiveUtil.height(13),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: ResponsiveUtil.height(20)),
+            Text(
+              "DOB",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: ResponsiveUtil.height(15),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
+              child: Container(
+                child: TextFormField(
+                  controller: addressController,
+                  autocorrect: true,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    prefixIcon: IconButton(
+                      onPressed: () {},
+                      icon: Image(
+                        image: AssetImage('assets/images/email.png'),
+                        height: ResponsiveUtil.height(20),
+                      ),
+                    ),
+                    contentPadding: EdgeInsets.only(
+                        left: ResponsiveUtil.width(16)),
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontFamily: "Montserrat-Medium",
+                      fontSize: ResponsiveUtil.height(13),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    fillColor: Color(0xffffffff),
+                    hoverColor: Colors.white,
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black12, width: 1),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Montserrat-Medium",
+                    fontSize: ResponsiveUtil.height(13),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: ResponsiveUtil.height(30)),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isEditing = false;
+                  isLoading = true;
+                  ApiClients().editUserProfile(
+                      nameController.text, phoneController.text,
+                      emailController.text, addressController.text, _image)
+                      .then((value) {
+                    if (mounted) {
+                      setState(() => isLoading = false);
+                    }
+
+                    ApiClients().getUserProfileData().then((value) {
+                      if (!value.containsKey('user')) {
+                        print("Invalid user data received.");
+                        return;
+                      }
+
+                      final userData = value['user'];
+                      GetStorage().write(
+                          ConstantData.UserId, userData['userId']);
+                      GetStorage().write(
+                          ConstantData.UserFirstName, userData['firstName']);
+                      GetStorage().write(
+                          ConstantData.UserMobile, userData['phoneNumber']);
+                      GetStorage().write(
+                          ConstantData.Useremail, userData['email']);
+                      GetStorage().write(ConstantData.UserProfileImage,
+                          userData['profilePicture']);
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              MainHome(
+                                  lat: '', long: '', showLoginWidget: false),
+                        ),
+                      );
+                    }).catchError((error) {
+                      print("Error during profile update: $error");
+                      setState(() => isLoading = false);
+                    });
+                  });
+                });
+              },
+              child:  Padding(
+                padding: EdgeInsets.only(left: ResponsiveUtil.width(12),
+                    right: ResponsiveUtil.width(12)),
+                child: Container(
+                  width:ResponsiveUtil(). isMobile(context)
+                      ? ResponsiveUtil.width(300)  // Small screen (mobile)
+                      : ResponsiveUtil().isTablet(context)
+                      ? ResponsiveUtil.width(1300) // Tablet screen
+                      : ResponsiveUtil.width(1500), // Large screen (desktop)
+                  height: ResponsiveUtil.height(50),
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 5,
+                        spreadRadius: 1,
+                        offset: Offset(1, 1),
+                      ),
+                    ],
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        Color(0xffFEBA69),
+                        Color(0xffFE7F64),
+                      ],
+                    ),
+                    borderRadius: const BorderRadius.all(Radius.circular(30)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Save",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Roboto-Regular',
+                        fontSize: ResponsiveUtil.height(17),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+
+
+        ));
+  }
+  }
