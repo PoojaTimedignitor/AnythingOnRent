@@ -15,6 +15,10 @@ import 'package:get_storage/get_storage.dart';
 import '../ConstantData/Constant_data.dart';
 import '../MyBehavior.dart';
 import '../NewDioClient.dart';
+import 'package:intl/intl.dart';
+
+import '../location_map.dart';
+
 
 class Myprofiledetails extends StatefulWidget {
   const Myprofiledetails({super.key});
@@ -30,6 +34,9 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   String email = "Guest";
   late String gender;
   late String address;
+  late String currentLocation;
+  late String currentCity;
+ // late String currentLocation;
   // String profileImage = "";
   Map<String, dynamic>? profileData;
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
@@ -60,26 +67,30 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   }
   bool isTablet(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    return width >= 600; // Tablet ke liye width 600px se zyada hona chahiye
+    return width >= 600;
   }
   bool isEditing = false;
-  //String address = "123 Main Street, City, Country";
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  TextEditingController dobController = TextEditingController();
+
+
   TextEditingController addressController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
     firstname = NewAuthStorage.getFName() ?? "Guest";
     lastname = NewAuthStorage.getLName() ?? "Guest";
     address = NewAuthStorage.getAddress() ?? "Guest";
     gender = NewAuthStorage.getGender() ?? "Guest";
-    print("gender    $gender");
+    print("address    $address");
+
     loadUserProfile();
+    loadCurrentLocation();
+
   }
 
   void _showGallaryDialogBox(BuildContext context) {
@@ -201,6 +212,24 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     );
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+      setState(() {
+        dobController.text = formattedDate;
+      });
+    }
+  }
+
+
+
   Future<void> loadUserProfile() async {
     try {
       Map<String, dynamic> response = await NewApiClients().getNewProfileData();
@@ -216,10 +245,19 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
         Map<String, dynamic> profile = response["profileData"];
 
         setState(() {
+          phoneController.text = profile["phoneNumber"] ?? "";
+          emailController.text = profile["email"] ?? "";
+          profileImage = profile["profilePicture"] ?? "";
+
+
           phoneNumber = profile["phoneNumber"] ?? "Guest";
           email = profile["email"] ?? "Guest";
-          profileImage = profile["profilePicture"] ?? "";
+
+
         });
+
+        print("Phone Number: ${phoneController.text}");
+        print("Email: ${emailController.text}");
 
         print("✅ Profile Data Updated!");
       } else {
@@ -228,6 +266,45 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     } catch (e) {
       print("❌ Error Loading Profile: $e");
     }
+  }
+
+
+  Future<void> loadCurrentLocation() async {
+    try {
+      Map<String, dynamic> response = await NewApiClients().getCurrentLocation();
+
+      print("🌍 API Response: $response");
+
+      if (response.containsKey("error")) {
+        print("❌ API Error: ${response["error"]}");
+        return;
+      }
+
+      if (response.containsKey("currentLocation")) {
+        Map<String, dynamic> location = response["currentLocation"];
+
+        setState(() {
+          currentCity = location["city"] ?? "Unknown";
+
+        });
+
+        print("📍 Current City: $currentCity");
+
+      } else {
+        print("❌ Error: currentLocation not found in response");
+      }
+    } catch (e) {
+      print("❌ Error Loading Location: $e");
+    }
+  }
+
+
+  @override
+  void dispose() {
+
+    phoneController.dispose();
+    emailController.dispose();
+    super.dispose();
   }
 
   @override
@@ -482,13 +559,58 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       ),
     );
   }
-
+  Widget AadhaarVerification() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: EdgeInsets.only(
+            top: ResponsiveUtil.height(16)), // Responsive top padding
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 6,
+              child: Text(
+                "Aadhaar Verification",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: ResponsiveUtil.fontSize(14),
+                  fontFamily: "okra_Medium",
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/images/circle_check.png',
+                    height: ResponsiveUtil.height(16),
+                  ),
+                  SizedBox(width: ResponsiveUtil.width(4)),
+                  Text(
+                    "Verify",
+                    style: TextStyle(
+                      fontFamily: "okra_Medium",
+                      fontSize: ResponsiveUtil.fontSize(16),
+                      color: Color(0xff1cb363),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   Widget mainData() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        height: ResponsiveUtil.height(360), // Height made responsive
-        width: ResponsiveUtil.width(96), // Width made responsive
+        height: ResponsiveUtil.height(393),
+        width: ResponsiveUtil.width(96),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius:
@@ -506,7 +628,8 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
               _buildInfoRow("Last Name", lastname),
               _buildInfoRow("Phone Number", phoneNumber),
               _buildInfoRow("Email", email),
-              _buildInfoRow("Permanent Address", address),
+              _buildInfoRow("CurrentLocation", currentCity),
+              _buildInfoRow("permanentAddress", address),
               _buildInfoRow("Gender", gender),
               _buildInfoRow("Dob", '29-0-1999'),
               SizedBox(height: ResponsiveUtil.height(10)),
@@ -559,257 +682,219 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     );
   }
 
-  Widget AadhaarVerification() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Padding(
-        padding: EdgeInsets.only(
-            top: ResponsiveUtil.height(16)), // Responsive top padding
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 6,
-              child: Text(
-                "Aadhaar Verification",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: ResponsiveUtil.fontSize(14),
-                  fontFamily: "okra_Medium",
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/circle_check.png',
-                    height: ResponsiveUtil.height(16),
-                  ),
-                  SizedBox(width: ResponsiveUtil.width(4)),
-                  Text(
-                    "Verify",
-                    style: TextStyle(
-                      fontFamily: "okra_Medium",
-                      fontSize: ResponsiveUtil.fontSize(16),
-                      color: Color(0xff1cb363),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-/*
+
+
+
   Widget _buildEditForm(double parentHeight, double parentWidth) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Phone Number",
+        padding: EdgeInsets.symmetric(horizontal: ResponsiveUtil.width(16)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Phone Number",
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "okra_Medium",
-                fontSize: 15,
+                fontSize: ResponsiveUtil.fontSize(15),
                 fontWeight: FontWeight.w600,
-              )),
-          Padding(
-            padding: EdgeInsets.only(
-              top: parentHeight * 0.01,
+              ),
             ),
-            child: Container(
-                child: TextFormField(
-              // focusNode: _emailFocus,
-              keyboardType: TextInputType.phone,
-              controller: nameController,
-              autocorrect: true,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                isDense: true,
-                prefixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Image(
-                      image: AssetImage('assets/images/email.png'),
-                      height: 20,
-                    )),
-                contentPadding: EdgeInsets.only(
-                  left: parentWidth * 0.04,
-                ),
-                hintStyle: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Montserrat-Medium",
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                fillColor: Color(0xffFFfffff),
-                hoverColor: Colors.white,
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10.0)),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black12, width: 1),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Montserrat-Medium",
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            )),
-          ),
-          SizedBox(height: parentHeight * 0.02),
-          Text("Email",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              )),
-          Padding(
-            padding: EdgeInsets.only(
-              top: parentHeight * 0.01,
-            ),
-            child: Container(
-                child: TextFormField(
-              // focusNode: _emailFocus,
-              keyboardType: TextInputType.emailAddress,
-              controller: phoneController,
-              autocorrect: true,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                isDense: true,
-                prefixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Image(
-                      image: AssetImage('assets/images/email.png'),
-                      height: 20,
-                    )),
-                contentPadding: EdgeInsets.only(
-                  left: parentWidth * 0.04,
-                ),
-                hintStyle: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Montserrat-Medium",
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                fillColor: Color(0xffFFfffff),
-                hoverColor: Colors.white,
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10.0)),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black12, width: 1),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Montserrat-Medium",
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            )),
-          ),
-          SizedBox(height: parentHeight * 0.02),
-          Text("Current Location",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              )),
-          Padding(
-            padding: EdgeInsets.only(top: parentHeight * 0.01),
-            child: Container(
-                child: TextFormField(
-              // focusNode: _emailFocus,
-              keyboardType: TextInputType.text,
-              controller: emailController,
-              autocorrect: true,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                isDense: true,
-                prefixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Image(
-                      image: AssetImage('assets/images/email.png'),
-                      height: 20,
-                    )),
-                contentPadding: EdgeInsets.only(
-                  left: parentWidth * 0.04,
-                ),
-                hintStyle: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Montserrat-Medium",
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                fillColor: Color(0xffFFfffff),
-                hoverColor: Colors.white,
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10.0)),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black12, width: 1),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Montserrat-Medium",
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            )),
-          ),
-          SizedBox(height: parentHeight * 0.02),
-          Text("DOB",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              )),
-          Padding(
-            padding: EdgeInsets.only(
-              top: parentHeight * 0.01,
-            ),
-            child: Container(
+            Padding(
+              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
               child: TextFormField(
-                keyboardType: TextInputType.text,
-                controller: addressController,
+                controller: phoneController,
                 autocorrect: true,
+                keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   isDense: true,
                   prefixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Image(
-                      image: AssetImage('assets/images/email.png'),
-                      height: 20,
-                    ),
+                      onPressed: () {},
+                      icon:  Icon(Icons.phone)
+
+                  
                   ),
                   contentPadding: EdgeInsets.only(
-                    left: parentWidth * 0.04,
+                      left: ResponsiveUtil.width(16)),
+                  fillColor: Color(0xffFFfffff),
+                  hoverColor: Colors.white,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10.0)),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black12, width: 1),
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
+                  hintText: 'Phone Number',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                    fontSize: ResponsiveUtil.fontSize(15),
+                    fontFamily: "okra_Light",
+                  ),
+                ),
+
+
+
+
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Montserrat-Medium",
+                  fontSize: ResponsiveUtil.fontSize(13),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            SizedBox(height: ResponsiveUtil.height(20)),
+            Text(
+              "Email",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: ResponsiveUtil.fontSize(15),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
+              child: TextFormField(
+                controller: emailController,
+                autocorrect: true,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  isDense: true,
+                  prefixIcon: IconButton(
+                      onPressed: () {},
+
+                      icon:  Icon(Icons.email_outlined)
+                      /*icon: Image(
+                        image: AssetImage('assets/images/email.png'),
+                        height: ResponsiveUtil.height(20),
+                      )*/
+                  ),
+                  contentPadding: EdgeInsets.only(
+                      left: ResponsiveUtil.width(16)),
+                  hintText: 'email',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                    fontSize: ResponsiveUtil.height(15),
+                    fontFamily: "okra_Light",
+                  ),
+                  fillColor: Color(0xffFFfffff),
+                  hoverColor: Colors.white,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10.0)),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black12, width: 1),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Montserrat-Medium",
+                  fontSize: ResponsiveUtil.height(13),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            SizedBox(height: ResponsiveUtil.height(20)),
+            Text(
+              "Current Location",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize: ResponsiveUtil.height(15),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+        GestureDetector(
+          onTap: () async {
+             Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LocationMapScreen(),
+              ),
+            );
+          //  loadCurrentLocation();
+
+          },
+
+/*            onTap: () async {
+                          final String? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateCity()),
+                          );
+                          if (result != null) {
+                            updateCity(result); // Update city if selected
+                          }
+                        },*/
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: SizeConfig.screenHeight * 0.03, left: 10),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: SizeConfig.screenHeight * 0.025,
+                      color: Color(0xfff44343),
+                    ),
+                    Flexible(
+                      child: Container(
+                        width: 120,
+                        child: Text(
+                          currentCity,
+                          style: TextStyle(
+                            color: Color(0xfff44343),
+                            letterSpacing: 0.0,
+                            fontFamily: "okra_Medium",
+                            fontSize:
+                            SizeConfig.blockSizeHorizontal *
+                                3.7,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: ResponsiveUtil.height(20)),
+            Text(
+              "DOB",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "okra_Medium",
+                fontSize:ResponsiveUtil.fontSize(15),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
+              child: TextFormField(
+                controller: dobController,
+                readOnly: true,
+                onTap: () => _selectDate(context),
+                decoration: InputDecoration(
+                  isDense: true,
+                  prefixIcon: IconButton(
+                    onPressed: () => _selectDate(context),
+                    icon: Icon(Icons.date_range),
+                  ),
+                  contentPadding: EdgeInsets.only(left: ResponsiveUtil.width(16)),
+                  hintText: "Select DOB",
                   hintStyle: TextStyle(
                     color: Colors.grey,
                     fontFamily: "Montserrat-Medium",
-                    fontSize: 13,
+                    fontSize: ResponsiveUtil.fontSize(14),
                     fontWeight: FontWeight.w500,
                   ),
                   fillColor: Color(0xffffffff),
@@ -827,344 +912,12 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: "Montserrat-Medium",
-                  fontSize: 13,
+                  fontSize: ResponsiveUtil.fontSize(15),
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-          ),
-          SizedBox(height: parentHeight * 0.03),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isEditing = false;
-                isLoading = true;
-                ApiClients()
-                    .editUserProfile(nameController.text, phoneController.text,
-                        emailController.text, addressController.text, _image)
-                    .then(
-                  (value) {
-                    */
-/*if (value.containsKey("message") && value["message"] == "Authorization token missing") {
-                    print("User is not authorized. Redirect to login.");
-                    // Handle redirection or error notification
-                    return;
-                  }*//*
 
-
-                    if (mounted) {
-                      setState(() => isLoading = false);
-                    }
-
-                    ApiClients().getUserProfileData().then((value) {
-                      if (!value.containsKey('user')) {
-                        print("Invalid user data received.");
-                        return;
-                      }
-                      ApiClients().getUserProfileData().then((value) {
-                        if (value.isEmpty) return;
-
-                        GetStorage().write(
-                            ConstantData.UserId, value['user']['userId']);
-                        GetStorage().write(ConstantData.UserFirstName,
-                            value['user']['firstName']);
-                        GetStorage().write(ConstantData.UserMobile,
-                            value['user']['phoneNumber']);
-                        GetStorage().write(
-                            ConstantData.Useremail, value['user']['email']);
-
-                        GetStorage().write(ConstantData.UserProfileImage,
-                            value['user']['profilePicture']);
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MainHome(
-                                    lat: '',
-                                    long: '',
-                                    showLoginWidget: false,
-                                  )),
-                        );
-                      });
-                    }).catchError((error) {
-                      print("Error during profile update: $error");
-                      setState(() => isLoading = false);
-                    });
-                  },
-                );
-
-                */
-/* firstname = nameController.text;
-                phoneNumber = phoneController.text;
-                email = emailController.text;
-                address = addressController.text;
-                isEditing = false;*//*
- // Exit edit mode
-              });
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                  left: parentWidth * 0.04, right: parentWidth * 0.04),
-              child: Container(
-                  width: parentWidth * 0.77,
-                  height: parentHeight * 0.06,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 5,
-                          spreadRadius: 1,
-                          offset: Offset(1, 1)),
-                    ],
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Color(0xffFEBA69),
-                        Color(0xffFE7F64),
-                      ],
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(30),
-                    ),
-                  ),
-                  child: Center(
-                      child: Text(
-                    "Save",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'Roboto-Regular',
-                        fontSize: SizeConfig.blockSizeHorizontal * 4.3),
-                  ))),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-*/
-
-
-  Widget _buildEditForm(double parentHeight, double parentWidth) {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: ResponsiveUtil.width(16)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Phone Number",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: ResponsiveUtil.height(15),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
-              child: Container(
-                child: TextFormField(
-                  controller: nameController,
-                  autocorrect: true,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: IconButton(
-                        onPressed: () {},
-                        icon: Image(
-                          image: AssetImage('assets/images/email.png'),
-                          height: ResponsiveUtil.height(20),
-                        )),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
-                    hintStyle: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Montserrat-Medium",
-                      fontSize: ResponsiveUtil.height(13),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    fillColor: Color(0xffFFfffff),
-                    hoverColor: Colors.white,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(10.0)),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12, width: 1),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Montserrat-Medium",
-                    fontSize: ResponsiveUtil.height(13),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: ResponsiveUtil.height(20)),
-            Text(
-              "Email",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: ResponsiveUtil.height(15),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
-              child: Container(
-                child: TextFormField(
-                  controller: phoneController,
-                  autocorrect: true,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: IconButton(
-                        onPressed: () {},
-                        icon: Image(
-                          image: AssetImage('assets/images/email.png'),
-                          height: ResponsiveUtil.height(20),
-                        )),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
-                    hintStyle: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Montserrat-Medium",
-                      fontSize: ResponsiveUtil.height(13),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    fillColor: Color(0xffFFfffff),
-                    hoverColor: Colors.white,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(10.0)),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12, width: 1),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Montserrat-Medium",
-                    fontSize: ResponsiveUtil.height(13),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: ResponsiveUtil.height(20)),
-            Text(
-              "Current Location",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: ResponsiveUtil.height(15),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
-              child: Container(
-                child: TextFormField(
-                  controller: emailController,
-                  autocorrect: true,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: IconButton(
-                        onPressed: () {},
-                        icon: Image(
-                          image: AssetImage('assets/images/email.png'),
-                          height: ResponsiveUtil.height(20),
-                        )),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
-                    hintStyle: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Montserrat-Medium",
-                      fontSize: ResponsiveUtil.height(13),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    fillColor: Color(0xffFFfffff),
-                    hoverColor: Colors.white,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(10.0)),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12, width: 1),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Montserrat-Medium",
-                    fontSize: ResponsiveUtil.height(13),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: ResponsiveUtil.height(20)),
-            Text(
-              "DOB",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: ResponsiveUtil.height(15),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
-              child: Container(
-                child: TextFormField(
-                  controller: addressController,
-                  autocorrect: true,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: IconButton(
-                      onPressed: () {},
-                      icon: Image(
-                        image: AssetImage('assets/images/email.png'),
-                        height: ResponsiveUtil.height(20),
-                      ),
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontFamily: "Montserrat-Medium",
-                      fontSize: ResponsiveUtil.height(13),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    fillColor: Color(0xffffffff),
-                    hoverColor: Colors.white,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12, width: 1),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Montserrat-Medium",
-                    fontSize: ResponsiveUtil.height(13),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
             SizedBox(height: ResponsiveUtil.height(30)),
             GestureDetector(
               onTap: () {

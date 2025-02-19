@@ -516,172 +516,6 @@ class MainHomeState extends State<MainHome>
         //  physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
 
-           /* Container(
-              height: 160,
-              color: Color(0xfff1f2fd),
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
-                      width: 108,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(100)),
-                        color: Color(0xffffffff),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
-                      width: 85,
-                      height: 95,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(100)),
-                        color: Color(0xfff1f2fd),
-                      ),
-                    ),
-                  ),
-
-                  Padding(
-                    padding:  EdgeInsets.only(top: 40,right: 20),
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: Container(
-                        width: 33,
-                        height: 33,
-                        child: Center(
-                          child: Icon(
-                            Icons.settings,
-                            size: 18,
-                            color: Colors.black,
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              Color(0xffe4b4fb),
-                              Color(0xfffddfdf),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Myprofiledetails()),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.08, left: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-
-                          Stack(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: CircleAvatar(
-                                  radius: 29.0,
-                                  backgroundColor: Colors.white,
-                                  child: CircleAvatar(
-                                    radius: 25.0,
-                                    backgroundColor: Colors.transparent,
-                                    backgroundImage: (profileImage != null &&
-                                        profileImage!.isNotEmpty)
-                                        ? NetworkImage(profileImage!)
-                                        : AssetImage('assets/images/profiless.png') as ImageProvider,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  *//*decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    shape: BoxShape.circle,
-                                  ),*//*
-                                  padding: EdgeInsets.all(4),
-                                  child: Image(image: AssetImage('assets/images/pro_edit.png'),height: 16,)      *//* Icon(
-                                    Icons.edit,
-                                    //color: Colors.white,
-                                    size: 16,
-                                  ),*//*
-                                ),
-                              ),
-                            ],
-                          ),
-
-
-                          Padding(
-                            padding:  EdgeInsets.only(top: 14,left: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-
-                                Container(
-                                  width:150,
-                                  child: Text(
-                                    "Hii, $firstname",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "okra_Medium",
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                SizedBox(height: 2),
-
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 3),
-                                      child: const Image(
-                                        image: AssetImage('assets/images/location.png'),
-                                        height: 13,
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                    SizedBox(width: 4),
-                                    // Location Text (Tappable)
-                                    Container(
-                                      width: 190,
-                                      child: Text(
-                                        locationName,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontFamily: 'Montserrat_Medium',
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black54,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-
-                ],
-              ),
-            ),*/
 
 
 
@@ -854,11 +688,6 @@ class MainHomeState extends State<MainHome>
                                 height: 22,
                               ),
                               Text("Manage Posts",
-                                  /*style: TextStyle(
-                                      fontSize: SizeConfig.blockSizeHorizontal * 3.93,
-                                      fontFamily: "okra_Regular",
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400)*/
 
                                 style: TextStyle(
                                   color: Color(0xff2B2B2B),
@@ -1584,6 +1413,7 @@ class MainHomeState extends State<MainHome>
                             MaterialPageRoute(
                                 builder: (context) =>
                                     LocationMapScreen()),
+
                           );
                           if (selectedCity != null) {
                             print("✅ Received City: $selectedCity");
@@ -2414,9 +2244,9 @@ class MainHomeState extends State<MainHome>
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:  EdgeInsets.all(8.0),
                   child: Container(
-                    padding: const EdgeInsets.all(5.0),
+                    padding:  EdgeInsets.all(5.0),
                     decoration: BoxDecoration(
                       color: Color(0xffEAEEFF),
                       borderRadius: BorderRadius.all(Radius.circular(30)),

@@ -167,46 +167,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     super.dispose();
   }
 
-  /* Future<void> validatePhoneNumber() async {
-    final phoneNumber = phoneController.text.trim();
-
-    if (phoneNumber.isEmpty || phoneNumber.length != 10) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid 10-digit phone number')),
-      );
-      return;
-    }
-
-    bool isRegistered = await authService.sendMobileOtp(phoneNumber);
-
-    if (isRegistered) {
-     // GetStorage().write('phoneNumber', phoneNumber);
-      // 📌 Phone Number को AuthStorage में Store करो
-      AuthStorage.setPhoneNumber(phoneNumber);
-      print("📌 Phone Number Stored in AuthStorage: $phoneNumber");
-
-      // 📌 Stored Phone Number को Read करो और Print करो
-      String? storedPhone = AuthStorage.getPhoneNumber();
-      print("📌 Retrieved Phone Number from AuthStorage: $storedPhone");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP sent successfully!')),
-      );
-
-      setState(() {
-        showOTPWidget = true;
-        _animationController.forward();
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send OTP. Try again!')),
-      );
-    }
-  }*/
 
 
-  //new code
-  /// 📌 Validate and Send OTP
   Future<void> validatePhoneNumber() async {
     final phoneNumber = phoneController.text.trim();
 
@@ -241,13 +203,13 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   Future<void> validateOTP() async {
     final otp = otpController.text.trim();
 
-    // 🔹 Validate OTP format
+
     if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
       _showSnackBar('❌ Please enter a valid 4-digit OTP');
       return;
     }
 
-    // 🔹 Retrieve stored phone number
+
     String? storedPhone = NewAuthStorage.getPhoneNumber();
     print("📌 Retrieved Phone Number: $storedPhone");
 
@@ -256,7 +218,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
       return;
     }
 
-    // 🔹 Verify OTP
+
     bool isVerified = await newauthService.phoneOtpVerify(storedPhone, otp);
 
     if (isVerified) {
@@ -301,66 +263,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
   }
 
-  // Future<void> validateEmail() async {
-  //   final email = emailController.text.trim();
-  //
-  //   final emailRegex =
-  //       RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-  //
-  //   // 🔹 Validate Email
-  //   if (email.isEmpty || !emailRegex.hasMatch(email)) {
-  //     _showSnackBar('Please enter a valid email address');
-  //     return;
-  //   }
-  //
-  //   // 🔹 Retrieve Stored Phone Number
-  //   String? storedPhone = AuthStorage.getPhoneNumber();
-  //   print("📌 Retrieved Phone Number from AuthStorage: $storedPhone");
-  //
-  //   if (storedPhone == null || storedPhone.isEmpty) {
-  //     _showSnackBar('❌ Phone number is not found in storage!');
-  //     return;
-  //   }
-  //
-  //   print("📞 Sending OTP to: $phoneNumber");
-  //
-  //   var response = await authService.sendEmailOtp(storedPhone, email);
-  //
-  //   print('API Response: $response');
-  //
-  //   if (response != null && response.containsKey('message')) {
-  //     String apiMessage = response['message'];
-  //
-  //     if (apiMessage.contains("OTP sent successfully")) {
-  //       print("✅ OTP Sent Successfully");
-  //
-  //       AuthStorage.setEmail(email);
-  //       print("📌 Phone Number Stored in AuthStorage: $email");
-  //
-  //
-  //       //GetStorage().write('email', email);
-  //
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('OTP sent to email successfully!')),
-  //       );
-  //
-  //       setState(() {
-  //         isOTPEmailVerification = true;
-  //         _animationController.forward();
-  //       });
-  //     } else {
-  //       print("❌ Failed to send OTP: $apiMessage");
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text(apiMessage)),
-  //       );
-  //     }
-  //   } else {
-  //     print("❌ Failed to send OTP, showing SnackBar");
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to send email OTP. Try again!')),
-  //     );
-  //   }
-  // }
+
 
 
   Future<void> validateNewEmailOTP() async {
@@ -410,48 +313,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     }
   }
 
-/*
-  Future<void> validateEmailOTP() async {
-    final String otp = emailOTPController.text.trim();
-    print("📩 Entered OTP: $otp");
 
-    if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid 4-digit OTP')),
-      );
-      return;
-    }
-
-    String? userId = AuthStoragesss.getUserId();
-
-    if (userId == null || userId.isEmpty) {
-      print("❌ ERROR: User ID missing!");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unexpected error. Try again!')),
-      );
-      return;
-    }
-
-    Map<String, dynamic> result = await authService.verifyEmailOtp(userId, otp);
-
-    if (result['success']) {
-      print("✅ OTP Verified Successfully!");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP verified successfully!')),
-      );
-
-      setState(() {
-        isNextScreen = true;
-        _animationController.forward();
-      });
-    } else {
-      print("❌ ERROR: ${result['message']}");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? 'Invalid OTP. Try again!')),
-      );
-    }
-  }
-*/
 
 
   Future<void> validateEmailOTP() async {
@@ -530,7 +392,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         firstName: firstName,
         lastName: lastName,
         gender: gender,
-        permanentAddress: address,
+        permanentAddresss: address,
         password: password,
       );
 
@@ -546,7 +408,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             firstName: firstName,
             lastName: lastName,
             gender: gender,
-            permanentAddress: address,
+            permanentAddress: user['permanentAddress']?.toString() ?? '',
             accessToken: user['accessToken']?.toString() ?? '',
             refreshToken: user['refreshToken']?.toString() ?? '',
             password: '', emailss: user['email']?.toString() ?? '',
@@ -558,7 +420,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  MainHome(lat: '', long: '', showLoginWidget: false),
+                  const MainHome(lat: '', long: '', showLoginWidget: false),
             ),
           );
         } else {
@@ -592,16 +454,15 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
     try {
 
-    //  final response = await newauthService(identifier, password);
       final response = await newauthService.newloginWithPhoneOrEmail(identifier,password);
-      print("📩 API से रिस्पॉन्स: $response");
+      print("📩 API response $response");
 
 
       if (response?['success'] == true) {
         final user = response?['user'];
 
-        print("✅ यूज़र आईडी सेव कर रहे हैं: ${user['id']}");
-        print("✅ टोकन सेव कर रहे हैं: ${user['accessToken']}");
+        print("save ID ${user['id']}");
+        print("Token ${user['accessToken']}");
 
 
         AuthStorage.saveUserData(
@@ -611,12 +472,12 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           firstName: user['firstName'],
           lastName: user['lastName'],
           gender: user['gender'],
-          permanentAddress: user['permanentAddress'],
-          phoneNumbers: user['phoneNumber'],
-          emalisss: user['email'],
+          permanentAddress: user['permanentAddress']?.toString() ?? '',
+          phoneNumbers: user['phoneNumber']?.toString() ?? '',
+          emalisss: user['email']?.toString() ?? '',
         );
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('लॉगिन सफल हुआ!')),
+          SnackBar(content: Text('login success')),
         );
 
         Navigator.pushReplacement(
@@ -1085,8 +946,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             return null;
           },
           inputFormatters: [
-            LengthLimitingTextInputFormatter(10), // Restrict to 10 digits
-            FilteringTextInputFormatter.digitsOnly, // Allow only numbers
+            LengthLimitingTextInputFormatter(10),
+            FilteringTextInputFormatter.digitsOnly,
           ],
           decoration: InputDecoration(
             prefixIcon: Padding(

@@ -250,7 +250,7 @@ class NewApiClients {
     required String firstName,
     required String lastName,
     required String gender,
-    required String permanentAddress,
+    required String permanentAddresss,
     required String password,
   }) async
   {
@@ -260,7 +260,7 @@ class NewApiClients {
       return {"success": false, "message": "User ID not found"};
     }
     NewAuthStorage.getUserId();
-    print("✅ AuthStorage से मिली userId: ${NewAuthStorage.getUserId()}");
+    print("✅ AuthStorage userId: ${NewAuthStorage.getUserId()}");
 
     //String url = ApiConstants.baseUrl + ApiConstants.verifyEmailOtp;
 
@@ -276,7 +276,7 @@ class NewApiClients {
           "firstName": firstName,
           "lastName": lastName,
           "gender": gender,
-          "permanentAddress": permanentAddress,
+          "permanentAddress": permanentAddresss,
           "password": password,
         },
           options: Options(
@@ -369,12 +369,12 @@ class NewApiClients {
     }
 
     try {
-      Response response = await _dio.get(
+      Response response = await NewDioClient.dio.get(
         url,
         options: Options(
           headers: {
-            "Authorization": "Bearer $accessToken", // ✅ Token added here
-            "Accept": "application/json", // Optional
+            "Authorization": "Bearer $accessToken",
+            "Accept": "application/json",
           },
         ),
       );
@@ -403,43 +403,50 @@ class NewApiClients {
   }
 
 
- /* Future<Map<String, dynamic>> getNewLogoutUser() async
-  {
-    String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
+  Future<Map<String, dynamic>> getCurrentLocation() async {
+    String url = "${ApiConstant().BaseUrl}${ApiConstant().getCurrentLocation}";
+    print("🌍 API Request: GET $url");
 
-    //String? sessionToken = GetStorage().read<String>('token');
     String? accessToken = NewAuthStorage.getAccessToken();
     print("📌 Stored Access Token: $accessToken");
 
     if (accessToken == null || accessToken.isEmpty) {
-      return {"error": "Session token is missing. Please log in again."};
+      print("❌ Access Token Missing!");
+      return {"error": "Session expired, please log in again"};
     }
 
-    print("vvvvvvv $url");
-    print("xxxxxx: $accessToken");
-
     try {
-      Response response = await _dio.post(
+      Response response = await NewDioClient.dio.get(
         url,
-
         options: Options(
           headers: {
-            'Authorization': 'Bearer $accessToken',
+            "Authorization": "Bearer $accessToken",
+            "Accept": "application/json",
           },
         ),
       );
 
+      print("🔄 API Response Received!");
+      print("📌 Status Code: ${response.statusCode}");
+      print("📌 Data: ${response.data}");
+
       if (response.statusCode == 200) {
-        print("✅ Logout Successful: ${response.data}");
+        print("✅ Location Data Fetched Successfully!");
         return response.data;
       } else {
+        print("⚠️ Unexpected Response Code: ${response.statusCode}");
         return {"error": "Unexpected response code: ${response.statusCode}"};
       }
-    } on DioError catch (e) {
-      print("❌ Logout API Error: ${e.response?.data}");
+    } on DioException catch (e) {
+      print("❌ Location API Error Encountered!");
+      print("📌 Status Code: ${e.response?.statusCode}");
+      print("📌 Error Data: ${e.response?.data}");
+      print("📌 Error Message: ${e.message}");
+
       return {"error": "Exception: ${e.message}"};
     }
-  }*/
+  }
+
 
   Future<Map<String, dynamic>> getNewLogoutUser() async {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";

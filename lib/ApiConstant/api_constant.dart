@@ -28,6 +28,7 @@ class ApiConstant {
 
 String logout = "/logout";
 String getEditProfile = "/profile";
+String getCurrentLocation = "/get-location";
 String putEditProfile = "/profile";
 
 String getDisplayProductList = "/products";

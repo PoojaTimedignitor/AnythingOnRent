@@ -101,7 +101,7 @@ class NewAuthStorage {
   static const String addressKey = "permanentAddress";
   static const String password = "password";
 
-  /// 📌 Save all user details in one function
+
   static Future<void> saveUserDetails({
     required String userId,
     required String phoneNumber,
@@ -128,7 +128,7 @@ class NewAuthStorage {
     print("✅ All User Details Saved Successfully!");
   }
 
-  /// 📌 Retrieve all user details as a map
+
   static Map<String, String?> getUserDetails() {
     return {
       "userId": _storage.read(userIdKey),
@@ -144,14 +144,14 @@ class NewAuthStorage {
   }
 
 
-  static String? getUserId() => _storage.read<String>('userId'); // ✅ Fix: Consistent key
-  static String? getFName() => _storage.read<String>('firstName'); // ✅ Fix: Consistent key
-  static String? getLName() => _storage.read<String>('lastName'); // ✅ Fix: Consistent key
-  static String? getPhone() => _storage.read<String>('phoneNumber'); // ✅ Fix: Consistent key
-  static String? getEmails() => _storage.read<String>('email'); // ✅ Fix: Consistent key
-  static String? getAddress() => _storage.read<String>('permanentAddress'); // ✅ Fix: Consistent key
-  static String? getGender() => _storage.read<String>('gender'); // ✅ Fix: Consistent key
-  static String? getProfileImage() => _storage.read<String>('profileImage'); // ✅ Fix: Consistent key
+  static String? getUserId() => _storage.read<String>('userId');
+  static String? getFName() => _storage.read<String>('firstName');
+  static String? getLName() => _storage.read<String>('lastName');
+  static String? getPhone() => _storage.read<String>('phoneNumber');
+  static String? getEmails() => _storage.read<String>('email');
+  static String? getAddress() => _storage.read<String>('permanentAddress');
+  static String? getGender() => _storage.read<String>('gender');
+  static String? getProfileImage() => _storage.read<String>('profileImage');
 
 
   /// 📌 Store Phone Number
@@ -205,12 +205,11 @@ class NewAuthStorage {
     _storage.write(StorageKeys.otp, otp);
   }
 
-  /// 📌 Retrieve OTP
   static String? getOTP() {
     return _storage.read<String>(StorageKeys.otp);
   }
 
-  /// 📌 Clear Storage (Logout/Reset)
+
   static Future<void> clearStorage() async {
     await _storage.erase();
   }
