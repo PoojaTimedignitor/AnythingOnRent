@@ -10,12 +10,16 @@ import 'Common_File/common_color.dart';
 import 'ConstantData/Constant_data.dart';
 import 'MyBehavior.dart';
 import 'ProductConfirmation.dart';
+import 'SearchCatagries.dart';
 import 'SideBar/My Collection.dart';
 import 'SideBar/My Ratings.dart';
 import 'SideBar/My Transaction History.dart';
 import 'SideBar/MyFevorites.dart';
 import 'SideBar/MyProfileDetails.dart';
 import 'SideBar/chat.dart';
+import 'addProductService.dart';
+import 'location_map.dart';
+import 'model/dio_client.dart';
 
 class ChangeHome extends StatefulWidget {
   const ChangeHome({super.key});
@@ -28,16 +32,18 @@ class _ChangeHomeState extends State<ChangeHome> {
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int selectedIndex = 0;
-  String _backgroundImage = 'assets/images/dashtwo.png';
+  String _backgroundImage = 'assets/images/new-bg.png';
+  String updatedCity = "No city selected";
+  final ApiClients authService = ApiClients();
 
 
   void _changeBackground(int index) {
     setState(() {
-      selectedIndex = index; // Update selected tab
+      selectedIndex = index;
       if (index == 0) {
-        _backgroundImage = 'assets/images/dashtwo.png'; // Product BG
+        _backgroundImage = 'assets/images/new-bg.png';
       } else if (index == 1) {
-        _backgroundImage = 'assets/images/service_bg.jpg'; // Service BG
+        _backgroundImage = 'assets/images/news-bg.png';
       }
     });
   }
@@ -112,7 +118,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails()),
+                              builder: (context) => Myprofiledetails(option: () {  },)),
                         );
                       },
                       child: Padding(
@@ -175,6 +181,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                   ),
                                   const SizedBox(height: 2),
                                   Row(
+
                                     children: [
                                       const Image(
                                         image: AssetImage(
@@ -467,7 +474,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                   width: 130,
                                   //  color: Colors.red,
                                   child: Text(
-                                      // the text of the row.
+
                                       "Due for renewal",
                                       style: TextStyle(
                                         color: Color(0xff2B2B2B),
@@ -731,6 +738,8 @@ class _ChangeHomeState extends State<ChangeHome> {
                                   image: AssetImage('assets/images/chat.png'),
                                   height: 20,
                                 ),
+
+
                                 Container(
                                   // width: 125,
                                   //  color: Colors.red,
@@ -773,26 +782,23 @@ class _ChangeHomeState extends State<ChangeHome> {
                                   image: AssetImage('assets/images/chat.png'),
                                   height: 20,
                                 ),
-                                Container(
-                                  // width: 125,
-                                  //  color: Colors.red,
-                                  child: Text(
-                                      // the text of the row.
-                                      "Legal",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
+                                Text(
+                                    // the text of the row.
+                                    "Legal",
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis),
                               ],
                             ),
                           ),
                           SizedBox(height: 15),
                           GestureDetector(
                             onTap: () {
+
                               //  LogoutDialogBox(context);
                             },
                             child: Row(
@@ -818,10 +824,13 @@ class _ChangeHomeState extends State<ChangeHome> {
                                             fontWeight: FontWeight.w600,
                                           ),
 
+
                                           /* style: TextStyle(
                                             color: Colors.pink,
                                             fontSize:
                                                 SizeConfig.blockSizeHorizontal * 3.9),*/
+
+
                                         )
                                       ],
                                     ),
@@ -849,7 +858,7 @@ class _ChangeHomeState extends State<ChangeHome> {
             Stack(
               children: [
                 Container(
-                  height: ResponsiveUtil.height(240),
+                  height: ResponsiveUtil.height(300),
                   decoration: BoxDecoration(
                    /* gradient: LinearGradient(
                       begin: Alignment.topRight,
@@ -872,8 +881,10 @@ class _ChangeHomeState extends State<ChangeHome> {
                       bottomLeft: Radius.circular(20),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: ListView(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    //crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
@@ -909,7 +920,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                         color: Colors.black,
                                       ),
                                       overflow: TextOverflow.ellipsis,
-                                      maxLines: 1, // Ensures it doesn't overflow
+                                      maxLines: 1,
                                     ),
                                   ),
                                   SizedBox(height: ResponsiveUtil.height(2)),
@@ -954,14 +965,14 @@ class _ChangeHomeState extends State<ChangeHome> {
                         ),
 
                       ),
-                      SizedBox(height: ResponsiveUtil.height(20)),
+                      SizedBox(height: ResponsiveUtil.height(13)),
 
                       // Tab Buttons
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: ResponsiveUtil.width(7)),
+                            horizontal: ResponsiveUtil.width(10)),
                         child: Container(
-                          padding: EdgeInsets.all(ResponsiveUtil.width(4)),
+                          padding: EdgeInsets.all(ResponsiveUtil.width(2)),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(30),
@@ -976,7 +987,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                   onTap: () => _changeBackground(0), // Change BG on tap
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
-                                      vertical: ResponsiveUtil.height(10),
+                                      vertical: ResponsiveUtil.height(9),
                                     ),
                                     decoration: BoxDecoration(
                                       gradient: selectedIndex == 0
@@ -1010,14 +1021,14 @@ class _ChangeHomeState extends State<ChangeHome> {
                                   onTap: () => _changeBackground(1), // Change BG on tap
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
-                                      vertical: ResponsiveUtil.height(10),
+                                      vertical: ResponsiveUtil.height(9),
                                     ),
                                     decoration: BoxDecoration(
                                       gradient: selectedIndex == 1
                                           ? LinearGradient(
                                         colors: [
-                                          Color(0xfff44343),
-                                          Color(0xfffa8b8b),
+                                          Color(0xff435bf4),
+                                          Color(0xff435bf4),
                                         ],
                                         begin: Alignment.topRight,
                                         end: Alignment.bottomLeft,
@@ -1042,14 +1053,6 @@ class _ChangeHomeState extends State<ChangeHome> {
                             ],
                           ),
 
-
-
-
-
-
-
-
-
                         ),
                       ),
                       Padding(
@@ -1059,12 +1062,98 @@ class _ChangeHomeState extends State<ChangeHome> {
                           "     ANYTHING ON RENT",
                           style: TextStyle(
                             fontFamily: "okra_extrabold",
-                            fontSize: SizeConfig.blockSizeHorizontal * 5.1,
+                            fontSize: SizeConfig.blockSizeHorizontal * 5.0,
                             color: CupertinoColors.black,
                             fontWeight: FontWeight.w200,
                           ),
                         ),
                       ),
+
+                      GestureDetector(
+
+                        onTap: () async {
+                          String? selectedCity = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    LocationMapScreen()),
+
+                          );
+                          if (selectedCity != null) {
+                            print("✅ Received City: $selectedCity");
+
+                            setState(() {
+                              updatedCity = selectedCity;
+                            });
+                            String? id = GetStorage().read<String>('userId');
+                            print("jjjjjjjj  $id");
+                            bool success =
+                            await authService.storeUserCity(
+                              id!, // User ID
+                              18.5204, // Latitude
+                              73.8567, // Longitude
+                              selectedCity, // City
+                            );
+
+                            if (success) {
+                              print(
+                                  "✅ City successfully updated in backend!");
+                            } else {
+                              print(
+                                  "❌ Failed to update city in backend.");
+                            }
+                          }
+                        },
+/*            onTap: () async {
+                          final String? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateCity()),
+                          );
+                          if (result != null) {
+                            updateCity(result); // Update city if selected
+                          }
+                        },*/
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: SizeConfig.screenHeight * 0.0, left: 30),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                size: SizeConfig.screenHeight * 0.025,
+                                color: Color(0xfff44343),
+                              ),
+                              Flexible(
+                                child: Container(
+                                  width: 120,
+                                  child: Text(
+                                    updatedCity,
+                                    style: TextStyle(
+                                      color: Color(0xfff44343),
+                                      letterSpacing: 0.0,
+                                      fontFamily: "okra_Medium",
+                                      fontSize:
+                                      SizeConfig.blockSizeHorizontal *
+                                          3.7,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      AddPostButton(
+                          SizeConfig.screenHeight, SizeConfig.screenWidth),
+
+
+                      HomeSearchBar(
+                          SizeConfig.screenHeight, SizeConfig.screenWidth),
+
 
                     ],
                   ),
@@ -1074,4 +1163,100 @@ class _ChangeHomeState extends State<ChangeHome> {
           ],
         ));
   }
+
+
+  Widget HomeSearchBar(double parentHeight, double parentWidth) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RecentSearchesScreen()),
+        );
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+                left: SizeConfig.screenWidth * .05,top: 10),
+            child: SizedBox(
+
+              height: SizeConfig.screenHeight * .053,
+              width: SizeConfig.screenWidth * .95,
+              child: Padding(
+                padding: EdgeInsets.only(right: parentWidth * 0.04),
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black26, width: 0.5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 10),
+                        Image(
+                          image: AssetImage("assets/images/search.png"),
+                          height: SizeConfig.screenWidth * 0.07,
+                        ),
+                        Text(
+                          " Search Product/Service",
+                          style: TextStyle(
+                            fontFamily: "Roboto_Regular",
+                            fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                            color: CommonColor.SearchBar,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget AddPostButton(double parentHeight, double parentWidth) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CreateProductService()));
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+            left: parentWidth * 0.62,
+            right: parentWidth * 0.09),
+        child: Container(
+          height: parentHeight * 0.040,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Color(0xfff44343),
+                Color(0xffFEA3A3),
+              ],
+            ),
+
+            borderRadius: BorderRadius.all(
+              Radius.circular(5),
+            ),
+          ),
+          child: Center(
+              child: Text(
+                "Create Post +",
+                style: TextStyle(
+                  fontFamily: "Montserrat-BoldItalic",
+                  fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+                  color: CupertinoColors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              )),
+        ),
+      ),
+    );
+  }
+
+
 }

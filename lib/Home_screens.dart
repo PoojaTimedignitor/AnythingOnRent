@@ -201,7 +201,6 @@ class _HomeScreenState extends State<HomeScreen>
                           color: Colors.black54,
                         ),
                         Text(
-                            // the text of the row.
                             "My Profile",
                             style: TextStyle(
                                 fontSize: 15,

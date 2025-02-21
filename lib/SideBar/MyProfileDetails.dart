@@ -21,7 +21,9 @@ import '../location_map.dart';
 
 
 class Myprofiledetails extends StatefulWidget {
-  const Myprofiledetails({super.key});
+  final VoidCallback option;
+
+  const Myprofiledetails({super.key, required this.option});
 
   @override
   State<Myprofiledetails> createState() => _MyprofiledetailsState();
@@ -35,7 +37,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   late String gender;
   late String address;
   late String currentLocation;
-  late String currentCity;
+ // late String currentCity;
  // late String currentLocation;
   // String profileImage = "";
   Map<String, dynamic>? profileData;
@@ -89,7 +91,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     print("address    $address");
 
     loadUserProfile();
-    loadCurrentLocation();
+    //loadCurrentLocation();
 
   }
 
@@ -284,11 +286,10 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
         Map<String, dynamic> location = response["currentLocation"];
 
         setState(() {
-          currentCity = location["city"] ?? "Unknown";
-
+         // currentCity = location["city"] ?? "Unknown";
         });
 
-        print("📍 Current City: $currentCity");
+      //  print("📍 Current City: $currentCity");
 
       } else {
         print("❌ Error: currentLocation not found in response");
@@ -311,18 +312,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text(
-          "Profile Details",
-          style: TextStyle(
-            fontFamily: "Montserrat-Medium",
-            fontSize: SizeConfig.blockSizeHorizontal * 4.5,
-            color: CommonColor.TextBlack,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-      ),
+
       body: Stack(
         children: [
           Container(
@@ -337,11 +327,11 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
               child: ListView(
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
-                physics: NeverScrollableScrollPhysics(),
+                physics: AlwaysScrollableScrollPhysics(),
                 children: [
                   Padding(
                     padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
-                    child: Container(
+                    child: SizedBox(
                       height: ResponsiveUtil.height(300),
                       width: ResponsiveUtil.width(400),
                       child: Stack(
@@ -350,7 +340,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                             right: ResponsiveUtil.width(240),
                             child: Container(
                               height: ResponsiveUtil.height(
-                                  300), // Adjust image container height
+                                  300),
                               width: ResponsiveUtil.width(
                                   160), // Adjust width if needed
                               decoration: BoxDecoration(
@@ -416,6 +406,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                 ],
               )),
           AllDetalisContaine(SizeConfig.screenHeight, SizeConfig.screenWidth),
+
         ],
       ),
     );
@@ -432,6 +423,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(height: ResponsiveUtil.height(10)),
               SizedBox(height: ResponsiveUtil.height(10)),
               GestureDetector(
                 onTap: () {
@@ -526,31 +518,6 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
             ],
           ),
 
-          /* SizedBox(height: ResponsiveUtil.height(10)),
-          Center(
-            child: Text(
-              "Listing ID:",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "okra_Medium",
-                fontSize: ResponsiveUtil.fontSize(16),
-                letterSpacing: 0.9,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          SizedBox(height: ResponsiveUtil.height(5)),
-          Center(
-            child: Text(
-              "AB2345",
-              style: TextStyle(
-                color: Color(0xff3684F0),
-                fontFamily: "okra_Regular",
-                fontSize: ResponsiveUtil.fontSize(16),
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),*/
           SizedBox(height: ResponsiveUtil.height(20)),
           isEditing
               ? _buildEditForm(SizeConfig.screenHeight, SizeConfig.screenWidth)
@@ -559,6 +526,9 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       ),
     );
   }
+
+
+
   Widget AadhaarVerification() {
     return Align(
       alignment: Alignment.topLeft,
@@ -605,6 +575,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       ),
     );
   }
+
   Widget mainData() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -628,7 +599,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
               _buildInfoRow("Last Name", lastname),
               _buildInfoRow("Phone Number", phoneNumber),
               _buildInfoRow("Email", email),
-              _buildInfoRow("CurrentLocation", currentCity),
+            //  _buildInfoRow("CurrentLocation", currentCity),
               _buildInfoRow("permanentAddress", address),
               _buildInfoRow("Gender", gender),
               _buildInfoRow("Dob", '29-0-1999'),
@@ -848,7 +819,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
                       child: Container(
                         width: 120,
                         child: Text(
-                          currentCity,
+                          "currentCity",
                           style: TextStyle(
                             color: Color(0xfff44343),
                             letterSpacing: 0.0,

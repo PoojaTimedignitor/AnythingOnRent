@@ -9,9 +9,8 @@ import 'Admin/UserFeedback.dart';
 import 'Admin/helpCentre.dart';
 import 'Admin/vedio_player.dart';
 import 'package:geolocator/geolocator.dart';
-import 'Authentication/login_screen.dart';
 import 'Authentication/register_common.dart';
-import 'City_Create.dart';
+
 import 'Common_File/ResponsiveUtil.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
@@ -28,8 +27,9 @@ import 'SideBar/My Collection.dart';
 import 'SideBar/My Ratings.dart';
 import 'SideBar/My Transaction History.dart';
 import 'SideBar/MyFevorites.dart';
-import 'SideBar/MyProfileDetails.dart';
+
 import 'SideBar/chat.dart';
+import 'SideBar/common_profile_bar.dart';
 import 'addProductService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
@@ -572,7 +572,7 @@ class MainHomeState extends State<MainHome>
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Myprofiledetails()),
+                  MaterialPageRoute(builder: (context) => ProfileBar()),
                 );
               },
               child: Padding(

@@ -1033,3 +1033,112 @@ class _HomeState extends State<ImageSliders> {
     );
   }
 }*/
+
+
+/*
+import 'package:flutter/material.dart';
+
+class MyProfileWidget extends StatefulWidget {
+  @override
+  _MyProfileWidgetState createState() => _MyProfileWidgetState();
+}
+
+class _MyProfileWidgetState extends State<MyProfileWidget> {
+  bool isExpanded = false; // Initially closed
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              isExpanded = !isExpanded; // Toggle expanded state
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(13.0),
+            child: Container(
+              height: 40,
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.help_outline,
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      " My Profile",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "okra_Medium",
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Spacer(),
+                    Image(
+                      image: AssetImage(isExpanded
+                          ? 'assets/images/minus.png'
+                          : 'assets/images/add.png'),
+                      height: 15,
+                      color: Color(0xfff44343),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+
+        if (isExpanded)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Profile Details",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text("Name: John Doe"),
+                  Text("Email: john@example.com"),
+                  Text("Phone: +91 9876543210"),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}*/
