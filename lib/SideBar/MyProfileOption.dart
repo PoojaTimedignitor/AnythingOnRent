@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -9,27 +10,29 @@ import '../Common_File/common_color.dart';
 import '../ConstantData/Constant_data.dart';
 import 'package:intl/intl.dart';
 import '../Authentication/forget_pass_OTP_verify.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../MainHome.dart';
 import '../MyBehavior.dart';
 import '../NewDioClient.dart';
 import '../location_map.dart';
 import '../model/dio_client.dart';
 import '../newGetStorage.dart';
+
 class ProfileOption extends StatefulWidget {
   final VoidCallback option;
   final VoidCallback onServiceProfile;
   final VoidCallback onProductProfile;
-  const ProfileOption({super.key, required this.option, required this.onServiceProfile, required this.onProductProfile});
+  const ProfileOption(
+      {super.key,
+      required this.option,
+      required this.onServiceProfile,
+      required this.onProductProfile});
 
   @override
   State<ProfileOption> createState() => _ProfileOptionState();
 }
 
 class _ProfileOptionState extends State<ProfileOption> {
-
-
-
   late String firstname;
   late String lastname;
   String phoneNumber = "Guest";
@@ -48,7 +51,7 @@ class _ProfileOptionState extends State<ProfileOption> {
 
   Future<void> _pickImageFromGallery() async {
     final XFile? pickedFile =
-    await _picker.pickImage(source: ImageSource.gallery);
+        await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -59,7 +62,7 @@ class _ProfileOptionState extends State<ProfileOption> {
 
   Future<void> _captureImageFromCamera() async {
     final XFile? pickedFile =
-    await _picker.pickImage(source: ImageSource.camera);
+        await _picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
       setState(() {
@@ -67,10 +70,12 @@ class _ProfileOptionState extends State<ProfileOption> {
       });
     }
   }
+
   bool isTablet(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return width >= 600;
   }
+
   bool isEditing = false;
   bool isProductEdit = false;
   bool isServiceEdit = false;
@@ -80,15 +85,20 @@ class _ProfileOptionState extends State<ProfileOption> {
   final TextEditingController emailController = TextEditingController();
   TextEditingController dobController = TextEditingController();
 
-
   TextEditingController addressController = TextEditingController();
-
-
 
   bool isProfile = false;
   bool isProductProfile = false;
   bool isServiceProfile = false;
 
+  void launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Could not launch $url");
+    }
+  }
 
   @override
   void initState() {
@@ -101,7 +111,6 @@ class _ProfileOptionState extends State<ProfileOption> {
 
     loadUserProfile();
     //loadCurrentLocation();
-
   }
 
   void _showGallaryDialogBox(BuildContext context) {
@@ -124,7 +133,8 @@ class _ProfileOptionState extends State<ProfileOption> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(top: ResponsiveUtil.height(20)),
+                          padding:
+                              EdgeInsets.only(top: ResponsiveUtil.height(20)),
                           child: Image(
                             image: AssetImage('assets/images/camerapop.png'),
                             height: ResponsiveUtil.height(20),
@@ -157,7 +167,8 @@ class _ProfileOptionState extends State<ProfileOption> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(top: ResponsiveUtil.height(5)),
+                          padding:
+                              EdgeInsets.only(top: ResponsiveUtil.height(5)),
                           child: Image(
                             image: AssetImage('assets/images/gallerypop.png'),
                             height: ResponsiveUtil.height(20),
@@ -194,7 +205,8 @@ class _ProfileOptionState extends State<ProfileOption> {
                     width: ResponsiveUtil.width(120),
                     height: ResponsiveUtil.height(40),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(ResponsiveUtil.height(10)),
+                      borderRadius:
+                          BorderRadius.circular(ResponsiveUtil.height(10)),
                       gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
@@ -239,8 +251,6 @@ class _ProfileOptionState extends State<ProfileOption> {
     }
   }
 
-
-
   Future<void> loadUserProfile() async {
     try {
       Map<String, dynamic> response = await NewApiClients().getNewProfileData();
@@ -260,11 +270,8 @@ class _ProfileOptionState extends State<ProfileOption> {
           emailController.text = profile["email"] ?? "";
           profileImage = profile["profilePicture"] ?? "";
 
-
           phoneNumber = profile["phoneNumber"] ?? "Guest";
           email = profile["email"] ?? "Guest";
-
-
         });
 
         print("Phone Number: ${phoneController.text}");
@@ -279,10 +286,10 @@ class _ProfileOptionState extends State<ProfileOption> {
     }
   }
 
-
   Future<void> loadCurrentLocation() async {
     try {
-      Map<String, dynamic> response = await NewApiClients().getCurrentLocation();
+      Map<String, dynamic> response =
+          await NewApiClients().getCurrentLocation();
 
       print("🌍 API Response: $response");
 
@@ -299,7 +306,6 @@ class _ProfileOptionState extends State<ProfileOption> {
         });
 
         //  print("📍 Current City: $currentCity");
-
       } else {
         print("❌ Error: currentLocation not found in response");
       }
@@ -308,227 +314,288 @@ class _ProfileOptionState extends State<ProfileOption> {
     }
   }
 
-
   @override
   void dispose() {
-
     phoneController.dispose();
     emailController.dispose();
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-
-          children: [
-            GestureDetector(
-              onTap: () async {
-                setState(() {
-                  isProfile = !isProfile;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10,right: 10),
-                child: Container(
-                  height: 48,
-                  width: SizeConfig.screenHeight * 0.5,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+      body: ScrollConfiguration(
+        behavior: MyBehavior(),
+        child: SingleChildScrollView(
+          //    physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isProfile = !isProfile;
+                    });
+                  },
                   child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.help_outline,
-                            color: Colors.black,
-                            size: 20,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            " My Profile",
-                            style: TextStyle(
+                    padding: EdgeInsets.only(top:SizeConfig.screenHeight*0.03 ),
+                    child: Container(
+                      height: SizeConfig.safeBlockVertical *
+                          5,
+                      width: SizeConfig.isDesktop
+                          ? 1200
+                          : SizeConfig.isTablet
+                              ? 750 // Tablet
+                              : SizeConfig.screenWidth > 400
+                                  ? 120 // Large Mobile
+                                  : 350, // Small Mobile
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(SizeConfig.safeBlockHorizontal *
+                              2.9), // Responsive radius
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(left:SizeConfig.screenWidth*0.01,right:SizeConfig.screenWidth*0.01 ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.help_outline,
                               color: Colors.black,
-                              fontFamily: "okra_Medium",
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
+                              size: SizeConfig.safeBlockVertical *
+                                  2.5, // Responsive icon size
                             ),
-                          ),
-                          Spacer(),
-                          Image(
-                            image: AssetImage(isProfile
-                                ? 'assets/images/minus.png'
-                                : 'assets/images/add.png'),
-                            height: 15,
-                            color: Color(0xfff44343),
-                          ),
-                        ],
-                      )),
-                ),
-              ),
-            ),
-        
-            if (isProfile)
-              Padding(
-                padding: const EdgeInsets.only(left: 10,right: 10),
-                child: Container(
-
-        
-                  decoration: BoxDecoration(
-
-                      //  color: Colors.white,
-                      border: Border.all(color: Color(0xfff4823b), width: 0.5),
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(ResponsiveUtil.width(5))),
-
-                  ),
-                  child: ScrollConfiguration(
-                    behavior: MyBehavior(),
-                    child: ListView(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
-                        Padding(
-                          padding:  EdgeInsets.only(top: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                            children: [
-
-
-                              Padding(
-                                padding:  EdgeInsets.only(left: 140,top: 10),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
-                                            blurRadius: 5,
-                                            offset: Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: CircleAvatar(
-                                        radius: ResponsiveUtil.width(40),
-                                        backgroundColor: Colors.white,
-                                        child: CircleAvatar(
-                                          radius: ResponsiveUtil.width(34),
-                                          backgroundColor: Colors.transparent,
-                                          backgroundImage: _image != null
-                                              ? FileImage(_image!)
-                                              : (profileImage != null &&
-                                              profileImage!.isNotEmpty)
-                                              ? NetworkImage(profileImage!)
-                                              : AssetImage('assets/images/profiless.png')
-                                          as ImageProvider,
-                                        ),
-                                      ),
-                                    ),
-                                    if (isEditing)
-                                      Positioned(
-                                        bottom: ResponsiveUtil.height(0),
-                                        right: ResponsiveUtil.width(0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            _showGallaryDialogBox(context);
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            padding: EdgeInsets.all(ResponsiveUtil.width(6)),
-                                            child: Icon(
-                                              Icons.camera_alt,
-                                              color: Colors.white,
-                                              size: ResponsiveUtil.fontSize(16),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
+                            SizedBox(width: SizeConfig.safeBlockHorizontal * 2),
+                            Text(
+                              " My Profile",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "okra_Medium",
+                                fontSize: SizeConfig.isDesktop
+                                    ? SizeConfig.safeBlockVertical * 1.0 // Desktop
+                                    : SizeConfig.isTablet
+                                    ? SizeConfig.safeBlockVertical * 1.4 // Tablet
+                                    : SizeConfig.safeBlockVertical * 1.7, // Mobile
+                                fontWeight: FontWeight.w600,
                               ),
-                              Padding(
-                                padding:  EdgeInsets.all(13.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isEditing = !isEditing;
-                                    });
-                                  },
-                                  child: Container(
-                                    height: ResponsiveUtil.height(37),
-                                    width: ResponsiveUtil.width(90),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 5,
-                                          offset: Offset(0, 2),
+                            ),
+                            Spacer(),
+                            Image.asset(
+                              isProfile
+                                  ? 'assets/images/minus.png'
+                                  : 'assets/images/add.png',
+                              height: SizeConfig.safeBlockVertical *
+                                  1.6, // Responsive image size
+                              color: Color(0xfff44343),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
+              if (isProfile)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xfff4823b), width: 0.5),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                            MediaQuery.of(context).size.width * 0.01),
+                      ),
+                    ),
+                    child: ScrollConfiguration(
+                      behavior: MyBehavior(),
+                      child: ListView(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.02),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width > 1500
+                                  ? 1500 // Desktop
+                                  : MediaQuery.of(context).size.width > 1300
+                                      ? 1300 // Tablet
+                                      : 300, // Mobile
+                              child: Stack(
+                                children: [
+                                  // Center Profile Row
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.1),
+                                                blurRadius: 5,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: CircleAvatar(
+                                            radius: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.1,
+                                            backgroundColor: Colors.white,
+                                            child: CircleAvatar(
+                                              radius: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.085,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              backgroundImage: _image != null
+                                                  ? FileImage(_image!)
+                                                  : (profileImage != null &&
+                                                          profileImage!
+                                                              .isNotEmpty)
+                                                      ? NetworkImage(
+                                                          profileImage!)
+                                                      : AssetImage(
+                                                              'assets/images/profiless.png')
+                                                          as ImageProvider,
+                                            ),
+                                          ),
                                         ),
+                                        if (isEditing)
+                                          Positioned(
+                                            bottom: 0,
+                                            right: 0,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                _showGallaryDialogBox(context);
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                padding: EdgeInsets.all(
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.015),
+                                                child: Icon(
+                                                  Icons.camera_alt,
+                                                  color: Colors.white,
+                                                  size: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.02,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        "Edit",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: "Montserrat-Medium",
-                                          fontSize: ResponsiveUtil.fontSize(13),
-                                          fontWeight: FontWeight.w500,
+                                  ),
+
+                                  // Edit Button Top Right
+                                  Positioned(
+                                    top: MediaQuery.of(context).size.height *
+                                        0.005,
+                                    right: MediaQuery.of(context).size.width *
+                                        0.02,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          isEditing = !isEditing;
+                                        });
+                                      },
+                                      child: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.05,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.15,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.1),
+                                              blurRadius: 5,
+                                              offset: Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Edit",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: "Montserrat-Medium",
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.018,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                            ],
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-        
-                        SizedBox(height: ResponsiveUtil.height(10)),
-                        isEditing
-                            ? _ProfileEditForm(SizeConfig.screenHeight, SizeConfig.screenWidth)
-                            : mainProfileData(),
-                      ],
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.02),
+                          isEditing
+                              ? _ProfileEditForm(
+                                  MediaQuery.of(context).size.height,
+                                  MediaQuery.of(context).size.width)
+                              : mainProfileData(),
+                        ],
+                      ),
                     ),
-                  )
+                  ),
                 ),
-              ),
-        
-            GestureDetector(
-              onTap: () async {
-                setState(() {
-                  isServiceProfile = !isServiceProfile;
-                });
-
-              },
-              child: Padding(
-                padding: EdgeInsets.only(top: 14, left: 10, right: 10),
-                child: Container(
-                  height: 45,
-                  width: SizeConfig.screenHeight * 0.5,
-                  decoration: BoxDecoration(
+              SizedBox(height: ResponsiveUtil.height(20)),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isServiceProfile = !isServiceProfile;
+                  });
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveUtil.width(10),
+                  ),
+                  child: Container(
+                    height: ResponsiveUtil.height(48),
+                    width: ResponsiveUtil().isMobile(context)
+                        ? MediaQuery.of(context).size.width > 400
+                            ? ResponsiveUtil.width(420) // Large Mobile
+                            : ResponsiveUtil.width(350) // Small Mobile
+                        : ResponsiveUtil().isTablet(context)
+                            ? ResponsiveUtil.width(750) // Tablet
+                            : ResponsiveUtil.width(1200), // Desktop
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(ResponsiveUtil.width(10))),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(ResponsiveUtil.width(8)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -536,367 +603,409 @@ class _ProfileOptionState extends State<ProfileOption> {
                           Icon(
                             Icons.help_outline,
                             color: Colors.black,
-                            size: 20,
+                            size: ResponsiveUtil.height(
+                                20), // Icon size responsive
                           ),
-                          SizedBox(width: 8),
+                          SizedBox(width: ResponsiveUtil.width(8)),
                           Text(
                             " Service Business Profile",
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: "okra_Medium",
-                              fontSize: 15,
+                              fontSize:
+                                  ResponsiveUtil.height(14), // Text responsive
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Spacer(),
-                          Image(
-                            image: AssetImage(isServiceProfile
+                          Image.asset(
+                            isProfile
                                 ? 'assets/images/minus.png'
-                                : 'assets/images/add.png'),
-                            height: 15,
+                                : 'assets/images/add.png',
+                            height: ResponsiveUtil.height(15),
                             color: Color(0xfff44343),
                           ),
                         ],
-                      )),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-
-
-            if (isServiceProfile)
-              Padding(
-                padding: const EdgeInsets.only(left: 10,right: 10),
-                child: Container(
-
-
-                    decoration: BoxDecoration(
-
-                      //  color: Colors.white,
-                      border: Border.all(color: Color(0xfff4823b), width: 0.5),
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(ResponsiveUtil.width(5))),
-
-                    ),
-                    child: ScrollConfiguration(
-                      behavior: MyBehavior(),
-                      child: ListView(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          Padding(
-                            padding:  EdgeInsets.only(top: 2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                              children: [
-
-
-                                Padding(
-                                  padding:  EdgeInsets.only(left: 140,top: 10),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
-                                              blurRadius: 5,
-                                              offset: Offset(0, 2),
+              if (isServiceProfile)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        //  color: Colors.white,
+                        border:
+                            Border.all(color: Color(0xfff4823b), width: 0.5),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(ResponsiveUtil.width(5))),
+                      ),
+                      child: ScrollConfiguration(
+                        behavior: MyBehavior(),
+                        child: ListView(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: ResponsiveUtil.height(10)),
+                              child: Container(
+                                width: ResponsiveUtil().isMobile(context)
+                                    ? ResponsiveUtil.width(300) // Mobile
+                                    : ResponsiveUtil().isTablet(context)
+                                        ? ResponsiveUtil.width(1300) // Tablet
+                                        : ResponsiveUtil.width(1500), // Desktop
+                                child: Stack(
+                                  children: [
+                                    // Center Profile Row
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.1),
+                                                  blurRadius: 5,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: ResponsiveUtil.width(40),
-                                          backgroundColor: Colors.white,
-                                          child: CircleAvatar(
-                                            radius: ResponsiveUtil.width(34),
-                                            backgroundColor: Colors.transparent,
-                                            backgroundImage: _image != null
-                                                ? FileImage(_image!)
-                                                : (profileImage != null &&
-                                                profileImage!.isNotEmpty)
-                                                ? NetworkImage(profileImage!)
-                                                : AssetImage('assets/images/profiless.png')
-                                            as ImageProvider,
-                                          ),
-                                        ),
-                                      ),
-                                      if (isServiceEdit)
-                                        Positioned(
-                                          bottom: ResponsiveUtil.height(0),
-                                          right: ResponsiveUtil.width(0),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              _showGallaryDialogBox(context);
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              padding: EdgeInsets.all(ResponsiveUtil.width(6)),
-                                              child: Icon(
-                                                Icons.camera_alt,
-                                                color: Colors.white,
-                                                size: ResponsiveUtil.fontSize(16),
+                                            child: CircleAvatar(
+                                              radius: ResponsiveUtil.width(40),
+                                              backgroundColor: Colors.white,
+                                              child: CircleAvatar(
+                                                radius:
+                                                    ResponsiveUtil.width(34),
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                backgroundImage: _image != null
+                                                    ? FileImage(_image!)
+                                                    : (profileImage != null &&
+                                                            profileImage!
+                                                                .isNotEmpty)
+                                                        ? NetworkImage(
+                                                            profileImage!)
+                                                        : AssetImage(
+                                                                'assets/images/profiless.png')
+                                                            as ImageProvider,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:  EdgeInsets.all(13.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        isServiceEdit = !isServiceEdit;
-                                      });
-                                    },
-                                    child: Container(
-                                      height: ResponsiveUtil.height(37),
-                                      width: ResponsiveUtil.width(90),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
-                                            blurRadius: 5,
-                                            offset: Offset(0, 2),
-                                          ),
+                                          if (isServiceEdit)
+                                            Positioned(
+                                              bottom: ResponsiveUtil.height(0),
+                                              right: ResponsiveUtil.width(0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  _showGallaryDialogBox(
+                                                      context);
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  padding: EdgeInsets.all(
+                                                      ResponsiveUtil.width(6)),
+                                                  child: Icon(
+                                                    Icons.camera_alt,
+                                                    color: Colors.white,
+                                                    size:
+                                                        ResponsiveUtil.fontSize(
+                                                            16),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                         ],
                                       ),
-                                      child: Center(
-                                        child: Text(
-                                          "Edit",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: "Montserrat-Medium",
-                                            fontSize: ResponsiveUtil.fontSize(13),
-                                            fontWeight: FontWeight.w500,
+                                    ),
+
+                                    // Edit Button Top Right
+                                    Positioned(
+                                      top: ResponsiveUtil.height(5),
+                                      right: ResponsiveUtil.width(10),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isServiceEdit = !isServiceEdit;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: ResponsiveUtil.height(37),
+                                          width: ResponsiveUtil.width(90),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.1),
+                                                blurRadius: 5,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Edit",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "Montserrat-Medium",
+                                                fontSize:
+                                                    ResponsiveUtil.fontSize(13),
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              ],
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-
-                          SizedBox(height: ResponsiveUtil.height(10)),
-                          isServiceEdit
-                              ? _ServiceEditForm(SizeConfig.screenHeight, SizeConfig.screenWidth)
-                              : mainServiceData(),
-                        ],
-                      ),
-                    )
+                            SizedBox(height: ResponsiveUtil.height(10)),
+                            isServiceEdit
+                                ? _ServiceEditForm(SizeConfig.screenHeight,
+                                    SizeConfig.screenWidth)
+                                : mainServiceData(),
+                          ],
+                        ),
+                      )),
                 ),
-              ),
-
-
-            GestureDetector(
-              onTap: () async {
-                setState(() {
-                  isProductProfile = !isProductProfile;
-                });
-
-              },
-              child: Padding(
-                padding: EdgeInsets.only(top: 14, left: 10, right: 10),
-                child: Container(
-                  height: 45,
-                  width: SizeConfig.screenHeight * 0.5,
-                  decoration: BoxDecoration(
+              SizedBox(height: ResponsiveUtil.height(20)),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isProductProfile = !isProductProfile;
+                  });
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveUtil.width(10),
+                  ),
+                  child: Container(
+                    height: ResponsiveUtil.height(48),
+                    width: ResponsiveUtil().isMobile(context)
+                        ? MediaQuery.of(context).size.width > 400
+                            ? ResponsiveUtil.width(420)
+                            : ResponsiveUtil.width(350) // Small Mobile
+                        : ResponsiveUtil().isTablet(context)
+                            ? ResponsiveUtil.width(750) // Tablet
+                            : ResponsiveUtil.width(1200), // Desktop
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(ResponsiveUtil.width(10))),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(ResponsiveUtil.width(8)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.help_outline, // Icon before the text
+                            Icons.help_outline,
                             color: Colors.black,
-                            size: 20,
+                            size: ResponsiveUtil.height(
+                                20), // Icon size responsive
                           ),
-                          SizedBox(width: 8),
+                          SizedBox(width: ResponsiveUtil.width(8)),
                           Text(
                             " Product Business profile",
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: "okra_Medium",
-                              fontSize: 15,
+                              fontSize:
+                                  ResponsiveUtil.height(14), // Text responsive
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Spacer(),
-                          Image(
-                            image: AssetImage(isProductProfile
+                          Image.asset(
+                            isProfile
                                 ? 'assets/images/minus.png'
-                                : 'assets/images/add.png'),
-                            height: 15,
+                                : 'assets/images/add.png',
+                            height: ResponsiveUtil.height(
+                                15), // Image height responsive
                             color: Color(0xfff44343),
                           ),
                         ],
-                      )),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-
-
-
-
-            if (isProductProfile)
-              Padding(
-                padding: const EdgeInsets.only(left: 10,right: 10),
-                child: Container(
-
-
-                    decoration: BoxDecoration(
-
-                      //  color: Colors.white,
-                      border: Border.all(color: Color(0xfff4823b), width: 0.5),
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(ResponsiveUtil.width(5))),
-
-                    ),
-                    child: ScrollConfiguration(
-                      behavior: MyBehavior(),
-                      child: ListView(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          Padding(
-                            padding:  EdgeInsets.only(top: 2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                              children: [
-
-
-                                Padding(
-                                  padding:  EdgeInsets.only(left: 140,top: 10),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
-                                              blurRadius: 5,
-                                              offset: Offset(0, 2),
+              if (isProductProfile)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        //  color: Colors.white,
+                        border:
+                            Border.all(color: Color(0xfff4823b), width: 0.5),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(ResponsiveUtil.width(5))),
+                      ),
+                      child: ScrollConfiguration(
+                        behavior: MyBehavior(),
+                        child: ListView(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: ResponsiveUtil.height(10)),
+                              child: Container(
+                                width: ResponsiveUtil().isMobile(context)
+                                    ? ResponsiveUtil.width(300) // Mobile
+                                    : ResponsiveUtil().isTablet(context)
+                                        ? ResponsiveUtil.width(1300) // Tablet
+                                        : ResponsiveUtil.width(1500), // Desktop
+                                child: Stack(
+                                  children: [
+                                    // Center Profile Row
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.1),
+                                                  blurRadius: 5,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: ResponsiveUtil.width(40),
-                                          backgroundColor: Colors.white,
-                                          child: CircleAvatar(
-                                            radius: ResponsiveUtil.width(34),
-                                            backgroundColor: Colors.transparent,
-                                            backgroundImage: _image != null
-                                                ? FileImage(_image!)
-                                                : (profileImage != null &&
-                                                profileImage!.isNotEmpty)
-                                                ? NetworkImage(profileImage!)
-                                                : AssetImage('assets/images/profiless.png')
-                                            as ImageProvider,
-                                          ),
-                                        ),
-                                      ),
-                                      if (isProductEdit)
-                                        Positioned(
-                                          bottom: ResponsiveUtil.height(0),
-                                          right: ResponsiveUtil.width(0),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              _showGallaryDialogBox(context);
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              padding: EdgeInsets.all(ResponsiveUtil.width(6)),
-                                              child: Icon(
-                                                Icons.camera_alt,
-                                                color: Colors.white,
-                                                size: ResponsiveUtil.fontSize(16),
+                                            child: CircleAvatar(
+                                              radius: ResponsiveUtil.width(40),
+                                              backgroundColor: Colors.white,
+                                              child: CircleAvatar(
+                                                radius:
+                                                    ResponsiveUtil.width(34),
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                backgroundImage: _image != null
+                                                    ? FileImage(_image!)
+                                                    : (profileImage != null &&
+                                                            profileImage!
+                                                                .isNotEmpty)
+                                                        ? NetworkImage(
+                                                            profileImage!)
+                                                        : AssetImage(
+                                                                'assets/images/profiless.png')
+                                                            as ImageProvider,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:  EdgeInsets.all(13.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        isProductEdit = !isProductEdit;
-                                      });
-                                    },
-                                    child: Container(
-                                      height: ResponsiveUtil.height(37),
-                                      width: ResponsiveUtil.width(90),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
-                                            blurRadius: 5,
-                                            offset: Offset(0, 2),
-                                          ),
+                                          if (isProductEdit)
+                                            Positioned(
+                                              bottom: ResponsiveUtil.height(0),
+                                              right: ResponsiveUtil.width(0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  _showGallaryDialogBox(
+                                                      context);
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  padding: EdgeInsets.all(
+                                                      ResponsiveUtil.width(6)),
+                                                  child: Icon(
+                                                    Icons.camera_alt,
+                                                    color: Colors.white,
+                                                    size:
+                                                        ResponsiveUtil.fontSize(
+                                                            16),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                         ],
                                       ),
-                                      child: Center(
-                                        child: Text(
-                                          "Edit",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: "Montserrat-Medium",
-                                            fontSize: ResponsiveUtil.fontSize(13),
-                                            fontWeight: FontWeight.w500,
+                                    ),
+
+                                    // Edit Button Top Right
+                                    Positioned(
+                                      top: ResponsiveUtil.height(5),
+                                      right: ResponsiveUtil.width(10),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isProductEdit = !isProductEdit;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: ResponsiveUtil.height(37),
+                                          width: ResponsiveUtil.width(90),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.1),
+                                                blurRadius: 5,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Edit",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "Montserrat-Medium",
+                                                fontSize:
+                                                    ResponsiveUtil.fontSize(13),
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              ],
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-
-                          SizedBox(height: ResponsiveUtil.height(10)),
-                          isProductEdit
-                              ? _productEditForm(SizeConfig.screenHeight, SizeConfig.screenWidth)
-                              : mainProductData(),
-                        ],
-                      ),
-                    )
+                            SizedBox(height: ResponsiveUtil.height(10)),
+                            isProductEdit
+                                ? _productEditForm(SizeConfig.screenHeight,
+                                    SizeConfig.screenWidth)
+                                : mainProductData(),
+                          ],
+                        ),
+                      )),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
-
-
 
   Widget aadhaarProfile() {
     return Align(
@@ -952,15 +1061,14 @@ class _ProfileOptionState extends State<ProfileOption> {
         height: ResponsiveUtil.height(350),
         width: ResponsiveUtil.width(96),
         decoration: BoxDecoration(
-        //  color: Colors.white,
-          /*border: Border.all(color: Color(0xfff4823b), width: 0.3),
+            //  color: Colors.white,
+            /*border: Border.all(color: Color(0xfff4823b), width: 0.3),
           borderRadius:
           BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),*/
-        ),
+            ),
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveUtil.width(18),
-
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1023,7 +1131,6 @@ class _ProfileOptionState extends State<ProfileOption> {
     );
   }
 
-
   Widget _ProfileEditForm(double parentHeight, double parentWidth) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: ResponsiveUtil.width(16)),
@@ -1054,16 +1161,19 @@ class _ProfileOptionState extends State<ProfileOption> {
                       padding: EdgeInsets.all(8),
                       child: Icon(Icons.phone, size: 17),
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     fillColor: Color(0xffFFFFFF),
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     hintText: 'Phone Number',
@@ -1081,8 +1191,7 @@ class _ProfileOptionState extends State<ProfileOption> {
                   ),
                 ),
               ),
-            )
-,
+            ),
             SizedBox(height: ResponsiveUtil.height(10)),
             Text(
               "Email",
@@ -1105,16 +1214,14 @@ class _ProfileOptionState extends State<ProfileOption> {
                   decoration: InputDecoration(
                     isDense: true,
                     prefixIcon: IconButton(
-                        onPressed: () {},
-
-                        icon:  Icon(Icons.email_outlined)
-                      /*icon: Image(
+                        onPressed: () {}, icon: Icon(Icons.email_outlined)
+                        /*icon: Image(
                           image: AssetImage('assets/images/email.png'),
                           height: ResponsiveUtil.height(20),
                         )*/
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        ),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     hintText: 'Email',
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -1125,10 +1232,12 @@ class _ProfileOptionState extends State<ProfileOption> {
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -1160,7 +1269,6 @@ class _ProfileOptionState extends State<ProfileOption> {
                   ),
                 );
                 //  loadCurrentLocation();
-
               },
 
 /*            onTap: () async {
@@ -1175,15 +1283,14 @@ class _ProfileOptionState extends State<ProfileOption> {
                         },*/
               child: Padding(
                 padding: EdgeInsets.only(
-                    top: SizeConfig.screenHeight * 0.01,),
+                  top: SizeConfig.screenHeight * 0.01,
+                ),
                 child: Container(
                   height: ResponsiveUtil.height(37),
                   width: ResponsiveUtil.width(140),
                   decoration: BoxDecoration(
-    border: Border.all(color: Color(0xfff4823b), width: 0.5),
-
+                    border: Border.all(color: Color(0xfff4823b), width: 0.5),
                     borderRadius: BorderRadius.all(Radius.circular(10)),
-
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -1197,16 +1304,13 @@ class _ProfileOptionState extends State<ProfileOption> {
                         Flexible(
                           child: Container(
                             width: 120,
-
                             child: Text(
                               "CurrentCity",
                               style: TextStyle(
                                 color: Color(0xfff44343),
                                 letterSpacing: 0.0,
                                 fontFamily: "okra_Medium",
-                                fontSize:
-                                SizeConfig.blockSizeHorizontal *
-                                    3.5,
+                                fontSize: ResponsiveUtil.fontSize(13),
                                 fontWeight: FontWeight.w400,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -1226,7 +1330,7 @@ class _ProfileOptionState extends State<ProfileOption> {
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "okra_Medium",
-                fontSize:ResponsiveUtil.fontSize(14),
+                fontSize: ResponsiveUtil.fontSize(14),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1242,9 +1346,13 @@ class _ProfileOptionState extends State<ProfileOption> {
                     isDense: true,
                     prefixIcon: IconButton(
                       onPressed: () => _selectDate(context),
-                      icon: Icon(Icons.date_range,size: ResponsiveUtil.height(15),),
+                      icon: Icon(
+                        Icons.date_range,
+                        size: ResponsiveUtil.height(15),
+                      ),
                     ),
-                    contentPadding: EdgeInsets.only(left: ResponsiveUtil.width(16)),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     hintText: "Select DOB",
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -1256,11 +1364,13 @@ class _ProfileOptionState extends State<ProfileOption> {
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -1273,16 +1383,19 @@ class _ProfileOptionState extends State<ProfileOption> {
                 ),
               ),
             ),
-
             SizedBox(height: ResponsiveUtil.height(20)),
             GestureDetector(
               onTap: () {
                 setState(() {
                   isEditing = false;
                   isLoading = true;
-                  ApiClients().editUserProfile(
-                      nameController.text, phoneController.text,
-                      emailController.text, addressController.text, _image)
+                  ApiClients()
+                      .editUserProfile(
+                          nameController.text,
+                          phoneController.text,
+                          emailController.text,
+                          addressController.text,
+                          _image)
                       .then((value) {
                     if (mounted) {
                       setState(() => isLoading = false);
@@ -1295,23 +1408,22 @@ class _ProfileOptionState extends State<ProfileOption> {
                       }
 
                       final userData = value['user'];
-                      GetStorage().write(
-                          ConstantData.UserId, userData['userId']);
+                      GetStorage()
+                          .write(ConstantData.UserId, userData['userId']);
                       GetStorage().write(
                           ConstantData.UserFirstName, userData['firstName']);
                       GetStorage().write(
                           ConstantData.UserMobile, userData['phoneNumber']);
-                      GetStorage().write(
-                          ConstantData.Useremail, userData['email']);
+                      GetStorage()
+                          .write(ConstantData.Useremail, userData['email']);
                       GetStorage().write(ConstantData.UserProfileImage,
                           userData['profilePicture']);
 
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              MainHome(
-                                  lat: '', long: '', showLoginWidget: false),
+                          builder: (context) => MainHome(
+                              lat: '', long: '', showLoginWidget: false),
                         ),
                       );
                     }).catchError((error) {
@@ -1321,15 +1433,17 @@ class _ProfileOptionState extends State<ProfileOption> {
                   });
                 });
               },
-              child:  Padding(
-                padding: EdgeInsets.only(left: ResponsiveUtil.width(12),bottom: ResponsiveUtil.height(15),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: ResponsiveUtil.width(12),
+                    bottom: ResponsiveUtil.height(15),
                     right: ResponsiveUtil.width(12)),
                 child: Container(
-                  width:ResponsiveUtil(). isMobile(context)
-                      ? ResponsiveUtil.width(300)  // Small screen (mobile)
+                  width: ResponsiveUtil().isMobile(context)
+                      ? ResponsiveUtil.width(400)
                       : ResponsiveUtil().isTablet(context)
-                      ? ResponsiveUtil.width(1300) // Tablet screen
-                      : ResponsiveUtil.width(1500), // Large screen (desktop)
+                          ? ResponsiveUtil.width(1300)
+                          : ResponsiveUtil.width(1500),
                   height: ResponsiveUtil.height(45),
                   decoration: BoxDecoration(
                     boxShadow: [
@@ -1365,8 +1479,6 @@ class _ProfileOptionState extends State<ProfileOption> {
               ),
             ),
           ],
-
-
         ));
   }
 
@@ -1421,18 +1533,17 @@ class _ProfileOptionState extends State<ProfileOption> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-     //   height: ResponsiveUtil.height(40),
+        //   height: ResponsiveUtil.height(40),
         width: ResponsiveUtil.width(96),
         decoration: BoxDecoration(
-          //  color: Colors.white,
-          /*border: Border.all(color: Color(0xfff4823b), width: 0.3),
+            //  color: Colors.white,
+            /*border: Border.all(color: Color(0xfff4823b), width: 0.3),
           borderRadius:
           BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),*/
-        ),
+            ),
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveUtil.width(18),
-
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1499,9 +1610,6 @@ class _ProfileOptionState extends State<ProfileOption> {
     );
   }
 
-
-
-
   Widget _ServiceEditForm(double parentHeight, double parentWidth) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: ResponsiveUtil.width(16)),
@@ -1530,20 +1638,20 @@ class _ProfileOptionState extends State<ProfileOption> {
                     isDense: true,
                     prefixIcon: IconButton(
                         onPressed: () {},
-                        icon:  Icon(Icons.numbers,size: ResponsiveUtil.height(15))
-
-
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        icon: Icon(Icons.numbers,
+                            size: ResponsiveUtil.height(15))),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     fillColor: Color(0xffFFfffff),
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     hintText: 'GST NO',
@@ -1553,10 +1661,6 @@ class _ProfileOptionState extends State<ProfileOption> {
                       fontFamily: "okra_Light",
                     ),
                   ),
-
-
-
-
                   style: TextStyle(
                     color: Colors.black,
                     fontFamily: "Montserrat-Medium",
@@ -1589,15 +1693,14 @@ class _ProfileOptionState extends State<ProfileOption> {
                     isDense: true,
                     prefixIcon: IconButton(
                         onPressed: () {},
-
-                        icon:  Icon(Icons.phone,size: ResponsiveUtil.height(15))
-                      /*icon: Image(
+                        icon: Icon(Icons.phone, size: ResponsiveUtil.height(15))
+                        /*icon: Image(
                           image: AssetImage('assets/images/email.png'),
                           height: ResponsiveUtil.height(20),
                         )*/
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        ),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     hintText: 'Business Contact',
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -1608,10 +1711,12 @@ class _ProfileOptionState extends State<ProfileOption> {
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -1624,7 +1729,7 @@ class _ProfileOptionState extends State<ProfileOption> {
                 ),
               ),
             ),
-     SizedBox(height: ResponsiveUtil.height(10)),
+            SizedBox(height: ResponsiveUtil.height(10)),
             Text(
               "Business Email",
               style: TextStyle(
@@ -1636,8 +1741,8 @@ class _ProfileOptionState extends State<ProfileOption> {
             ),
             Padding(
               padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
-              child: SizedBox( height: ResponsiveUtil.height(40),
-
+              child: SizedBox(
+                height: ResponsiveUtil.height(40),
                 child: TextFormField(
                   controller: emailController,
                   autocorrect: true,
@@ -1647,15 +1752,17 @@ class _ProfileOptionState extends State<ProfileOption> {
                     isDense: true,
                     prefixIcon: IconButton(
                         onPressed: () {},
-
-                        icon:  Icon(Icons.email_outlined,size: ResponsiveUtil.height(15),)
-                      /*icon: Image(
+                        icon: Icon(
+                          Icons.email_outlined,
+                          size: ResponsiveUtil.height(15),
+                        )
+                        /*icon: Image(
                           image: AssetImage('assets/images/email.png'),
                           height: ResponsiveUtil.height(20),
                         )*/
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        ),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     hintText: 'Business Email',
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -1666,10 +1773,12 @@ class _ProfileOptionState extends State<ProfileOption> {
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -1683,8 +1792,6 @@ class _ProfileOptionState extends State<ProfileOption> {
               ),
             ),
             SizedBox(height: ResponsiveUtil.height(20)),
-
-
             Text(
               "Business Started Since",
               style: TextStyle(
@@ -1706,16 +1813,14 @@ class _ProfileOptionState extends State<ProfileOption> {
                   decoration: InputDecoration(
                     isDense: true,
                     prefixIcon: IconButton(
-                        onPressed: () {},
-
-                        icon:  Icon(Icons.email_outlined)
-                      /*icon: Image(
+                        onPressed: () {}, icon: Icon(Icons.email_outlined)
+                        /*icon: Image(
                           image: AssetImage('assets/images/email.png'),
                           height: ResponsiveUtil.height(20),
                         )*/
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        ),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     hintText: 'email',
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -1726,10 +1831,12 @@ class _ProfileOptionState extends State<ProfileOption> {
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -1761,7 +1868,6 @@ class _ProfileOptionState extends State<ProfileOption> {
                   ),
                 );
                 //  loadCurrentLocation();
-
               },
 
 /*            onTap: () async {
@@ -1776,15 +1882,14 @@ class _ProfileOptionState extends State<ProfileOption> {
                         },*/
               child: Padding(
                 padding: EdgeInsets.only(
-                  top: SizeConfig.screenHeight * 0.01,),
+                  top: SizeConfig.screenHeight * 0.01,
+                ),
                 child: Container(
                   height: ResponsiveUtil.height(37),
                   width: ResponsiveUtil.width(140),
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xfff4823b), width: 0.5),
-
                     borderRadius: BorderRadius.all(Radius.circular(10)),
-
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -1798,16 +1903,13 @@ class _ProfileOptionState extends State<ProfileOption> {
                         Flexible(
                           child: Container(
                             width: 120,
-
                             child: Text(
                               "CurrentCity",
                               style: TextStyle(
                                 color: Color(0xfff44343),
                                 letterSpacing: 0.0,
                                 fontFamily: "okra_Medium",
-                                fontSize:
-                                SizeConfig.blockSizeHorizontal *
-                                    3.5,
+                                fontSize: ResponsiveUtil.fontSize(13),
                                 fontWeight: FontWeight.w400,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -1821,61 +1923,78 @@ class _ProfileOptionState extends State<ProfileOption> {
                 ),
               ),
             ),
-
             SizedBox(height: ResponsiveUtil.height(20)),
-
             Container(
               height: ResponsiveUtil.height(110),
-              width: ResponsiveUtil.width(320),
+              width: ResponsiveUtil().isMobile(context)
+                  ? ResponsiveUtil.width(420)
+                  : ResponsiveUtil().isTablet(context)
+                      ? ResponsiveUtil.width(800)
+                      : ResponsiveUtil.width(1600),
               decoration: BoxDecoration(
-                  color: Colors.white,
+                color: Colors.white,
                 border: Border.all(color: Color(0xfff4823b), width: 0.3),
-          borderRadius:
-          BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),
-              ),child:
-            ListView(
-              children: [
-                SizedBox(height: ResponsiveUtil.height(20)),
-                Center(
-                  child: Text(
-                    "FOLLOW US ON SOCIAL MEDIA",
-                    style: TextStyle(
-                      color: Color(0xff3d87f1),
-                      fontFamily: "okra_Medium",
-                      fontSize: ResponsiveUtil.height(13),
-                      letterSpacing: 0.9,
-                      fontWeight: FontWeight.w600,
+                borderRadius:
+                    BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),
+              ),
+              child: ListView(
+                children: [
+                  SizedBox(height: ResponsiveUtil.height(20)),
+                  Center(
+                    child: Text(
+                      "FOLLOW US ON SOCIAL MEDIA",
+                      style: TextStyle(
+                        color: Color(0xff3d87f1),
+                        fontFamily: "okra_Medium",
+                        fontSize: ResponsiveUtil.fontSize(13),
+                        letterSpacing: 0.9,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: ResponsiveUtil.height(20)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image(
-                      image: AssetImage('assets/images/facebook.png'),
-                      height: parentHeight * 0.047,
-                    ),
-                    SizedBox(width: ResponsiveUtil.width(10)),
-
-                    Image(
-                      image: AssetImage('assets/images/youtub.png'),
-                      height: parentHeight * 0.047,
-                    ), SizedBox(width: ResponsiveUtil.width(10)),
-                    Image(
-                      image: AssetImage('assets/images/insta.png'),
-                      height: parentHeight * 0.047,
-                    ), SizedBox(width: ResponsiveUtil.width(10)),
-
-                    Image(
-                      image: AssetImage('assets/images/linkedIn.png'),
-                      height: parentHeight * 0.045,
-                    ),
-                  ],
-                ),
-
-              ],
-            ),
+                  SizedBox(height: ResponsiveUtil.height(20)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () =>
+                            launchURL("https://www.facebook.com/yourprofile"),
+                        child: Image(
+                          image: AssetImage('assets/images/facebook.png'),
+                          height: parentHeight * 0.047,
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtil.width(10)),
+                      GestureDetector(
+                        onTap: () =>
+                            launchURL("https://www.youtube.com/yourchannel"),
+                        child: Image(
+                          image: AssetImage('assets/images/youtub.png'),
+                          height: parentHeight * 0.047,
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtil.width(10)),
+                      GestureDetector(
+                        onTap: () =>
+                            launchURL("https://www.instagram.com/yourprofile"),
+                        child: Image(
+                          image: AssetImage('assets/images/insta.png'),
+                          height: parentHeight * 0.047,
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtil.width(10)),
+                      GestureDetector(
+                        onTap: () => launchURL(
+                            "https://www.linkedin.com/in/yourprofile"),
+                        child: Image(
+                          image: AssetImage('assets/images/linkedIn.png'),
+                          height: parentHeight * 0.045,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: ResponsiveUtil.height(20)),
             GestureDetector(
@@ -1883,9 +2002,13 @@ class _ProfileOptionState extends State<ProfileOption> {
                 setState(() {
                   isEditing = false;
                   isLoading = true;
-                  ApiClients().editUserProfile(
-                      nameController.text, phoneController.text,
-                      emailController.text, addressController.text, _image)
+                  ApiClients()
+                      .editUserProfile(
+                          nameController.text,
+                          phoneController.text,
+                          emailController.text,
+                          addressController.text,
+                          _image)
                       .then((value) {
                     if (mounted) {
                       setState(() => isLoading = false);
@@ -1898,23 +2021,22 @@ class _ProfileOptionState extends State<ProfileOption> {
                       }
 
                       final userData = value['user'];
-                      GetStorage().write(
-                          ConstantData.UserId, userData['userId']);
+                      GetStorage()
+                          .write(ConstantData.UserId, userData['userId']);
                       GetStorage().write(
                           ConstantData.UserFirstName, userData['firstName']);
                       GetStorage().write(
                           ConstantData.UserMobile, userData['phoneNumber']);
-                      GetStorage().write(
-                          ConstantData.Useremail, userData['email']);
+                      GetStorage()
+                          .write(ConstantData.Useremail, userData['email']);
                       GetStorage().write(ConstantData.UserProfileImage,
                           userData['profilePicture']);
 
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              MainHome(
-                                  lat: '', long: '', showLoginWidget: false),
+                          builder: (context) => MainHome(
+                              lat: '', long: '', showLoginWidget: false),
                         ),
                       );
                     }).catchError((error) {
@@ -1924,15 +2046,18 @@ class _ProfileOptionState extends State<ProfileOption> {
                   });
                 });
               },
-              child:  Padding(
-                padding: EdgeInsets.only(left: ResponsiveUtil.width(12),bottom: ResponsiveUtil.height(20),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: ResponsiveUtil.width(12),
+                    bottom: ResponsiveUtil.height(20),
                     right: ResponsiveUtil.width(12)),
                 child: Container(
-                  width:ResponsiveUtil(). isMobile(context)
-                      ? ResponsiveUtil.width(300)  // Small screen (mobile)
+                  width: ResponsiveUtil().isMobile(context)
+                      ? ResponsiveUtil.width(400) // Small screen (mobile)
                       : ResponsiveUtil().isTablet(context)
-                      ? ResponsiveUtil.width(1300) // Tablet screen
-                      : ResponsiveUtil.width(1500), // Large screen (desktop)
+                          ? ResponsiveUtil.width(1300) // Tablet screen
+                          : ResponsiveUtil.width(
+                              1500), // Large screen (desktop)
                   height: ResponsiveUtil.height(45),
                   decoration: BoxDecoration(
                     boxShadow: [
@@ -1967,14 +2092,9 @@ class _ProfileOptionState extends State<ProfileOption> {
                 ),
               ),
             ),
-
-
           ],
-
-
         ));
   }
-
 
   Widget aadhaarProduct() {
     return Align(
@@ -2027,18 +2147,17 @@ class _ProfileOptionState extends State<ProfileOption> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        height: ResponsiveUtil.height(380),
+        height: ResponsiveUtil.height(340),
         width: ResponsiveUtil.width(96),
         decoration: BoxDecoration(
-          //  color: Colors.white,
-          /*border: Border.all(color: Color(0xfff4823b), width: 0.3),
+            //  color: Colors.white,
+            /*border: Border.all(color: Color(0xfff4823b), width: 0.3),
           borderRadius:
           BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),*/
-        ),
+            ),
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveUtil.width(18),
-
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2047,7 +2166,6 @@ class _ProfileOptionState extends State<ProfileOption> {
               _productInfoRow("Business Contact", lastname),
               _productInfoRow("Business email", phoneNumber),
               _productInfoRow("Product Actual Location", email),
-
               _productInfoRow("Business Started Since", address),
               _productInfoRow("No.Of Users Contacted", address),
               _productInfoRow("Follow Me", gender),
@@ -2101,13 +2219,10 @@ class _ProfileOptionState extends State<ProfileOption> {
     );
   }
 
-
-
-
   Widget _productEditForm(double parentHeight, double parentWidth) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: ResponsiveUtil.width(16)),
-        child:  Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -2132,20 +2247,20 @@ class _ProfileOptionState extends State<ProfileOption> {
                     isDense: true,
                     prefixIcon: IconButton(
                         onPressed: () {},
-                        icon:  Icon(Icons.numbers,size: ResponsiveUtil.height(15))
-
-
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        icon: Icon(Icons.numbers,
+                            size: ResponsiveUtil.height(15))),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     fillColor: Color(0xffFFfffff),
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     hintText: 'GST NO',
@@ -2155,10 +2270,6 @@ class _ProfileOptionState extends State<ProfileOption> {
                       fontFamily: "okra_Light",
                     ),
                   ),
-
-
-
-
                   style: TextStyle(
                     color: Colors.black,
                     fontFamily: "Montserrat-Medium",
@@ -2191,15 +2302,14 @@ class _ProfileOptionState extends State<ProfileOption> {
                     isDense: true,
                     prefixIcon: IconButton(
                         onPressed: () {},
-
-                        icon:  Icon(Icons.phone,size: ResponsiveUtil.height(15))
-                      /*icon: Image(
+                        icon: Icon(Icons.phone, size: ResponsiveUtil.height(15))
+                        /*icon: Image(
                           image: AssetImage('assets/images/email.png'),
                           height: ResponsiveUtil.height(20),
                         )*/
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        ),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     hintText: 'Business Contact',
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -2210,10 +2320,12 @@ class _ProfileOptionState extends State<ProfileOption> {
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -2238,8 +2350,8 @@ class _ProfileOptionState extends State<ProfileOption> {
             ),
             Padding(
               padding: EdgeInsets.only(top: ResponsiveUtil.height(10)),
-              child: SizedBox( height: ResponsiveUtil.height(40),
-
+              child: SizedBox(
+                height: ResponsiveUtil.height(40),
                 child: TextFormField(
                   controller: emailController,
                   autocorrect: true,
@@ -2249,15 +2361,17 @@ class _ProfileOptionState extends State<ProfileOption> {
                     isDense: true,
                     prefixIcon: IconButton(
                         onPressed: () {},
-
-                        icon:  Icon(Icons.email_outlined,size: ResponsiveUtil.height(15),)
-                      /*icon: Image(
+                        icon: Icon(
+                          Icons.email_outlined,
+                          size: ResponsiveUtil.height(15),
+                        )
+                        /*icon: Image(
                           image: AssetImage('assets/images/email.png'),
                           height: ResponsiveUtil.height(20),
                         )*/
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        ),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     hintText: 'Business Email',
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -2268,10 +2382,12 @@ class _ProfileOptionState extends State<ProfileOption> {
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -2285,8 +2401,6 @@ class _ProfileOptionState extends State<ProfileOption> {
               ),
             ),
             SizedBox(height: ResponsiveUtil.height(20)),
-
-
             Text(
               "Business Started Since",
               style: TextStyle(
@@ -2308,16 +2422,14 @@ class _ProfileOptionState extends State<ProfileOption> {
                   decoration: InputDecoration(
                     isDense: true,
                     prefixIcon: IconButton(
-                        onPressed: () {},
-
-                        icon:  Icon(Icons.email_outlined)
-                      /*icon: Image(
+                        onPressed: () {}, icon: Icon(Icons.email_outlined)
+                        /*icon: Image(
                           image: AssetImage('assets/images/email.png'),
                           height: ResponsiveUtil.height(20),
                         )*/
-                    ),
-                    contentPadding: EdgeInsets.only(
-                        left: ResponsiveUtil.width(16)),
+                        ),
+                    contentPadding:
+                        EdgeInsets.only(left: ResponsiveUtil.width(16)),
                     hintText: 'email',
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -2328,10 +2440,12 @@ class _ProfileOptionState extends State<ProfileOption> {
                     hoverColor: Colors.white,
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                        borderSide:
+                            BorderSide(color: Color(0xfff4823b), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xfff4823b), width: 0.5),
+                      borderSide:
+                          BorderSide(color: Color(0xfff4823b), width: 0.5),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -2363,7 +2477,6 @@ class _ProfileOptionState extends State<ProfileOption> {
                   ),
                 );
                 //  loadCurrentLocation();
-
               },
 
 /*            onTap: () async {
@@ -2378,15 +2491,14 @@ class _ProfileOptionState extends State<ProfileOption> {
                         },*/
               child: Padding(
                 padding: EdgeInsets.only(
-                  top: SizeConfig.screenHeight * 0.01,),
+                  top: SizeConfig.screenHeight * 0.01,
+                ),
                 child: Container(
                   height: ResponsiveUtil.height(37),
                   width: ResponsiveUtil.width(140),
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xfff4823b), width: 0.5),
-
                     borderRadius: BorderRadius.all(Radius.circular(10)),
-
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -2400,16 +2512,13 @@ class _ProfileOptionState extends State<ProfileOption> {
                         Flexible(
                           child: Container(
                             width: 120,
-
                             child: Text(
                               "CurrentCity",
                               style: TextStyle(
                                 color: Color(0xfff44343),
                                 letterSpacing: 0.0,
                                 fontFamily: "okra_Medium",
-                                fontSize:
-                                SizeConfig.blockSizeHorizontal *
-                                    3.5,
+                                fontSize: ResponsiveUtil.fontSize(13),
                                 fontWeight: FontWeight.w400,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -2423,18 +2532,92 @@ class _ProfileOptionState extends State<ProfileOption> {
                 ),
               ),
             ),
-
-
-
-            SizedBox(height: ResponsiveUtil.height(30)),
+            SizedBox(height: ResponsiveUtil.height(20)),
+            Container(
+              height: ResponsiveUtil.height(110),
+              width: ResponsiveUtil().isMobile(context)
+                  ? ResponsiveUtil.width(420)
+                  : ResponsiveUtil().isTablet(context)
+                      ? ResponsiveUtil.width(800)
+                      : ResponsiveUtil.width(1600),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Color(0xfff4823b), width: 0.3),
+                borderRadius:
+                    BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),
+              ),
+              child: ListView(
+                children: [
+                  SizedBox(height: ResponsiveUtil.height(20)),
+                  Center(
+                    child: Text(
+                      "FOLLOW US ON SOCIAL MEDIA",
+                      style: TextStyle(
+                        color: Color(0xff3d87f1),
+                        fontFamily: "okra_Medium",
+                        fontSize: ResponsiveUtil.height(13),
+                        letterSpacing: 0.9,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveUtil.height(20)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () =>
+                            launchURL("https://www.facebook.com/yourprofile"),
+                        child: Image(
+                          image: AssetImage('assets/images/facebook.png'),
+                          height: parentHeight * 0.047,
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtil.width(10)),
+                      GestureDetector(
+                        onTap: () =>
+                            launchURL("https://www.youtube.com/yourchannel"),
+                        child: Image(
+                          image: AssetImage('assets/images/youtub.png'),
+                          height: parentHeight * 0.047,
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtil.width(10)),
+                      GestureDetector(
+                        onTap: () =>
+                            launchURL("https://www.instagram.com/yourprofile"),
+                        child: Image(
+                          image: AssetImage('assets/images/insta.png'),
+                          height: parentHeight * 0.047,
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtil.width(10)),
+                      GestureDetector(
+                        onTap: () => launchURL(
+                            "https://www.linkedin.com/in/yourprofile"),
+                        child: Image(
+                          image: AssetImage('assets/images/linkedIn.png'),
+                          height: parentHeight * 0.045,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: ResponsiveUtil.height(20)),
             GestureDetector(
               onTap: () {
                 setState(() {
                   isEditing = false;
                   isLoading = true;
-                  ApiClients().editUserProfile(
-                      nameController.text, phoneController.text,
-                      emailController.text, addressController.text, _image)
+                  ApiClients()
+                      .editUserProfile(
+                          nameController.text,
+                          phoneController.text,
+                          emailController.text,
+                          addressController.text,
+                          _image)
                       .then((value) {
                     if (mounted) {
                       setState(() => isLoading = false);
@@ -2447,23 +2630,22 @@ class _ProfileOptionState extends State<ProfileOption> {
                       }
 
                       final userData = value['user'];
-                      GetStorage().write(
-                          ConstantData.UserId, userData['userId']);
+                      GetStorage()
+                          .write(ConstantData.UserId, userData['userId']);
                       GetStorage().write(
                           ConstantData.UserFirstName, userData['firstName']);
                       GetStorage().write(
                           ConstantData.UserMobile, userData['phoneNumber']);
-                      GetStorage().write(
-                          ConstantData.Useremail, userData['email']);
+                      GetStorage()
+                          .write(ConstantData.Useremail, userData['email']);
                       GetStorage().write(ConstantData.UserProfileImage,
                           userData['profilePicture']);
 
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              MainHome(
-                                  lat: '', long: '', showLoginWidget: false),
+                          builder: (context) => MainHome(
+                              lat: '', long: '', showLoginWidget: false),
                         ),
                       );
                     }).catchError((error) {
@@ -2473,15 +2655,18 @@ class _ProfileOptionState extends State<ProfileOption> {
                   });
                 });
               },
-              child:  Padding(
-                padding: EdgeInsets.only(left: ResponsiveUtil.width(12),bottom: ResponsiveUtil.height(12),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: ResponsiveUtil.width(12),
+                    bottom: ResponsiveUtil.height(12),
                     right: ResponsiveUtil.width(12)),
                 child: Container(
-                  width:ResponsiveUtil(). isMobile(context)
-                      ? ResponsiveUtil.width(300)  // Small screen (mobile)
+                  width: ResponsiveUtil().isMobile(context)
+                      ? ResponsiveUtil.width(400) // Small screen (mobile)
                       : ResponsiveUtil().isTablet(context)
-                      ? ResponsiveUtil.width(1300) // Tablet screen
-                      : ResponsiveUtil.width(1500), // Large screen (desktop)
+                          ? ResponsiveUtil.width(1300) // Tablet screen
+                          : ResponsiveUtil.width(
+                              1500), // Large screen (desktop)
                   height: ResponsiveUtil.height(45),
                   decoration: BoxDecoration(
                     boxShadow: [
@@ -2517,11 +2702,6 @@ class _ProfileOptionState extends State<ProfileOption> {
               ),
             ),
           ],
-
-
         ));
   }
-
-
-
 }

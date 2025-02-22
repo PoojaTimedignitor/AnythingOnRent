@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:anything/All_Product_List.dart';
 import 'package:anything/CatagrioesList.dart';
 import 'package:anything/ConstantData/AuthStorage.dart';
@@ -89,8 +91,19 @@ class MainHomeState extends State<MainHome>
       _tabController = TabController(length: 2, vsync: this);
       //  updatedCity = GetStorage().read('selectedCity') ?? "No city selected";
     });
+    startAnimation();
   }
-
+  void startAnimation() {
+    Timer.periodic(Duration(milliseconds: 800), (timer) {
+      if (mounted) {
+        setState(() {
+          _visible = !_visible; // Toggle visibility every 2 sec
+        });
+      } else {
+        timer.cancel(); // Stop timer if widget is disposed
+      }
+    });
+  }
   @override
   void dispose() {
     _searchFocus.dispose();
@@ -107,7 +120,7 @@ class MainHomeState extends State<MainHome>
   List<Products> filteredItemss = [];
   int selectedIndex = 0;
   final ApiClients authService = ApiClients();
-
+  bool _visible = true;
   //final box = GetStorage();
 
   late TabController _tabController;
@@ -899,32 +912,49 @@ class MainHomeState extends State<MainHome>
                         ),
                         SizedBox(height: 25),
                         GestureDetector(
+                          child: Padding(
+                            padding:  EdgeInsets.only(left: 12),
+                            child: Wrap(
+                              spacing: 12, // Horizontal spacing
 
-                          child: Wrap(
-                            spacing: 13,
-                            children: [
-                              SizedBox(width: 0),
-                              const Image(
-                                image: AssetImage('assets/images/chat.png'),
-                                height: 20,
-                              ),
-                              Container(
-                                width: 130,
-                                //  color: Colors.red,
-                                child: Text(
-                                    // the text of the row.
+
+                              crossAxisAlignment: WrapCrossAlignment.center, // Vertical center align
+                              children: [
+                                const Image(
+                                  image: AssetImage('assets/images/chat.png'),
+                                  height: 20,
+                                ),
+                                Container(
+                                  width: 120, // Adjust width for better wrapping
+                                  child: Text(
                                     "Due for renewal",
                                     style: TextStyle(
                                       color: Color(0xff2B2B2B),
                                       fontFamily: "okra_Medium",
-                                      fontSize: 15,
+                                      fontSize: SizeConfig.isDesktop
+                                          ? SizeConfig.safeBlockVertical * 1.8 // Desktop
+                                          : SizeConfig.isTablet
+                                          ? SizeConfig.safeBlockVertical * 1.5 // Tablet
+                                          : SizeConfig.safeBlockVertical * 1.9, // Mobile
                                       fontWeight: FontWeight.w600,
                                     ),
-                                    overflow: TextOverflow.ellipsis),
-                              ),
-                            ],
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                AnimatedOpacity(
+                                  opacity: _visible ? 1.0 : 0.0, // Fade effect on image only
+                                  duration: const Duration(milliseconds: 800), // Smooth transition
+                                  child: const Image(
+                                    image: AssetImage('assets/images/renew.png'),
+                                    height: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+
                         ),
+
                         SizedBox(height: 25),
                         GestureDetector(
                           onTap: () {

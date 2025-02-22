@@ -265,7 +265,12 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           useInheritedMediaQuery: true,
           locale: DevicePreview.locale(context),
-          builder: DevicePreview.appBuilder,
+          builder: (context, widget) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: DevicePreview.appBuilder(context, widget),
+            );
+          },
           initialRoute: '/',
           home: const SplashScreen(),
           debugShowCheckedModeBanner: false,
