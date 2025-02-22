@@ -946,7 +946,7 @@ class MainHomeState extends State<MainHome>
                                   duration: const Duration(milliseconds: 800), // Smooth transition
                                   child: const Image(
                                     image: AssetImage('assets/images/renew.png'),
-                                    height: 1,
+                                    height: 16,
                                   ),
                                 ),
                               ],

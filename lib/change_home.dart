@@ -32,19 +32,29 @@ class _ChangeHomeState extends State<ChangeHome> {
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int selectedIndex = 0;
-  String _backgroundImage = 'assets/images/new-bg.png';
   String updatedCity = "No city selected";
   final ApiClients authService = ApiClients();
+  BoxDecoration _backgroundDecoration = BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topRight,
+      end: Alignment.bottomLeft,
+      colors: [Color(0xffaa4f7e), Color(0xffff937a)], // Default Gradient
+    ),
+  );
+
 
 
   void _changeBackground(int index) {
     setState(() {
-      selectedIndex = index;
-      if (index == 0) {
-        _backgroundImage = 'assets/images/new-bg.png';
-      } else if (index == 1) {
-        _backgroundImage = 'assets/images/news-bg.png';
-      }
+      _backgroundDecoration = BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: index == 0
+              ? [Color(0xffaa4f7e), Color(0xffff937a)]  // 🔥 Gradient 1
+              : [Color(0xffe4b4fb), Color(0xfffddfdf)], // 🎨 Gradient 2
+        ),
+      );
     });
   }
 
@@ -859,23 +869,7 @@ class _ChangeHomeState extends State<ChangeHome> {
               children: [
                 Container(
                   height: ResponsiveUtil.height(300),
-                  decoration: BoxDecoration(
-                   /* gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Color(0xffaa4f7e),
-                        Color(0xffff937a),
-                      ],
-                    ),*/
-
-
-
-                    image: DecorationImage(
-                      image: AssetImage(_backgroundImage),
-                      fit: BoxFit.cover,
-                    ),
-
+                  decoration: _backgroundDecoration.copyWith(
                     borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(20),
                       bottomLeft: Radius.circular(20),
