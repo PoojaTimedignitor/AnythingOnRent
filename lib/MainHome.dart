@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:anything/All_Product_List.dart';
 import 'package:anything/CatagrioesList.dart';
 import 'package:anything/ConstantData/AuthStorage.dart';
 import 'package:anything/model/dio_client.dart';
@@ -43,6 +42,8 @@ import 'package:geocoding/geocoding.dart';
 
 import 'change_home.dart';
 import 'createCity.dart';
+import 'createProduct.dart';
+import 'dummyData.dart';
 import 'location_map.dart';
 
 class MainHome extends StatefulWidget {
@@ -1827,7 +1828,7 @@ class MainHomeState extends State<MainHome>
                 ),
                 itemBuilder: (BuildContext context, int itemIndex, int index1) {
                   final baseUrl = 'https://admin-fyu1.onrender.com/';
-                  print("baseUrl... ${baseUrl}");
+
                   final imgUrl = adsUrlsList.isNotEmpty
                       ? '$baseUrl${adsUrlsList[index1].replaceAll("\\", "/")}'
                       : null;
@@ -2402,7 +2403,7 @@ class MainHomeState extends State<MainHome>
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    AllProductList()));
+                                                    SpecialOfferRibbon(text: '',)));
 
 
                                     },
@@ -2682,7 +2683,7 @@ class MainHomeState extends State<MainHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ChangeHome()));
+                                                  NewProduct()));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(
@@ -2943,7 +2944,6 @@ class MainHomeState extends State<MainHome>
     );
   }
 }
-
 class CustomImageClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -2965,3 +2965,20 @@ class CustomImageClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
+
+
+/* FadeTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: Text(
+                  "PET WORLD",
+                  style: TextStyle(
+                    fontFamily: "Montserrat-BoldItalic",
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: SizeConfig.blockSizeHorizontal * 4.0,
+                  ),
+                ),
+              ),
+            ),*/

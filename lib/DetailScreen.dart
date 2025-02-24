@@ -82,7 +82,7 @@ class _DetailScreenState extends State<DetailScreen>
     );
 
     _controllerss.forward().whenComplete(() {
-      // Hide animation after 2 loops
+
       setState(() {
         _isVisible = false;
       });
@@ -610,7 +610,7 @@ class _DetailScreenState extends State<DetailScreen>
                                                 Radius.circular(10))),
                                         child: Stack(
                                           alignment: Alignment
-                                              .center, // Align content in the center
+                                              .center,
                                           children: [
                                             // Border Animation
                                             Visibility(

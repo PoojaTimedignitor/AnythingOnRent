@@ -51,8 +51,8 @@ class _ChangeHomeState extends State<ChangeHome> {
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
           colors: index == 0
-              ? [Color(0xffaa4f7e), Color(0xffff937a)]  // 🔥 Gradient 1
-              : [Color(0xffe4b4fb), Color(0xfffddfdf)], // 🎨 Gradient 2
+              ? [Color(0xffaa4f7e), Color(0xffff937a)]
+              : [Color(0xffe4b4fb), Color(0xfffddfdf)],
         ),
       );
     });
@@ -121,6 +121,8 @@ class _ChangeHomeState extends State<ChangeHome> {
                           child: Icon(Icons.settings,
                               size: 18, color: Colors.black),
                         ),
+
+
                       ),
                     ),
                     GestureDetector(
@@ -563,9 +565,9 @@ class _ChangeHomeState extends State<ChangeHome> {
                                 ),
                                 Container(
                                   width: 108,
-                                  //  color: Colors.red,
+
                                   child: Text(
-                                      // the text of the row.
+
                                       "FeedBack",
                                       style: TextStyle(
                                         color: Color(0xff2B2B2B),
