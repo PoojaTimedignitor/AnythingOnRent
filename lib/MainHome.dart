@@ -2403,7 +2403,7 @@ class MainHomeState extends State<MainHome>
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    SpecialOfferRibbon(text: '',)));
+                                                    RibbonShape(text: '',)));
 
 
                                     },

@@ -165,53 +165,87 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
   }
 }
 */
+
 import 'package:flutter/material.dart';
 
-class LeftRibbonBanner extends StatelessWidget {
+class RibbonShape extends StatelessWidget {
   final String text;
+  final bool isHero;
 
-  const LeftRibbonBanner({Key? key, required this.text}) : super(key: key);
+  const RibbonShape({super.key, required this.text, this.isHero = false});
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 110,
-      left: -60, // Ribbon thoda bahar aayega
-      child: Stack(
-        children: [
-          // Triangle (Ribbon ka pointed edge)
-          Transform.rotate(
-            angle: -0.78, // -45 degrees
+    return isHero
+        ? Hero(
+      tag: text, // Hero animation for smooth transition
+      child: _buildRibbon(),
+    )
+        : _buildRibbon();
+  }
+
+  Widget _buildRibbon() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10.0),
+      child: ClipPath(
+        clipper: ArcClipper(),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(4),
+            bottomLeft: Radius.circular(15),
+          ),
+          child: IntrinsicWidth(
             child: Container(
-              width: 120,
-              height: 120,
-              color: Colors.red.shade700,
-            ),
-          ),
-          // Main Ribbon
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(4),
-                bottomRight: Radius.circular(4),
+              width: 160.0,
+              height: 25.0,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Color(0xfffd4952),
+                    Color(0xfffd4952),
+                    Color(0xffffa055),
+                  ],
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.0,
+                  ),
+                ),
               ),
             ),
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-            ),
           ),
-        ],
+        ),
       ),
     );
   }
 }
+
+class ArcClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(10, size.height);
+    path.lineTo(0, size.height / 2);
+    path.lineTo(10, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
 
 
 
