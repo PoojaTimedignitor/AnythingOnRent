@@ -11,22 +11,34 @@ import 'MyBehavior.dart';
 import 'createPostCity.dart';
 import 'dummyData.dart';
 import 'package:get_storage/get_storage.dart';
-
+import 'package:shimmer/shimmer.dart';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 
+import 'location_map.dart';
+
 class NewProduct extends StatefulWidget {
-  const NewProduct({super.key});
+  final String lat;
+  final String long;
+  String ProductAddress;
+  String BusinessOfficeAddress;
+  NewProduct(
+      {super.key,
+      required this.lat,
+      required this.long,
+      required this.ProductAddress,
+      required this.BusinessOfficeAddress});
 
   @override
   State<NewProduct> createState() => _NewProductState();
 }
 
-class _NewProductState extends State<NewProduct>
-    with SingleTickerProviderStateMixin {
+class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _controllerzoom;
+  bool showTextField = false;
   late List<Animation<Offset>> _animations = [];
   TextEditingController PerHourController = TextEditingController();
   TextEditingController PerDayController = TextEditingController();
@@ -39,13 +51,31 @@ class _NewProductState extends State<NewProduct>
   TextEditingController productNameController = TextEditingController();
   TextEditingController productCurrentAddressController =
       TextEditingController();
+
+  TextEditingController businessNameController = TextEditingController();
+  TextEditingController businessContactController = TextEditingController();
+  TextEditingController businessEmailController = TextEditingController();
+  TextEditingController businessGSTINController = TextEditingController();
+  TextEditingController businessStartedController = TextEditingController();
+
   late PageController _pageController;
 
   final List<String> ribbons = ["CREATE PRODUCT", "CREATE BUSINESS PROFILE"];
   final ImagePicker _picker = ImagePicker();
   List<File> _selectedImages = [];
+  final box = GetStorage();
   int currentIndex = 0;
   String updatedCitys = "Choose City";
+  bool isDropdownOpenRent = false;
+  bool isDropdownOpenSell = false;
+  String? selectedCategory;
+  bool isSelectedRent = false;
+  bool isSelectedSell = false;
+  bool perDay = false;
+  bool perHour = false;
+  bool perMonth = false;
+  bool perWeek = false;
+  int quantity = 0;
 
   void updateCitys(String newCity) {
     setState(() {
@@ -53,8 +83,6 @@ class _NewProductState extends State<NewProduct>
       GetStorage().write('selectedCity', newCity);
     });
   }
-
-
 
   @override
   void initState() {
@@ -82,11 +110,27 @@ class _NewProductState extends State<NewProduct>
     }
 
     _controller.forward(); // Start the animation
+
+    _controllerzoom = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+      lowerBound: 1.0,
+      upperBound: 1.07,
+    )..repeat(reverse: true);
+  }
+
+  void _updateQuantity(int change) {
+    setState(() {
+      quantity += change;
+      if (quantity < 0) quantity = 0;
+      box.write('quantity', quantity);
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _controllerzoom.dispose();
     super.dispose();
   }
 
@@ -226,6 +270,8 @@ class _NewProductState extends State<NewProduct>
     });
   }
 
+  File? _selectedImage;
+
   Future<void> _pickImagesFromGallery() async {
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
 
@@ -260,7 +306,7 @@ class _NewProductState extends State<NewProduct>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffF5F6FB),
+      backgroundColor: Colors.white,
       body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: SingleChildScrollView(
@@ -407,19 +453,32 @@ class _NewProductState extends State<NewProduct>
         physics: NeverScrollableScrollPhysics(),
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 15),
+          SizedBox(height: 17),
           Text(
             "    Product Name",
             style: TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-            child: TextFormField(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xffd5abff).withOpacity(0.3),
+                    spreadRadius: 0,
+                    blurRadius: 5,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: TextFormField(
                 textAlign: TextAlign.start,
                 maxLines: 1,
                 keyboardType: TextInputType.text,
@@ -437,64 +496,80 @@ class _NewProductState extends State<NewProduct>
                     fontSize: SizeConfig.blockSizeHorizontal * 3.5,
                   ),
                   fillColor: Colors.white,
-                  hoverColor: Colors.white,
                   filled: true,
                   enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
+                    borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
+                        BorderSide(color: Color(0xffd5abff), width: 0.5),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                )),
+                ),
+              ),
+            ),
           ),
-          SizedBox(height: 15),
+          SizedBox(height: 17),
           Text(
             "    Product Description",
             style: TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-            child: TextFormField(
-                textAlign: TextAlign.start,
-                maxLines: 2,
-                keyboardType: TextInputType.text,
-                controller: productNameController,
-                autocorrect: true,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Ex.HD Camera (black & white)',
-                  contentPadding:
-                      EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                  hintStyle: TextStyle(
-                    fontFamily: "Roboto_Regular",
-                    color: Color(0xffa1a1a1),
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xffd5abff).withOpacity(0.3),
+                    spreadRadius: 0,
+                    blurRadius: 5,
+                    offset: Offset(0, 4),
                   ),
-                  fillColor: Colors.white,
-                  hoverColor: Colors.white,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                )),
-          ),  SizedBox(height: 15),
+                ],
+              ),
+              child: TextFormField(
+                  textAlign: TextAlign.start,
+                  maxLines: 2,
+                  keyboardType: TextInputType.text,
+                  controller: productDiscriptionController,
+                  autocorrect: true,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Ex.HD Camera (black & white)',
+                    contentPadding:
+                        EdgeInsets.only(left: 10, top: 10, bottom: 12),
+                    hintStyle: TextStyle(
+                      fontFamily: "Roboto_Regular",
+                      color: Color(0xffa1a1a1),
+                      fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                    ),
+                    fillColor: Colors.white,
+                    hoverColor: Colors.white,
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      /*  borderSide:
+                          BorderSide(color: Color(0xff943bf4), width: 0.5),*/
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color(0xffd5abff), width: 0.5),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  )),
+            ),
+          ),
+          SizedBox(height: 15),
           Text(
             "    Add Product Images",
             style: TextStyle(
@@ -512,7 +587,7 @@ class _NewProductState extends State<NewProduct>
                 child: DottedBorder(
                   borderType: BorderType.RRect,
                   radius: Radius.circular(10),
-                  color: CommonColor.Blue,
+                  color: Color(0xff943bf4),
                   strokeWidth: 1,
                   dashPattern: [4, 5],
                   child: GestureDetector(
@@ -537,8 +612,7 @@ class _NewProductState extends State<NewProduct>
                             height: 26,
                             width: 100,
                             decoration: BoxDecoration(
-                              border: Border.all(color: CommonColor.Blue),
-
+                              border: Border.all(color: Color(0xff943bf4)),
                               borderRadius: BorderRadius.circular(7),
                             ),
                             child: Center(
@@ -549,7 +623,7 @@ class _NewProductState extends State<NewProduct>
                                       SizeConfig.blockSizeHorizontal * 2.5,
                                   fontFamily: 'Roboto_Regular',
                                   fontWeight: FontWeight.w400,
-                                  color: CommonColor.Blue,
+                                  color: Color(0xff943bf4),
                                 ),
                               ),
                             ),
@@ -773,200 +847,1552 @@ class _NewProductState extends State<NewProduct>
                   ),
                 ],
               ),
-
           ]),
-          SizedBox(height: 20),
-          Text
-
-
-
-
-
-            (
-            "    City",
+          SizedBox(height: 28),
+          Text(
+            "     Product Current Address",
             style: TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
           ),
-          GestureDetector(
-            onTap:  () async {
-              final String? result =
-              await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          CreateCityCreatePost()));
+          Stack(
+            children: [
+              widget.ProductAddress.isEmpty
+                  ? GestureDetector(
+                      onTap: () async {
+                        final selectedAddress = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LocationMapScreen()),
+                        );
 
-              if (result != null) {
-                updateCitys(result);
-              }
-            }
-            ,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  left: 10, right: 10, top: 7),
-              child: Container(
-                height: 50,
-                width: SizeConfig.screenWidth * 0.9,
-                decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  border: Border.all(color: Color(0xff943bf4), width: 0.5),
+                        if (selectedAddress != null) {
+                          setState(() {
+                            widget.ProductAddress = selectedAddress;
+                          });
+                        }
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: parentHeight * 0.01,
+                            left: parentWidth * 0.03,
+                            right: parentWidth * 0.03),
+                        child: Container(
+                          height: parentHeight * 0.0603,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            /* border: Border.all(
+                                color: Color(0xffd5abff).withOpacity(0.5)),*/
 
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(7)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(14.0),
-                  child: Text(
-                    (updatedCitys),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xffd5abff).withOpacity(0.3),
+                                spreadRadius: 0,
+                                blurRadius: 5,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Row(
+                              children: [
+                                Image(
+                                  image:
+                                      AssetImage('assets/images/location.png'),
+                                  color: Colors.black45,
+                                  height: 18,
+                                ),
+                                Text(
+                                  "    Select Current Address",
+                                  style: TextStyle(
+                                    color: Color(0xff7D7B7B),
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal * 3.8,
+                                    fontWeight: FontWeight.normal,
+                                    fontFamily: 'Roboto-Regular',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () async {
+                        final selectedAddress = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LocationMapScreen()),
+                        );
+
+                        if (selectedAddress != null) {
+                          setState(() {
+                            widget.ProductAddress = selectedAddress;
+                          });
+                        }
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: parentHeight * 0.01,
+                            left: parentWidth * 0.03,
+                            right: parentWidth * 0.04),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            //   color: Color(0xffFFF0F0),
+                            border: Border.all(
+                                color: Color(0xffd5abff).withOpacity(0.5)),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Padding(
+                            padding:
+                                EdgeInsets.only(top: 20, bottom: 10, left: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image(
+                                  image:
+                                      AssetImage('assets/images/location.png'),
+                                  color: Color(0xff7F96F0),
+                                  height: 18,
+                                ),
+                                SizedBox(width: 10),
+                                Flexible(
+                                  child: Text(
+                                    widget.ProductAddress,
+                                    style: TextStyle(
+                                      color: Color(0xff7F96F0),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Roboto-Medium',
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+            ],
+          ),
+          SizedBox(
+            height: parentHeight * 0.025,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
+              height: SizeConfig.screenHeight * 0.08,
+              width: SizeConfig.screenWidth * 0.94,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "   Product Exact Quantity",
                     style: TextStyle(
                       color: Colors.black,
-                      letterSpacing: 0.5,
                       fontFamily: "okra_Medium",
-                      fontSize: SizeConfig
-                          .blockSizeHorizontal *
-                          3.8,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 15),
+                    child: Container(
+                        height: 43,
+                        width: 130,
+                        decoration: BoxDecoration(
+                            color: Color(0xffb46ffd).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                                icon: const Icon(Icons.remove),
+                                onPressed: () {
+                                  setState(() {
+                                    _updateQuantity(-1);
+                                  });
+                                }),
+                            Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    color: Colors.white),
+                                child: Text(quantity.toString())),
+                            IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: () {
+                                  setState(() {
+                                    _updateQuantity(1);
+                                  });
+                                }),
+                          ],
+                        )),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: parentHeight * 0.030,
+          ),
+          Stack(
+            children: [
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 13, right: 13, top: 22, bottom: 20),
+                child: IntrinsicHeight(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8), // Auto sizing
+
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Color(0xff632883).withOpacity(0.8),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 50),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AnimatedBuilder(
+                            animation: _controllerzoom,
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: _controllerzoom.value,
+                                child: child,
+                              );
+                            },
+                            child: Container(
+                                height: 57,
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12)),
+                                  gradient: RadialGradient(
+                                    colors: [
+                                      Color(0xfff6f3ff),
+                                      Color(0xffae94f3)
+                                    ],
+                                    center: Alignment.center,
+                                    radius: 0.6,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color:
+                                            Color(0xffFE7F64).withOpacity(0.5),
+                                        blurRadius: 9,
+                                        spreadRadius: 0,
+                                        offset: Offset(0, 1)),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(1.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(12)),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                            image: AssetImage(
+                                                'assets/images/warning.png'),
+                                            height: 20,
+                                            color: Colors.blueAccent,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Container(
+                                            width: SizeConfig.screenWidth * 0.7,
+                                            child: Text(
+                                                "On our platform, you can both sell and rent your products",
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        "Montserrat-Italic",
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 12),
+                                                maxLines: 2),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )),
+                          ),
+                          SizedBox(height: 10),
+                          SizedBox(
+                            width: SizeConfig.screenWidth * 0.94,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isDropdownOpenRent = !isDropdownOpenRent;
+                                  isSelectedRent =
+                                      !isSelectedRent; // Toggle the selected state
+                                });
+                              },
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4, vertical: 10),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 18,
+                                            height: 18,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: Color(
+                                                    0xff624ffa), // Outer circle color
+                                                width: 01,
+                                              ),
+                                            ),
+                                            child: isSelectedRent ||
+                                                    isDropdownOpenRent
+                                                ? Center(
+                                                    child: Container(
+                                                      width:
+                                                          10, // Inner circle size
+                                                      height: 10,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color:
+                                                            Color(0xff624ffa),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : null,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            "To Rent",
+                                            style: TextStyle(
+                                                fontFamily:
+                                                    "Montserrat-BoldItalic",
+                                                color: Color(0xff624ffa),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14),
+                                          ),
+                                          Spacer(),
+                                          // Dropdown Icon
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                isDropdownOpenRent =
+                                                    !isDropdownOpenRent; // Toggle dropdown state
+                                              });
+                                            },
+                                            child: Icon(
+                                                isDropdownOpenRent
+                                                    ? Icons.keyboard_arrow_up
+                                                    : Icons.keyboard_arrow_down,
+                                                size: 28,
+                                                color: Color(0xff624ffa)),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (isDropdownOpenRent)
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                perHour = !perHour;
+                                              });
+                                            },
+                                            child: SizedBox(
+                                              height: 40,
+                                              child: Row(
+                                                children: [
+                                                  Checkbox(
+                                                    value: perHour,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        perHour = value!;
+                                                      });
+                                                    },
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                  ),
+                                                  Text("Per Hour"),
+                                                  if (perHour) // ✅ Now wrapped properly in conditional rendering
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 20,
+                                                                right: 15),
+                                                        child: TextFormField(
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          controller:
+                                                              PerHourController,
+                                                          autocorrect: true,
+                                                          textInputAction:
+                                                              TextInputAction
+                                                                  .next,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            isDense: true,
+                                                            hintText: '₹ 1000',
+                                                            contentPadding:
+                                                                EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            5,
+                                                                        horizontal:
+                                                                            15),
+                                                            hintStyle:
+                                                                TextStyle(
+                                                              fontFamily:
+                                                                  "Roboto_Regular",
+                                                              color: Color(
+                                                                  0xffacacac),
+                                                              fontSize:
+                                                                  14, // ✅ Adjust size if needed
+                                                            ),
+                                                            fillColor: Color(
+                                                                0xffF5F6FB),
+                                                            hoverColor:
+                                                                Colors.white,
+                                                            filled: true,
+                                                            enabledBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide
+                                                                      .none,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                            ),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                  color: Color(
+                                                                      0xffebd7fb),
+                                                                  width: 1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                perDay = !perDay;
+                                              });
+                                            },
+                                            child: SizedBox(
+                                              height: 40,
+                                              child: Row(
+                                                children: [
+                                                  Checkbox(
+                                                    value: perDay,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        perDay = value!;
+                                                      });
+                                                    },
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                  ),
+                                                  Text("Per Day"),
+                                                  if (perDay)
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 27,
+                                                          right: 15,
+                                                        ),
+                                                        child: TextFormField(
+                                                            textAlign:
+                                                                TextAlign.start,
+
+                                                            // focusNode: _productNameFocus,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            controller:
+                                                                PerDayController,
+                                                            autocorrect: true,
+                                                            textInputAction:
+                                                                TextInputAction
+                                                                    .next,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              isDense: true,
+                                                              hintText:
+                                                                  '₹ 1000',
+                                                              contentPadding:
+                                                                  EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          5,
+                                                                      horizontal:
+                                                                          15),
+                                                              hintStyle:
+                                                                  TextStyle(
+                                                                fontFamily:
+                                                                    "Roboto_Regular",
+                                                                color: Color(
+                                                                    0xffacacac),
+                                                                fontSize: SizeConfig
+                                                                        .blockSizeHorizontal *
+                                                                    3.5,
+                                                              ),
+                                                              fillColor: Color(
+                                                                  0xffF5F6FB),
+                                                              hoverColor:
+                                                                  Colors.white,
+                                                              filled: true,
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide
+                                                                          .none,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8.0)),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Color(
+                                                                        0xffebd7fb),
+                                                                    width: 1),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                              ),
+                                                            )),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                perWeek = !perWeek;
+                                              });
+                                            },
+                                            child: SizedBox(
+                                              height: 40,
+                                              child: Row(
+                                                children: [
+                                                  Checkbox(
+                                                    value: perWeek,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        perWeek = value!;
+                                                      });
+                                                    },
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                  ),
+                                                  Text("Per Week"),
+                                                  if (perWeek)
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 16,
+                                                          right: 15,
+                                                        ),
+                                                        child: TextFormField(
+                                                            textAlign:
+                                                                TextAlign.start,
+
+                                                            // focusNode: _productNameFocus,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            controller:
+                                                                PerWeekController,
+                                                            autocorrect: true,
+                                                            textInputAction:
+                                                                TextInputAction
+                                                                    .next,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              isDense: true,
+                                                              hintText:
+                                                                  '₹ 1000',
+                                                              contentPadding:
+                                                                  EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          5,
+                                                                      horizontal:
+                                                                          15),
+                                                              hintStyle:
+                                                                  TextStyle(
+                                                                fontFamily:
+                                                                    "Roboto_Regular",
+                                                                color: Color(
+                                                                    0xffacacac),
+                                                                fontSize: SizeConfig
+                                                                        .blockSizeHorizontal *
+                                                                    3.5,
+                                                              ),
+                                                              fillColor: Color(
+                                                                  0xffF5F6FB),
+                                                              hoverColor:
+                                                                  Colors.white,
+                                                              filled: true,
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide
+                                                                          .none,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8.0)),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Color(
+                                                                        0xffebd7fb),
+                                                                    width: 1),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                              ),
+                                                            )),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                perMonth = !perMonth;
+                                              });
+                                            },
+                                            child: Container(
+                                              height: 42,
+                                              child: Row(
+                                                children: [
+                                                  Checkbox(
+                                                    value: perMonth,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        perMonth = value!;
+                                                      });
+                                                    },
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                  ),
+                                                  Text("Per Month"),
+                                                  if (perMonth)
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 11,
+                                                          right: 15,
+                                                        ),
+                                                        child: TextFormField(
+                                                            textAlign:
+                                                                TextAlign.start,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            controller:
+                                                                PerMonthController,
+                                                            autocorrect: true,
+                                                            textInputAction:
+                                                                TextInputAction
+                                                                    .next,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              isDense: true,
+                                                              hintText:
+                                                                  '₹ 1000',
+                                                              contentPadding:
+                                                                  EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          5,
+                                                                      horizontal:
+                                                                          15),
+                                                              hintStyle:
+                                                                  TextStyle(
+                                                                fontFamily:
+                                                                    "Roboto_Regular",
+                                                                color: Color(
+                                                                    0xffacacac),
+                                                                fontSize: SizeConfig
+                                                                        .blockSizeHorizontal *
+                                                                    3.5,
+                                                              ),
+                                                              fillColor: Color(
+                                                                  0xffF5F6FB),
+                                                              hoverColor:
+                                                                  Colors.white,
+                                                              filled: true,
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide
+                                                                          .none,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8.0)),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Color(
+                                                                        0xffebd7fb),
+                                                                    width: 1),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                              ),
+                                                            )),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(7)),
+                            width: SizeConfig.screenWidth * 0.94,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isDropdownOpenSell = !isDropdownOpenSell;
+                                  isSelectedSell =
+                                      !isSelectedSell; // Toggle the selected state
+                                });
+                              },
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5, vertical: 13),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 18,
+                                            height: 18,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: Color(
+                                                    0xff624ffa), // Outer circle color
+                                                width: 01,
+                                              ),
+                                            ),
+                                            child: isSelectedSell ||
+                                                    isDropdownOpenSell
+                                                ? Center(
+                                                    child: Container(
+                                                      width:
+                                                          10, // Inner circle size
+                                                      height: 10,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: Color(
+                                                            0xff624ffa), // Inner circle color
+                                                      ),
+                                                    ),
+                                                  )
+                                                : null,
+                                          ),
+                                          SizedBox(
+                                              width:
+                                                  10), // Space between checkbox and text
+                                          Text(
+                                            "To Sell",
+                                            style: TextStyle(
+                                                fontFamily:
+                                                    "Montserrat-BoldItalic",
+                                                color: Color(0xff624ffa),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14),
+                                          ),
+                                          Spacer(),
+                                          // Dropdown Icon
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                isDropdownOpenSell =
+                                                    !isDropdownOpenSell; // Toggle dropdown state
+                                              });
+                                            },
+                                            child: Icon(
+                                                isDropdownOpenSell
+                                                    ? Icons.keyboard_arrow_up
+                                                    : Icons.keyboard_arrow_down,
+                                                size: 28,
+                                                color: Color(0xff624ffa)),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (isDropdownOpenSell)
+                                      Container(
+                                        height: 60, // Limit the dropdown height
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            left: 11,
+                                            right: 15,
+                                          ),
+                                          child: TextFormField(
+                                              textAlign: TextAlign.start,
+                                              // focusNode: _productNameFocus,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              controller: sellController,
+                                              autocorrect: true,
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                hintText: '₹ 1000',
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 9,
+                                                        horizontal: 15),
+                                                hintStyle: TextStyle(
+                                                  fontFamily: "Roboto_Regular",
+                                                  color: Color(0xffacacac),
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      3.5,
+                                                ),
+                                                fillColor: Color(0xffF5F6FB),
+                                                hoverColor: Colors.white,
+                                                filled: true,
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0)),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xffe2bfff),
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                              )),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  height: parentHeight * 0.06,
+                  width: parentWidth * 0.47,
+                  decoration: BoxDecoration(
+                    color: Color(0xff7937a1),
+                    border: Border.all(color: Color(0xffe8a33e), width: 2),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Image(
+                            image: AssetImage('assets/images/star.png'),
+                            height: 22,
+                          ),
+                          Text(
+                            "  DEAL ZONE  ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "okra_Bold",
+                              letterSpacing: 1.0,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Image(
+                            image: AssetImage('assets/images/star.png'),
+                            height: 22,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                showTextField = !showTextField; // Toggle visibility
+              });
+            },
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Container(
+                    height: parentHeight * 0.08,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          Color(0xffffa055),
+                          Color(0xfffd4952),
+                          Color(0xfffd4952),
+                        ],
+                      ),
+                      border: Border.all(color: Color(0xffe8a33e), width: 2),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: Center(
+                        child: Shimmer.fromColors(
+                      baseColor: Colors.white, // Light color
+                      highlightColor: Color(0xff632883), // Highlight color
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("CREATE BUSINESS PROFILE",
+                              style: TextStyle(
+                                  color: Color(0xff632883),
+                                  fontFamily: "Montserrat-BoldItalic",
+                                  fontSize:
+                                      SizeConfig.blockSizeHorizontal * 4.0,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 0.9),
+                              overflow: TextOverflow.ellipsis),
+                          Text(
+                            "  (Optional)",
+                            style: TextStyle(
+                              color: Colors.grey[500]!,
+                              fontFamily: "Roboto_Regular",
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                  ),
+                ),
+                Image(
+                    image: AssetImage('assets/images/business_pro.png'),
+                    height: 50),
+              ],
+            ),
+          ),
+          if (showTextField)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "    Business Name",
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontFamily: "okra_Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xffd5abff).withOpacity(0.3),
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      keyboardType: TextInputType.text,
+                      controller: businessNameController,
+                      autocorrect: true,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: 'Business Name',
+                        contentPadding:
+                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                        hintStyle: TextStyle(
+                          fontFamily: "Roboto_Regular",
+                          color: Color(0xffa1a1a1),
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Color(0xffd5abff), width: 0.5),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+                Text(
+                  "    Business WhatsApss Contact",
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontFamily: "okra_Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xffd5abff).withOpacity(0.3),
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      keyboardType: TextInputType.text,
+                      controller: businessContactController,
+                      autocorrect: true,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: 'Business Name',
+                        contentPadding:
+                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                        hintStyle: TextStyle(
+                          fontFamily: "Roboto_Regular",
+                          color: Color(0xffa1a1a1),
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Color(0xffd5abff), width: 0.5),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+                Text(
+                  "    Business email",
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontFamily: "okra_Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xffd5abff).withOpacity(0.3),
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      keyboardType: TextInputType.text,
+                      controller: businessEmailController,
+                      autocorrect: true,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: 'Business Name',
+                        contentPadding:
+                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                        hintStyle: TextStyle(
+                          fontFamily: "Roboto_Regular",
+                          color: Color(0xffa1a1a1),
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Color(0xffd5abff), width: 0.5),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+                Text(
+                  "     Business Office Address",
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontFamily: "okra_Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Stack(
+                  children: [
+                    widget.BusinessOfficeAddress.isEmpty
+                        ? GestureDetector(
+                            onTap: () async {
+                              final selectedAddress = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LocationMapScreen()),
+                              );
+
+                              if (selectedAddress != null) {
+                                setState(() {
+                                  widget.BusinessOfficeAddress =
+                                      selectedAddress;
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: parentHeight * 0.01,
+                                  left: parentWidth * 0.03,
+                                  right: parentWidth * 0.03),
+                              child: Container(
+                                height: parentHeight * 0.0603,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  /* border: Border.all(
+                                color: Color(0xffd5abff).withOpacity(0.5)),*/
+
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0xffd5abff).withOpacity(0.3),
+                                      spreadRadius: 0,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: [
+                                      Image(
+                                        image: AssetImage(
+                                            'assets/images/location.png'),
+                                        color: Colors.black45,
+                                        height: 18,
+                                      ),
+                                      Text(
+                                        "    Select Office Address",
+                                        style: TextStyle(
+                                          color: Color(0xff7D7B7B),
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  3.8,
+                                          fontWeight: FontWeight.normal,
+                                          fontFamily: 'Roboto-Regular',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () async {
+                              final selectedAddress = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LocationMapScreen()),
+                              );
+
+                              if (selectedAddress != null) {
+                                setState(() {
+                                  widget.BusinessOfficeAddress =
+                                      selectedAddress;
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: parentHeight * 0.01,
+                                  left: parentWidth * 0.03,
+                                  right: parentWidth * 0.04),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  //   color: Color(0xffFFF0F0),
+                                  border: Border.all(
+                                      color:
+                                          Color(0xffd5abff).withOpacity(0.5)),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 20, bottom: 10, left: 10),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image(
+                                        image: AssetImage(
+                                            'assets/images/location.png'),
+                                        color: Color(0xff7F96F0),
+                                        height: 18,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Flexible(
+                                        child: Text(
+                                          widget.BusinessOfficeAddress,
+                                          style: TextStyle(
+                                            color: Color(0xff7F96F0),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Roboto-Medium',
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                  ],
+                ),
+                SizedBox(height: 25),
+                Padding(
+                  padding: EdgeInsets.only(top: 13, left: 20),
+                  child: GestureDetector(
+                    onTap: _pickImagesFromGallery,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          height: parentHeight * 0.14,
+                          width: parentWidth * 0.4,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey.withOpacity(0.8),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                          ),
+                          child: _selectedImage == null
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.image,
+                                        color: Colors.grey, size: 50),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "Upload Business Image",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Roboto_Regular',
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: Image.file(
+                                    _selectedImage!,
+                                    width: double.infinity,
+                                    height: parentHeight * 0.14, // Fix height
+                                    fit: BoxFit
+                                        .cover, // Image ko container mai fit karne ke liye
+                                  ),
+                                ),
+                        ),
+                        if (_selectedImage != null)
+                          Positioned(
+                            top: 5,
+                            right: 5,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedImage =
+                                      null;
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.close,
+                                    color: Colors.white, size: 20),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+                Text(
+                  "    Business GESTIN",
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontFamily: "okra_Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xffd5abff).withOpacity(0.3),
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      keyboardType: TextInputType.text,
+                      controller: businessGSTINController,
+                      autocorrect: true,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: 'Business Name',
+                        contentPadding:
+                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                        hintStyle: TextStyle(
+                          fontFamily: "Roboto_Regular",
+                          color: Color(0xffa1a1a1),
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Color(0xffd5abff), width: 0.5),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+                Text(
+                  "    Business Started Since",
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontFamily: "okra_Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xffd5abff).withOpacity(0.3),
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      keyboardType: TextInputType.text,
+                      controller: businessStartedController,
+                      autocorrect: true,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: 'Business Name',
+                        contentPadding:
+                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                        hintStyle: TextStyle(
+                          fontFamily: "Roboto_Regular",
+                          color: Color(0xffa1a1a1),
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Color(0xffd5abff), width: 0.5),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: IntrinsicWidth(
+              //  padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: parentHeight * 0.06,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xff632883), Color(0xff8d42a3)],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  "Add Product",
+                  style: TextStyle(
+                    fontFamily: "Montserrat-BoldItalic",
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
                   ),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 12),
-          Text(
-            "    Product Current Address",
-            style: TextStyle(
-              color: Color(0xff000000),
-              fontFamily: "okra_Medium",
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-            child: TextFormField(
-                textAlign: TextAlign.start,
-                maxLines: 1,
-                keyboardType: TextInputType.text,
-                controller: productNameController,
-                autocorrect: true,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Ex.HD Camera (black & white)',
-                  contentPadding:
-                      EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                  hintStyle: TextStyle(
-                    fontFamily: "Roboto_Regular",
-                    color: Color(0xffa1a1a1),
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                  ),
-                  fillColor: Colors.white,
-                  hoverColor: Colors.white,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                )),
-          ),
-          SizedBox(height: 12),
-          Text(
-            "    Product Name",
-            style: TextStyle(
-              color: Color(0xff521875),
-              fontFamily: "okra_Medium",
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-            child: TextFormField(
-                textAlign: TextAlign.start,
-                maxLines: 1,
-                keyboardType: TextInputType.text,
-                controller: productNameController,
-                autocorrect: true,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Ex.HD Camera (black & white)',
-                  contentPadding:
-                      EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                  hintStyle: TextStyle(
-                    fontFamily: "Roboto_Regular",
-                    color: Color(0xffa1a1a1),
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                  ),
-                  fillColor: Colors.white,
-                  hoverColor: Colors.white,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                )),
-          ),
-          SizedBox(height: 12),
-          Text(
-            "    Product Name",
-            style: TextStyle(
-              color: Color(0xff521875),
-              fontFamily: "okra_Medium",
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-            child: TextFormField(
-                textAlign: TextAlign.start,
-                maxLines: 1,
-                keyboardType: TextInputType.text,
-                controller: productNameController,
-                autocorrect: true,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Ex.HD Camera (black & white)',
-                  contentPadding:
-                      EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                  hintStyle: TextStyle(
-                    fontFamily: "Roboto_Regular",
-                    color: Color(0xffa1a1a1),
-                    fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                  ),
-                  fillColor: Colors.white,
-                  hoverColor: Colors.white,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color(0xff943bf4), width: 0.5),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                )),
-          ),
+          SizedBox(height: 17),
         ]);
   }
 }
@@ -1037,7 +2463,6 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
       upperBound: 2.0, // Loop exactly 2 times
     );
 
-
     _controllerss.repeat().whenComplete(() {
       setState(() {
         _isVisible = false;
@@ -1048,12 +2473,10 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
       duration: const Duration(seconds: 3),
     )..repeat(reverse: true);
 
-
     _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack),
     );
   }
-
 
   void repeatAnimation() async {
     while (mounted) {
@@ -1064,15 +2487,12 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
     }
   }
 
-
-
   @override
   void dispose() {
     _controller.dispose();
     _controllerss.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {

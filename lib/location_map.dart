@@ -14,6 +14,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'Authentication/register_screen.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
+import 'createProduct.dart';
 
 
 
@@ -48,10 +49,6 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
   double selectLong = 0.0;
 
   static const kGoogleApiKey = "AIzaSyDCazNyr62owvI09pzdkVdZ7_t8a8T3XzU";
-  // static const kGoogleApiKey = "AIzaSyDCazNyr62owvI09pzdkVdZ7_t8a8T3XzU";
-
-  //InternetConnectionStatus? internetStatus;
-
 
   static const CameraPosition _kGooglePlex = CameraPosition(
       target: LatLng(18.6011, 73.7641),
@@ -148,14 +145,11 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
     children: [
       Card(
         elevation: 1,
-        child: Container(
-        //  color: CommonColor.red.withOpacity(0.1),
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: SizeConfig.screenHeight * 0.02
-            ),
-            child: (getSearchBarLayout(SizeConfig.screenHeight, SizeConfig.screenWidth)),
+        child: Padding(
+          padding: EdgeInsets.only(
+              bottom: SizeConfig.screenHeight * 0.02
           ),
+          child: (getSearchBarLayout(SizeConfig.screenHeight, SizeConfig.screenWidth)),
         ),
       ),
       Expanded(
@@ -284,20 +278,37 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
               ),
             ),
             GestureDetector(
-              onTap: (){
+             /* onTap: (){
              //   print("Street firstName: ${widget.firstName}");
+                String selectedAddress =
+                    "$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.";
+                Navigator.pop(context, selectedAddress);
+
 
                 Navigator.pop(context, locality);
-               /* Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>  MainHome(
-                     // address: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
+
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) =>  NewProduct(
+                      ProductAddress: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
+                     // BusinessOfficeAddress: '$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.',
 
                       lat: "$selectLat",
                       long: "$selectLong",
+
                       //ProfilePicture: widget.ProfileImage, firstName: widget.firstName, lastname: widget.lastname, email: widget.email, password: widget.password, cpassword: widget.cpassword, permanetAddress: widget.mobileNumber, mobileNumber: widget.mobileNumber, FrontImage: widget.frontImage, BackImage: widget.BackImage,
 
 
-                    )*/
+                    ),
+                    ));*/
+
+
+            onTap: () {
+    String selectedAddress =
+    "$name, $street, $subLocality, $locality, $postalCode, $administrativeArea, $country.";
+
+    // Correct way to pass address back
+    Navigator.pop(context, selectedAddress);
+
 
               },
               child: Align(

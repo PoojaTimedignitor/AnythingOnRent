@@ -2683,7 +2683,7 @@ class MainHomeState extends State<MainHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  NewProduct()));
+                                                  NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

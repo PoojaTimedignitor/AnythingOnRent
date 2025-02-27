@@ -4,7 +4,6 @@ import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/MainHome.dart';
 import 'package:anything/model/dio_client.dart';
-import 'package:anything/ttttttttt.dart';
 import 'package:flutter/material.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:get_storage/get_storage.dart';
@@ -16,7 +15,6 @@ import 'ConstantData/Constant_data.dart';
 import 'MyBehavior.dart';
 import 'ResponseModule/getSubCatResponseModel.dart';
 import 'createPostCity.dart';
-import 'dummytwo.dart';
 import 'ResponseModule/getSubCatResponseModel.dart' as subCatData;
 
 class CreateProductService extends StatefulWidget {
@@ -435,198 +433,7 @@ class _CreateProductServiceState extends State<CreateProductService>
   String? _selectedSuggestion;
   String? _selectedSubItem;
 
-  // Function to show the sublist dialog
-/*  Future<void> _showSubSuggestionDialog(
-      BuildContext context, String suggestion) async {
-    final selectedSubSuggestion = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        final sublist = _subSuggestions[suggestion] ?? [];
-        return AlertDialog(
-          title: Text('Sublist for $suggestion'),
-          content: Container(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: sublist.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text(sublist[index]),
-                  onTap: () {
-                    Navigator.pop(context, sublist[index]);
-                  },
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
 
-    if (selectedSubSuggestion != null) {
-      setState(() {
-        _selectedSubItem = selectedSubSuggestion;
-        SubCatController.text =
-        '$_selectedSuggestion --> $_selectedSubItem'; // Update TextField
-      });
-    }
-  }
-
-  // Function to show the main suggestion dialog
-  Future<void> _showMainSuggestionDialog(BuildContext context) async {
-    final selectedSuggestion = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title:  Text(
-            "${updatedTexts} Categories",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Container(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: filteredSubCat.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title:  Text(
-                    filteredSubCat[index].name ?? '',
-                    style: TextStyle(
-                      letterSpacing: 0.5,
-                      color: Colors.black,
-                      fontFamily: "Montserrat_Regular",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop(); // Close the dialog
-
-                  },
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (selectedSuggestion != null) {
-      setState(() {
-        _selectedSuggestion = selectedSuggestion;
-        SubCatController.text = _selectedSuggestion!; // Update TextField with main suggestion
-      });
-
-      // Show the sublist dialog for the selected suggestion
-      await _showSubSuggestionDialog(context, selectedSuggestion);
-    }
-  }*/
-
-/*
-  void DialogBoxSuggestion(BuildContext context) {
-    SizeConfig().init(context);
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(9),
-          ),
-          contentPadding: EdgeInsets.only(top: 10, left: 10, right: 10),
-          content: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: SizeConfig.screenHeight * 0.5, // Maximum height for the dialog
-              minWidth: double.infinity, // Ensures proper width
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // Avoids unnecessary expansion
-              children: [
-                // Header Section
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${updatedTexts} Categories",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                    ],
-                  ),
-                ),
-
-                // List Section
-                Flexible(
-                  child: ListView.builder(
-                    shrinkWrap: true, // Ensures the ListView takes minimal required space
-                    padding: EdgeInsets.zero,
-                    physics: BouncingScrollPhysics(), // Adds smooth scrolling
-                    itemCount: filteredSubCat.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 5,
-                              vertical: 0,
-                            ),
-                            visualDensity: VisualDensity(
-                              horizontal: 0,
-                              vertical: -4,
-                            ),
-                            title: Text(
-                              filteredSubCat[index].name ?? '',
-                              style: TextStyle(
-                                letterSpacing: 0.5,
-                                color: Colors.black,
-                                fontFamily: "Montserrat_Regular",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.of(context).pop(); // Close the dialog
-                              _onPrimaryOptionTap(
-                                filteredSubCat[index].name.toString(),
-                              );
-                            },
-                          ),
-                          Divider(
-                            color: CommonColor.SearchBar,
-                            thickness: 0.2,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-*/
 
 
   Future<bool> _onWillPop() async {
