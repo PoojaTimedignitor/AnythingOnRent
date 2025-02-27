@@ -272,6 +272,19 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 
   File? _selectedImage;
 
+  Future<void> _pickSingleImageFromGallery() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path); // Only 1 image
+      });
+    } else {
+      print("❌ No Image Selected");
+    }
+  }
+
+
   Future<void> _pickImagesFromGallery() async {
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
 
@@ -2179,7 +2192,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 Padding(
                   padding: EdgeInsets.only(top: 13, left: 20),
                   child: GestureDetector(
-                    onTap: _pickImagesFromGallery,
+                    onTap: _pickSingleImageFromGallery,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
