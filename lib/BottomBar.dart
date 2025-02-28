@@ -1578,3 +1578,65 @@ class BottomBarState extends State<BottomBar>
     );
   }
 }
+
+
+
+
+/*ListView(
+children: [
+SizedBox(height: 25),
+Center(
+child: Text(
+"FOLLOW US ON SOCIAL MEDIA",
+style: TextStyle(
+color: Color(0xff3d87f1),
+fontFamily: "okra_Medium",
+fontSize: 15,
+letterSpacing: 0.9,
+fontWeight: FontWeight.w600,
+),
+),
+),
+SizedBox(height: 25),
+Row(
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+GestureDetector(
+onTap: () =>
+launchURL("https://www.facebook.com/yourprofile"),
+child: Image(
+image: AssetImage('assets/images/facebook.png'),
+height: parentHeight * 0.047,
+),
+),
+SizedBox(width: 10),
+GestureDetector(
+onTap: () =>
+launchURL("https://www.youtube.com/yourchannel"),
+child: Image(
+image: AssetImage('assets/images/youtub.png'),
+height: parentHeight * 0.047,
+),
+),
+SizedBox(width:10),
+GestureDetector(
+onTap: () =>
+launchURL("https://www.instagram.com/yourprofile"),
+child: Image(
+image: AssetImage('assets/images/insta.png'),
+height: parentHeight * 0.047,
+),
+),
+SizedBox(width: 10),
+GestureDetector(
+onTap: () => launchURL(
+"https://www.linkedin.com/in/yourprofile"),
+child: Image(
+image: AssetImage('assets/images/linkedIn.png'),
+height: parentHeight * 0.045,
+),
+),
+],
+),
+],
+),*/

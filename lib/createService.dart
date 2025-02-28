@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:anything/mm.dart';
 import 'package:anything/secoundData.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +20,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'location_map.dart';
 
-class NewProduct extends StatefulWidget {
+class NewService extends StatefulWidget {
   final String lat;
   final String long;
   String ProductAddress;
   String BusinessOfficeAddress;
-  NewProduct(
+  NewService(
       {super.key,
       required this.lat,
       required this.long,
@@ -32,10 +33,10 @@ class NewProduct extends StatefulWidget {
       required this.BusinessOfficeAddress});
 
   @override
-  State<NewProduct> createState() => _NewProductState();
+  State<NewService> createState() => _NewServiceState();
 }
 
-class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
+class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
   late AnimationController _controller;
   late AnimationController _controllerzoom;
   bool showTextField = false;
@@ -59,7 +60,17 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   TextEditingController businessStartedController = TextEditingController();
 
   late PageController _pageController;
-
+  List<String> days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ];
+  List<String> selectedDays = [];
+  bool isDropdownOpen = false;
   final List<String> ribbons = ["CREATE PRODUCT", "CREATE BUSINESS PROFILE"];
   final ImagePicker _picker = ImagePicker();
   List<File> _selectedImages = [];
@@ -84,6 +95,12 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
     });
   }
 
+  void _toggleDropdown() {
+    setState(() {
+      isDropdownOpen = !isDropdownOpen;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -95,13 +112,12 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 
     for (int i = 0; i < ribbons.length; i++) {
       _animations.add(Tween<Offset>(
-        begin: Offset(1, 0), // Slide from right
-        end: Offset(0, 0),
+        begin: Offset(1, 0),
       ).animate(
         CurvedAnimation(
           parent: _controller,
           curve: Interval(
-            0.2 * i, // Delay each ribbon slightly
+            0.2 * i,
             1.0,
             curve: Curves.easeOut,
           ),
@@ -109,7 +125,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
       ));
     }
 
-    _controller.forward(); // Start the animation
+    _controller.forward();
 
     _controllerzoom = AnimationController(
       vsync: this,
@@ -325,6 +341,71 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
     }
   }
 
+  void _showDropdown(BuildContext context) async {
+    List<String> tempSelectedDays = List.from(selectedDays); // ✅ Temporary list
+
+    List<String>? result = await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            // ✅ Dialog state update
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: Container(
+                padding: EdgeInsets.all(10),
+                width: 200, // ✅ Dropdown ka size chhota kiya
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("Select Days",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600)),
+                    Divider(),
+                    Column(
+                      children: days.map((day) {
+                        return CheckboxListTile(
+                          title: Text(day, style: TextStyle(fontSize: 12)),
+                          value: tempSelectedDays.contains(day),
+                          onChanged: (bool? value) {
+                            setDialogState(() {
+                              // ✅ Update inside dialog
+                              if (value == true) {
+                                tempSelectedDays.add(day);
+                              } else {
+                                tempSelectedDays.remove(day);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(
+                            context, tempSelectedDays), // ✅ Return updated list
+                        child: Text("Done",
+                            style: TextStyle(color: Colors.purple)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        selectedDays = result;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -344,7 +425,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Image.asset(
-                        'assets/images/estione.png',
+                        'assets/images/servicess.jpg',
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -375,7 +456,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                       children: [
                         // Back Button (Top-Left)
                         Positioned(
-                          left: SizeConfig.screenWidth * 0.05,
+                          left: SizeConfig.screenWidth * 0.01,
                           top: SizeConfig.screenHeight *
                               0.06, // Adjusted to fit inside container
                           child: Container(
@@ -406,41 +487,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                         ),
 
                         // Ribbons (Top-Right)
-                        Positioned(
-                          top: 80,
-                          right: 0,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: List.generate(ribbons.length, (index) {
-                              return SlideTransition(
-                                position: _animations[index],
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            Duration(milliseconds: 500),
-                                        pageBuilder: (_, __, ___) =>
-                                            SecondScreen(
-                                                ribbonText: ribbons[index]),
-                                        transitionsBuilder:
-                                            (_, animation, __, child) {
-                                          return FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: RibbonShape(
-                                      text: ribbons[index], isHero: true),
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -457,7 +503,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 ],
               ),
               Container(
-                //  height: 600,
                 child:
                     DataInfo(SizeConfig.screenHeight, SizeConfig.screenWidth),
               )
@@ -473,11 +518,10 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: NeverScrollableScrollPhysics(),
-        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 17),
           Text(
-            "    Product Name",
+            "   Service Name",
             style: TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
@@ -493,7 +537,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(10.0),
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0xffd5abff).withOpacity(0.3),
+                    color: Color(0xffff979d).withOpacity(0.3),
                     spreadRadius: 0,
                     blurRadius: 5,
                     offset: Offset(0, 4),
@@ -509,7 +553,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   isDense: true,
-                  hintText: 'Ex.HD Camera (black & white)',
+                  hintText: 'Volt Tech Solutions',
                   contentPadding:
                       EdgeInsets.only(left: 10, top: 14, bottom: 12),
                   hintStyle: TextStyle(
@@ -534,7 +578,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           ),
           SizedBox(height: 17),
           Text(
-            "    Product Description",
+            "    Service Description",
             style: TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
@@ -550,7 +594,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(10.0),
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0xffd5abff).withOpacity(0.3),
+                    color: Color(0xffff979d).withOpacity(0.3),
                     spreadRadius: 0,
                     blurRadius: 5,
                     offset: Offset(0, 4),
@@ -566,7 +610,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     isDense: true,
-                    hintText: 'Ex.HD Camera (black & white)',
+                    hintText: 'Volt Tech Solutions',
                     contentPadding:
                         EdgeInsets.only(left: 10, top: 10, bottom: 12),
                     hintStyle: TextStyle(
@@ -593,7 +637,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           ),
           SizedBox(height: 15),
           Text(
-            "    Add Product Images",
+            "    Add Service Images",
             style: TextStyle(
               color: Colors.black,
               fontFamily: "okra_Medium",
@@ -609,7 +653,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 child: DottedBorder(
                   borderType: BorderType.RRect,
                   radius: Radius.circular(10),
-                  color: Color(0xff943bf4),
+                  color: Color(0xfff12935),
                   strokeWidth: 1,
                   dashPattern: [4, 5],
                   child: GestureDetector(
@@ -625,7 +669,8 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                           Padding(
                             padding: EdgeInsets.only(top: parentHeight * 0.01),
                             child: Image(
-                              image: AssetImage('assets/images/uploadpic.png'),
+                              image: AssetImage(
+                                  'assets/images/upload_service.png'),
                               height: parentHeight * 0.04,
                             ),
                           ),
@@ -634,7 +679,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                             height: 26,
                             width: 100,
                             decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xff943bf4)),
+                              border: Border.all(color: Color(0xfff12935)),
                               borderRadius: BorderRadius.circular(7),
                             ),
                             child: Center(
@@ -645,7 +690,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                       SizeConfig.blockSizeHorizontal * 2.5,
                                   fontFamily: 'Roboto_Regular',
                                   fontWeight: FontWeight.w400,
-                                  color: Color(0xff943bf4),
+                                  color: Color(0xfff12935),
                                 ),
                               ),
                             ),
@@ -872,7 +917,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           ]),
           SizedBox(height: 28),
           Text(
-            "     Product Current Address",
+            "     City",
             style: TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
@@ -911,7 +956,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 
                             boxShadow: [
                               BoxShadow(
-                                color: Color(0xffd5abff).withOpacity(0.3),
+                                color: Color(0xffff979d).withOpacity(0.3),
                                 spreadRadius: 0,
                                 blurRadius: 5,
                                 offset: Offset(0, 4),
@@ -930,7 +975,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                   height: 18,
                                 ),
                                 Text(
-                                  "    Select Current Address",
+                                  "    Select City",
                                   style: TextStyle(
                                     color: Color(0xff7D7B7B),
                                     fontSize:
@@ -1008,64 +1053,95 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           SizedBox(
             height: parentHeight * 0.025,
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              height: SizeConfig.screenHeight * 0.08,
-              width: SizeConfig.screenWidth * 0.94,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => bbbttt(
+                          )));
+                },
+                child: Text(
+                  "   Select Availability",
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontFamily: "okra_Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(height: 8),
+              Stack(
                 children: [
-                  Text(
-                    "   Product Exact Quantity",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "okra_Medium",
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                  GestureDetector(
+                    onTap: _toggleDropdown,
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.purple,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            selectedDays.isEmpty
+                                ? "Select Days"
+                                : selectedDays
+                                    .join(", "), // ✅ Selected days show
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                          Icon(Icons.arrow_drop_down, color: Colors.white),
+                        ],
+                      ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: Container(
-                        height: 43,
-                        width: 130,
-                        decoration: BoxDecoration(
-                            color: Color(0xffb46ffd).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                                icon: const Icon(Icons.remove),
-                                onPressed: () {
+
+
+                  if (isDropdownOpen)
+                    Positioned(
+                      top: 50,
+                      left: 0,
+                      width: 250,
+                      child: Material(
+                        elevation: 5,
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: days.map((day) {
+                              return CheckboxListTile(
+                                title:
+                                    Text(day, style: TextStyle(fontSize: 14)),
+                                value: selectedDays.contains(day),
+                                onChanged: (bool? value) {
                                   setState(() {
-                                    _updateQuantity(-1);
+                                    if (value == true) {
+                                      selectedDays.add(day);
+                                    } else {
+                                      selectedDays.remove(day);
+                                    }
                                   });
-                                }),
-                            Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(3),
-                                    color: Colors.white),
-                                child: Text(quantity.toString())),
-                            IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: () {
-                                  setState(() {
-                                    _updateQuantity(1);
-                                  });
-                                }),
-                          ],
-                        )),
-                  ),
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
-            ),
+            ],
           ),
           SizedBox(
             height: parentHeight * 0.030,
@@ -1077,8 +1153,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                     EdgeInsets.only(left: 13, right: 13, top: 22, bottom: 20),
                 child: IntrinsicHeight(
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8), // Auto sizing
-
+                    padding: EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Color(0xff632883).withOpacity(0.8),
@@ -1086,7 +1161,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
-
                     child: Padding(
                       padding: EdgeInsets.only(left: 20, right: 20, top: 50),
                       child: Column(
@@ -1166,8 +1240,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                               onTap: () {
                                 setState(() {
                                   isDropdownOpenRent = !isDropdownOpenRent;
-                                  isSelectedRent =
-                                      !isSelectedRent; // Toggle the selected state
+                                  isSelectedRent = !isSelectedRent;
                                 });
                               },
                               child: SingleChildScrollView(
@@ -1185,8 +1258,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                color: Color(
-                                                    0xff624ffa), // Outer circle color
+                                                color: Color(0xff624ffa),
                                                 width: 01,
                                               ),
                                             ),
@@ -1263,7 +1335,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                                     ),
                                                   ),
                                                   Text("Per Hour"),
-                                                  if (perHour) // ✅ Now wrapped properly in conditional rendering
+                                                  if (perHour)
                                                     Expanded(
                                                       child: Padding(
                                                         padding:
@@ -1884,622 +1956,611 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
             ),
           ),
           if (showTextField)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "    Business Name",
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontFamily: "okra_Medium",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                "    Business Name",
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xffd5abff).withOpacity(0.3),
-                          spreadRadius: 0,
-                          blurRadius: 5,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      textAlign: TextAlign.start,
-                      maxLines: 1,
-                      keyboardType: TextInputType.text,
-                      controller: businessNameController,
-                      autocorrect: true,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Business Name',
-                        contentPadding:
-                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                        hintStyle: TextStyle(
-                          fontFamily: "Roboto_Regular",
-                          color: Color(0xffa1a1a1),
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xffd5abff), width: 0.5),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xffd5abff).withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 5,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    controller: businessNameController,
+                    autocorrect: true,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Business Name',
+                      contentPadding:
+                          EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                      hintStyle: TextStyle(
+                        fontFamily: "Roboto_Regular",
+                        color: Color(0xffa1a1a1),
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Color(0xffd5abff), width: 0.5),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
-                Text(
-                  "    Business WhatsApss Contact",
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontFamily: "okra_Medium",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              SizedBox(height: 25),
+              Text(
+                "    Business WhatsApss Contact",
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xffd5abff).withOpacity(0.3),
-                          spreadRadius: 0,
-                          blurRadius: 5,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      textAlign: TextAlign.start,
-                      maxLines: 1,
-                      keyboardType: TextInputType.text,
-                      controller: businessContactController,
-                      autocorrect: true,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Business Name',
-                        contentPadding:
-                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                        hintStyle: TextStyle(
-                          fontFamily: "Roboto_Regular",
-                          color: Color(0xffa1a1a1),
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xffd5abff), width: 0.5),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xffd5abff).withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 5,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    controller: businessContactController,
+                    autocorrect: true,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Business Name',
+                      contentPadding:
+                          EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                      hintStyle: TextStyle(
+                        fontFamily: "Roboto_Regular",
+                        color: Color(0xffa1a1a1),
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Color(0xffd5abff), width: 0.5),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
-                Text(
-                  "    Business email",
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontFamily: "okra_Medium",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              SizedBox(height: 25),
+              Text(
+                "    Business email",
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xffd5abff).withOpacity(0.3),
-                          spreadRadius: 0,
-                          blurRadius: 5,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      textAlign: TextAlign.start,
-                      maxLines: 1,
-                      keyboardType: TextInputType.text,
-                      controller: businessEmailController,
-                      autocorrect: true,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Business Name',
-                        contentPadding:
-                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                        hintStyle: TextStyle(
-                          fontFamily: "Roboto_Regular",
-                          color: Color(0xffa1a1a1),
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xffd5abff), width: 0.5),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xffd5abff).withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 5,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    controller: businessEmailController,
+                    autocorrect: true,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Business Name',
+                      contentPadding:
+                          EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                      hintStyle: TextStyle(
+                        fontFamily: "Roboto_Regular",
+                        color: Color(0xffa1a1a1),
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Color(0xffd5abff), width: 0.5),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
-                Text(
-                  "     Business Office Address",
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontFamily: "okra_Medium",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              SizedBox(height: 25),
+              Text(
+                "     Business Office Address",
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
-                Stack(
-                  children: [
-                    widget.BusinessOfficeAddress.isEmpty
-                        ? GestureDetector(
-                            onTap: () async {
-                              final selectedAddress = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LocationMapScreen()),
-                              );
+              ),
+              Stack(
+                children: [
+                  widget.BusinessOfficeAddress.isEmpty
+                      ? GestureDetector(
+                          onTap: () async {
+                            final selectedAddress = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LocationMapScreen()),
+                            );
 
-                              if (selectedAddress != null) {
-                                setState(() {
-                                  widget.BusinessOfficeAddress =
-                                      selectedAddress;
-                                });
-                              }
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  top: parentHeight * 0.01,
-                                  left: parentWidth * 0.03,
-                                  right: parentWidth * 0.03),
-                              child: Container(
-                                height: parentHeight * 0.0603,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  /* border: Border.all(
+                            if (selectedAddress != null) {
+                              setState(() {
+                                widget.BusinessOfficeAddress = selectedAddress;
+                              });
+                            }
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: parentHeight * 0.01,
+                                left: parentWidth * 0.03,
+                                right: parentWidth * 0.03),
+                            child: Container(
+                              height: parentHeight * 0.0603,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                /* border: Border.all(
                                 color: Color(0xffd5abff).withOpacity(0.5)),*/
 
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Color(0xffd5abff).withOpacity(0.3),
-                                      spreadRadius: 0,
-                                      blurRadius: 5,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Row(
-                                    children: [
-                                      Image(
-                                        image: AssetImage(
-                                            'assets/images/location.png'),
-                                        color: Colors.black45,
-                                        height: 18,
-                                      ),
-                                      Text(
-                                        "    Select Office Address",
-                                        style: TextStyle(
-                                          color: Color(0xff7D7B7B),
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal *
-                                                  3.8,
-                                          fontWeight: FontWeight.normal,
-                                          fontFamily: 'Roboto-Regular',
-                                        ),
-                                      ),
-                                    ],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xffd5abff).withOpacity(0.3),
+                                    spreadRadius: 0,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 4),
                                   ),
-                                ),
+                                ],
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                            ),
-                          )
-                        : GestureDetector(
-                            onTap: () async {
-                              final selectedAddress = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LocationMapScreen()),
-                              );
-
-                              if (selectedAddress != null) {
-                                setState(() {
-                                  widget.BusinessOfficeAddress =
-                                      selectedAddress;
-                                });
-                              }
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  top: parentHeight * 0.01,
-                                  left: parentWidth * 0.03,
-                                  right: parentWidth * 0.04),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  //   color: Color(0xffFFF0F0),
-                                  border: Border.all(
-                                      color:
-                                          Color(0xffd5abff).withOpacity(0.5)),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 20, bottom: 10, left: 10),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Image(
-                                        image: AssetImage(
-                                            'assets/images/location.png'),
-                                        color: Color(0xff7F96F0),
-                                        height: 18,
-                                      ),
-                                      SizedBox(width: 10),
-                                      Flexible(
-                                        child: Text(
-                                          widget.BusinessOfficeAddress,
-                                          style: TextStyle(
-                                            color: Color(0xff7F96F0),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'Roboto-Medium',
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),)
-                  ],
-                ),
-                SizedBox(height: 25),
-                Padding(
-                  padding: EdgeInsets.only(top: 13, left: 20),
-                  child: GestureDetector(
-                    onTap: _pickSingleImageFromGallery,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: parentHeight * 0.14,
-                          width: parentWidth * 0.44,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey.withOpacity(0.8),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                          ),
-                          child: _selectedImage == null
-                              ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                              child: Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child: Row(
                                   children: [
-                                    Icon(Icons.image,
-                                        color: Colors.grey, size: 50),
-                                    SizedBox(height: 10),
+                                    Image(
+                                      image: AssetImage(
+                                          'assets/images/location.png'),
+                                      color: Colors.black45,
+                                      height: 18,
+                                    ),
                                     Text(
-                                      "Upload Business Image",
+                                      "    Select Office Address",
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'Roboto_Regular',
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.grey,
+                                        color: Color(0xff7D7B7B),
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal *
+                                                3.8,
+                                        fontWeight: FontWeight.normal,
+                                        fontFamily: 'Roboto-Regular',
                                       ),
                                     ),
                                   ],
-                                )
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Image.file(
-                                    _selectedImage!,
-                                    width: double.infinity,
-                                    height: parentHeight * 0.14, // Fixed height
-                                    fit: BoxFit
-                                        .contain,
-                                  ),
                                 ),
-                        ),
-                        if (_selectedImage != null)
-                          Positioned(
-                            top: 5,
-                            right: 5,
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedImage = null;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(Icons.close,
-                                    color: Colors.white, size: 20),
                               ),
                             ),
                           ),
-                      ],
-                    ),
+                        )
+                      : GestureDetector(
+                          onTap: () async {
+                            final selectedAddress = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LocationMapScreen()),
+                            );
+
+                            if (selectedAddress != null) {
+                              setState(() {
+                                widget.BusinessOfficeAddress = selectedAddress;
+                              });
+                            }
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: parentHeight * 0.01,
+                                left: parentWidth * 0.03,
+                                right: parentWidth * 0.04),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                //   color: Color(0xffFFF0F0),
+                                border: Border.all(
+                                    color: Color(0xffd5abff).withOpacity(0.5)),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 20, bottom: 10, left: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          'assets/images/location.png'),
+                                      color: Color(0xff7F96F0),
+                                      height: 18,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Flexible(
+                                      child: Text(
+                                        widget.BusinessOfficeAddress,
+                                        style: TextStyle(
+                                          color: Color(0xff7F96F0),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Roboto-Medium',
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                ],
+              ),
+              SizedBox(height: 25),
+              Padding(
+                padding: EdgeInsets.only(top: 13, left: 20),
+                child: GestureDetector(
+                  onTap: _pickSingleImageFromGallery,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        height: parentHeight * 0.14,
+                        width: parentWidth * 0.44,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.8),
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                        child: _selectedImage == null
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.image,
+                                      color: Colors.grey, size: 50),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    "Upload Business Image",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Roboto_Regular',
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: Image.file(
+                                  _selectedImage!,
+                                  width: double.infinity,
+                                  height: parentHeight * 0.14, // Fixed height
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                      ),
+                      if (_selectedImage != null)
+                        Positioned(
+                          top: 5,
+                          right: 5,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedImage = null;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(Icons.close,
+                                  color: Colors.white, size: 20),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 25),
-                Text(
-                  "    Business GESTIN",
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontFamily: "okra_Medium",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              SizedBox(height: 25),
+              Text(
+                "    Business GESTIN",
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xffd5abff).withOpacity(0.3),
-                          spreadRadius: 0,
-                          blurRadius: 5,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      textAlign: TextAlign.start,
-                      maxLines: 1,
-                      keyboardType: TextInputType.text,
-                      controller: businessGSTINController,
-                      autocorrect: true,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Business Name',
-                        contentPadding:
-                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                        hintStyle: TextStyle(
-                          fontFamily: "Roboto_Regular",
-                          color: Color(0xffa1a1a1),
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xffd5abff), width: 0.5),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xffd5abff).withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 5,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    controller: businessGSTINController,
+                    autocorrect: true,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Business Name',
+                      contentPadding:
+                          EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                      hintStyle: TextStyle(
+                        fontFamily: "Roboto_Regular",
+                        color: Color(0xffa1a1a1),
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Color(0xffd5abff), width: 0.5),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
-                Text(
-                  "    Business Started Since",
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontFamily: "okra_Medium",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              SizedBox(height: 25),
+              Text(
+                "    Business Started Since",
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15, right: 10, top: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xffd5abff).withOpacity(0.3),
-                          spreadRadius: 0,
-                          blurRadius: 5,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      textAlign: TextAlign.start,
-                      maxLines: 1,
-                      keyboardType: TextInputType.text,
-                      controller: businessStartedController,
-                      autocorrect: true,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Business Name',
-                        contentPadding:
-                            EdgeInsets.only(left: 10, top: 14, bottom: 12),
-                        hintStyle: TextStyle(
-                          fontFamily: "Roboto_Regular",
-                          color: Color(0xffa1a1a1),
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.5,
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xffd5abff), width: 0.5),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xffd5abff).withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 5,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    controller: businessStartedController,
+                    autocorrect: true,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Business Name',
+                      contentPadding:
+                          EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                      hintStyle: TextStyle(
+                        fontFamily: "Roboto_Regular",
+                        color: Color(0xffa1a1a1),
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Color(0xffd5abff), width: 0.5),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
-                Padding(
-                  padding:  EdgeInsets.all(18.0),
-                  child: Container(
-
-                    height: ResponsiveUtil.height(90),
-                    width: ResponsiveUtil().isMobile(context)
-                        ? ResponsiveUtil.width(420)
-                        : ResponsiveUtil().isTablet(context)
-                        ? ResponsiveUtil.width(800)
-                        : ResponsiveUtil.width(1600),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Color(0xff632883), width: 0.3),
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(ResponsiveUtil.width(13))),
-                    ),
-
-
-                    child: Column(
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: EdgeInsets.all(18.0),
+                child: Container(
+                  height: ResponsiveUtil.height(90),
+                  width: ResponsiveUtil().isMobile(context)
+                      ? ResponsiveUtil.width(420)
+                      : ResponsiveUtil().isTablet(context)
+                          ? ResponsiveUtil.width(800)
+                          : ResponsiveUtil.width(1600),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Color(0xff632883), width: 0.3),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(ResponsiveUtil.width(13))),
+                  ),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-
-                      "FOLLOW US ON SOCIAL MEDIA",
-                          style: TextStyle(
-                            color: Color(0xff3d87f1),
-                            fontFamily: "okra_Medium",
-                            fontSize: 15,
-                            letterSpacing: 0.2,
-                            fontWeight: FontWeight.w600,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "FOLLOW US ON SOCIAL MEDIA",
+                        style: TextStyle(
+                          color: Color(0xff3d87f1),
+                          fontFamily: "okra_Medium",
+                          fontSize: 15,
+                          letterSpacing: 0.2,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.purple,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () => launchURL(
+                                    "https://www.facebook.com/yourprofile"),
+                                child: Image(
+                                  image:
+                                      AssetImage('assets/images/facebook.png'),
+                                  height: parentHeight * 0.024,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 10),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.purple,
-                              ),
-                              child: Padding(
-                                padding:  EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () =>
-                                      launchURL("https://www.facebook.com/yourprofile"),
-                                  child: Image(
-                                    image: AssetImage('assets/images/facebook.png'),
-                                    height: parentHeight * 0.024,
-                                  ),
+                          SizedBox(width: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.purple,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () => launchURL(
+                                    "https://www.youtube.com/yourchannel"),
+                                child: Image(
+                                  image: AssetImage('assets/images/youtub.png'),
+                                  height: parentHeight * 0.028,
                                 ),
                               ),
                             ),
-                            SizedBox(width: 10),
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.purple,
-                              ),
-                              child: Padding(
-                                padding:  EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () =>
-                                      launchURL("https://www.youtube.com/yourchannel"),
-                                  child: Image(
-                                    image: AssetImage('assets/images/youtub.png'),
-                                    height: parentHeight * 0.028,
-                                  ),
+                          ),
+                          SizedBox(width: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.purple,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () => launchURL(
+                                    "https://www.instagram.com/yourprofile"),
+                                child: Image(
+                                  image: AssetImage('assets/images/insta.png'),
+                                  height: parentHeight * 0.025,
                                 ),
                               ),
                             ),
-                            SizedBox(width:10),
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.purple,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () =>
-                                      launchURL("https://www.instagram.com/yourprofile"),
-                                  child: Image(
-                                    image: AssetImage('assets/images/insta.png'),
-                                    height: parentHeight * 0.025,
-                                  ),
+                          ),
+                          SizedBox(width: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.purple,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () => launchURL(
+                                    "https://www.linkedin.com/in/yourprofile"),
+                                child: Image(
+                                  image:
+                                      AssetImage('assets/images/linkedIn.png'),
+                                  height: parentHeight * 0.025,
                                 ),
                               ),
                             ),
-                            SizedBox(width: 10),
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.purple,),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () => launchURL(
-                                      "https://www.linkedin.com/in/yourprofile"),
-                                  child: Image(
-                                    image: AssetImage('assets/images/linkedIn.png'),
-                                    height: parentHeight * 0.025,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-
-              ]),
+              ),
+            ]),
           SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.all(18.0),
@@ -2550,7 +2611,7 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _animation;
-  String text = "PET WORLD";
+  String text = "ELECTRICAL SERVICES";
   TextEditingController productNameController = TextEditingController();
 
   late Animation<double> _scaleAnimation;
@@ -2653,7 +2714,7 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "Create Product",
+          "Create Service",
           style: TextStyle(
             color: Colors.white,
             fontFamily: "Montserrat-Bold",
@@ -2704,7 +2765,7 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
               height: textHeight,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xff632883), Color(0xff8d42a3)],
+                  colors: [Color(0xfff12935), Color(0xffFF5963)],
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                 ),
@@ -2753,14 +2814,12 @@ class SnakeBorderPainter extends CustomPainter {
         ],
       );
 
-    // Define path for rounded rectangle
     final Path path = Path()
       ..addRRect(RRect.fromRectAndRadius(
         Rect.fromLTWH(0, 0, size.width, size.height),
         const Radius.circular(10),
       ));
 
-    // Animate the path using dash effect
     final PathMetrics pathMetrics = path.computeMetrics();
     for (var metric in pathMetrics) {
       final double pathLength = metric.length;
