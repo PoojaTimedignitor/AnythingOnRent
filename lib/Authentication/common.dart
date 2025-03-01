@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CommonLayout extends StatelessWidget {
   final Widget child;
   final String title;
-  final VoidCallback? onBackPress; // Optional action for back button
+  final VoidCallback? onBackPress;
 
   const CommonLayout({
     Key? key,
@@ -27,7 +27,7 @@ class CommonLayout extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: onBackPress ?? () => Navigator.pop(context), // Back action
+          onPressed: onBackPress ?? () => Navigator.pop(context),
         ),
       ),
        body:  Stack(
@@ -39,7 +39,7 @@ class CommonLayout extends StatelessWidget {
       child: Image.asset(
         'assets/images/register_logo.png',
         fit: BoxFit.cover
-        ,  // Make the image cover the whole screen
+        ,
       ),
       ),
     ),

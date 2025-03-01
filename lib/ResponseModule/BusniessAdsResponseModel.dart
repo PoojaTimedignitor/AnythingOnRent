@@ -4,11 +4,11 @@ class AdminBusinessAdsResponseModel {
 
   AdminBusinessAdsResponseModel({this.success, this.urls});
 
-  // JSON से कंस्ट्रक्टर
+
   AdminBusinessAdsResponseModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['urls'] != null) {
-      // यदि 'urls' एक सूची की सूची है, तो उसे समतल (flatten) करें
+
       urls = [];
       if (json['urls'] is List) {
         for (var urlList in json['urls']) {

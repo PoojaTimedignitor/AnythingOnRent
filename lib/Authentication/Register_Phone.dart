@@ -1,4 +1,3 @@
-import 'package:anything/Authentication/common.dart';
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +25,9 @@ class _Register_PhoneState extends State<Register_Phone> {
   void initState() {
     super.initState();
     phoneController.addListener(() {
-      print("Phone Number Entered: ${phoneController.text}");
+      print("Phone Number enter ${phoneController.text}");
 
-      // Update button state
+
       setState(() {
         isButtonActive = phoneController.text.length == 10 &&
             RegExp(r'^[0-9]{10}$').hasMatch(phoneController.text);
@@ -57,7 +56,7 @@ class _Register_PhoneState extends State<Register_Phone> {
       
           Padding(
             padding: const EdgeInsets.only(top: 120 ),
-            child: Container(
+            child: SizedBox(
       
               height: ResponsiveUtil.height(SizeConfig.screenHeight*0.62),
       
@@ -71,7 +70,7 @@ class _Register_PhoneState extends State<Register_Phone> {
                       ),
                     ),
                   Positioned(
-                    top:ResponsiveUtil.height(160), // Adjust the position as needed
+                    top:ResponsiveUtil.height(160),
                     left: ResponsiveUtil.width(90),
                     right: ResponsiveUtil.width(10),
                     child: Text(
@@ -79,7 +78,7 @@ class _Register_PhoneState extends State<Register_Phone> {
                       textAlign: TextAlign.start,
                       style: TextStyle(
                         fontFamily: "okra_extrabold",
-                        fontSize: ResponsiveUtil.fontSize(20) , // Responsive font size
+                        fontSize: ResponsiveUtil.fontSize(20) ,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
       
@@ -156,7 +155,7 @@ class _Register_PhoneState extends State<Register_Phone> {
                                   borderRadius: BorderRadius.circular(10.0),
                                 ), hintText: ' phone number',
                                 hintStyle: TextStyle(
-                                  color: Colors.grey, // Hint text color
+                                  color: Colors.grey,
                                   fontSize: ResponsiveUtil.fontSize(15),
                                   fontFamily: "okra_Light",
                                 ),

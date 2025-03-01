@@ -12,7 +12,7 @@ class NewDioClient {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   static final Dio dio = Dio(BaseOptions(
-    baseUrl: "https://rental-api-5vfa.onrender.com/",
+    baseUrl: "http://backend.anythingonrent.com/",
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
   )

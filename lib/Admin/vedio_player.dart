@@ -38,7 +38,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
                 _controller.play();
               }
-              //_isPlaying = !_isPlaying;
+
             //}
             );
           },

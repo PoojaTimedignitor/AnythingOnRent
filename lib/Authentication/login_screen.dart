@@ -10,7 +10,6 @@ import '../Common_File/ResponsiveUtil.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import '../MainHome.dart';
-import 'forget_pass_OTP_verify.dart';
 import 'forget_password.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -36,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _validateAndShowTooltip() {
     if (emailController.text.isEmpty) {
       final dynamic tooltip = _tooltipKey.currentState;
-      tooltip.ensureTooltipVisible(); // Show the tooltip if validation fails
+      tooltip.ensureTooltipVisible();
     } else if (emailController.text.isEmpty) {
       setState(() {
         showTooltip = false;
@@ -128,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
           "Login",
           style: TextStyle(
               color: Colors.black,
-              // fontWeight: FontWeight.w700,
+
               fontFamily: 'Roboto-Regular',
             fontSize: ResponsiveUtil.fontSize(12) ,),
         ),

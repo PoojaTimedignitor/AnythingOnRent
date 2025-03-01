@@ -2,9 +2,7 @@ import 'package:get_storage/get_storage.dart';
 
 class AuthStorage {
   static final GetStorage _storage = GetStorage(); // ✅ Ab ye static hai
-    // ==============================
-  // 🔹 Save User Data from API Response
-  // ==============================
+
   static void saveUserData({
     String? userId,
     String? accessToken,
@@ -21,8 +19,8 @@ class AuthStorage {
     bool? isPhoneVerified,
   }) {
     if (userId != null) {
-      _storage.write('userId', userId); // ✅ Fix: Consistent key for User ID
-      print("✅ User ID saved: $userId");
+      _storage.write('userId', userId);
+      print("UserId saved $userId");
     }
 
     if (accessToken != null) _storage.write('accessToken', accessToken);
@@ -39,31 +37,27 @@ class AuthStorage {
     if (isPhoneVerified != null) _storage.write('phoneVerified', isPhoneVerified);
   }
 
-  // ==============================
-  // 🔹 Set Individual Data
-  // ==============================
+
   static void setPhoneNumber(String phoneNumber) {
-    _storage.write('phoneNumber', phoneNumber); // ✅ Fix: Correct key
-    print("✅ Phone Number saved: $phoneNumber");
+    _storage.write('phoneNumber', phoneNumber);
+    print("Number saved $phoneNumber");
   }
 
   static void setEmail(String emalisss) {
-    _storage.write('email', emalisss); // ✅ Fix: Correct key
-    print("✅ Email saved: $emalisss");
+    _storage.write('email', emalisss);
+    print("email saved $emalisss");
   }
 
 
 
   static void updateProfilePicture(String newProfilePicture) {
     _storage.write('profilePicture', newProfilePicture);
-    print("✅ Profile Picture Updated: $newProfilePicture");
+    print("Picture Updated $newProfilePicture");
   }
 
 
-  // ==============================
-  // 🔹 Get Stored User Data
-  // ==============================
-  static String? getUserId() => _storage.read<String>('userId'); // ✅ Fix: Consistent key
+
+  static String? getUserId() => _storage.read<String>('userId');
   static String? getAccessToken() => _storage.read<String>('accessToken');
   static String? getRefreshToken() => _storage.read<String>('refreshToken');
   static String? getEmail() => _storage.read<String>('email');
@@ -73,33 +67,27 @@ class AuthStorage {
   static String? getPermanentAddress() => _storage.read<String>('permanentAddress');
   static String? getPhoneNumber() => _storage.read<String>('phoneNumber');
   static String? getUserType() => _storage.read<String>('userType');
-  static String? getProfilePicture() => _storage.read<String>('profilePicture'); // ✅ Get Profile Picture
-  static bool? isEmailVerified() => _storage.read<bool>('isEmailVerified'); // ✅ Fix: Now stored
-  static bool? isPhoneVerified() => _storage.read<bool>('phoneVerified'); // ✅ Fix: Now stored
+  static String? getProfilePicture() => _storage.read<String>('profilePicture');
+  static bool? isEmailVerified() => _storage.read<bool>('isEmailVerified');
+  static bool? isPhoneVerified() => _storage.read<bool>('phoneVerified');
 
-  // ==============================
-  // 🔹 Clear User Data (Logout)
-  // ==============================
+
   static void clearUserData() {
-    _storage.erase(); // Removes all stored data
-    print("🚀 User data cleared!");
+    _storage.erase();
+    print("cleared");
   }
 
-  // ==============================
-  // 🔹 Save Only Tokens
-  // ==============================
+
   static Future<void> saveTokens(String accessToken, String refreshToken) async {
     if (accessToken.isNotEmpty) await _storage.write('accessToken', accessToken);
     if (refreshToken.isNotEmpty) await _storage.write('refreshToken', refreshToken);
-    print("✅ Tokens saved successfully!");
+    print("token save successfully!");
   }
 
-  // ==============================
-  // 🔹 Clear Tokens
-  // ==============================
+
   static void clearTokens() {
-    _storage.remove('accessToken'); // ✅ Ab ye kaam karega
+    _storage.remove('accessToken');
     _storage.remove('refreshToken');
-    print("🚀 Tokens cleared!");
+    print("Tokens");
   }
 }

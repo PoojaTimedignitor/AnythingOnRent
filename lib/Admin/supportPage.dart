@@ -128,7 +128,6 @@ class _SupportpageState extends State<Supportpage> {
                     'https://admin-fyu1.onrender.com/api/pages/display/terms-of-service';
                 print("Ad URLllll: $url");
 
-                // Launch the URL in the browser or relevant app
                 if (await canLaunch(url)) {
                   await launch(url);
                 } else {
@@ -262,11 +261,11 @@ class _SupportpageState extends State<Supportpage> {
                                     BigSupportScreen(),
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
-                              // Define the right-to-left slide transition
+
                               const begin = Offset(1.0,
-                                  0.0); // Starting point (off-screen to the right)
+                                  0.0);
                               const end = Offset
-                                  .zero; // Ending point (at the current position)
+                                  .zero;
                               const curve = Curves.easeInOut;
 
                               var tween = Tween(begin: begin, end: end)
@@ -417,7 +416,7 @@ class _SupportpageState extends State<Supportpage> {
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      isShowMore = true; // Show all tickets
+                                      isShowMore = true;
                                     });
                                   },
                                   child: Center(

@@ -36,7 +36,7 @@ class _FAQState extends State<FAQ> {
     try {
       Map<String, dynamic> response = await ApiClients().getCatFAQ();
 
-      var jsonList = getCatFaqResponse.fromJson(response); // Parse the response
+      var jsonList = getCatFaqResponse.fromJson(response);
 
       setState(() {
         itemss = jsonList.data?.toList() ?? [];
@@ -47,17 +47,17 @@ class _FAQState extends State<FAQ> {
       setState(() {
         isLoading = false;
       });
-      print("Error fetching categories: $e"); // Log the error
+      print("Error fetching categories: $e");
     }
   }
 
   void _handleLinkTap(String? url) {
     if (url != null) {
-      _launchURL(url); // Open the URL
+      _launchURL(url);
     }
   }
 
-  // Function to launch the URL
+
   void _launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);

@@ -21,10 +21,12 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+
+
 class _HomeScreenState extends State<HomeScreen> {
   List<String> selectedDays = [];
   final List<String> days = [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+    'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
   ];
 
   void showDaySelector(BuildContext context) {
@@ -36,50 +38,52 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setStateBottomSheet) {
-            return ListView(
+            return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  "Select Days for Weekly Offers",
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Select Days",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
                 ),
-                Column(
-                  children: days.map((day) {
-                    bool isSelected = selectedDays.contains(day);
-                    return Container(
-                      margin: EdgeInsets.zero, // 👈 Bilkul chipka diya
-                      padding: EdgeInsets.zero, // 👈 Extra padding bhi hata di
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0), // 👈 Rounded bhi remove kar sakte ho agar aur chipkana hai
-                        ),
-                        contentPadding: EdgeInsets.zero, // 👈 ListTile ke andar bhi no padding
-                        title: Text(
-                          day,
-                          style: TextStyle(
-                            color: isSelected ? Colors.green : Colors.black,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ...days.map((day) {
+                  bool isSelected = selectedDays.contains(day);
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          selectedDays.remove(day);
+                        } else {
+                          selectedDays.add(day);
+                        }
+                      });
+                      setStateBottomSheet(() {});
+                    },
+                    child: Padding(
+                      padding:  EdgeInsets.only(left: 15,right: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            day,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isSelected ? Colors.green : Colors.black,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
                           ),
-                        ),
-                        trailing: isSelected
-                            ? Icon(Icons.check_circle, color: Colors.green)
-                            : Icon(Icons.radio_button_unchecked),
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              selectedDays.remove(day);
-                            } else {
-                              selectedDays.add(day);
-                            }
-                          });
-
-                          setStateBottomSheet(() {});
-                        },
+                          if (isSelected)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Icon(Icons.check_circle, color: Colors.green, size: 14),
+                            ),
+                        ],
                       ),
-                    );
-                  }).toList(),
-                ),
-
-
+                    ),
+                  );
+                }).toList(),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
@@ -87,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     foregroundColor: Colors.white,
                   ),
                   child: Text("Done"),
-                )
+                ),
               ],
             );
           },

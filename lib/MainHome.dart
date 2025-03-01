@@ -1905,8 +1905,11 @@ class MainHomeState extends State<MainHome>
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => CreateProductService()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -2680,11 +2683,11 @@ class MainHomeState extends State<MainHome>
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      Navigator.push(
+                                    /*  Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
+                                                  NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));*/
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

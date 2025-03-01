@@ -1,5 +1,5 @@
 class ApiConstant {
-  String BaseUrl = "https://rental-api-5vfa.onrender.com";
+  String BaseUrl = "http://backend.anythingonrent.com";
   String BaseUrlCreateProduct = "https://rental-api-5vfa.onrender.com/api";
   String BaseUrlGetAllCat = "https://admin-fyu1.onrender.com/api";
   String BaseUrlGetAllCats = "https://rental-api-5vfa.onrender.com";
@@ -48,12 +48,12 @@ String RefreshToken = "/refresh-token";
 
 
   String getBigSupportTicket(String userId, String ticketNumber) {
-    return "/app-support/$userId/$ticketNumber"; // No slash here
+    return "/app-support/$userId/$ticketNumber";
   }
 
 
   String userRegister(String userId) {
-    return "/update-details/$userId"; // No slash here
+    return "/update-details/$userId";
   }
 
   String deleteProducts(String ProductId) {

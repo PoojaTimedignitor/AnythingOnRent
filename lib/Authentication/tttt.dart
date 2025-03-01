@@ -14,10 +14,10 @@ class _OrangeScreenState extends State<OrangeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff36443), // Orange background
+      backgroundColor: Color(0xfff36443),
       body: Stack(
         children: [
-          // Background Gradient (Optional)
+
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -28,7 +28,7 @@ class _OrangeScreenState extends State<OrangeScreen> {
             ),
           ),
 
-          // White Box with Inputs
+
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -86,7 +86,7 @@ class _OrangeScreenState extends State<OrangeScreen> {
                           ),
                           SizedBox(height: 15),
 
-                          // Password Field
+
                           TextFormField(
                             controller: passwordController,
                             obscureText: true,

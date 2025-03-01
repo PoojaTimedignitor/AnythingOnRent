@@ -78,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _validateAndShowTooltip() {
     if (emailController.text.isEmpty) {
       final dynamic tooltip = _tooltipKey.currentState;
-      tooltip.ensureTooltipVisible(); // Show the tooltip if validation fails
+      tooltip.ensureTooltipVisible();
     } else if (emailController.text.isEmpty) {
       setState(() {
         showTooltip = false;
@@ -153,7 +153,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     textRecognizer.close();
   }
 
-// Helper function to match Aadhaar-specific text
   bool _containsAadhaarSpecificText(String text) {
     final aadhaarKeywords = [
       "Aadhaar",

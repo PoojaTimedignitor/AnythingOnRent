@@ -75,14 +75,14 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           onPressed: () {
             if (_selectedIndex == 3) {
               setState(() {
-                _selectedIndex = 2; // FAQ page pe wapas jayein
+                _selectedIndex = 2;
               });
             } else {
-              // Agar back press karte waqt ContactUsPage open ho, toh directly previous page pe jaana hai
+
               if (Navigator.canPop(context)) {
-                Navigator.pop(context); // Normal back behavior
+                Navigator.pop(context);
               } else {
-                // Agar koi aur page stack mein nahi ho, toh default behavior
+
                 Navigator.pop(context);
               }
             }

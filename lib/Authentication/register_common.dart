@@ -183,7 +183,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
     if (isRegistered) {
       String? storedPhone = NewAuthStorage.getPhoneNumber();
-      print("📌 Retrieved Phone Number from AuthStorage: $storedPhone");
+      print("Retrieved Phone Number $storedPhone");
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('OTP sent successfully!')),
@@ -205,16 +205,16 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
 
     if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
-      _showSnackBar('❌ Please enter a valid 4-digit OTP');
+      _showSnackBar(' valid 4-digit OTP');
       return;
     }
 
 
     String? storedPhone = NewAuthStorage.getPhoneNumber();
-    print("📌 Retrieved Phone Number: $storedPhone");
+    print(" Phone Number: $storedPhone");
 
     if (storedPhone == null) {
-      _showSnackBar('❌ Error: No phone number found.');
+      _showSnackBar(' Nooooo phone number found.');
       return;
     }
 
@@ -222,7 +222,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     bool isVerified = await newauthService.phoneOtpVerify(storedPhone, otp);
 
     if (isVerified) {
-      _showSnackBar('✅ OTP verified successfully!');
+      _showSnackBar('successfully!');
 
       setState(() {
         isEmailVerification = true;
@@ -230,11 +230,10 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         _animationController.forward();
       });
     } else {
-      _showSnackBar('❌ Invalid OTP. Try again!');
+      _showSnackBar(' no OTP. Try again!');
     }
   }
 
-// 🔹 Helper function for showing SnackBar
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
@@ -272,27 +271,25 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     final emailRegex = RegExp(
         r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 
-    // 🔹 Validate Email Format
     if (email.isEmpty || !emailRegex.hasMatch(email)) {
-      _showSnackBar('Please enter a valid email address');
+      _showSnackBar('valid email address');
       return;
     }
 
-    // 🔹 Retrieve Stored Phone Number
     String? storedPhone = NewAuthStorage.getPhoneNumber();
-    print("📌 Retrieved Phone Number from AuthStorage: $storedPhone");
+    print(" Number from AuthStorage: $storedPhone");
 
     if (storedPhone == null || storedPhone.isEmpty) {
-      _showSnackBar('❌ Phone number is not found in storage!');
+      _showSnackBar('not found in storage!');
       return;
     }
 
-    print("📞 Sending OTP to: $email");
+    print("OTP to: $email");
 
     bool isOtpSent = await newauthService.sendNewEmailOtp(storedPhone, email);
 
     if (isOtpSent) {
-      print("✅ Email OTP Sent Successfully!");
+      print("OTP Sent Successfully!");
 
       // ✅ Store Email in GetStorage
       NewAuthStorage.setEmail(email);
@@ -306,7 +303,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         _animationController.forward();
       });
     } else {
-      print("❌ Failed to send Email OTP");
+      print("no send Email OTP");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send email OTP. Try again!')),
       );
@@ -318,7 +315,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
   Future<void> validateEmailOTP() async {
     final String otp = emailOTPController.text.trim();
-    print("📩 Entered OTP: $otp");
+    print(" OTP $otp");
 
     if (otp.isEmpty || otp.length != 4 || !RegExp(r'^\d{4}$').hasMatch(otp)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -329,7 +326,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
     String? email = NewAuthStorage.getEmail();
     if (email == null) {
-      print("❌ ERROR: Email missing!");
+      print("ERROR....");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Unexpected error. Try again!')),
       );
@@ -339,7 +336,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     bool isVerified = await newauthService.verifyNewEmailOtp(email, otp);
 
     if (isVerified) {
-      print("✅ Email OTP Verified!");
+      print("OTP Verified");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Email verified successfully!')),
       );
@@ -349,7 +346,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         _animationController.forward();
       });
     } else {
-      print("❌ ERROR: OTP verification failed!");
+      print("OTP failed");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Invalid OTP. Try again!')),
       );
@@ -386,9 +383,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     try {
       final response = await newauthService.fetchAndStoreUserDetails(
         //userId: "someUserId",
-        // 🔴 Isko actual userId se replace karna
         phoneNumber: "somePhoneNumber",
-        // 🔴 Isko actual phoneNumber se replace karna
         firstName: firstName,
         lastName: lastName,
         gender: gender,
@@ -396,7 +391,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
         password: password,
       );
 
-      print("📩 Full API Response: $response");
+      print(" Response $response");
 
       if (response['success'] == true && response.containsKey('user')) {
         final user = response['user'];
@@ -414,7 +409,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             password: '', emailss: user['email']?.toString() ?? '',
           );
 
-          showSnackbar('Registration Successful!');
+          showSnackbar('Registration Successful');
 
           Navigator.pushReplacement(
             context,
@@ -424,16 +419,16 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             ),
           );
         } else {
-          print("❌ ERROR: User object is null.");
-          showSnackbar('Error: Invalid response from server.');
+          print(" object is null");
+          showSnackbar('Invalid response');
         }
       } else {
-        print("❌ Unexpected API Response: $response");
-        showSnackbar(response['message'] ?? 'Registration Failed! Try again.');
+        print("API Response $response");
+        showSnackbar(response['message'] ?? 'Registration fail Try again.');
       }
     } catch (e) {
-      print("🔥 Exception: $e");
-      showSnackbar('Something went wrong. Please try again!');
+     // print(" exception: $e");
+      showSnackbar('Something  wrong. Please try again');
     }
   }
 
@@ -455,7 +450,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     try {
 
       final response = await newauthService.newloginWithPhoneOrEmail(identifier,password);
-      print("📩 API response $response");
+      print("response $response");
 
 
       if (response?['success'] == true) {
@@ -485,15 +480,15 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           MaterialPageRoute(builder: (context) => MainHome(lat: '', long: '', showLoginWidget: false,)),
         );
       } else {
-        print("❌ DCD: $response");
+
         showSnackbar('SDGDFGH');
       }
 
 
 
     } catch (e) {
-      print("🔥 RTYRTY: $e");
-      showSnackbar('TYRYHTY!');
+      print("ffff $e");
+      showSnackbar('afffff');
     }
   }
 
@@ -1086,7 +1081,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   }
 
   Widget _buildEmailOTPWidget() {
-   // String? email = GetStorage().read<String>('email');
+
     print("mmmm ${ NewAuthStorage.getEmail()}");
     //  String? phoneNumber = GetStorage().read<String>('phoneNumber');
     String? email = NewAuthStorage.getEmail();
@@ -1212,9 +1207,9 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
     double parentHeight,
     double parentWidth, {
     required String title,
-    required String contactInfo, // Dynamic Mobile Number / Email
+    required String contactInfo,
     required VoidCallback onPressed,
-    bool showOTPField = true, // Enable/Disable OTP Field
+    bool showOTPField = true,
   })
   {
     print('Phone Number: ${widget.phoneNumber}');
@@ -1229,7 +1224,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  " $title ", // Dynamic text
+                  " $title ",
                   style: TextStyle(
                     fontFamily: "Roboto_Regular",
                     fontWeight: FontWeight.w400,
@@ -1240,7 +1235,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                 Padding(
                   padding: EdgeInsets.only(right: parentWidth * 0.0),
                   child: Text(
-                    contactInfo, // Dynamic Mobile Number / Email
+                    contactInfo,
                     style: TextStyle(
                       fontFamily: "Roboto_Regular",
                       fontWeight: FontWeight.w400,
@@ -1254,7 +1249,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           ),
           if (showOTPField)
 
-            // Only show OTP if enabled
+
             Padding(
               padding: EdgeInsets.all(20.0),
               child: Form(
@@ -1271,7 +1266,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                                 : otpController,
                         focusNode: focusNode,
                         onClipboardFound: (value) {
-                          debugPrint('📋 OTP Pasted: $value');
+                          debugPrint('Pasted $value');
 
                           if (isEmailVerification || isOTPEmailVerification) {
                             emailOTPController.setText(value);
@@ -1281,7 +1276,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                         },
                         hapticFeedbackType: HapticFeedbackType.lightImpact,
                         onCompleted: (pin) {
-                          debugPrint('✅ OTP Entered: $pin');
+                          debugPrint('Entered $pin');
                         },
 
                         onChanged: (value) {
@@ -1425,7 +1420,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                                 width: 5,
                               ),
                               Text(
-                                "Verify", // Dynamic Mobile Number / Email
+                                "Verify",
                                 style: TextStyle(
                                   fontFamily: "okra_Medium",
                                   fontSize:
@@ -1454,7 +1449,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                 Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    "Your Email", // Dynamic Mobile Number / Email
+                    "Your Email",
                     style: TextStyle(
                       fontFamily: "okra_Medium",
                       fontWeight: FontWeight.w400,
@@ -1471,7 +1466,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "$email", // Dynamic Mobile Number / Email
+                          "$email",
                           style: /*TextStyle(
                       fontFamily: "Roboto_Regular",
                       fontWeight: FontWeight.w400,
@@ -1498,7 +1493,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                                 width: 5,
                               ),
                               Text(
-                                "Verify", // Dynamic Mobile Number / Email
+                                "Verify",
                                 style: TextStyle(
                                   fontFamily: "okra_Medium",
                                   fontSize:
@@ -1530,7 +1525,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'First Name cannot be empty'; // Error message
+              return 'First Name not empty';
             }
             return null;
           },
@@ -1761,9 +1756,9 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             Text(
               verifiedText,
               style: TextStyle(
-                color: verifiedText == "Referral Code Verified! ✅"
+                color: verifiedText == "Referral Code verify"
                     ? Colors.green
-                    : verifiedText == "Referral Code is Invalid!"
+                    : verifiedText == "Invalid"
                     ? Colors.red
                     : Colors.black,
                 fontWeight: FontWeight.w500,
@@ -1781,9 +1776,9 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             focusNode: _ReferralFocus,
             maxLength: 6,
             textInputAction: TextInputAction.next,
-            enabled: verifiedText != "Referral Code Verified! ✅",
+            enabled: verifiedText != "Referral valid",
             style: TextStyle(
-              color: verifiedText == "Referral Code Verified! ✅" ? Colors.grey : Colors.black, // Gray text if verified
+              color: verifiedText == "Referral Invalid" ? Colors.grey : Colors.black,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -1810,7 +1805,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
           ),
           borderRadius: BorderRadius.circular(10.0),
         ),
-              disabledBorder: OutlineInputBorder( // Ensure border remains when disabled
+              disabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   width: 0.3,
                   color: Color(0xff000000),
@@ -1837,7 +1832,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
                 if (value['success'] == true && value['response'] == true) {
                   setState(() {
-                    verifiedText = "Referral Code Verified! ✅";
+                    verifiedText = "Referral verify";
                   });
 
                 }

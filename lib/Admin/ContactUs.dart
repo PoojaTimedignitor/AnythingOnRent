@@ -71,7 +71,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   void showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false,  // Disable dismissing with back button or tapping outside
+      barrierDismissible: false,
       builder: (BuildContext context) {
 
         return WillPopScope(

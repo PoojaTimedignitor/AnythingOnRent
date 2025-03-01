@@ -15,7 +15,6 @@ class SizeConfig {
   static double safeBlockHorizontal = 0.0;
   static double safeBlockVertical = 0.0;
 
-  // New additions
   static double devicePixelRatio = 1.0;
   static bool isTablet = false;
   static bool isDesktop = false;
@@ -36,10 +35,8 @@ class SizeConfig {
     safeBlockHorizontal = (screenWidth - safeAreaHorizontal) / 100;
     safeBlockVertical = (screenHeight - safeAreaVertical) / 100;
 
-    // DPI Support
     devicePixelRatio = _mediaQueryData.devicePixelRatio;
 
-    // Breakpoints for tablet & desktop
     isTablet = screenWidth > 600;
     isDesktop = screenWidth > 1200;
   }
