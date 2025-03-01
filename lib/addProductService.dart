@@ -136,7 +136,7 @@ class _CreateProductServiceState extends State<CreateProductService>
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         top: SizeConfig.screenHeight *
-            0.7, // Adjust this value to position it exactly where you want
+            0.7,
         left: 2,
         right: 2,
         child: Material(
@@ -158,7 +158,7 @@ class _CreateProductServiceState extends State<CreateProductService>
 
     overlay.insert(overlayEntry);
 
-    // Remove the snack bar after some time
+
     Future.delayed(Duration(seconds: 3), () {
       overlayEntry.remove();
     });

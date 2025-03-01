@@ -32,7 +32,7 @@ class SubCategoryData {
   String? name;
   String? slug;
   String? parentCategory;
-  List<dynamic>? relatedSubCategories; // Updated to List<dynamic>
+  List<dynamic>? relatedSubCategories;
   String? createdAt;
   String? updatedAt;
   int? iV;
@@ -53,9 +53,9 @@ class SubCategoryData {
     slug = json['slug'];
     parentCategory = json['parentCategory'];
     if (json['relatedSubCategories'] != null) {
-      relatedSubCategories = <dynamic>[]; // Corrected initialization
+      relatedSubCategories = <dynamic>[];
       json['relatedSubCategories'].forEach((v) {
-        relatedSubCategories!.add(v); // Simply add to the list
+        relatedSubCategories!.add(v);
       });
     }
     createdAt = json['createdAt'];

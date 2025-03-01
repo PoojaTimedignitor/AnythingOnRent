@@ -19,7 +19,6 @@ class BorderPainter extends CustomPainter {
     double startAngle = pi / 2;
     double sweepAmount = currentState * pi;
 
-    // Draw the arc (border) animation
     canvas.drawArc(rect, startAngle, sweepAmount, false, paint);
     canvas.drawArc(rect, startAngle, -sweepAmount, false, paint);
   }

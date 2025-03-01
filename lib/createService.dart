@@ -342,20 +342,20 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
   }
 
   void _showDropdown(BuildContext context) async {
-    List<String> tempSelectedDays = List.from(selectedDays); // ✅ Temporary list
+    List<String> tempSelectedDays = List.from(selectedDays);
 
     List<String>? result = await showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            // ✅ Dialog state update
+
             return Dialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 padding: EdgeInsets.all(10),
-                width: 200, // ✅ Dropdown ka size chhota kiya
+                width: 200,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -370,7 +370,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                           value: tempSelectedDays.contains(day),
                           onChanged: (bool? value) {
                             setDialogState(() {
-                              // ✅ Update inside dialog
+
                               if (value == true) {
                                 tempSelectedDays.add(day);
                               } else {
@@ -385,7 +385,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () => Navigator.pop(
-                            context, tempSelectedDays), // ✅ Return updated list
+                            context, tempSelectedDays),
                         child: Text("Done",
                             style: TextStyle(color: Colors.purple)),
                       ),

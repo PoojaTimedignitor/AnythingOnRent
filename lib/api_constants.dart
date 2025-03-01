@@ -6,7 +6,7 @@ class ApiConstants {
   static const String verifyEmailOtp = "/verifyEmailOtp";
 
   static String userRegisterrrr(String userId) {
-    return "/update-details/$userId"; // No slash here
+    return "/update-details/$userId";
   }
 
 }

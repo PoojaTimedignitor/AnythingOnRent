@@ -207,7 +207,7 @@ class _AddToCartState extends State<AddToCart> {
 
               return Padding(
                 padding:
-                const EdgeInsets.only(bottom: 8), // Add gap here
+                const EdgeInsets.only(bottom: 8),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -252,12 +252,12 @@ class _AddToCartState extends State<AddToCart> {
                         children: [
                           Hero(
                             tag: product.sId
-                                .toString(), // Use the same tag here
+                                .toString(),
                             child: Row(
                                 mainAxisAlignment:
                                 MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment
-                                    .start, // Ensure text aligns at the top
+                                    .start,
                                 children: [
                                   SizedBox(width: 5),
                                   Expanded(
@@ -267,14 +267,14 @@ class _AddToCartState extends State<AddToCart> {
                                       child: Column(
                                         crossAxisAlignment:
                                         CrossAxisAlignment
-                                            .start, // Align everything to the start
+                                            .start,
                                         children: [
 
                                           Container(
 
 
 
-                                        // Set width for each item
+
                                         margin: EdgeInsets.symmetric(horizontal: 10.0),
                                         decoration: BoxDecoration(
                                             gradient: LinearGradient(

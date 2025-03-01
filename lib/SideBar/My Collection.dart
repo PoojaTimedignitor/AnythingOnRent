@@ -7,7 +7,6 @@ import '../DetailScreen.dart';
 import '../MyBehavior.dart';
 import '../ResponseModule/getAllProductList.dart';
 import '../model/dio_client.dart';
-import 'EditDeleteBottomModelSheet.dart';
 
 class MyCollection extends StatefulWidget {
   const MyCollection({super.key});
@@ -41,7 +40,6 @@ class _MyCollectionState extends State<MyCollection> {
   @override
   void initState() {
     fetchProductsList(page);
-    print("hgfhdgf");
     super.initState();
   }
 
@@ -206,7 +204,7 @@ class _MyCollectionState extends State<MyCollection> {
 
                         return Padding(
                           padding:
-                              const EdgeInsets.only(bottom: 8), // Add gap here
+                              const EdgeInsets.only(bottom: 8),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -250,12 +248,12 @@ class _MyCollectionState extends State<MyCollection> {
                                   children: [
                                     Hero(
                                       tag: product.sId
-                                          .toString(), // Use the same tag here
+                                          .toString(),
                                       child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           crossAxisAlignment: CrossAxisAlignment
-                                              .start, // Ensure text aligns at the top
+                                              .start,
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.all(6.0),
@@ -305,7 +303,7 @@ class _MyCollectionState extends State<MyCollection> {
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment
-                                                          .start, // Align everything to the start
+                                                          .start,
                                                   children: [
                                                     Padding(
                                                       padding:
@@ -339,7 +337,7 @@ class _MyCollectionState extends State<MyCollection> {
                                                       child: Column(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
-                                                                .start, // Align the entire column's content to the start
+                                                                .start,
                                                         children: [
                                                           Container(
                                                             height: MediaQuery.of(
@@ -390,7 +388,7 @@ class _MyCollectionState extends State<MyCollection> {
                                                                 return Align(
                                                                   alignment:
                                                                       Alignment
-                                                                          .topLeft, // Ensures alignment starts from top-left
+                                                                          .topLeft,
                                                                   child: Text(
                                                                     priceDisplay,
                                                                     style:
@@ -486,7 +484,7 @@ class _MyCollectionState extends State<MyCollection> {
                                                                       fontSize: SizeConfig.blockSizeHorizontal * 3.2,
                                                                       fontWeight: FontWeight.w400,
                                                                     ),
-                                                                    textAlign: TextAlign.right, // Align text to the right
+                                                                    textAlign: TextAlign.right,
                                                                   ),
                                                                 ),
                                                               ),
@@ -503,7 +501,7 @@ class _MyCollectionState extends State<MyCollection> {
                                             GestureDetector(
                                               onTap: () async {
                                                 setState(() {
-                                                  selectedProductId = product.sId; // Set selected product ID
+                                                  selectedProductId = product.sId;
                                                 });
                                                  showModalBottomSheet(
                                                     shape: RoundedRectangleBorder(
@@ -750,6 +748,10 @@ class _DeleteConfirmationDialogState extends State<DeleteConfirmationDialog> {
   }*/
 
 
+
+
+
+
   void deleteProduct(String productId) async {
     setState(() {
       isLoading = true;
@@ -826,7 +828,7 @@ class _DeleteConfirmationDialogState extends State<DeleteConfirmationDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // Cancel Button
+
                 Container(
                     width: SizeConfig.screenWidth * 0.25,
                     height: SizeConfig.screenHeight * 0.05,
@@ -846,7 +848,7 @@ class _DeleteConfirmationDialogState extends State<DeleteConfirmationDialog> {
                 ),
 
 
-                // Delete Button
+
 
 
       GestureDetector(

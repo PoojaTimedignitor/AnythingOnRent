@@ -213,7 +213,8 @@ class BottomBarState extends State<BottomBar>
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ),
                   ),
-                  */ /* Stack(
+                  */
+      /* Stack(
                     children: [
                    Padding(
                     padding: EdgeInsets.only(
@@ -256,13 +257,13 @@ class BottomBarState extends State<BottomBar>
         items: _navBarsItems(),
         confineInSafeArea: true,
 
-        backgroundColor: Colors.white, // Default is Colors.white.
-        handleAndroidBackButtonPress: true, // Default is true.
+        backgroundColor: Colors.white,
+        handleAndroidBackButtonPress: true,
         resizeToAvoidBottomInset:
-            true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-        stateManagement: true, // Default is true.
+            true,
+        stateManagement: true,
         hideNavigationBarWhenKeyboardShows:
-            true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
+            true,
         decoration: NavBarDecoration(
           borderRadius: const BorderRadius.only(
             topRight: Radius.circular(15),
@@ -279,19 +280,19 @@ class BottomBarState extends State<BottomBar>
         popAllScreensOnTapOfSelectedTab: true,
         popActionScreens: PopActionScreensType.all,
         itemAnimationProperties: ItemAnimationProperties(
-          // Navigation Bar's items animation properties.
+
           duration: Duration(milliseconds: 200),
           curve: Curves.ease,
         ),
         screenTransitionAnimation: ScreenTransitionAnimation(
-          // Screen transition animation on change of selected tab.
+
           animateTabTransition: true,
           curve: Curves.ease,
 
           duration: Duration(milliseconds: 200),
         ),
         navBarStyle:
-            NavBarStyle.style9, // Choose the nav bar style with this property.
+            NavBarStyle.style9,
       ),
     );
   }
@@ -532,14 +533,13 @@ class BottomBarState extends State<BottomBar>
             MaterialPageRoute(
                 builder: (context) => DashBoardScreen(
 
-                    //  recLane: widget.recLane,
+
                     )));
       },
       child: Padding(
         padding: EdgeInsets.only(
             left: parentWidth * 0.67, right: parentWidth * 0.05),
         child: Container(
-          //alignment: Alignment.,
           height: parentHeight * 0.030,
           decoration: BoxDecoration(
             border: Border.all(width: 0.5, color: CommonColor.Blue),
@@ -699,7 +699,8 @@ class BottomBarState extends State<BottomBar>
                     ),
                   ),
                 ),
-              )*/ /*
+              )*/
+    /*
             ],
           ),
           Padding(
@@ -818,7 +819,7 @@ class BottomBarState extends State<BottomBar>
                             padding: EdgeInsets.only(left: 10, right: 20),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
-                                  10), /* border: Border.all(color: Colors.black, width: 0.5)*/
+                                  10),
                             ),
                             child: Align(
                               alignment: Alignment.center,
@@ -961,12 +962,11 @@ class BottomBarState extends State<BottomBar>
                                               spreadRadius: 0,
                                               offset: Offset(0, 1)),
                                         ],
-                                        /*       border: Border.all(
-                                              color: Colors.black38, width: 0.9),*/
+
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(7))),
 
-                                    // alignment: Alignment.center,
+
 
                                     child: Column(
                                       // crossAxisAlignment: CrossAxisAlignment.start,
@@ -989,7 +989,7 @@ class BottomBarState extends State<BottomBar>
                                                         "https://media.istockphoto.com/id/507832549/photo/couple-standing-on-balcony-of-modern-house.jpg?s=2048x2048&w=is&k=20&c=7ooit4W_g24NDUGnLDWs9Dlh0F8T6dRbtX8RBBgQiuE="),
                                                     NetworkImage(
                                                         "https://media.istockphoto.com/id/1436217023/photo/exterior-of-a-blue-suburban-home.jpg?s=2048x2048&w=is&k=20&c=Z9Wc1NpUagwfdZbtHCyVEF9JnLXDIsPyIrw48-UXFb0="),
-                                                    // we have display image from netwrok as well
+
                                                     NetworkImage(
                                                         "https://media.istockphoto.com/id/1132628728/photo/couple-in-front-of-residential-home-smiling.jpg?s=2048x2048&w=is&k=20&c=wqxgUhQQAqthoi-h80nHksGOhklcUywyrkCDwXPXxEc=")
                                                   ],

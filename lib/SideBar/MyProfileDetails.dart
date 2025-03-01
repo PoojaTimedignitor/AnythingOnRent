@@ -37,9 +37,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
   late String gender;
   late String address;
   late String currentLocation;
- // late String currentCity;
- // late String currentLocation;
-  // String profileImage = "";
+
   Map<String, dynamic>? profileData;
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
 
@@ -236,10 +234,10 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     try {
       Map<String, dynamic> response = await NewApiClients().getNewProfileData();
 
-      print("API Response: $response");
+      print("api Response $response");
 
       if (response.containsKey("error")) {
-        print("❌ API Error: ${response["error"]}");
+        print("api Error ${response["error"]}");
         return;
       }
 
@@ -258,15 +256,15 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
 
         });
 
-        print("Phone Number: ${phoneController.text}");
-        print("Email: ${emailController.text}");
+        print("Phone Number ${phoneController.text}");
+        print("Email ${emailController.text}");
 
-        print("✅ Profile Data Updated!");
+        print("Data Updated");
       } else {
-        print("❌ Error: Profile data not found in response");
+        print("Profile data not found");
       }
     } catch (e) {
-      print("❌ Error Loading Profile: $e");
+      print("loading Profile: $e");
     }
   }
 
@@ -275,10 +273,10 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
     try {
       Map<String, dynamic> response = await NewApiClients().getCurrentLocation();
 
-      print("🌍 API Response: $response");
+      print("api Response $response");
 
       if (response.containsKey("error")) {
-        print("❌ API Error: ${response["error"]}");
+        print("error ${response["error"]}");
         return;
       }
 
@@ -286,16 +284,16 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
         Map<String, dynamic> location = response["currentLocation"];
 
         setState(() {
-         // currentCity = location["city"] ?? "Unknown";
+
         });
 
-      //  print("📍 Current City: $currentCity");
+
 
       } else {
-        print("❌ Error: currentLocation not found in response");
+        print("currentLocation response");
       }
     } catch (e) {
-      print("❌ Error Loading Location: $e");
+      print("loading Location $e");
     }
   }
 
@@ -534,7 +532,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
       alignment: Alignment.topLeft,
       child: Padding(
         padding: EdgeInsets.only(
-            top: ResponsiveUtil.height(16)), // Responsive top padding
+            top: ResponsiveUtil.height(16)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -599,7 +597,7 @@ class _MyprofiledetailsState extends State<Myprofiledetails> {
               _buildInfoRow("Last Name", lastname),
               _buildInfoRow("Phone Number", phoneNumber),
               _buildInfoRow("Email", email),
-            //  _buildInfoRow("CurrentLocation", currentCity),
+
               _buildInfoRow("permanentAddress", address),
               _buildInfoRow("Gender", gender),
               _buildInfoRow("Dob", '29-0-1999'),

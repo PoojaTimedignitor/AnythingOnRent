@@ -29,14 +29,13 @@ class _CityListScreenState extends State<CityListScreen> {
     fetchCities();
   }
 
-  // Function to fetch cities from the API
   Future<void> fetchCities() async {
-    final url = 'https://example.com/getCitiesInState'; // Replace with your actual API URL
+    final url = 'https://example.com/getCitiesInState';
     final response = await http.post(
       Uri.parse(url),
       body: json.encode({
-        'country': 'India',  // Sending country parameter as POST data
-        'state': 'Maharashtra',  // Sending state parameter as POST data
+        'country': 'India',
+        'state': 'Maharashtra',
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +43,7 @@ class _CityListScreenState extends State<CityListScreen> {
     );
 
     if (response.statusCode == 200) {
-      // If the request was successful, parse the response
+
       var data = json.decode(response.body);
       setState(() {
         cities = List<String>.from(data['data']);

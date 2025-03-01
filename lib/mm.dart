@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "Select Days",
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 ...days.map((day) {
@@ -63,31 +63,129 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Padding(
                       padding:  EdgeInsets.only(left: 15,right: 10),
-                      child: Row(
+                     /* child: Row(
+
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
                             day,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 15,
                               color: isSelected ? Colors.green : Colors.black,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                             ),
                           ),
                           if (isSelected)
                             Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
+                              padding:  EdgeInsets.only(left: 5.0),
                               child: Icon(Icons.check_circle, color: Colors.green, size: 14),
                             ),
                         ],
+                      ),*/
+
+                      child: /* Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              day,
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: isSelected ? Colors.green : Colors.black,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+
+
+
+                            Spacer(),
+                            if (isSelected)
+                              Icon(Icons.check_circle, color: Colors.green, size: 19),
+                          ],
+                        )
+*/
+
+                     /* Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (isSelected)
+                                Icon(Icons.check_circle, color: Colors.green, size: 19),
+                              SizedBox(width: 8),
+                              Text(
+                                day,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: isSelected ? Colors.green : Colors.black,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                ),
+                              ),
+                              Spacer(),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.black,
+                                size: 16,
+                              ),
+                            ],
+                          )),*/
+
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+
+
+                            Container(
+                              width: 20, // Outer circle size
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSelected ? Color(0xff8d4fd6) : Colors.black, // Outer border color
+                                  width: 1,
+                                ),
+                              ),
+                              child: isSelected
+                                  ? Center(
+                                child: Container(
+                                  width: 10, // Inner circle size
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xff8d4fd6), // Inner filled circle color
+                                  ),
+                                ),
+                              )
+                                  : null,
+                            ),
+                          SizedBox(width: 12,),
+
+                            Text(
+                              day,
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: isSelected ? Color(0xff8d4fd6) : Colors.black,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+
+
+
+                          ],
+                        ),
                       ),
+
                     ),
                   );
                 }).toList(),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: Color(0xff8d4fd6),
                     foregroundColor: Colors.white,
                   ),
                   child: Text("Done"),
@@ -113,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: Colors.green,
+                //foregroundColor: Colors.green,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(color: Colors.green),

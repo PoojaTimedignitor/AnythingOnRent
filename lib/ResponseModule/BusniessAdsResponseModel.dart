@@ -1,6 +1,6 @@
 class AdminBusinessAdsResponseModel {
   bool? success;
-  List<String>? urls; // URLs की सूची (Strings)
+  List<String>? urls;
 
   AdminBusinessAdsResponseModel({this.success, this.urls});
 
@@ -22,7 +22,6 @@ class AdminBusinessAdsResponseModel {
     }
   }
 
-  // JSON में रूपांतरित करने की विधि
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['success'] = this.success;
@@ -34,19 +33,17 @@ class AdminBusinessAdsResponseModel {
 }
 
 class Urls {
-  String? url;  // URL का उदाहरण प्रॉपर्टी
+  String? url;
 
   Urls({this.url});
 
-  // From JSON constructor
   Urls.fromJson(Map<String, dynamic> json) {
-    url = json['url']; // Assuming 'url' is a property of Urls
+    url = json['url'];
   }
 
-  // To JSON method
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data['url'] = this.url;  // Assuming 'url' is a property of Urls
+    data['url'] = this.url;
     return data;
   }
 }

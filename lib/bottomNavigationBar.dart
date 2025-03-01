@@ -81,14 +81,11 @@ class BottomNavyBar extends StatelessWidget {
   /// Used to configure the borderRadius of the [BottomNavyBar]. Defaults to null.
   final BorderRadiusGeometry? borderRadius;
 
-  /// Used to configure the padding of the [BottomNavyBarItem] [items].
-  /// Defaults to EdgeInsets.symmetric(horizontal: 4).
+
   final EdgeInsets itemPadding;
 
-  /// Used to configure the animation curve. Defaults to [Curves.linear].
   final Curve curve;
 
-  /// Whether this navigation bar should show a Inactive titles. Defaults to false.
   final bool showInactiveTitle;
 
   @override
