@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:anything/secoundData.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 import 'dart:ui' as ui;
 import 'Common_File/ResponsiveUtil.dart';
 import 'Common_File/SizeConfig.dart';
@@ -18,18 +19,23 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'location_map.dart';
+import 'mm.dart';
+import 'newGetStorage.dart';
 
 class NewProduct extends StatefulWidget {
+  final String categoryName;
   final String lat;
   final String long;
+  final String imagePath;
   String ProductAddress;
   String BusinessOfficeAddress;
+
   NewProduct(
       {super.key,
       required this.lat,
       required this.long,
       required this.ProductAddress,
-      required this.BusinessOfficeAddress});
+      required this.BusinessOfficeAddress, required this.categoryName, required this.imagePath});
 
   @override
   State<NewProduct> createState() => _NewProductState();
@@ -76,6 +82,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   bool perMonth = false;
   bool perWeek = false;
   int quantity = 0;
+
 
   void updateCitys(String newCity) {
     setState(() {
@@ -290,7 +297,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
         _selectedImage = File(pickedFile.path); // Only 1 image
       });
     } else {
-      print("❌ No Image Selected");
+      print(" No Image Selected");
     }
   }
 
@@ -343,11 +350,14 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        'assets/images/estione.png',
-                        fit: BoxFit.cover,
+                      child: CustomNetworkImage(
+                        imageUrl: widget.imagePath.startsWith('http')
+                            ? widget.imagePath
+                            : 'https://yourserver.com' + widget.imagePath,
                       ),
+
                     ),
+
                   ),
 
                   Positioned.fill(
@@ -452,7 +462,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                     child: SizedBox(
                         height: SizeConfig.screenHeight * 0.2,
                         child: AllInformationWidget(
-                            SizeConfig.screenWidth, SizeConfig.screenHeight)),
+                            SizeConfig.screenWidth, SizeConfig.screenHeight, widget.categoryName,)),
                   ),
                 ],
               ),
@@ -2535,10 +2545,11 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 }
 
 class AllInformationWidget extends StatefulWidget {
+  final String categoryName;
   final double parentHeight;
   final double parentWidth;
 
-  AllInformationWidget(this.parentHeight, this.parentWidth);
+  AllInformationWidget(this.parentHeight, this.parentWidth, this.categoryName);
 
   @override
   _AllInformationWidgetState createState() => _AllInformationWidgetState();
@@ -2558,9 +2569,19 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
   late AnimationController _scaleController;
   bool _isVisible = true;
 
+  late final String firstname;
+
   @override
   void initState() {
     super.initState();
+
+
+
+    firstname = NewAuthStorage.getFName() ?? "Guest";
+    //  firstname = AuthStorage().
+    print("name   $firstname");
+
+
 
     _controller = AnimationController(
       vsync: this,
@@ -2633,6 +2654,8 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
 
   @override
   Widget build(BuildContext context) {
+    String text = widget.categoryName.isNotEmpty ? widget.categoryName : "PET WORLD";
+
     TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: text,
@@ -2663,7 +2686,7 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
         ),
         SizedBox(height: SizeConfig.screenHeight * 0.004),
         Text(
-          "Hi, Aayshaaa",
+          "Hii, $firstname",
           style: TextStyle(
             fontSize: 16,
             fontFamily: 'Montserrat_Medium',

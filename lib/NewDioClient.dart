@@ -26,23 +26,23 @@ class NewDioClient {
         if (accessToken != null && accessToken.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $accessToken';
         } else {
-          print("❌ Interceptor: No token found, request may fail!");
+          print(" No token found, request may fail!");
         }
         return handler.next(options);
       },
       onError: (DioError e, handler) async {
         if (e.response?.statusCode == 401) {
-          print("🔄 Access Token Expired, Refreshing...");
+          print("Access Token Expired, Refreshing...");
 
           bool refreshed = await _refreshToken();
           if (refreshed) {
             String? newAccessToken = await NewAuthStorage.getAccessToken();
             e.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
 
-            print("✅ Retrying Request...");
+            print("Retrying Request...");
             return handler.resolve(await dio.fetch(e.requestOptions));
           } else {
-            print("❌ Refresh Token Expired! Logging out...");
+            print(" Refresh Token Expired Logging out...");
             await NewAuthStorage.clearStorage();
 
             // Navigate to the login screen after session expiry
@@ -61,7 +61,7 @@ class NewDioClient {
     try {
       String? refreshToken = await NewAuthStorage.getRefreshToken();
       if (refreshToken == null) {
-        print("❌ No Refresh Token Found!");
+        print(" Refresh Token Found");
         return false;
       }
 
@@ -73,14 +73,14 @@ class NewDioClient {
       if (response.statusCode == 200 && response.data['accessToken'] != null) {
         String newAccessToken = response.data['accessToken'];
         await NewAuthStorage.setAccessToken(newAccessToken);
-        print("✅ Access Token Refreshed: $newAccessToken");
+        print(" Access Token Refreshed $newAccessToken");
         return true;
       } else {
-        print("❌ Refresh Token Expired or Invalid!");
+        print(" Refresh Token Expired or Invalid!");
         return false;
       }
     } catch (e) {
-      print("🔥 Refresh Token Error: $e");
+      print("Refresh Token Error: $e");
       return false;
     }
   }
@@ -119,7 +119,7 @@ class NewApiClients {
 
       if (response.statusCode == 200) {
         NewAuthStorage.setPhoneNumber(phoneNumber);
-        print("📌 Phone Number Stored in AuthStorage: $phoneNumber");
+        print("Phone Number Stored in AuthStorage: $phoneNumber");
         return true;
       } else {
         return false;
@@ -140,7 +140,7 @@ class NewApiClients {
 
     try {
       Response response = await _dio.post(url, data: data);
-      print("📌 OTP Verify Response: ${response.data}");
+      print("OTP Verify Response: ${response.data}");
 
       if (response.statusCode == 200 &&
           response.data['message']
@@ -148,11 +148,11 @@ class NewApiClients {
               .contains("Phone number verified successfully")) {
         return true;
       } else {
-        print("❌ OTP verification failed: ${response.data['message']}");
+        print("OTP verification failed: ${response.data['message']}");
         return false;
       }
     } catch (e) {
-      print("❌ Error in verifyNewMobileOtp: $e");
+      print("Error in verifyNewMobileOtp: $e");
       return false;
     }
   }
@@ -171,29 +171,29 @@ class NewApiClients {
     try {
       Response response = await _dio.post(url, data: data);
 
-      print("📌 API URL: $url");
-      print("📌 Sent Data: $data"); // यह देखो कि सही डेटा भेजा जा रहा है या नहीं
-      print("📌 Full API Response: ${response.data}"); // पूरा रिस्पॉन्स देखो
+      print(" URL: $url");
+      print("Sent Data: $data");
+      print("Full API Response: ${response.data}");
 
       if (response.statusCode == 200 &&
           response.data['message'].contains("OTP sent successfully")) {
         NewAuthStorage.setPhoneNumber(phoneNumber);
         NewAuthStorage.setEmail(email);
 
-        print("✅ Phone Number Stored: $phoneNumber");
-        print("✅ Email Stored: $email");
+        print("Phone Number Stored: $phoneNumber");
+        print("Email Stored: $email");
 
         return true;
       } else {
-        print("❌ Failed to send Email OTP: ${response.data}");
+        print("send Email OTP: ${response.data}");
         return false;
       }
     } catch (e) {
       if (e is DioException) {
-        print("❌ DioException: ${e.response
-            ?.data}"); // यहाँ देखो कि क्या एरर आ रहा है
+        print(" DioException: ${e.response
+            ?.data}");
       }
-      print("❌ Error in sendEmailOtp: $e");
+      print("Error EmailOtp: $e");
       return false;
     }
   }
@@ -205,7 +205,7 @@ class NewApiClients {
 
     String? phoneNumber = NewAuthStorage.getPhoneNumber();
     if (phoneNumber == null) {
-      print("❌ Error: No phone number found in storage!");
+      print(" Error");
       return false;
     }
 
@@ -217,7 +217,7 @@ class NewApiClients {
 
     try {
       Response response = await _dio.post(url, data: data);
-      print("📌 Email OTP Verify Response: ${response.data}");
+      print("Email OTP Verify Response ${response.data}");
 
       if (response.statusCode == 200 && response.data['success'] == true) {
         String userId = response.data['user']['id'];
@@ -229,21 +229,22 @@ class NewApiClients {
         await NewAuthStorage.setAccessToken(accessToken);
         await NewAuthStorage.setRefreshToken(refreshToken);
 
-        print("✅ Email OTP Verified and Data Stored!");
-        print("🔐 Stored Access Token: ${await NewAuthStorage.getAccessToken()}");
-        print("🔐 Stored Access Token: ${await NewAuthStorage.getUserId()}");
-        print("🔄 Stored Refresh Token: ${await NewAuthStorage.getRefreshToken()}");
+        print(" Email OTP Verified and Data Stored!");
+        print(" Stored Access Token: ${await NewAuthStorage.getAccessToken()}");
+        print(" Stored Access Token: ${await NewAuthStorage.getUserId()}");
+        print(" Stored Refresh Token: ${await NewAuthStorage.getRefreshToken()}");
 
         return true;
       } else {
-        print("❌ OTP verification failed: ${response.data['message']}");
+        print(" OTP verification failed: ${response.data['message']}");
         return false;
       }
     } catch (e) {
-      print("❌ Error in verifyEmailOtp: $e");
+      print("Error in verifyEmailOtp: $e");
       return false;
     }
   }
+
 
   Future<Map<String, dynamic>> fetchAndStoreUserDetails({
     required String phoneNumber,
@@ -256,18 +257,18 @@ class NewApiClients {
   {
     String? userId = await NewAuthStorage.getUserId();
     if (userId == null || userId.isEmpty) {
-      print("🚨 Error: User ID is missing from storage.");
+      print(" Error: User ID is missing from storage.");
       return {"success": false, "message": "User ID not found"};
     }
     NewAuthStorage.getUserId();
-    print("✅ AuthStorage userId: ${NewAuthStorage.getUserId()}");
+    print("AuthStorage userId: ${NewAuthStorage.getUserId()}");
 
     //String url = ApiConstants.baseUrl + ApiConstants.verifyEmailOtp;
 
 
     String url = ApiConstants.baseUrl + ApiConstants.userRegisterrrr(userId);
    // String url = "https://rental-api-5vfa.onrender.com/update-details/$userId";
-    print("🌍 API URL: $url");
+    print("api URL: $url");
 
     try {
       Response response = await _dio.post(
@@ -287,17 +288,17 @@ class NewApiClients {
             validateStatus: (status) => status! < 500,
           ),);
 
-      print("📩 Fetch User API Response: ${response.data}");
+      print("Fetch User API Response: ${response.data}");
 
       if (response.statusCode == 200 && response.data['success'] == true) {
-        print("✅ User Details Updated Successfully!");
+        print(" User Details Updated Successfully!");
         return response.data;
       } else {
-        print("❌ Failed to Update User Details. Response: ${response.data}");
+        print(" Failed to Update User Details. Response: ${response.data}");
         return {"success": false, "message": response.data['message'] ?? "Failed to update details"};
       }
     } catch (e) {
-      print("🔥 Error: $e");
+      print(" Error: $e");
       return {"success": false, "message": "Error: ${e.toString()}"};
     }
   }
@@ -308,7 +309,7 @@ class NewApiClients {
     String url;
 
     String? accessToken = NewAuthStorage.getAccessToken();
-    print("🔑 Access Token: $accessToken");
+    print("Access Token: $accessToken");
 
     if (identifier.contains('@')) {
       url = "${baseUrl}login";
@@ -321,8 +322,8 @@ class NewApiClients {
       'password': password,
     };
 
-    print("📡 API Call: $url");
-    print("📨 Request Data: $data");
+    print(" API Call: $url");
+    print("Request Data: $data");
 
     try {
       Response response = await NewDioClient.dio.post(
@@ -331,24 +332,24 @@ class NewApiClients {
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
 
-      print("📩 API Response: ${response.data}");
-      print("📡 Status Code: ${response.statusCode}");
+      print(" api Response: ${response.data}");
+      print(" Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200 && response.data['success'] == true) {
-          print("✅ Login Successful: ${response.data['message']}");
+          print(" Login Successful: ${response.data['message']}");
         return response.data;
       } else {
-        print("❌ Login Failed: ${response.data['message']}");
+        print(" Login Failed: ${response.data['message']}");
         return null;
       }
     } catch (e) {
-      print("🔥 Exception: $e");
+      print("Exception: $e");
 
       if (e is DioError) {
         if (e.response != null) {
-          print("❌ Server Response: ${e.response?.data}");
+          print(" Server Response: ${e.response?.data}");
         } else {
-          print("❌ Request Error: ${e.message}");
+          print(" Request Error: ${e.message}");
         }
       }
       return null;
@@ -358,13 +359,13 @@ class NewApiClients {
 
   Future<Map<String, dynamic>> getNewProfileData() async {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().getEditProfile}";
-    print("🌍 API Request: GET $url");
+    print("api Request: GET $url");
 
     String? accessToken = NewAuthStorage.getAccessToken();
-    print("📌 Stored Access Token: $accessToken");
+    print(" Stored Access Token: $accessToken");
 
     if (accessToken == null || accessToken.isEmpty) {
-      print("❌ Access Token Missing!");
+      print(" Access Token Missing!");
       return {"error": "Session expired, please log in again"};
     }
 
@@ -379,24 +380,24 @@ class NewApiClients {
         ),
       );
 
-      print("🔄 API Response Received!");
-      print("📌 Status Code: ${response.statusCode}");
-      print("📌 Headers: ${response.headers}");
-      print("📌 Data: ${response.data}");
+      print("api Response Received!");
+      print(" Status Code: ${response.statusCode}");
+      print(" Headers: ${response.headers}");
+      print("Data: ${response.data}");
 
       if (response.statusCode == 200) {
-        print("✅ Profile Data Fetched Successfully!");
+        print(" Profile Data Fetched Successfully!");
         return response.data;
       } else {
-        print("⚠️ Unexpected Response Code: ${response.statusCode}");
+        print("Unexpected Response Code: ${response.statusCode}");
         return {"error": "Unexpected response code: ${response.statusCode}"};
       }
     } on DioException catch (e) {
-      print("❌ Profile API Error Encountered!");
-      print("📌 Status Code: ${e.response?.statusCode}");
-      print("📌 Headers: ${e.response?.headers}");
-      print("📌 Error Data: ${e.response?.data}");
-      print("📌 Error Message: ${e.message}");
+      print(" Profile API Error Encountered!");
+      print(" Status Code: ${e.response?.statusCode}");
+      print(" Headers: ${e.response?.headers}");
+      print("Error Data: ${e.response?.data}");
+      print("Error Message: ${e.message}");
 
       return {"error": "Exception: ${e.message}"};
     }
@@ -405,13 +406,13 @@ class NewApiClients {
 
   Future<Map<String, dynamic>> getCurrentLocation() async {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().getCurrentLocation}";
-    print("🌍 API Request: GET $url");
+    print("API Request: GET $url");
 
     String? accessToken = NewAuthStorage.getAccessToken();
-    print("📌 Stored Access Token: $accessToken");
+    print(" Stored Access Token: $accessToken");
 
     if (accessToken == null || accessToken.isEmpty) {
-      print("❌ Access Token Missing!");
+      print(" Access Token Missing!");
       return {"error": "Session expired, please log in again"};
     }
 
@@ -426,22 +427,22 @@ class NewApiClients {
         ),
       );
 
-      print("🔄 API Response Received!");
-      print("📌 Status Code: ${response.statusCode}");
-      print("📌 Data: ${response.data}");
+      print(" API Response Received!");
+      print(" Status Code: ${response.statusCode}");
+      print(" Data: ${response.data}");
 
       if (response.statusCode == 200) {
-        print("✅ Location Data Fetched Successfully!");
+        print("Location Data Fetched Successfully!");
         return response.data;
       } else {
-        print("⚠️ Unexpected Response Code: ${response.statusCode}");
+        print(" Unexpected Response Code: ${response.statusCode}");
         return {"error": "Unexpected response code: ${response.statusCode}"};
       }
     } on DioException catch (e) {
-      print("❌ Location API Error Encountered!");
-      print("📌 Status Code: ${e.response?.statusCode}");
-      print("📌 Error Data: ${e.response?.data}");
-      print("📌 Error Message: ${e.message}");
+      print("Location API Error Encountered!");
+      print(" Status Code: ${e.response?.statusCode}");
+      print("Error Data: ${e.response?.data}");
+      print("Error Message: ${e.message}");
 
       return {"error": "Exception: ${e.message}"};
     }
@@ -452,10 +453,10 @@ class NewApiClients {
     String url = "${ApiConstant().BaseUrl}${ApiConstant().logout}";
 
     String? accessToken = await NewAuthStorage.getAccessToken();
-    print("📌 Stored Access Token Before Logout: $accessToken");
+    print("Stored Access Token Before Logout: $accessToken");
 
     if (accessToken == null || accessToken.isEmpty) {
-      print("❌ No token found, forcing logout...");
+      print("No token found, forcing logout...");
       await NewAuthStorage.clearStorage();
       return {"error": "Session expired. Please log in again."};
     }
@@ -471,16 +472,16 @@ class NewApiClients {
       );
 
       if (response.statusCode == 200) {
-        print("✅ Logout Successful: ${response.data}");
+        print(" Logout Successful: ${response.data}");
         return response.data;
       } else {
         return {"error": "Unexpected response code: ${response.statusCode}"};
       }
     } on DioException catch (e) {
-      print("❌ Logout API Error: ${e.response?.data}");
+      print(" Logout API Error: ${e.response?.data}");
 
       if (e.response?.statusCode == 401) {
-        print("🔄 Token Expired! Clearing Storage...");
+        print("Token Expired! Clearing Storage...");
         await NewAuthStorage.clearStorage();
       }
 

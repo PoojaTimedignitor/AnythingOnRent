@@ -1,61 +1,55 @@
 class GetAllCategoriesList {
   bool? success;
-  String? message;
-  List<CategoryData>? categoryData;
+  List<Data>? data;
+  int? categoryCount;
 
-  GetAllCategoriesList({this.success, this.message, this.categoryData});
+  GetAllCategoriesList({this.success, this.data, this.categoryCount});
 
   GetAllCategoriesList.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    message = json['message'];
-    if (json['CategoryData'] != null) {
-      categoryData = <CategoryData>[];
-      json['CategoryData'].forEach((v) {
-        categoryData!.add(new CategoryData.fromJson(v));
+    if (json['data'] != null) {
+      data = <Data>[];
+      json['data'].forEach((v) {
+        data!.add(new Data.fromJson(v));
       });
     }
+    categoryCount = json['categoryCount'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
-    data['message'] = this.message;
-    if (this.categoryData != null) {
-      data['CategoryData'] = this.categoryData!.map((v) => v.toJson()).toList();
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
+    data['categoryCount'] = this.categoryCount;
     return data;
   }
 }
 
-class CategoryData {
+class Data {
   String? sId;
   String? name;
   String? slug;
   String? desc;
+  String? bannerImage;
   Null otherOption;
-  String? createdAt;
-  String? updatedAt;
-  int? iV;
 
-  CategoryData(
+  Data(
       {this.sId,
         this.name,
         this.slug,
         this.desc,
-        this.otherOption,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+        this.bannerImage,
+        this.otherOption});
 
-  CategoryData.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     name = json['name'];
     slug = json['slug'];
     desc = json['desc'];
+    bannerImage = json['bannerImage'];
     otherOption = json['otherOption'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
@@ -64,10 +58,8 @@ class CategoryData {
     data['name'] = this.name;
     data['slug'] = this.slug;
     data['desc'] = this.desc;
+    data['bannerImage'] = this.bannerImage;
     data['otherOption'] = this.otherOption;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
     return data;
   }
 }

@@ -1,11 +1,13 @@
 import 'package:anything/ResponseModule/getAllCatList.dart';
 
+
 import 'package:flutter/material.dart';
 
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 
 import 'MyBehavior.dart';
+
 
 import 'model/dio_client.dart';
 
@@ -21,7 +23,7 @@ class CatagriesList extends StatefulWidget {
 }
 
 class _CatagriesListState extends State<CatagriesList> {
-  List<CategoryData> items = [];
+  List<Data> items = [];
 
   final List<String> catagriesImage = [
     'assets/images/fashion.png',
@@ -42,7 +44,7 @@ class _CatagriesListState extends State<CatagriesList> {
     'assets/images/other.png',
   ];
 
-  List<CategoryData> filteredItems = [];
+  List<Data> filteredItems = [];
 
   bool isLoading = true;
   bool isSearchingData = false;
@@ -58,7 +60,9 @@ class _CatagriesListState extends State<CatagriesList> {
       Map<String, dynamic> response = await ApiClients().getAllCat();
       var jsonList = GetAllCategoriesList.fromJson(response);
       setState(() {
-        items = jsonList.categoryData ?? [];
+
+        items = jsonList.data ?? [];
+
         filteredItems = List.from(items);
         isLoading = false;
       });
@@ -72,37 +76,39 @@ class _CatagriesListState extends State<CatagriesList> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Container(
-        height: SizeConfig.screenHeight * 0.93,
-        decoration: const BoxDecoration(
-          color: Color(0xffF5F6FB),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
+    return Scaffold(
+      body: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          height: SizeConfig.screenHeight * 0.93,
+          decoration: const BoxDecoration(
+            color: Color(0xffF5F6FB),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
           ),
-        ),
-        child: ScrollConfiguration(
-          behavior: MyBehavior(),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              isLoading
-                  ? Padding(
-                      padding:
-                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.4),
-                      child: Image(
-                          image: AssetImage("assets/images/logo.gif"),
-                          height: SizeConfig.screenHeight * 0.15),
-                    )
-                  : SizedBox(
-                      height: SizeConfig.screenHeight * 0.9,
-                      child: AllCatagriesList(
-                          SizeConfig.screenHeight, SizeConfig.screenWidth))
-            ],
+          child: ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                isLoading
+                    ? Padding(
+                        padding:
+                            EdgeInsets.only(top: SizeConfig.screenHeight * 0.4),
+                        child: Image(
+                            image: AssetImage("assets/images/logo.gif"),
+                            height: SizeConfig.screenHeight * 0.15),
+                      )
+                    : SizedBox(
+                        height: SizeConfig.screenHeight * 0.9,
+                        child: AllCatagriesList(
+                            SizeConfig.screenHeight, SizeConfig.screenWidth))
+              ],
+            ),
           ),
         ),
       ),

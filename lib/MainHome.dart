@@ -13,6 +13,7 @@ import 'Admin/vedio_player.dart';
 import 'package:geolocator/geolocator.dart';
 import 'Authentication/register_common.dart';
 
+import 'Cat_Product_Service.dart';
 import 'Common_File/ResponsiveUtil.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
@@ -32,6 +33,7 @@ import 'SideBar/MyFevorites.dart';
 
 import 'SideBar/chat.dart';
 import 'SideBar/common_profile_bar.dart';
+import 'SideBar/klklk.dart';
 import 'addProductService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
@@ -64,13 +66,15 @@ class MainHomeState extends State<MainHome>
     with SingleTickerProviderStateMixin {
   String? profileImage = GetStorage().read(ConstantData.UserProfileImage);
   bool isSearchExpanded = false;
-  List<catData.CategoryData> filteredItems = [];
-  List<catData.CategoryData> items = [];
+/*  List<catData.CategoryData> filteredItems = [];
+  List<catData.CategoryData> items = [];*/
   final cs.CarouselSliderController _controller = cs.CarouselSliderController();
 
   bool isLoading = true;
   bool isSearchingData = false;
   String locationName = "";
+
+
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -79,7 +83,7 @@ class MainHomeState extends State<MainHome>
     // TODO: implement initState
     super.initState();
     setState(() {
-      fetchCategories();
+      //fetchCategories();
       fetchProductsList();
       fetchBusinessAds();
       _getCityName();
@@ -170,6 +174,7 @@ class MainHomeState extends State<MainHome>
     'assets/images/agriculture.png',
   ];
 
+/*
   void fetchCategories() async {
     try {
       Map<String, dynamic> response = await ApiClients().getAllCat();
@@ -187,6 +192,8 @@ class MainHomeState extends State<MainHome>
       print("Error fetching categories: $e");
     }
   }
+*/
+
 
   void fetchProductsList() async {
     try {
@@ -1909,7 +1916,7 @@ class MainHomeState extends State<MainHome>
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
+                    CatProductService(onChanged: (String ) {  }, categoryId: '',)));
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -2140,7 +2147,7 @@ class MainHomeState extends State<MainHome>
             child: ListView.builder(
                 padding: EdgeInsets.zero,
                 scrollDirection: Axis.horizontal,
-                itemCount: filteredItems.length, // Define the number of items
+                itemCount: 10, // Define the number of items
                 itemBuilder: (context, index) {
                   return Column(
                     children: [
@@ -2175,7 +2182,7 @@ class MainHomeState extends State<MainHome>
                         height: parentHeight * 0.02,
                         width: parentWidth * 0.2,
                         child: Text(
-                          filteredItems[index].name.toString(),
+                          "filteredItems[index].name.toString()",
                           style: TextStyle(
                             letterSpacing: 0.5,
                             color: Colors.black,
@@ -2683,11 +2690,11 @@ class MainHomeState extends State<MainHome>
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                    /*  Navigator.push(
+                                     /* Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));*/
+                                                  TimeSelection()));*/
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

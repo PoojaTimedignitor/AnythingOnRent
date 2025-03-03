@@ -1,5 +1,6 @@
 class ApiConstant {
-  String BaseUrl = "http://backend.anythingonrent.com";
+  String BaseUrl = "https://backend.anythingonrent.com";
+
   String BaseUrlCreateProduct = "https://rental-api-5vfa.onrender.com/api";
   String BaseUrlGetAllCat = "https://admin-fyu1.onrender.com/api";
   String BaseUrlGetAllCats = "https://rental-api-5vfa.onrender.com";
@@ -11,7 +12,7 @@ class ApiConstant {
   String registerss = "update-details/67a45296163c23dde02d4a90";
   String login = "/login";
   String products = "/addproduct/jhdfs";
-  String getAllCatagries = "/category123";
+  String getAllCatagries = "/categories";
   String getAllSubCatagries(String categoryId) {
     return "/subcatetgories/$categoryId";
   }

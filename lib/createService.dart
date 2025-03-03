@@ -41,8 +41,9 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
   late AnimationController _controllerzoom;
   bool showTextField = false;
   late List<Animation<Offset>> _animations = [];
-  TextEditingController PerHourController = TextEditingController();
+  TextEditingController TotalNoOfProvided = TextEditingController();
   TextEditingController PerDayController = TextEditingController();
+  TextEditingController businessWebsiteController = TextEditingController();
   TextEditingController PerWeekController = TextEditingController();
   TextEditingController PerMonthController = TextEditingController();
   TextEditingController sellController = TextEditingController();
@@ -87,6 +88,8 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
   bool perMonth = false;
   bool perWeek = false;
   int quantity = 0;
+
+  bool? isYesSelected;
 
   void updateCitys(String newCity) {
     setState(() {
@@ -349,7 +352,6 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-
             return Dialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -370,7 +372,6 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                           value: tempSelectedDays.contains(day),
                           onChanged: (bool? value) {
                             setDialogState(() {
-
                               if (value == true) {
                                 tempSelectedDays.add(day);
                               } else {
@@ -384,11 +385,10 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () => Navigator.pop(
-                            context, tempSelectedDays),
-                        child: Text("Done",
-                            style: TextStyle(color: Colors.purple)),
-                      ),
+                          onPressed: () =>
+                              Navigator.pop(context, tempSelectedDays),
+                          child: Text("Done",
+                              style: TextStyle(color: Colors.purple))),
                     ),
                   ],
                 ),
@@ -404,6 +404,129 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
         selectedDays = result;
       });
     }
+  }
+
+  void showDaySelector(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateBottomSheet) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Select Days",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ...days.map((day) {
+                  bool isSelected = selectedDays.contains(day);
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          selectedDays.remove(day);
+                        } else {
+                          selectedDays.add(day);
+                        }
+                      });
+                      setStateBottomSheet(() {});
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15, right: 10),
+                      /* child: Row(
+
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            day,
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: isSelected ? Colors.green : Colors.black,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                          if (isSelected)
+                            Padding(
+                              padding:  EdgeInsets.only(left: 5.0),
+                              child: Icon(Icons.check_circle, color: Colors.green, size: 14),
+                            ),
+                        ],
+                      ),*/
+
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 20, // Outer circle size
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Color(0xffFF5963)
+                                      : Colors.black,
+                                  width: 1,
+                                ),
+                              ),
+                              child: isSelected
+                                  ? Center(
+                                      child: Container(
+                                        width: 10,
+                                        height: 10,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color(0xffFF5963),
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            SizedBox(
+                              width: 12,
+                            ),
+                            Text(
+                              day,
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: isSelected
+                                    ? Color(0xffFF5963)
+                                    : Colors.black,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xffFF5963),
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text("Done"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -1051,18 +1174,15 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
             ],
           ),
           SizedBox(
-            height: parentHeight * 0.025,
+            height: parentHeight * 0.028,
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               GestureDetector(
-                onTap: (){
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => bbbttt(
-                          )));
+                onTap: () {
+                /*  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => bbbttt()));*/
                 },
                 child: Text(
                   "   Select Availability",
@@ -1074,26 +1194,31 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(
+                width: parentWidth * 0.025,
+              ),
               Stack(
                 children: [
                   GestureDetector(
-                    onTap: _toggleDropdown,
+                    onTap: () {
+                      showDaySelector(context);
+                    },
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                          EdgeInsets.symmetric(horizontal: 13, vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.purple,
+                        gradient: LinearGradient(
+                          colors: [Color(0xfff12935), Color(0xffFF5963)],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                        ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            selectedDays.isEmpty
-                                ? "Select Days"
-                                : selectedDays
-                                    .join(", "), // ✅ Selected days show
+                            "Select Days",
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                           Icon(Icons.arrow_drop_down, color: Colors.white),
@@ -1101,8 +1226,6 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-
-
                   if (isDropdownOpen)
                     Positioned(
                       top: 50,
@@ -1144,755 +1267,149 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
             ],
           ),
           SizedBox(
-            height: parentHeight * 0.030,
+            height: parentHeight * 0.015,
           ),
-          Stack(
-            children: [
-              Padding(
-                padding:
-                    EdgeInsets.only(left: 13, right: 13, top: 22, bottom: 20),
-                child: IntrinsicHeight(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xff632883).withOpacity(0.8),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20, top: 50),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AnimatedBuilder(
-                            animation: _controllerzoom,
-                            builder: (context, child) {
-                              return Transform.scale(
-                                scale: _controllerzoom.value,
-                                child: child,
-                              );
-                            },
-                            child: Container(
-                                height: 57,
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12)),
-                                  gradient: RadialGradient(
-                                    colors: [
-                                      Color(0xfff6f3ff),
-                                      Color(0xffae94f3)
-                                    ],
-                                    center: Alignment.center,
-                                    radius: 0.6,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color:
-                                            Color(0xffFE7F64).withOpacity(0.5),
-                                        blurRadius: 9,
-                                        spreadRadius: 0,
-                                        offset: Offset(0, 1)),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(1.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(12)),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Image(
-                                            image: AssetImage(
-                                                'assets/images/warning.png'),
-                                            height: 20,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          SizedBox(width: 10),
-                                          Container(
-                                            width: SizeConfig.screenWidth * 0.7,
-                                            child: Text(
-                                                "On our platform, you can both sell and rent your products",
-                                                style: TextStyle(
-                                                    fontFamily:
-                                                        "Montserrat-Italic",
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 12),
-                                                maxLines: 2),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )),
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: Wrap(
+              spacing: 12.0,
+              runSpacing: 9.0,
+              children: selectedDays.map((day) {
+                return Chip(
+                  label: Text(
+                    day,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  backgroundColor: Color(0xffdfc5ff).withOpacity(0.3),
+                  deleteIcon: Icon(Icons.close, color: Colors.black),
+                  onDeleted: () {
+                    setState(() {
+                      selectedDays.remove(day);
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Colors.black, width: 0.5),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          SizedBox(
+            height: parentHeight * 0.010,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(
+              "Do you provide any onsite consultation related to your service",
+              style: TextStyle(
+                color: Color(0xff000000),
+                fontFamily: "Montserrat-Medium",
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isYesSelected = true;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isYesSelected == true
+                                ? Color(0xffFF5963)
+                                : Colors.black,
+                            width: 1,
                           ),
-                          SizedBox(height: 10),
-                          SizedBox(
-                            width: SizeConfig.screenWidth * 0.94,
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isDropdownOpenRent = !isDropdownOpenRent;
-                                  isSelectedRent = !isSelectedRent;
-                                });
-                              },
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4, vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 18,
-                                            height: 18,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: Color(0xff624ffa),
-                                                width: 01,
-                                              ),
-                                            ),
-                                            child: isSelectedRent ||
-                                                    isDropdownOpenRent
-                                                ? Center(
-                                                    child: Container(
-                                                      width:
-                                                          10, // Inner circle size
-                                                      height: 10,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color:
-                                                            Color(0xff624ffa),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : null,
-                                          ),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            "To Rent",
-                                            style: TextStyle(
-                                                fontFamily:
-                                                    "Montserrat-BoldItalic",
-                                                color: Color(0xff624ffa),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          ),
-                                          Spacer(),
-                                          // Dropdown Icon
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                isDropdownOpenRent =
-                                                    !isDropdownOpenRent; // Toggle dropdown state
-                                              });
-                                            },
-                                            child: Icon(
-                                                isDropdownOpenRent
-                                                    ? Icons.keyboard_arrow_up
-                                                    : Icons.keyboard_arrow_down,
-                                                size: 28,
-                                                color: Color(0xff624ffa)),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    if (isDropdownOpenRent)
-                                      Column(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                perHour = !perHour;
-                                              });
-                                            },
-                                            child: SizedBox(
-                                              height: 40,
-                                              child: Row(
-                                                children: [
-                                                  Checkbox(
-                                                    value: perHour,
-                                                    onChanged: (bool? value) {
-                                                      setState(() {
-                                                        perHour = value!;
-                                                      });
-                                                    },
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                    ),
-                                                  ),
-                                                  Text("Per Hour"),
-                                                  if (perHour)
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 20,
-                                                                right: 15),
-                                                        child: TextFormField(
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .number,
-                                                          controller:
-                                                              PerHourController,
-                                                          autocorrect: true,
-                                                          textInputAction:
-                                                              TextInputAction
-                                                                  .next,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            isDense: true,
-                                                            hintText: '₹ 1000',
-                                                            contentPadding:
-                                                                EdgeInsets
-                                                                    .symmetric(
-                                                                        vertical:
-                                                                            5,
-                                                                        horizontal:
-                                                                            15),
-                                                            hintStyle:
-                                                                TextStyle(
-                                                              fontFamily:
-                                                                  "Roboto_Regular",
-                                                              color: Color(
-                                                                  0xffacacac),
-                                                              fontSize:
-                                                                  14, // ✅ Adjust size if needed
-                                                            ),
-                                                            fillColor: Color(
-                                                                0xffF5F6FB),
-                                                            hoverColor:
-                                                                Colors.white,
-                                                            filled: true,
-                                                            enabledBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide
-                                                                      .none,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8.0),
-                                                            ),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide: BorderSide(
-                                                                  color: Color(
-                                                                      0xffebd7fb),
-                                                                  width: 1),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8.0),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                perDay = !perDay;
-                                              });
-                                            },
-                                            child: SizedBox(
-                                              height: 40,
-                                              child: Row(
-                                                children: [
-                                                  Checkbox(
-                                                    value: perDay,
-                                                    onChanged: (bool? value) {
-                                                      setState(() {
-                                                        perDay = value!;
-                                                      });
-                                                    },
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                    ),
-                                                  ),
-                                                  Text("Per Day"),
-                                                  if (perDay)
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          left: 27,
-                                                          right: 15,
-                                                        ),
-                                                        child: TextFormField(
-                                                            textAlign:
-                                                                TextAlign.start,
-
-                                                            // focusNode: _productNameFocus,
-                                                            keyboardType:
-                                                                TextInputType
-                                                                    .number,
-                                                            controller:
-                                                                PerDayController,
-                                                            autocorrect: true,
-                                                            textInputAction:
-                                                                TextInputAction
-                                                                    .next,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              isDense: true,
-                                                              hintText:
-                                                                  '₹ 1000',
-                                                              contentPadding:
-                                                                  EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          5,
-                                                                      horizontal:
-                                                                          15),
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                fontFamily:
-                                                                    "Roboto_Regular",
-                                                                color: Color(
-                                                                    0xffacacac),
-                                                                fontSize: SizeConfig
-                                                                        .blockSizeHorizontal *
-                                                                    3.5,
-                                                              ),
-                                                              fillColor: Color(
-                                                                  0xffF5F6FB),
-                                                              hoverColor:
-                                                                  Colors.white,
-                                                              filled: true,
-                                                              enabledBorder: OutlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide
-                                                                          .none,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0)),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Color(
-                                                                        0xffebd7fb),
-                                                                    width: 1),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0),
-                                                              ),
-                                                            )),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                perWeek = !perWeek;
-                                              });
-                                            },
-                                            child: SizedBox(
-                                              height: 40,
-                                              child: Row(
-                                                children: [
-                                                  Checkbox(
-                                                    value: perWeek,
-                                                    onChanged: (bool? value) {
-                                                      setState(() {
-                                                        perWeek = value!;
-                                                      });
-                                                    },
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                    ),
-                                                  ),
-                                                  Text("Per Week"),
-                                                  if (perWeek)
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          left: 16,
-                                                          right: 15,
-                                                        ),
-                                                        child: TextFormField(
-                                                            textAlign:
-                                                                TextAlign.start,
-
-                                                            // focusNode: _productNameFocus,
-                                                            keyboardType:
-                                                                TextInputType
-                                                                    .number,
-                                                            controller:
-                                                                PerWeekController,
-                                                            autocorrect: true,
-                                                            textInputAction:
-                                                                TextInputAction
-                                                                    .next,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              isDense: true,
-                                                              hintText:
-                                                                  '₹ 1000',
-                                                              contentPadding:
-                                                                  EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          5,
-                                                                      horizontal:
-                                                                          15),
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                fontFamily:
-                                                                    "Roboto_Regular",
-                                                                color: Color(
-                                                                    0xffacacac),
-                                                                fontSize: SizeConfig
-                                                                        .blockSizeHorizontal *
-                                                                    3.5,
-                                                              ),
-                                                              fillColor: Color(
-                                                                  0xffF5F6FB),
-                                                              hoverColor:
-                                                                  Colors.white,
-                                                              filled: true,
-                                                              enabledBorder: OutlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide
-                                                                          .none,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0)),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Color(
-                                                                        0xffebd7fb),
-                                                                    width: 1),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0),
-                                                              ),
-                                                            )),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                perMonth = !perMonth;
-                                              });
-                                            },
-                                            child: Container(
-                                              height: 42,
-                                              child: Row(
-                                                children: [
-                                                  Checkbox(
-                                                    value: perMonth,
-                                                    onChanged: (bool? value) {
-                                                      setState(() {
-                                                        perMonth = value!;
-                                                      });
-                                                    },
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                    ),
-                                                  ),
-                                                  Text("Per Month"),
-                                                  if (perMonth)
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          left: 11,
-                                                          right: 15,
-                                                        ),
-                                                        child: TextFormField(
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            keyboardType:
-                                                                TextInputType
-                                                                    .number,
-                                                            controller:
-                                                                PerMonthController,
-                                                            autocorrect: true,
-                                                            textInputAction:
-                                                                TextInputAction
-                                                                    .next,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              isDense: true,
-                                                              hintText:
-                                                                  '₹ 1000',
-                                                              contentPadding:
-                                                                  EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          5,
-                                                                      horizontal:
-                                                                          15),
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                fontFamily:
-                                                                    "Roboto_Regular",
-                                                                color: Color(
-                                                                    0xffacacac),
-                                                                fontSize: SizeConfig
-                                                                        .blockSizeHorizontal *
-                                                                    3.5,
-                                                              ),
-                                                              fillColor: Color(
-                                                                  0xffF5F6FB),
-                                                              hoverColor:
-                                                                  Colors.white,
-                                                              filled: true,
-                                                              enabledBorder: OutlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide
-                                                                          .none,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0)),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Color(
-                                                                        0xffebd7fb),
-                                                                    width: 1),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0),
-                                                              ),
-                                                            )),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                  ],
+                        ),
+                        child: isYesSelected == true
+                            ? Center(
+                                child: Container(
+                                  width: 14,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xffFF5963),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(7)),
-                            width: SizeConfig.screenWidth * 0.94,
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isDropdownOpenSell = !isDropdownOpenSell;
-                                  isSelectedSell =
-                                      !isSelectedSell; // Toggle the selected state
-                                });
-                              },
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5, vertical: 13),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 18,
-                                            height: 18,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: Color(
-                                                    0xff624ffa), // Outer circle color
-                                                width: 01,
-                                              ),
-                                            ),
-                                            child: isSelectedSell ||
-                                                    isDropdownOpenSell
-                                                ? Center(
-                                                    child: Container(
-                                                      width:
-                                                          10, // Inner circle size
-                                                      height: 10,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: Color(
-                                                            0xff624ffa), // Inner circle color
-                                                      ),
-                                                    ),
-                                                  )
-                                                : null,
-                                          ),
-                                          SizedBox(
-                                              width:
-                                                  10), // Space between checkbox and text
-                                          Text(
-                                            "To Sell",
-                                            style: TextStyle(
-                                                fontFamily:
-                                                    "Montserrat-BoldItalic",
-                                                color: Color(0xff624ffa),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          ),
-                                          Spacer(),
-                                          // Dropdown Icon
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                isDropdownOpenSell =
-                                                    !isDropdownOpenSell; // Toggle dropdown state
-                                              });
-                                            },
-                                            child: Icon(
-                                                isDropdownOpenSell
-                                                    ? Icons.keyboard_arrow_up
-                                                    : Icons.keyboard_arrow_down,
-                                                size: 28,
-                                                color: Color(0xff624ffa)),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    if (isDropdownOpenSell)
-                                      Container(
-                                        height: 60, // Limit the dropdown height
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 11,
-                                            right: 15,
-                                          ),
-                                          child: TextFormField(
-                                              textAlign: TextAlign.start,
-                                              // focusNode: _productNameFocus,
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              controller: sellController,
-                                              autocorrect: true,
-                                              textInputAction:
-                                                  TextInputAction.next,
-                                              decoration: InputDecoration(
-                                                isDense: true,
-                                                hintText: '₹ 1000',
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 9,
-                                                        horizontal: 15),
-                                                hintStyle: TextStyle(
-                                                  fontFamily: "Roboto_Regular",
-                                                  color: Color(0xffacacac),
-                                                  fontSize: SizeConfig
-                                                          .blockSizeHorizontal *
-                                                      3.5,
-                                                ),
-                                                fillColor: Color(0xffF5F6FB),
-                                                hoverColor: Colors.white,
-                                                filled: true,
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                        borderSide:
-                                                            BorderSide.none,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0)),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xffe2bfff),
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                ),
-                                              )),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+                              )
+                            : null,
                       ),
-                    ),
+                      SizedBox(width: 8),
+                      Text(
+                        "Yes",
+                        style: TextStyle(
+                          color: Color(0xff000000),
+                          fontFamily: "Montserrat-Medium",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              Center(
-                child: Container(
-                  height: parentHeight * 0.06,
-                  width: parentWidth * 0.47,
-                  decoration: BoxDecoration(
-                    color: Color(0xff7937a1),
-                    border: Border.all(color: Color(0xffe8a33e), width: 2),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Image(
-                            image: AssetImage('assets/images/star.png'),
-                            height: 22,
+                SizedBox(width: 20),
+                // No Option
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isYesSelected = false;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isYesSelected == false
+                                ? Color(0xffFF5963)
+                                : Colors.black,
+                            width: 1,
                           ),
-                          Text(
-                            "  DEAL ZONE  ",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "okra_Bold",
-                              letterSpacing: 1.0,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Image(
-                            image: AssetImage('assets/images/star.png'),
-                            height: 22,
-                          ),
-                        ],
+                        ),
+                        child: isYesSelected == false
+                            ? Center(
+                                child: Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xffFF5963),
+                                  ),
+                                ),
+                              )
+                            : null,
                       ),
-                    ),
+                      SizedBox(width: 8),
+                      Text(
+                        "No",
+                        style: TextStyle(
+                          color: Color(0xff000000),
+                          fontFamily: "Montserrat-Medium",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           GestureDetector(
             onTap: () {
@@ -1908,13 +1425,9 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                     height: parentHeight * 0.08,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
+                        colors: [Color(0xff632883), Color(0xff8d42a3)],
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
-                        colors: [
-                          Color(0xffffa055),
-                          Color(0xfffd4952),
-                          Color(0xfffd4952),
-                        ],
                       ),
                       border: Border.all(color: Color(0xffe8a33e), width: 2),
                       borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -1922,7 +1435,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                     child: Center(
                         child: Shimmer.fromColors(
                       baseColor: Colors.white, // Light color
-                      highlightColor: Color(0xff632883), // Highlight color
+                      highlightColor: Color(0xfff1737b), // Highlight color
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -2447,6 +1960,106 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+              SizedBox(height: 25),
+              Text(
+                "    Add Business Website",
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xffd5abff).withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 5,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    controller: businessWebsiteController,
+                    autocorrect: true,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Business Website',
+                      contentPadding:
+                          EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                      hintStyle: TextStyle(
+                        fontFamily: "Roboto_Regular",
+                        color: Color(0xffa1a1a1),
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Color(0xffd5abff), width: 0.5),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 25),
+              Text(
+                "    Total Number of Service Provided:",
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),  SizedBox(height: 10),
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 15),
+                child: TextFormField(
+                  textAlign: TextAlign.start,
+                  keyboardType: TextInputType.number,
+                  controller: TotalNoOfProvided,
+                  autocorrect: true,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Ex 100',
+                    contentPadding:
+                    EdgeInsets.only(left: 10, top: 5, bottom: 12),
+                    hintStyle: TextStyle(
+                      fontFamily: "Roboto_Regular",
+                      color: Color(0xffacacac),
+                      fontSize: 14, // ✅ Adjust size if needed
+                    ),
+                    fillColor: Color(0xffF5F6FB),
+                    hoverColor: Colors.white,
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color(0xfffbcacd), width: 0.5),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(height: 10),
               Padding(
                 padding: EdgeInsets.all(18.0),
@@ -2484,7 +2097,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.purple,
+                              color: Color(0xffFF5963),
                             ),
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
@@ -2503,7 +2116,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.purple,
+                              color: Color(0xffFF5963),
                             ),
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
@@ -2521,7 +2134,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.purple,
+                              color: Color(0xffFF5963),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -2539,7 +2152,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.purple,
+                              color: Color(0xffFF5963),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -2570,7 +2183,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                 height: parentHeight * 0.06,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xff632883), Color(0xff8d42a3)],
+                    colors: [Color(0xfff12935), Color(0xffFF5963)],
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
                   ),
@@ -2579,7 +2192,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  "Add Product",
+                  "Add Service",
                   style: TextStyle(
                     fontFamily: "Montserrat-BoldItalic",
                     color: Colors.white,
@@ -2658,7 +2271,7 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
     _controllerss = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
-      upperBound: 2.0, // Loop exactly 2 times
+      upperBound: 2.0,
     );
 
     _controllerss.repeat().whenComplete(() {

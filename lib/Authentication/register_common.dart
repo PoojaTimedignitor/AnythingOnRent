@@ -537,8 +537,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
 
                       showLoginWidget = false;
 
-
-
                       _animationController.reverse();
                     } else if (isOTPEmailVerification) {
                       otpController.clear();
@@ -709,7 +707,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                 ],
               ],
 
-              // 🔹 Login Form
+
               if (showLoginWidget) ...[
                 _buildLoginWidget(),
                 SizedBox(height: 20),
