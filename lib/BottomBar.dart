@@ -1,3 +1,4 @@
+/*
 import 'package:anything/All_Product_List.dart';
 import 'package:anything/pupularCatagoriesViewAll.dart';
 import 'package:flutter/cupertino.dart';
@@ -176,7 +177,8 @@ class BottomBarState extends State<BottomBar>
       ),
       body:
 
-          /*  ScrollConfiguration(
+          */
+/*  ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView(
           shrinkWrap: true,
@@ -213,8 +215,10 @@ class BottomBarState extends State<BottomBar>
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ),
                   ),
-                  */
-      /* Stack(
+                  *//*
+
+      */
+/* Stack(
                     children: [
                    Padding(
                     padding: EdgeInsets.only(
@@ -242,13 +246,16 @@ class BottomBarState extends State<BottomBar>
 
                       // RegisterButton(SizeConfig.screenHeight, SizeConfig.screenWidth),
                     ],
-                  ),*/ /*
+                  ),*//*
+ */
+/*
                 ],
               ),
             ),
           ],
         ),
-      ),*/
+      ),*//*
+
 
           PersistentTabView(
         context,
@@ -628,12 +635,14 @@ class BottomBarState extends State<BottomBar>
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
-                        /* style: TextStyle(
+                        */
+/* style: TextStyle(
                       color: CommonColor.Black,
                       fontFamily: "Roboto_Regular",
                       fontSize: SizeConfig.blockSizeHorizontal * 2.7,
                       fontWeight: FontWeight.w500,
-                    ),*/
+                    ),*//*
+
                       ),
                     ),
                   ],
@@ -645,7 +654,8 @@ class BottomBarState extends State<BottomBar>
       ],
     );
 
-    /* Padding(
+    */
+/* Padding(
       padding: EdgeInsets.only(top: parentHeight * 0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -661,8 +671,10 @@ class BottomBarState extends State<BottomBar>
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              */
-    /*GestureDetector(
+              *//*
+
+    */
+/*GestureDetector(
                 onTap: (){
                   Navigator.push(
                       context,
@@ -699,8 +711,10 @@ class BottomBarState extends State<BottomBar>
                     ),
                   ),
                 ),
-              )*/
-    /*
+              )*//*
+
+    */
+/*
             ],
           ),
           Padding(
@@ -733,7 +747,8 @@ class BottomBarState extends State<BottomBar>
           )
         ],
       ),
-    );*/
+    );*//*
+
   }
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
@@ -1582,6 +1597,7 @@ class BottomBarState extends State<BottomBar>
 
 
 
+*/
 /*ListView(
 children: [
 SizedBox(height: 25),
@@ -1640,3 +1656,4 @@ height: parentHeight * 0.045,
 ),
 ],
 ),*/
+

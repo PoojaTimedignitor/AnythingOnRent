@@ -2414,7 +2414,7 @@ class MainHomeState extends State<MainHome>
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    NewService(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
+                                                    CreateProductService()));
 
 
                                     },
@@ -2690,11 +2690,11 @@ class MainHomeState extends State<MainHome>
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                     /* Navigator.push(
+                                      Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  TimeSelection()));*/
+                                                  NewService(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(

@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:anything/api_constants.dart';
 import 'package:anything/newGetStorage.dart';
 import 'package:dio/dio.dart';
@@ -97,11 +99,9 @@ class NewApiClients {
   }
 
   NewApiClients._internal() {
-
     _dio.options.baseUrl = "https://example.com";
     print("ApiClients initialized");
   }
-
 
 
   Future<bool> sendNewMobileOtp(String phoneNumber) async {
@@ -110,7 +110,6 @@ class NewApiClients {
     var data = {'phoneNumber': phoneNumber};
 
     try {
-
       Response response = await _dio.post(url, data: data);
 
       print("Api URl res   :$url");
@@ -158,7 +157,6 @@ class NewApiClients {
   }
 
 
-
   Future<bool> sendNewEmailOtp(String phoneNumber, String email) async {
     // String url = "https://rental-api-5vfa.onrender.com/sendEmailOtp"; // API Endpoint
     String url = ApiConstants.baseUrl + ApiConstants.sendEmailOtp;
@@ -199,8 +197,7 @@ class NewApiClients {
   }
 
 
-
-    Future<bool> verifyNewEmailOtp(String email, String otp) async {
+  Future<bool> verifyNewEmailOtp(String email, String otp) async {
     String url = ApiConstants.baseUrl + ApiConstants.verifyEmailOtp;
 
     String? phoneNumber = NewAuthStorage.getPhoneNumber();
@@ -232,7 +229,8 @@ class NewApiClients {
         print(" Email OTP Verified and Data Stored!");
         print(" Stored Access Token: ${await NewAuthStorage.getAccessToken()}");
         print(" Stored Access Token: ${await NewAuthStorage.getUserId()}");
-        print(" Stored Refresh Token: ${await NewAuthStorage.getRefreshToken()}");
+        print(
+            " Stored Refresh Token: ${await NewAuthStorage.getRefreshToken()}");
 
         return true;
       } else {
@@ -267,7 +265,7 @@ class NewApiClients {
 
 
     String url = ApiConstants.baseUrl + ApiConstants.userRegisterrrr(userId);
-   // String url = "https://rental-api-5vfa.onrender.com/update-details/$userId";
+    // String url = "https://rental-api-5vfa.onrender.com/update-details/$userId";
     print("api URL: $url");
 
     try {
@@ -280,13 +278,13 @@ class NewApiClients {
           "permanentAddress": permanentAddresss,
           "password": password,
         },
-          options: Options(
-            headers: {
-              "Authorization": "Bearer ${await NewAuthStorage.getAccessToken()}",
-              "Content-Type": "application/json",
-            },
-            validateStatus: (status) => status! < 500,
-          ),);
+        options: Options(
+          headers: {
+            "Authorization": "Bearer ${await NewAuthStorage.getAccessToken()}",
+            "Content-Type": "application/json",
+          },
+          validateStatus: (status) => status! < 500,
+        ),);
 
       print("Fetch User API Response: ${response.data}");
 
@@ -295,7 +293,10 @@ class NewApiClients {
         return response.data;
       } else {
         print(" Failed to Update User Details. Response: ${response.data}");
-        return {"success": false, "message": response.data['message'] ?? "Failed to update details"};
+        return {
+          "success": false,
+          "message": response.data['message'] ?? "Failed to update details"
+        };
       }
     } catch (e) {
       print(" Error: $e");
@@ -304,7 +305,8 @@ class NewApiClients {
   }
 
 
-  Future<Map<String, dynamic>?> newloginWithPhoneOrEmail(String identifier, String password) async {
+  Future<Map<String, dynamic>?> newloginWithPhoneOrEmail(String identifier,
+      String password) async {
     String baseUrl = "https://rental-api-5vfa.onrender.com/";
     String url;
 
@@ -336,7 +338,7 @@ class NewApiClients {
       print(" Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200 && response.data['success'] == true) {
-          print(" Login Successful: ${response.data['message']}");
+        print(" Login Successful: ${response.data['message']}");
         return response.data;
       } else {
         print(" Login Failed: ${response.data['message']}");
@@ -488,6 +490,197 @@ class NewApiClients {
       return {"error": "Exception: ${e.message}"};
     }
   }
+
+
+  Future<Map<String, dynamic>> NewGetAllCat() async {
+    String url =
+        ApiConstant().BaseUrl + ApiConstant().getAllCatagries;
+
+
+    String? accessToken = NewAuthStorage.getAccessToken();
+    print(" Stored Access Token: $accessToken");
+
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+
+      print("getCatList Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print("Dio Error: ${e.response}");
+      return e.response!.data;
+    }
+  }
+
+
+  Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
+    String url =
+        "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().getAllSubCatagries(categoryId)}";
+    print("Constructed URL: $url");
+
+    String? accessToken = NewAuthStorage.getAccessToken();
+    print(" Stored Access Token: $accessToken");
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization':
+            'Bearer $accessToken',
+          },
+        ),
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Data: ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print("Dio Error Response: ${e.response?.data}");
+        return e.response?.data ?? {'error': 'Unknown error'};
+      } else {
+        print("Dio Error: No response from server.");
+        return {'error': 'No response from server'};
+      }
+    }
+  }
+
+
+  Future<Map<String, dynamic>> NewPostfeedbackUser(
+      String suggest,
+      ) async
+  {
+    String url = ApiConstant().AdminBaseUrl + ApiConstant().UserFeedback;
+
+    String? accessToken = await NewAuthStorage.getAccessToken();
+
+    // String? userId = GetStorage().read<String>(ConstantData.UserId);
+
+
+    String? userId = await NewAuthStorage.getUserIdd();
+
+    print(" UserId: $userId");
+
+    var datas = jsonEncode({
+      'user': userId,
+      'suggest': suggest,
+    });
+
+    try {
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: datas,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+      print("statusCode --> ${response.statusCode}");
+      print("dateeeee --> ${response.data}");
+      return response.data;
+    } on DioError catch (e) {
+      return e.response!.data;
+    }
+  }
+
+
+  Future<Map<String, dynamic>> NewCreateTicket(
+      String categoryId, String description) async
+  {
+
+    print("Creating Ticket...");
+
+    String url = ApiConstant().AdminBaseUrl + ApiConstant().AdminContactUsMessage;
+    String? sessionToken = await NewAuthStorage.getAccessToken();
+    String? userId = await NewAuthStorage.getUserIdd();
+
+    var datas = jsonEncode({
+      'userId': userId,
+      'category': categoryId,
+      'description': description,
+    });
+
+    print("Sending Data: $datas");
+
+    try {
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: datas,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+          },
+        ),
+      );
+
+      print(" Status Code: ${response.statusCode}");
+      print(" API Response Data: ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print(" API Error: ${e.response!.data}");
+      return e.response!.data;
+    }
+  }
+
+
+  Future<Map<String, dynamic>> getAllTicket() async {
+    String? userId = await NewAuthStorage.getUserIdd();
+
+    if (userId == null || userId.isEmpty) {
+      throw Exception("⚠ UserId is missing!");
+    }
+
+    print(" User ID: $userId");
+
+    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
+    print("📡 API URL: $url");
+
+    String? sessionToken = await NewAuthStorage.getAccessToken();
+    if (sessionToken == null || sessionToken.isEmpty) {
+      throw Exception(" Session token is missing or invalid.");
+    }
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {'Authorization': 'Bearer $sessionToken'},
+        ),
+      );
+
+      print(" Status Code: ${response.statusCode}");
+      print(" Response Data: ${response.data}");
+
+      if (response.headers.value('content-type')?.contains('application/json') ?? false) {
+        return response.data;
+      } else {
+        throw Exception(" Unexpected response format: ${response.data}");
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print(" Dio Error Response: ${e.response?.data}");
+        throw Exception("Error fetching data: ${e.response?.statusCode ?? 'Unknown'} - ${e.response?.data}");
+      } else {
+        print(" Dio Error Message: ${e.message}");
+        throw Exception("Dio Error: ${e.message}");
+      }
+    }
+  }
+
+
+
 
 
 

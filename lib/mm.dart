@@ -1,3 +1,4 @@
+/*
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -50,3 +51,44 @@ class _CustomNetworkImageState extends State<CustomNetworkImage> {
     );
   }
 }
+*/
+
+
+/*
+Future<Map<String, dynamic>> getAllCat(File? imageFile) async {
+  String url = ApiConstant().BaseUrl + ApiConstant().getAllCatagries;
+
+  String? sessionToken =
+  GetStorage().read<String>(ConstantData.UserAccessToken);
+
+  try {
+    FormData formData = FormData.fromMap({
+
+      if (imageFile != null)
+        'bannerImage': await MultipartFile.fromFile(
+          imageFile.path,
+          filename: imageFile.path.split('/').last,
+        ),
+    });
+
+    Response response = await _dio.post(
+      url,
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $sessionToken',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+
+    print("getCatList Status Code --> ${response.statusCode}");
+    print("Response Data --> ${response.data}");
+
+    return response.data;
+  } on DioError catch (e) {
+    print("Dio Error: ${e.response}");
+    return e.response!.data;
+  }
+}
+*/

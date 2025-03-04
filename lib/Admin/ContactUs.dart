@@ -9,7 +9,9 @@ import 'package:get_storage/get_storage.dart';
 
 import '../ConstantData/Constant_data.dart';
 import '../MyBehavior.dart';
+import '../NewDioClient.dart';
 import '../model/dio_client.dart';
+import '../newGetStorage.dart';
 import 'ContactUsQuestions.dart';
 
 class ContactUsPage extends StatefulWidget {
@@ -130,47 +132,56 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        ApiClients()
-                            .CreateTicket(
-                                selectedCategoryId, messageController.text)
-                            .then((value) {
-                          print(value['data']);
-                          print("Response: $value");
-          
-                          if (mounted) {
-                            setState(() {});
+                      onTap: () async {
+                        print(" Submitting Ticket...");
+
+                        var response = await NewApiClients().NewCreateTicket(
+                            selectedCategoryId,
+                            messageController.text
+                        );
+
+                        print(" API Response: $response");
+
+                        if (mounted) {
+                          setState(() {});
+                        }
+
+                        if (response['success'] == true) {
+                          String? userId = response['data']?['userId'];
+                          print(" User ID: $userId");
+
+                          if (userId != null) {
+                            await NewAuthStorage.setUserId(userId);
                           }
-          
-                          if (value['success'] == true) {
-                            print("Userssssss....${value['data']?['userId']}");
-                            GetStorage().write(
-                                ConstantData.UserId, value['data']?['userId']);
-          
-                            showTopSnackBar(
-                                context, 'Question submitted successfully');
-          
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HelpCenterScreen()),
-                            );
-                          }
-                        }); // Close the dialog
+
+                          showTopSnackBar(context, ' Question submitted successfully!');
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HelpCenterScreen()),
+                          );
+                        } else {
+                          print(" Error Message: ${response['message']}");
+                          showTopSnackBar(context, " Failed to submit question!");
+                        }
                       },
+
                       child: Center(
                         child: Container(
-                            width: SizeConfig.screenWidth * 0.75,
-                            height: SizeConfig.screenHeight * 0.05,
-                            child: Center(
-                                child: Text(
-                              " Okay",
+                          width: SizeConfig.screenWidth * 0.75,
+                          height: SizeConfig.screenHeight * 0.05,
+                          child: Center(
+                            child: Text(
+                              "Okay",
                               style: TextStyle(
-                                  color: Color(0xfff44343),
-                                  fontWeight: FontWeight.w700,
-                                  fontFamily: 'Roboto-Regular',
-                                  fontSize: SizeConfig.blockSizeHorizontal * 4.5),
-                            ))),
+                                color: Color(0xfff44343),
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Roboto-Regular',
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.5,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(height: 16),

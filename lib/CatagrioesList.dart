@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:anything/ResponseModule/getAllCatList.dart';
 
 
@@ -45,7 +47,7 @@ class _CatagriesListState extends State<CatagriesList> {
   ];
 
   List<Data> filteredItems = [];
-
+  File imageFile = File('/storage/emulated/0/Download/sample_image.jpg');
   bool isLoading = true;
   bool isSearchingData = false;
 
@@ -221,7 +223,7 @@ class _CatagriesListState extends State<CatagriesList> {
                                   "Selected Category ID: $selectedCategoryId");
 
                               widget.onChanged(
-                                  selectedCategoryId); // Pass categoryId to parent widget
+                                  selectedCategoryId);
                               Navigator.pop(context,
                                   filteredItems[index].name.toString());
                             },

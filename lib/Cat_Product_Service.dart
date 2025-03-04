@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:flutter/material.dart';
 
+import 'ApiConstant/api_constant.dart';
 import 'Common_File/common_color.dart';
+import 'NewDioClient.dart';
 import 'ResponseModule/getAllCatList.dart';
 import 'createProduct.dart';
 import 'model/dio_client.dart';
@@ -43,17 +47,22 @@ class _CatProductServiceState extends State<CatProductService> {
 
   bool isLoading = true;
   bool isSearchingData = false;
+  File imageFile = File('/storage/emulated/0/Download/sample_image.jpg');
+
+
 
   @override
   void initState() {
     fetchCategories();
+
+
     super.initState();
   }
 
 
   void fetchCategories() async {
     try {
-      Map<String, dynamic> response = await ApiClients().getAllCat();
+      Map<String, dynamic> response = await NewApiClients().NewGetAllCat();
       var jsonList = GetAllCategoriesList.fromJson(response);
       setState(() {
 
@@ -69,6 +78,11 @@ class _CatProductServiceState extends State<CatProductService> {
       print("Error fetching categories: $e");
     }
   }
+
+
+
+
+
 
 
   @override
@@ -191,30 +205,32 @@ class _CatProductServiceState extends State<CatProductService> {
                         childAspectRatio: 1,
                       ),
                       itemCount: filteredItems.length,
-                      // Total number of items
+
                       itemBuilder: (context, index) {
                         print(
                             "ddddd  ${filteredItems[index].name.toString()}");
 
-                        /* String categoryName = filteredItems[index];
-                      int productCount = productCountList[categoryName] ?? 0;*/
+
                         return GestureDetector(
                           onTap: () {
-                            String selectedCategoryId =
-                            filteredItems[index].sId.toString();
-                            print(
-                                "Selected Category ID: $selectedCategoryId");
+                            String selectedCategoryId = filteredItems[index].sId.toString();
+                            print("Selected Category ID: $selectedCategoryId");
                             print("Category Name: ${filteredItems[index].name.toString()}");
+
+
+                            String baseUrl = ApiConstant().BaseUrl;
+                            String imagePath = filteredItems[index].bannerImage != null &&
+                                filteredItems[index].bannerImage!.isNotEmpty
+                                ? baseUrl + filteredItems[index].bannerImage!
+                                : 'assets/images/estione.png';
                             widget.onChanged(
-                                selectedCategoryId); // Pass categoryId to parent widget
+                                selectedCategoryId);
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress:'', categoryName: filteredItems[index].name.toString(),  imagePath: filteredItems[index].bannerImage != null &&
-                                            filteredItems[index].bannerImage!.isNotEmpty
-                                            ? filteredItems[index].bannerImage!
-                                            : 'assets/images/estione.png',
+                                        NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress:'', categoryName: filteredItems[index].name.toString(),
+                                          imagePath: imagePath,
                                         )));
 
 

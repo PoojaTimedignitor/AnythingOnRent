@@ -5,6 +5,7 @@ import '../Common_File/ResponsiveUtil.dart';
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import '../MyBehavior.dart';
+import '../NewDioClient.dart';
 import '../ResponseModule/getAllSupportTicket.dart';
 import '../model/dio_client.dart';
 import 'bigSupportScreen.dart';
@@ -25,13 +26,13 @@ class _SupportpageState extends State<Supportpage> {
   String userIds = '';
   bool isShowMore = false;
 
-  void fetchAllTicketSupport(String userId) async {
+  void fetchAllTicketSupport() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      Map<String, dynamic> response = await ApiClients().getAllTicket(userId);
+      Map<String, dynamic> response = await NewApiClients().getAllTicket();
 
       if (response.isNotEmpty) {
         var jsonList = getAllSupportTicket.fromJson(response);
@@ -45,15 +46,16 @@ class _SupportpageState extends State<Supportpage> {
         setState(() {
           isLoading = false;
         });
-        print("No data available.");
+        print(" No data available.");
       }
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      print("Error fetching Ticket: $e");
+      print(" Error fetching Ticket: $e");
     }
   }
+
 
   String formatDate(String date) {
     DateTime parsedDate = DateTime.parse(date);
@@ -64,7 +66,7 @@ class _SupportpageState extends State<Supportpage> {
   @override
   void initState() {
     super.initState();
-    fetchAllTicketSupport(userIds);
+    fetchAllTicketSupport();
   }
 
   @override

@@ -4,8 +4,11 @@ import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
 import '../ConstantData/Constant_data.dart';
 import '../MainHome.dart';
+import '../NewDioClient.dart';
 import '../model/dio_client.dart';
 import 'package:get_storage/get_storage.dart';
+
+import '../newGetStorage.dart';
 
 class Userfeedback extends StatefulWidget {
   const Userfeedback({super.key});
@@ -214,10 +217,10 @@ class _UserfeedbackState extends State<Userfeedback> {
                       SizedBox(height: 10),
                       GestureDetector(
                         onTap: () {
-                          ApiClients()
-                              .PostfeedbackUser(
-                                  productDiscriptionController.text)
-                              .then((value) {
+                          NewApiClients()
+                              .NewPostfeedbackUser(
+                              productDiscriptionController.text)
+                              .then((value) async {
                             print(value['data']);
                             print("Response: $value");
 
@@ -225,11 +228,16 @@ class _UserfeedbackState extends State<Userfeedback> {
                               setState(() {});
                             }
 
+
+
                             if (value['success'] == true) {
-                              print(
-                                  "Userssssss....${value['data']?['feedbackUser']}");
-                              GetStorage().write(ConstantData.UserId,
-                                  value['data']?['feedbackUser']);
+                              String? userId = value['data']?['feedbackUser'];
+                              if (userId != null) {
+                                await NewAuthStorage.setUserId(userId);
+                                print("User ID Stored: $userId");
+                              } else {
+                                print("Error: userId is null");
+                              }
 
                               showTopSnackBar(context, 'Feedback submitted successfully');
                               Navigator.pop(
@@ -272,17 +280,21 @@ class _UserfeedbackState extends State<Userfeedback> {
                                 ),
                                 child: Center(
                                     child: Text(
-                                  "Save",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Roboto-Regular',
-                                      fontSize:
+                                      "Save",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Roboto-Regular',
+                                          fontSize:
                                           SizeConfig.blockSizeHorizontal * 4.3),
-                                ))),
+                                    ))),
                           ),
                         ),
                       ),
+
+
+
+
                     ],
                   ),
                 )
