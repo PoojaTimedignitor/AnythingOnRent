@@ -152,6 +152,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
       ));
     }
 
+
     _controller.forward();
 
     _controllerzoom = AnimationController(
@@ -220,10 +221,10 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                       ),
                     ),
                     SizedBox(height: 10),
-                    // Scrollable container for displaying images
+
                     Container(
                       height: 400,
-                      width: 200, // Set the height for the scrollable container
+                      width: 200,
                       child: ListView.builder(
                         itemCount: _selectedImages.length,
                         itemBuilder: (context, index) {
@@ -232,11 +233,11 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                               GestureDetector(
                                 onTap: () async {
                                   selectedIndex =
-                                      index; // Set the selected index
+                                      index;
                                   await _pickImageForReplacement(selectedIndex);
-                                  Navigator.pop(context); // Pick new image
+                                  Navigator.pop(context);
                                   setState(
-                                      () {}); // Refresh the dialog to show updated image
+                                      () {});
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -265,10 +266,10 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      // Remove the image when cancel icon is pressed
+
                                       _selectedImages.removeAt(index);
                                     });
-                                    Navigator.pop(context); // Close the dialog
+                                    Navigator.pop(context);
                                   },
                                 ),
                               ),
@@ -562,7 +563,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   isScrollControlled: true,
                   isDismissible: true,
                   builder: (BuildContext bc) {
-                    return Container(
+                    return SizedBox(
                       height: MediaQuery.of(context).size.height *
                           0.5, // Adjust height
                       child: AllSubCat(),

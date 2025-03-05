@@ -13,6 +13,7 @@ class _AllSubCatState extends State<AllSubCat> {
   TextEditingController emailController = TextEditingController();
   List<String> categories = ["Electronics", "Clothing", "Books", "Furniture"];
   String? selectedCategory;
+  bool isLoading = true;
 
   @override
   Widget build(BuildContext context) {

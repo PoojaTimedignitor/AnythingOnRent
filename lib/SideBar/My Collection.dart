@@ -98,7 +98,7 @@ class _MyCollectionState extends State<MyCollection> {
                       child: Center(
                         child: !isSearchingData
                             ? Text(
-                                "My Collection",
+                                "My Post",
                                 style: TextStyle(
                                   fontFamily: "Montserrat-Medium",
                                   fontSize: SizeConfig.blockSizeHorizontal * 4.5,
@@ -189,7 +189,7 @@ class _MyCollectionState extends State<MyCollection> {
                   padding: EdgeInsets.only(top: 80),
                   child: Image(
                       image: AssetImage("assets/images/logo.gif"),
-                      height: SizeConfig.screenHeight * 0.13),
+                      height: SizeConfig.screenHeight * 0.16),
                 ))
               : filteredItems.isNotEmpty
                   ? ListView.builder(

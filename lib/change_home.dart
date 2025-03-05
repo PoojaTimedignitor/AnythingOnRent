@@ -35,29 +35,26 @@ class _ChangeHomeState extends State<ChangeHome> {
   String updatedCity = "No city selected";
   final ApiClients authService = ApiClients();
   BoxDecoration _backgroundDecoration = BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topRight,
-      end: Alignment.bottomLeft,
-      colors: [Color(0xffaa4f7e), Color(0xffff937a)], // Default Gradient
+    image: DecorationImage(
+      image: AssetImage("assets/images/servicess.jpg"),
+      fit: BoxFit.cover,
     ),
   );
-
-
 
   void _changeBackground(int index) {
     setState(() {
       _backgroundDecoration = BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: index == 0
-              ? [Color(0xffaa4f7e), Color(0xffff937a)]
-              : [Color(0xffe4b4fb), Color(0xfffddfdf)],
+        image: DecorationImage(
+          image: AssetImage(
+            index == 0
+                ? "assets/images/servicess.jpg"
+                : "assets/images/estione.png",
+          ),
+          fit: BoxFit.cover,
         ),
       );
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +118,6 @@ class _ChangeHomeState extends State<ChangeHome> {
                           child: Icon(Icons.settings,
                               size: 18, color: Colors.black),
                         ),
-
-
                       ),
                     ),
                     GestureDetector(
@@ -130,7 +125,9 @@ class _ChangeHomeState extends State<ChangeHome> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Myprofiledetails(option: () {  },)),
+                              builder: (context) => Myprofiledetails(
+                                    option: () {},
+                                  )),
                         );
                       },
                       child: Padding(
@@ -193,7 +190,6 @@ class _ChangeHomeState extends State<ChangeHome> {
                                   ),
                                   const SizedBox(height: 2),
                                   Row(
-
                                     children: [
                                       const Image(
                                         image: AssetImage(
@@ -485,9 +481,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                 Container(
                                   width: 130,
                                   //  color: Colors.red,
-                                  child: Text(
-
-                                      "Due for renewal",
+                                  child: Text("Due for renewal",
                                       style: TextStyle(
                                         color: Color(0xff2B2B2B),
                                         fontFamily: "okra_Medium",
@@ -565,10 +559,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                 ),
                                 Container(
                                   width: 108,
-
-                                  child: Text(
-
-                                      "FeedBack",
+                                  child: Text("FeedBack",
                                       style: TextStyle(
                                         color: Color(0xff2B2B2B),
                                         fontFamily: "okra_Medium",
@@ -601,9 +592,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                 Container(
                                   // width: 108,
                                   //  color: Colors.red,
-                                  child: Text(
-
-                                      "Report & Suggestions",
+                                  child: Text("Report & Suggestions",
                                       style: TextStyle(
                                         color: Color(0xff2B2B2B),
                                         fontFamily: "okra_Medium",
@@ -750,8 +739,6 @@ class _ChangeHomeState extends State<ChangeHome> {
                                   image: AssetImage('assets/images/chat.png'),
                                   height: 20,
                                 ),
-
-
                                 Container(
                                   // width: 125,
                                   //  color: Colors.red,
@@ -810,7 +797,6 @@ class _ChangeHomeState extends State<ChangeHome> {
                           SizedBox(height: 15),
                           GestureDetector(
                             onTap: () {
-
                               //  LogoutDialogBox(context);
                             },
                             child: Row(
@@ -836,13 +822,10 @@ class _ChangeHomeState extends State<ChangeHome> {
                                             fontWeight: FontWeight.w600,
                                           ),
 
-
                                           /* style: TextStyle(
                                             color: Colors.pink,
                                             fontSize:
                                                 SizeConfig.blockSizeHorizontal * 3.9),*/
-
-
                                         )
                                       ],
                                     ),
@@ -877,7 +860,30 @@ class _ChangeHomeState extends State<ChangeHome> {
                       bottomLeft: Radius.circular(20),
                     ),
                   ),
-                  child: ListView(
+
+    ),
+
+
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.4),
+                          Colors.black.withOpacity(0.4),
+                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.5),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+
+ ListView(
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
                     //crossAxisAlignment: CrossAxisAlignment.start,
@@ -895,10 +901,10 @@ class _ChangeHomeState extends State<ChangeHome> {
                               onTap: () {
                                 _scaffoldKey.currentState?.openDrawer();
                               },
-                              child: Icon(Icons.dehaze_rounded, color: Colors.black),
+                              child: Icon(Icons.dehaze_rounded,
+                                  color: Colors.black),
                             ),
                             SizedBox(width: ResponsiveUtil.width(10)),
-
 
                             Expanded(
                               child: Column(
@@ -913,7 +919,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                         fontSize: ResponsiveUtil.fontSize(15),
                                         fontFamily: 'okra_extrabold',
                                         fontWeight: FontWeight.w400,
-                                        color: Colors.black,
+                                        color: Colors.white,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
@@ -934,7 +940,8 @@ class _ChangeHomeState extends State<ChangeHome> {
                                         child: Text(
                                           "Opposite Sassoon Hospital, Station Road, Pune-411001",
                                           style: TextStyle(
-                                            fontSize: ResponsiveUtil.fontSize(14),
+                                            fontSize:
+                                                ResponsiveUtil.fontSize(14),
                                             fontFamily: 'Poppins_Bold',
                                             fontWeight: FontWeight.w400,
                                             letterSpacing: 0.5,
@@ -950,8 +957,9 @@ class _ChangeHomeState extends State<ChangeHome> {
                               ),
                             ),
 
-
-                            SizedBox(width: ResponsiveUtil.width(10)), // Spacing before icon
+                            SizedBox(
+                                width: ResponsiveUtil.width(
+                                    10)), // Spacing before icon
                             Image.asset(
                               'assets/images/notification.png',
                               height: ResponsiveUtil.height(20),
@@ -959,7 +967,6 @@ class _ChangeHomeState extends State<ChangeHome> {
                             ),
                           ],
                         ),
-
                       ),
                       SizedBox(height: ResponsiveUtil.height(13)),
 
@@ -973,14 +980,18 @@ class _ChangeHomeState extends State<ChangeHome> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          child:
-                          Row(
+                          child: Row(
                             children: [
                               // Product Button
                               Expanded(
                                 flex: 3,
                                 child: GestureDetector(
-                                  onTap: () => _changeBackground(0), // Change BG on tap
+                                  onTap: () {
+                                    setState(() {
+                                      selectedIndex = 0;
+                                      _changeBackground(0);
+                                    });
+                                  },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
                                       vertical: ResponsiveUtil.height(9),
@@ -988,12 +999,16 @@ class _ChangeHomeState extends State<ChangeHome> {
                                     decoration: BoxDecoration(
                                       gradient: selectedIndex == 0
                                           ? LinearGradient(
-                                        colors: [Color(0xff632883), Color(0xff8d42a3)],
-                                        begin: Alignment.topRight,
-                                        end: Alignment.bottomLeft,
-                                      )
+                                              colors: [
+                                                Color(0xff632883), Color(0xff8d42a3)],
+
+                                              begin: Alignment.topRight,
+                                              end: Alignment.bottomLeft,
+                                            )
                                           : null,
-                                      color: selectedIndex != 0 ? Colors.transparent : null,
+                                      color: selectedIndex != 0
+                                          ? Colors.transparent
+                                          : null,
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                     alignment: Alignment.center,
@@ -1001,7 +1016,9 @@ class _ChangeHomeState extends State<ChangeHome> {
                                       "Product",
                                       style: TextStyle(
                                         fontFamily: "Montserrat-BoldItalic",
-                                        color: selectedIndex == 0 ? Colors.white : Colors.black,
+                                        color: selectedIndex == 0
+                                            ? Colors.white
+                                            : Colors.black,
                                         fontWeight: FontWeight.bold,
                                         fontSize: ResponsiveUtil.fontSize(15),
                                       ),
@@ -1014,7 +1031,12 @@ class _ChangeHomeState extends State<ChangeHome> {
                               Expanded(
                                 flex: 3,
                                 child: GestureDetector(
-                                  onTap: () => _changeBackground(1), // Change BG on tap
+                                  onTap: () {
+                                    setState(() {
+                                      selectedIndex = 1;
+                                      _changeBackground(1);
+                                    });
+                                  },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
                                       vertical: ResponsiveUtil.height(9),
@@ -1022,15 +1044,16 @@ class _ChangeHomeState extends State<ChangeHome> {
                                     decoration: BoxDecoration(
                                       gradient: selectedIndex == 1
                                           ? LinearGradient(
-                                        colors: [
-                                          Color(0xff435bf4),
-                                          Color(0xff435bf4),
-                                        ],
-                                        begin: Alignment.topRight,
-                                        end: Alignment.bottomLeft,
-                                      )
+                                              colors: [
+                                                Color(0xfff12935), Color(0xffFF5963)
+                                              ],
+                                              begin: Alignment.topRight,
+                                              end: Alignment.bottomLeft,
+                                            )
                                           : null,
-                                      color: selectedIndex != 1 ? Colors.transparent : null,
+                                      color: selectedIndex != 1
+                                          ? Colors.transparent
+                                          : null,
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                     alignment: Alignment.center,
@@ -1038,7 +1061,9 @@ class _ChangeHomeState extends State<ChangeHome> {
                                       "Service",
                                       style: TextStyle(
                                         fontFamily: "Montserrat-BoldItalic",
-                                        color: selectedIndex == 1 ? Colors.white : Colors.black,
+                                        color: selectedIndex == 1
+                                            ? Colors.white
+                                            : Colors.black,
                                         fontWeight: FontWeight.bold,
                                         fontSize: ResponsiveUtil.fontSize(15),
                                       ),
@@ -1048,12 +1073,11 @@ class _ChangeHomeState extends State<ChangeHome> {
                               ),
                             ],
                           ),
-
                         ),
                       ),
                       Padding(
-                        padding:
-                        EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                        padding: EdgeInsets.only(
+                            top: SizeConfig.screenHeight * 0.02),
                         child: Text(
                           "     ANYTHING ON RENT",
                           style: TextStyle(
@@ -1066,14 +1090,11 @@ class _ChangeHomeState extends State<ChangeHome> {
                       ),
 
                       GestureDetector(
-
                         onTap: () async {
                           String? selectedCity = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    LocationMapScreen()),
-
+                                builder: (context) => LocationMapScreen()),
                           );
                           if (selectedCity != null) {
                             print("✅ Received City: $selectedCity");
@@ -1083,8 +1104,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                             });
                             String? id = GetStorage().read<String>('userId');
                             print("jjjjjjjj  $id");
-                            bool success =
-                            await authService.storeUserCity(
+                            bool success = await authService.storeUserCity(
                               id!, // User ID
                               18.5204, // Latitude
                               73.8567, // Longitude
@@ -1092,11 +1112,9 @@ class _ChangeHomeState extends State<ChangeHome> {
                             );
 
                             if (success) {
-                              print(
-                                  "✅ City successfully updated in backend!");
+                              print("City successfully updated in backend!");
                             } else {
-                              print(
-                                  "❌ Failed to update city in backend.");
+                              print("❌ Failed to update city in backend.");
                             }
                           }
                         },
@@ -1130,8 +1148,7 @@ class _ChangeHomeState extends State<ChangeHome> {
                                       letterSpacing: 0.0,
                                       fontFamily: "okra_Medium",
                                       fontSize:
-                                      SizeConfig.blockSizeHorizontal *
-                                          3.7,
+                                          SizeConfig.blockSizeHorizontal * 3.7,
                                       fontWeight: FontWeight.w400,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -1146,20 +1163,17 @@ class _ChangeHomeState extends State<ChangeHome> {
                       AddPostButton(
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
 
-
                       HomeSearchBar(
                           SizeConfig.screenHeight, SizeConfig.screenWidth),
-
-
                     ],
                   ),
-                ),
+
+
               ],
             ),
           ],
         ));
   }
-
 
   Widget HomeSearchBar(double parentHeight, double parentWidth) {
     return GestureDetector(
@@ -1173,10 +1187,9 @@ class _ChangeHomeState extends State<ChangeHome> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Padding(
-            padding: EdgeInsets.only(
-                left: SizeConfig.screenWidth * .05,top: 10),
+            padding:
+                EdgeInsets.only(left: SizeConfig.screenWidth * .05, top: 10),
             child: SizedBox(
-
               height: SizeConfig.screenHeight * .053,
               width: SizeConfig.screenWidth * .95,
               child: Padding(
@@ -1216,13 +1229,12 @@ class _ChangeHomeState extends State<ChangeHome> {
   Widget AddPostButton(double parentHeight, double parentWidth) {
     return GestureDetector(
       onTap: () {
-       /* Navigator.push(context,
+        /* Navigator.push(context,
             MaterialPageRoute(builder: (context) => CreateProductService()));*/
       },
       child: Padding(
         padding: EdgeInsets.only(
-            left: parentWidth * 0.62,
-            right: parentWidth * 0.09),
+            left: parentWidth * 0.62, right: parentWidth * 0.09),
         child: Container(
           height: parentHeight * 0.040,
           decoration: BoxDecoration(
@@ -1234,25 +1246,22 @@ class _ChangeHomeState extends State<ChangeHome> {
                 Color(0xffFEA3A3),
               ],
             ),
-
             borderRadius: BorderRadius.all(
               Radius.circular(5),
             ),
           ),
           child: Center(
               child: Text(
-                "Create Post +",
-                style: TextStyle(
-                  fontFamily: "Montserrat-BoldItalic",
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.1,
-                  color: CupertinoColors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              )),
+            "Create Post +",
+            style: TextStyle(
+              fontFamily: "Montserrat-BoldItalic",
+              fontSize: SizeConfig.blockSizeHorizontal * 3.1,
+              color: CupertinoColors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          )),
         ),
       ),
     );
   }
-
-
 }

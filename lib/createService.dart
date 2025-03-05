@@ -562,7 +562,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withOpacity(0.1),
+                            Colors.black.withOpacity(0.3),
                             Colors.black.withOpacity(0.3),
                             Colors.black.withOpacity(0.4),
                             Colors.black.withOpacity(0.7),
@@ -2043,7 +2043,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                     hintStyle: TextStyle(
                       fontFamily: "Roboto_Regular",
                       color: Color(0xffacacac),
-                      fontSize: 14, // ✅ Adjust size if needed
+                      fontSize: 14,
                     ),
                     fillColor: Color(0xffF5F6FB),
                     hoverColor: Colors.white,

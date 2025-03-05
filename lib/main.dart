@@ -223,13 +223,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Timer(duration, navigateParentPage); // Default Case
 }}*/
 
-
-
-
 import 'dart:async';
 
 import 'package:anything/Common_File/SizeConfig.dart';
-import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/MainHome.dart';
 import 'package:anything/newGetStorage.dart';
 import 'package:flutter/material.dart';
@@ -238,7 +234,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:device_preview/device_preview.dart';
 
 import 'Authentication/register_common.dart';
-import 'ConstantData/AuthStorage.dart';
+import 'mm.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -276,16 +272,16 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           routes: <String, WidgetBuilder>{
             '/dashboard': (BuildContext context) => MainHome(
-              lat: '',
-              long: '',
-              showLoginWidget: false,
-            ),
+                  lat: '',
+                  long: '',
+                  showLoginWidget: false,
+                ),
             '/register': (BuildContext context) => PhoneRegistrationPage(
-              mobileNumber: '',
-              email: '',
-              phoneNumber: '',
-              showLoginWidget: false,
-            ),
+                  mobileNumber: '',
+                  email: '',
+                  phoneNumber: '',
+                  showLoginWidget: false,
+                ),
           },
         );
       },
@@ -293,118 +289,185 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatefulWidget   {
   const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+
+    with TickerProviderStateMixin {
+
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+ late AnimationController _controllerZoom;
+  late Animation<double> _animation;
+
+
   @override
   void initState() {
     super.initState();
-    startTimer();
+     startTimer();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 800), // Animation duration
+    );
+
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(_controller)
+      ..addStatusListener((status) {
+        // Repeat the animation back and forth
+        if (status == AnimationStatus.completed) {
+          _controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          _controller.forward();
+        }
+      });
+
+    // 3. Start animation
+    _controller.forward();
+
+
+
+/*
+    _controllerZoom = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    );
+
+
+    _animation = Tween(begin: 0.0, end: 200.0).animate(_controller);
+
+
+    _controllerZoom.addListener(() {
+      setState(() {});
+    });
+
+    // Start the animation
+    _controllerZoom.forward();*/
+
+
+
+
+    _controllerZoom = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+
+    // Define an animation that goes from 0 (zoomed out) to 1 (full size).
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controllerZoom, curve: Curves.easeInOut),
+    );
+
+    // Start the animation as soon as the widget is built.
+    _controllerZoom.forward();
+  }
+
+
+
+
+  @override
+  void dispose() {
+    // Always dispose controller to free resources
+    _controller.dispose();
+    _controllerZoom.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      body:Column(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding:  EdgeInsets.only(top: 240),
+        child: Stack(
+         // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ddt(
+                          )));
+                },
+                child:
 
-
-        children: <Widget>[
-
-          Stack(
-            children: [
-              Container(
-
-                height: SizeConfig.screenHeight * 0.3,
-                decoration: BoxDecoration(
-                    color: CommonColor.splashContainer,
-                    borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(70),
-                        bottomLeft: Radius.circular(70))
-                ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.25),
-                child: Center(
-                  child: Container(
-                    height: 100,
-                    width: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-
-
+                ScaleTransition(
+                  scale: _animation,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 100, left: 90),
+                    child: SizedBox(
+                      height: 200,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Image(
+                          image: AssetImage("assets/images/logo.png"),
+                        ),
+                      ),
                     ),
-                    child: Image(
-                        image: const AssetImage("assets/images/logo.png"),
-                        height: SizeConfig.screenHeight * 0.1),
-
                   ),
-                ),
-              )
-            ],
-          ),
-          SplashScreen(SizeConfig.screenHeight, SizeConfig.screenWidth)
+                )
 
-        ],
-      ),
-
-    );
-  }
-
-
-
-  Widget SplashScreen(double parentHeight, double parentWidth) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(top: parentWidth * 0.1),
-          child: Image(image: AssetImage("assets/images/group.png"),
-              height: parentHeight * 0.2),
-        ),
-
-        SizedBox(height: 30),
-
-        Text("Anything on Rent",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: SizeConfig.blockSizeHorizontal * 6.0,
-              fontWeight: FontWeight.bold,
             ),
-            textAlign: TextAlign.center),
-        SizedBox(height: 40),
-        Padding(
-          padding: EdgeInsets.only(
-              left: parentWidth * 0.09, right: parentWidth * 0.09),
-          child: Text(
-              "Upgrade your Product with new products after 15 Days of use for free",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: SizeConfig.blockSizeHorizontal * 4.0,
+            AnimatedBuilder(
+              animation: _scaleAnimation,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _scaleAnimation.value,
+                  child: child,
+                );
+              },
+              child: Container(
+                height: 200,
+                width: 400,
+              // color: Colors.red,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding:  EdgeInsets.only(top: 100,left: 20),
+                      child: Image(
+                        image: const AssetImage("assets/images/splash_one.png"),height: 50,
+                      ),
+                    ),
 
-                fontFamily: 'Montserrat-Medium',
 
+
+
+                    Padding(
+                      padding:  EdgeInsets.only(bottom: 60),
+                      child: Image(
+                        image: const AssetImage("assets/images/splash_two.png"),height: 60,
+                      ),
+                    ),
+
+                    Padding(
+                      padding:  EdgeInsets.only(bottom: 80,left: 80),
+                      child: Image(
+                        image:  AssetImage("assets/images/splash_three.png"),height: 50,
+                      ),
+                    ),
+
+                    Padding(
+                      padding:  EdgeInsets.only(left: 10,top: 30),
+                      child: Image(
+                        image:  AssetImage("assets/images/splash_four.png"),height: 60,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              textScaleFactor: 1.0,
-              textAlign: TextAlign.center),
+            ),
+
+          ],
         ),
-
-
-        //     Style
-
-      ],
+      ),
     );
   }
-
-
-
 
   void navigateToRegister() {
     Navigator.of(context).pushReplacementNamed('/register');
@@ -421,20 +484,20 @@ class _SplashScreenState extends State<SplashScreen> {
       bool isFirstTime = GetStorage().read('isFirstTime') ?? false;
       String? accessToken = NewAuthStorage.getAccessToken();
 
-      print("📌 First Time: $isFirstTime, Access Token: $accessToken");
+      print("First Time: $isFirstTime, Access Token: $accessToken");
 
       if (isFirstTime) {
-        print("🔴 First time user, Navigating to Register Page");
+        print("First time user, Navigating to Register Page");
         return Timer(duration, navigateToRegister);
       } else if (accessToken == null || accessToken.isEmpty) {
-        print("🟠 Token Not Found, Navigating to Register Page");
+        print("Token Not Found, Navigating to Register Page");
         return Timer(duration, navigateToRegister);
       } else {
-        print("🟢 Token Found, Navigating to Dashboard");
+        print("Token Found, Navigating to Dashboard");
         return Timer(duration, navigateToDashboard);
       }
     } catch (e) {
-      print("❌ Error in startTimer: $e");
+      print("Error in startTimer: $e");
     }
 
     return Timer(duration, navigateToDashboard); // Default Case

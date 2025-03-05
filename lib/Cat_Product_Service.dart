@@ -9,11 +9,13 @@ import 'NewDioClient.dart';
 import 'ResponseModule/getAllCatList.dart';
 import 'createProduct.dart';
 import 'model/dio_client.dart';
+
 class CatProductService extends StatefulWidget {
   final Function(String) onChanged;
   final String categoryId;
 
-  const CatProductService({super.key, required this.onChanged, required this.categoryId});
+  const CatProductService(
+      {super.key, required this.onChanged, required this.categoryId});
 
   @override
   State<CatProductService> createState() => _CatProductServiceState();
@@ -49,23 +51,17 @@ class _CatProductServiceState extends State<CatProductService> {
   bool isSearchingData = false;
   File imageFile = File('/storage/emulated/0/Download/sample_image.jpg');
 
-
-
   @override
   void initState() {
     fetchCategories();
-
-
     super.initState();
   }
-
 
   void fetchCategories() async {
     try {
       Map<String, dynamic> response = await NewApiClients().NewGetAllCat();
       var jsonList = GetAllCategoriesList.fromJson(response);
       setState(() {
-
         items = jsonList.data ?? [];
 
         filteredItems = List.from(items);
@@ -79,40 +75,32 @@ class _CatProductServiceState extends State<CatProductService> {
     }
   }
 
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Column(
-        children: [
-          DataServiceProduct(SizeConfig.screenHeight,SizeConfig.screenWidth)
-        ],
-      )
-    );
+        body: Column(
+      children: [
+        DataServiceProduct(SizeConfig.screenHeight, SizeConfig.screenWidth)
+      ],
+    ));
   }
 
-
-  Widget DataServiceProduct(double parentHeight,double parentWidth){
-    return  Container(
+  Widget DataServiceProduct(double parentHeight, double parentWidth) {
+    return Container(
       height: SizeConfig.screenHeight * 0.93,
       child: Column(
         children: [
           Padding(
-            padding:  EdgeInsets.only(top: 40,left: 10,right: 10),
+            padding: EdgeInsets.only(top: 40, left: 10, right: 10),
             child: Container(
-              padding:  EdgeInsets.all(5.0),
+              padding: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
                 color: Color(0xffe1e8fd),
                 borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceAround, // Align buttons to ends
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceAround, // Align buttons to ends
                 children: [
                   GestureDetector(
                     onTap: () {
@@ -126,16 +114,13 @@ class _CatProductServiceState extends State<CatProductService> {
                       decoration: BoxDecoration(
                         gradient: selectedIndex != 1
                             ? LinearGradient(
-                          colors: [Color(0xff632883), Color(0xff8d42a3)],
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                        )
+                                colors: [Color(0xff632883), Color(0xff8d42a3)],
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                              )
                             : null,
-                        color: selectedIndex == 1
-                            ? Colors.transparent
-                            : null,
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(30)),
+                        color: selectedIndex == 1 ? Colors.transparent : null,
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
                       child: Text(
                         "Product",
@@ -161,16 +146,13 @@ class _CatProductServiceState extends State<CatProductService> {
                       decoration: BoxDecoration(
                         gradient: selectedIndex == 1
                             ? LinearGradient(
-                          colors: [Color(0xfff12935), Color(0xffFF5963)],
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                        )
+                                colors: [Color(0xfff12935), Color(0xffFF5963)],
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                              )
                             : null,
-                        color: selectedIndex != 1
-                            ? Colors.transparent
-                            : null,
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(30)),
+                        color: selectedIndex != 1 ? Colors.transparent : null,
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
                       child: Text(
                         "Service",
@@ -190,137 +172,175 @@ class _CatProductServiceState extends State<CatProductService> {
           ),
           Expanded(
             child: Container(
-
               alignment: Alignment.center,
               child: selectedIndex == 0
-                  ?  Expanded(
-                  child: Padding(
+                  ? Padding(
                     padding: EdgeInsets.all(1.0),
-                    child: filteredItems.isNotEmpty
-                        ? GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, // Number of columns
-                        crossAxisSpacing: 11.0, // Space between columns
-                        mainAxisSpacing: 1.0, // Space between rows
-                        childAspectRatio: 1,
-                      ),
-                      itemCount: filteredItems.length,
-
-                      itemBuilder: (context, index) {
-                        print(
-                            "ddddd  ${filteredItems[index].name.toString()}");
-
-
-                        return GestureDetector(
-                          onTap: () {
-                            String selectedCategoryId = filteredItems[index].sId.toString();
-                            print("Selected Category ID: $selectedCategoryId");
-                            print("Category Name: ${filteredItems[index].name.toString()}");
-
-
-                            String baseUrl = ApiConstant().BaseUrl;
-                            String imagePath = filteredItems[index].bannerImage != null &&
-                                filteredItems[index].bannerImage!.isNotEmpty
-                                ? baseUrl + filteredItems[index].bannerImage!
-                                : 'assets/images/estione.png';
-                            widget.onChanged(
-                                selectedCategoryId);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        NewProduct(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress:'', categoryName: filteredItems[index].name.toString(),
-                                          imagePath: imagePath,
-                                        )));
-
-
-                            /*Navigator.pop(context,
-                                filteredItems[index].name.toString());*/
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                left: 8.0,
-                                right: 5.0,
-                                top: 14.0,
-                                bottom: 10.0),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(15))),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Image.asset(
-                                    catagriesImage[index],
-                                    width: 35,
-                                  ),
+                    child: isLoading
+                        ? Center(
+                            child: Padding(
+                            padding: EdgeInsets.only(top: 40),
+                            child: Image(
+                                image: AssetImage("assets/images/logo.gif"),
+                                height: SizeConfig.screenHeight * 0.16),
+                          ))
+                        : filteredItems.isNotEmpty
+                            ? GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing:
+                                      11.0,
+                                  mainAxisSpacing:
+                                      1.0,
+                                  childAspectRatio: 1,
                                 ),
-                                Container(
-                                  width: 120,
-                                  margin: EdgeInsets.only(bottom: 5),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text(
-                                      filteredItems[index].name.toString(),
+                                itemCount: filteredItems.length,
+                                itemBuilder: (context, index) {
+                                  print(
+                                      "ddddd  ${filteredItems[index].name.toString()}");
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      String selectedCategoryId =
+                                          filteredItems[index]
+                                              .sId
+                                              .toString();
+                                      print(
+                                          "Selected Category ID: $selectedCategoryId");
+                                      print(
+                                          "Category Name: ${filteredItems[index].name.toString()}");
+
+                                      String baseUrl =
+                                          ApiConstant().BaseUrl;
+                                      String imagePath =
+                                          filteredItems[index]
+                                                          .bannerImage !=
+                                                      null &&
+                                                  filteredItems[index]
+                                                      .bannerImage!
+                                                      .isNotEmpty
+                                              ? baseUrl +
+                                                  filteredItems[index]
+                                                      .bannerImage!
+                                              : 'assets/images/estione.png';
+                                      widget.onChanged(selectedCategoryId);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NewProduct(
+                                                    lat: '',
+                                                    long: '',
+                                                    ProductAddress: '',
+                                                    BusinessOfficeAddress:
+                                                        '',
+                                                    categoryName:
+                                                        filteredItems[index]
+                                                            .name
+                                                            .toString(),
+                                                    imagePath: imagePath,
+                                                  )));
+
+                                      /*Navigator.pop(context,
+                                filteredItems[index].name.toString());*/
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          left: 8.0,
+                                          right: 5.0,
+                                          top: 14.0,
+                                          bottom: 10.0),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Image.asset(
+                                              catagriesImage[index],
+                                              width: 35,
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 120,
+                                            margin:
+                                                EdgeInsets.only(bottom: 5),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                filteredItems[index]
+                                                    .name
+                                                    .toString(),
+                                                style: TextStyle(
+                                                  color: CommonColor.Black,
+                                                  fontFamily:
+                                                      "Roboto_Regular",
+                                                  fontSize: SizeConfig
+                                                          .blockSizeHorizontal *
+                                                      3.2,
+                                                  fontWeight:
+                                                      FontWeight.w400,
+                                                ),
+                                                overflow:
+                                                    TextOverflow.ellipsis,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                            : Column(
+                                children: [
+                                  Icon(
+                                    Icons.search_sharp,
+                                    color: CommonColor.noResult,
+                                    size: 50,
+                                  ),
+                                  Text("No results found",
                                       style: TextStyle(
                                         color: CommonColor.Black,
                                         fontFamily: "Roboto_Regular",
                                         fontSize:
-                                        SizeConfig.blockSizeHorizontal *
-                                            3.2,
+                                            SizeConfig.blockSizeHorizontal *
+                                                4.0,
+                                        fontWeight: FontWeight.w600,
+                                      )),
+                                  SizedBox(height: 10),
+                                  Container(
+                                    width: SizeConfig.screenWidth * 0.6,
+                                    child: Text(
+                                      "We couldn't find what you searched for try searching again",
+                                      style: TextStyle(
+                                        color: CommonColor.gray,
+                                        fontFamily: "Roboto_Regular",
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal *
+                                                3.3,
                                         fontWeight: FontWeight.w400,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
                                       textAlign: TextAlign.center,
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                        : Column(
-                      children: [
-                        Icon(
-                          Icons.search_sharp,
-                          color: CommonColor.noResult,
-                          size: 50,
-                        ),
-                        Text("No results found",
-                            style: TextStyle(
-                              color: CommonColor.Black,
-                              fontFamily: "Roboto_Regular",
-                              fontSize: SizeConfig.blockSizeHorizontal * 4.0,
-                              fontWeight: FontWeight.w600,
-                            )),
-                        SizedBox(height: 10),
-                        Container(
-                          width: SizeConfig.screenWidth * 0.6,
-                          child: Text(
-                            "We couldn't find what you searched for try searching again",
-                            style: TextStyle(
-                              color: CommonColor.gray,
-                              fontFamily: "Roboto_Regular",
-                              fontSize: SizeConfig.blockSizeHorizontal * 3.3,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      ],
-                    ),
-                  ))
+                                  )
+                                ],
+                              ),
+                  )
                   : Text(
-                "Zepto Super Saver Content",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                      "Zepto Super Saver Content",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
         ],
