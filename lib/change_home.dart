@@ -69,7 +69,7 @@ class _ChangeHomeState extends State<ChangeHome> {
             //  physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               Container(
-                height: ResponsiveUtil.height(160),
+                height: ResponsiveUtil.height(180),
                 color: const Color(0xfff1f2fd),
                 child: Stack(
                   children: [
@@ -853,17 +853,14 @@ class _ChangeHomeState extends State<ChangeHome> {
             Stack(
               children: [
                 Container(
-                  height: ResponsiveUtil.height(300),
+                  height: ResponsiveUtil.height(345),
                   decoration: _backgroundDecoration.copyWith(
                     borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(20),
                       bottomLeft: Radius.circular(20),
                     ),
                   ),
-
-    ),
-
-
+                ),
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
@@ -872,252 +869,251 @@ class _ChangeHomeState extends State<ChangeHome> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
+                          Colors.black.withOpacity(0.5),
                           Colors.black.withOpacity(0.4),
-                          Colors.black.withOpacity(0.4),
-                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.5),
                           Colors.black.withOpacity(0.5),
                         ],
                       ),
                     ),
                   ),
                 ),
+                ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: ResponsiveUtil.height(40),
+                        left: ResponsiveUtil.width(15),
+                        right: ResponsiveUtil.width(15),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _scaffoldKey.currentState?.openDrawer();
+                            },
+                            child:
+                                Icon(Icons.dehaze_rounded, color: Colors.black),
+                          ),
+                          SizedBox(width: ResponsiveUtil.width(10)),
 
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Name Text
+                                Container(
+                                  width: double.infinity,
+                                  child: Text(
+                                    "Hi, Aayshaaa",
+                                    style: TextStyle(
+                                      fontSize: ResponsiveUtil.fontSize(15),
+                                      fontFamily: 'okra_extrabold',
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.white,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                                SizedBox(height: ResponsiveUtil.height(2)),
 
- ListView(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    //crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: ResponsiveUtil.height(40),
-                          left: ResponsiveUtil.width(15),
-                          right: ResponsiveUtil.width(15),
+                                // Location Row
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/location.png',
+                                      height: ResponsiveUtil.height(16),
+                                      color: CupertinoColors.white,
+                                    ),
+                                    SizedBox(width: ResponsiveUtil.width(3)),
+                                    Expanded(
+                                      child: Text(
+                                        "Opposite Sassoon Hospital, Station Road, Pune-411001",
+                                        style: TextStyle(
+                                          fontSize: ResponsiveUtil.fontSize(14),
+                                          fontFamily: 'Poppins_Bold',
+                                          fontWeight: FontWeight.w400,
+                                          letterSpacing: 0.5,
+                                          color: CupertinoColors.white,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1, // Prevents text overflow
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(
+                              width: ResponsiveUtil.width(
+                                  10)), // Spacing before icon
+                          Image.asset(
+                            'assets/images/notification.png',
+                            height: ResponsiveUtil.height(20),
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: ResponsiveUtil.height(13)),
+
+                    // Tab Buttons
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveUtil.width(10)),
+                      child: Container(
+                        padding: EdgeInsets.all(ResponsiveUtil.width(2)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
                         ),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                _scaffoldKey.currentState?.openDrawer();
-                              },
-                              child: Icon(Icons.dehaze_rounded,
-                                  color: Colors.black),
-                            ),
-                            SizedBox(width: ResponsiveUtil.width(10)),
-
+                            // Product Button
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Name Text
-                                  Container(
-                                    width: double.infinity,
-                                    child: Text(
-                                      "Hi, Aayshaaa",
-                                      style: TextStyle(
-                                        fontSize: ResponsiveUtil.fontSize(15),
-                                        fontFamily: 'okra_extrabold',
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                              flex: 3,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedIndex = 0;
+                                    _changeBackground(0);
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: ResponsiveUtil.height(9),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: selectedIndex == 0
+                                        ? LinearGradient(
+                                            colors: [
+                                              Color(0xff632883),
+                                              Color(0xff8d42a3)
+                                            ],
+                                            begin: Alignment.topRight,
+                                            end: Alignment.bottomLeft,
+                                          )
+                                        : null,
+                                    color: selectedIndex != 0
+                                        ? Colors.transparent
+                                        : null,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "Product",
+                                    style: TextStyle(
+                                      fontFamily: "Montserrat-BoldItalic",
+                                      color: selectedIndex == 0
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: ResponsiveUtil.fontSize(15),
                                     ),
                                   ),
-                                  SizedBox(height: ResponsiveUtil.height(2)),
-
-                                  // Location Row
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/location.png',
-                                        height: ResponsiveUtil.height(16),
-                                        color: CupertinoColors.black,
-                                      ),
-                                      SizedBox(width: ResponsiveUtil.width(3)),
-                                      Expanded(
-                                        child: Text(
-                                          "Opposite Sassoon Hospital, Station Road, Pune-411001",
-                                          style: TextStyle(
-                                            fontSize:
-                                                ResponsiveUtil.fontSize(14),
-                                            fontFamily: 'Poppins_Bold',
-                                            fontWeight: FontWeight.w400,
-                                            letterSpacing: 0.5,
-                                            color: CupertinoColors.black,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1, // Prevents text overflow
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
 
-                            SizedBox(
-                                width: ResponsiveUtil.width(
-                                    10)), // Spacing before icon
-                            Image.asset(
-                              'assets/images/notification.png',
-                              height: ResponsiveUtil.height(20),
-                              color: Colors.white,
+                            // Service Button
+                            Expanded(
+                              flex: 3,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedIndex = 1;
+                                    _changeBackground(1);
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: ResponsiveUtil.height(9),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: selectedIndex == 1
+                                        ? LinearGradient(
+                                            colors: [
+                                              Color(0xfff12935),
+                                              Color(0xffFF5963)
+                                            ],
+                                            begin: Alignment.topRight,
+                                            end: Alignment.bottomLeft,
+                                          )
+                                        : null,
+                                    color: selectedIndex != 1
+                                        ? Colors.transparent
+                                        : null,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "Service",
+                                    style: TextStyle(
+                                      fontFamily: "Montserrat-BoldItalic",
+                                      color: selectedIndex == 1
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: ResponsiveUtil.fontSize(15),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: ResponsiveUtil.height(13)),
-
-                      // Tab Buttons
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ResponsiveUtil.width(10)),
-                        child: Container(
-                          padding: EdgeInsets.all(ResponsiveUtil.width(2)),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Row(
-                            children: [
-                              // Product Button
-                              Expanded(
-                                flex: 3,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedIndex = 0;
-                                      _changeBackground(0);
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: ResponsiveUtil.height(9),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      gradient: selectedIndex == 0
-                                          ? LinearGradient(
-                                              colors: [
-                                                Color(0xff632883), Color(0xff8d42a3)],
-
-                                              begin: Alignment.topRight,
-                                              end: Alignment.bottomLeft,
-                                            )
-                                          : null,
-                                      color: selectedIndex != 0
-                                          ? Colors.transparent
-                                          : null,
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "Product",
-                                      style: TextStyle(
-                                        fontFamily: "Montserrat-BoldItalic",
-                                        color: selectedIndex == 0
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: ResponsiveUtil.fontSize(15),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // Service Button
-                              Expanded(
-                                flex: 3,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedIndex = 1;
-                                      _changeBackground(1);
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: ResponsiveUtil.height(9),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      gradient: selectedIndex == 1
-                                          ? LinearGradient(
-                                              colors: [
-                                                Color(0xfff12935), Color(0xffFF5963)
-                                              ],
-                                              begin: Alignment.topRight,
-                                              end: Alignment.bottomLeft,
-                                            )
-                                          : null,
-                                      color: selectedIndex != 1
-                                          ? Colors.transparent
-                                          : null,
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "Service",
-                                      style: TextStyle(
-                                        fontFamily: "Montserrat-BoldItalic",
-                                        color: selectedIndex == 1
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: ResponsiveUtil.fontSize(15),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                      child: Text(
+                        "   ANYTHING ON RENT",
+                        style: TextStyle(
+                          fontFamily: "okra_extrabold",
+                          fontSize: SizeConfig.blockSizeHorizontal * 5.0,
+                          color: CupertinoColors.white,
+                          fontWeight: FontWeight.w200,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: SizeConfig.screenHeight * 0.02),
-                        child: Text(
-                          "     ANYTHING ON RENT",
-                          style: TextStyle(
-                            fontFamily: "okra_extrabold",
-                            fontSize: SizeConfig.blockSizeHorizontal * 5.0,
-                            color: CupertinoColors.black,
-                            fontWeight: FontWeight.w200,
-                          ),
-                        ),
-                      ),
+                    ),
 
-                      GestureDetector(
-                        onTap: () async {
-                          String? selectedCity = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LocationMapScreen()),
+                    GestureDetector(
+                      onTap: () async {
+                        String? selectedCity = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LocationMapScreen()),
+                        );
+                        if (selectedCity != null) {
+                          print("Received City: $selectedCity");
+
+                          setState(() {
+                            updatedCity = selectedCity;
+                          });
+                          String? id = GetStorage().read<String>('userId');
+                          print("jjjjjjjj  $id");
+                          bool success = await authService.storeUserCity(
+                            id!, // User ID
+                            18.5204, // Latitude
+                            73.8567, // Longitude
+                            selectedCity, // City
                           );
-                          if (selectedCity != null) {
-                            print("✅ Received City: $selectedCity");
 
-                            setState(() {
-                              updatedCity = selectedCity;
-                            });
-                            String? id = GetStorage().read<String>('userId');
-                            print("jjjjjjjj  $id");
-                            bool success = await authService.storeUserCity(
-                              id!, // User ID
-                              18.5204, // Latitude
-                              73.8567, // Longitude
-                              selectedCity, // City
-                            );
-
-                            if (success) {
-                              print("City successfully updated in backend!");
-                            } else {
-                              print("❌ Failed to update city in backend.");
-                            }
+                          if (success) {
+                            print("City successfully updated in backend!");
+                          } else {
+                            print("Failed to update city in backend.");
                           }
-                        },
+                        }
+                      },
 /*            onTap: () async {
                           final String? result = await Navigator.push(
                             context,
@@ -1128,47 +1124,52 @@ class _ChangeHomeState extends State<ChangeHome> {
                             updateCity(result); // Update city if selected
                           }
                         },*/
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              top: SizeConfig.screenHeight * 0.0, left: 30),
-                          child: Row(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: SizeConfig.screenHeight * 0.01,
+                            left: 20,
+                            right: 150),
+
+
+                          child: Column(
                             children: [
-                              Icon(
-                                Icons.location_on,
-                                size: SizeConfig.screenHeight * 0.025,
-                                color: Color(0xfff44343),
-                              ),
-                              Flexible(
-                                child: Container(
-                                  width: 120,
-                                  child: Text(
-                                    updatedCity,
-                                    style: TextStyle(
-                                      color: Color(0xfff44343),
-                                      letterSpacing: 0.0,
-                                      fontFamily: "okra_Medium",
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal * 3.7,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    size: SizeConfig.screenHeight * 0.025,
+                                    color: Colors.white,
                                   ),
-                                ),
-                              ),
+                                  Flexible(
+                                    child: Text(
+                                      updatedCity,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        letterSpacing: 0.0,
+                                        fontFamily: "okra_Medium",
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal * 3.7,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+
+
+                                ],
+                              ),  AddPostButton(
+                                SizeConfig.screenHeight, SizeConfig.screenWidth),
                             ],
                           ),
                         ),
                       ),
-                      AddPostButton(
-                          SizeConfig.screenHeight, SizeConfig.screenWidth),
-
-                      HomeSearchBar(
-                          SizeConfig.screenHeight, SizeConfig.screenWidth),
-                    ],
-                  ),
 
 
+                    HomeSearchBar(
+                        SizeConfig.screenHeight, SizeConfig.screenWidth),
+                  ],
+                ),
               ],
             ),
           ],
