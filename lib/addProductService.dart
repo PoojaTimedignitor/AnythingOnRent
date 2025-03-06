@@ -10,7 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
-import 'CatagrioesList.dart';
+import 'ProductSeparateCat.dart';
 import 'ConstantData/Constant_data.dart';
 import 'MyBehavior.dart';
 import 'ResponseModule/getSubCatResponseModel.dart';

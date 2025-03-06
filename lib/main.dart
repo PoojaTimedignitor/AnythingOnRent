@@ -392,7 +392,9 @@ class _SplashScreenState extends State<SplashScreen>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ddt(
+                          builder: (context) => ShowUp( delay: 300,
+                            repeat: true,
+                            child: Text("Hello, Animated Screen!"),
                           )));
                 },
                 child:

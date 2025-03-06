@@ -85,7 +85,9 @@ class _CatProductServiceState extends State<CatProductService> {
     ));
   }
 
-  Widget DataServiceProduct(double parentHeight, double parentWidth) {
+  Widget DataServiceProduct(double parentHeight, double parentWidth)
+
+  {
     return Container(
       height: SizeConfig.screenHeight * 0.93,
       child: Column(

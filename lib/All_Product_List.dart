@@ -11,9 +11,7 @@ import 'dart:ui';
 
 import 'DetailScreen.dart';
 import 'MyBehavior.dart';
-import 'ResponseModule/getAllProductList.dart';
-import 'ResponseModule/getAllProductList.dart';
-import 'ResponseModule/getAllProductList.dart';
+
 import 'ff.dart';
 
 class AllProductList extends StatefulWidget {

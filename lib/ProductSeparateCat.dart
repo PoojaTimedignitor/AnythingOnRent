@@ -119,10 +119,10 @@ class _CatagriesListState extends State<CatagriesList> {
 
   Widget AllCatagriesList(double parentheight, double parentWidth) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
-          padding: EdgeInsets.only(top: parentheight * 0.03),
+          padding: EdgeInsets.only(top: parentheight * 0.05),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -169,36 +169,33 @@ class _CatagriesListState extends State<CatagriesList> {
                             ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(13.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        print("list...$filteredItems");
-                        setState(() {
-                          isSearchingData = !isSearchingData;
-                          if (!isSearchingData) {
-                            filteredItems = items;
-                          }
-                        });
-                      },
-                      child: Icon(
-                        isSearchingData ? Icons.close : Icons.search_rounded,
-                      ),
+                  GestureDetector(
+                    onTap: () {
+                      print("list...$filteredItems");
+                      setState(() {
+                        isSearchingData = !isSearchingData;
+                        if (!isSearchingData) {
+                          filteredItems = items;
+                        }
+                      });
+                    },
+                    child: Icon(
+                      isSearchingData ? Icons.close : Icons.search_rounded,
                     ),
                   )
                 ],
-              ),
+              ),  SizedBox(height: 15),
               Container(
                 height: SizeConfig.screenHeight * 0.0005,
                 color: CommonColor.SearchBar,
               ),
 
-              SizedBox(height: 15),
+
               // ListView to show filtered items
 
               Expanded(
                   child: Padding(
-                padding: EdgeInsets.all(1.0),
+                padding: EdgeInsets.all(0.06),
                 child: filteredItems.isNotEmpty
                     ? GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

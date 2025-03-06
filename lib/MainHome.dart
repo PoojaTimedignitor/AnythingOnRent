@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:anything/CatagrioesList.dart';
+import 'package:anything/ProductSeparateCat.dart';
 import 'package:anything/ConstantData/AuthStorage.dart';
 import 'package:anything/createService.dart';
 import 'package:anything/model/dio_client.dart';
@@ -413,7 +413,7 @@ class MainHomeState extends State<MainHome>
                       print("Logout initiated...");
 
                       String? accessToken = AuthStorage.getAccessToken();
-                      print("📌 Stored Access Token: $accessToken");
+                      print(" Stored Access Token: $accessToken");
                       /*String? sessionToken = GetStorage()
                           .read<String>(ConstantData.userToken);*/
 
@@ -1470,10 +1470,10 @@ class MainHomeState extends State<MainHome>
 
                             if (success) {
                               print(
-                                  "✅ City successfully updated in backend!");
+                                  "City successfully updated in backend!");
                             } else {
                               print(
-                                  "❌ Failed to update city in backend.");
+                                  "Failed to update city in backend.");
                             }
                           }
                         },
