@@ -980,347 +980,353 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
             ],
           ),
         ),
-        body: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          physics: AlwaysScrollableScrollPhysics(),
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: ResponsiveUtil.height(300),
-                  decoration: _backgroundDecoration.copyWith(
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(20),
-                      bottomLeft: Radius.circular(20),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.6),
-                          Colors.black.withOpacity(0.6),
-                          Colors.black.withOpacity(0.5),
-                          Colors.black.withOpacity(0.5),
-                        ],
+        body:  ScrollConfiguration(
+          behavior: MyBehavior(),
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: AlwaysScrollableScrollPhysics(),
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    height: ResponsiveUtil.height(300),
+                    decoration: _backgroundDecoration.copyWith(
+                      borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
                       ),
                     ),
                   ),
-                ),
-                ListView(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: ResponsiveUtil.height(40),
-                        left: ResponsiveUtil.width(15),
-                        right: ResponsiveUtil.width(15),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _scaffoldKey.currentState?.openDrawer();
-                            },
-                            child:
-                                Icon(Icons.dehaze_rounded, color: Colors.black),
-                          ),
-                          SizedBox(width: ResponsiveUtil.width(10)),
-
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Name Text
-                                Container(
-                                  width: double.infinity,
-                                  child: Text(
-                                    "Hi, Aayshaaa",
-                                    style: TextStyle(
-                                      fontSize: ResponsiveUtil.fontSize(15),
-                                      fontFamily: 'okra_extrabold',
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.white,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                                SizedBox(height: ResponsiveUtil.height(2)),
-
-                                // Location Row
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/location.png',
-                                      height: ResponsiveUtil.height(16),
-                                      color: CupertinoColors.white,
-                                    ),
-                                    SizedBox(width: ResponsiveUtil.width(3)),
-                                    Expanded(
-                                      child: Text(
-                                        "Opposite Sassoon Hospital, Station Road, Pune-411001",
-                                        style: TextStyle(
-                                          fontSize: ResponsiveUtil.fontSize(14),
-                                          fontFamily: 'Poppins_Bold',
-                                          fontWeight: FontWeight.w400,
-                                          letterSpacing: 0.5,
-                                          color: CupertinoColors.white,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1, // Prevents text overflow
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(
-                              width: ResponsiveUtil.width(
-                                  10)), // Spacing before icon
-                          Image.asset(
-                            'assets/images/notification.png',
-                            height: ResponsiveUtil.height(20),
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveUtil.height(13)),
-
-                    // Tab Buttons
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveUtil.width(10)),
-                      child: Container(
-                        padding: EdgeInsets.all(ResponsiveUtil.width(2)),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Row(
-                          children: [
-                            // Product Button
-                            Expanded(
-                              flex: 3,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedIndex = 0;
-                                    _changeBackground(0);
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: ResponsiveUtil.height(9),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: selectedIndex == 0
-                                        ? LinearGradient(
-                                            colors: [
-                                              Color(0xfff12935),
-                                              Color(0xffFF5963)
-                                            ],
-                                            begin: Alignment.topRight,
-                                            end: Alignment.bottomLeft,
-                                          )
-                                        : null,
-                                    color: selectedIndex != 0
-                                        ? Colors.transparent
-                                        : null,
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Service",
-                                    style: TextStyle(
-                                      fontFamily: "Montserrat-BoldItalic",
-                                      color: selectedIndex == 0
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: ResponsiveUtil.fontSize(15),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            // Service Button
-                            Expanded(
-                              flex: 3,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedIndex = 1;
-                                    _changeBackground(1);
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: ResponsiveUtil.height(9),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: selectedIndex == 1
-                                        ? LinearGradient(
-                                            colors: [
-                                              Color(0xff632883),
-                                              Color(0xff8d42a3)
-                                            ],
-                                            begin: Alignment.topRight,
-                                            end: Alignment.bottomLeft,
-                                          )
-                                        : null,
-                                    color: selectedIndex != 1
-                                        ? Colors.transparent
-                                        : null,
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Product",
-                                    style: TextStyle(
-                                      fontFamily: "Montserrat-BoldItalic",
-                                      color: selectedIndex == 1
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: ResponsiveUtil.fontSize(15),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.6),
+                            Colors.black.withOpacity(0.6),
+                            Colors.black.withOpacity(0.5),
+                            Colors.black.withOpacity(0.5),
                           ],
                         ),
                       ),
                     ),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
-                      child: Text(
-                        "   ANYTHING ON RENT",
-                        style: TextStyle(
-                          fontFamily: "okra_extrabold",
-                          fontSize: SizeConfig.blockSizeHorizontal * 5.0,
-                          color: CupertinoColors.white,
-                          fontWeight: FontWeight.w200,
+                  ),
+                  ListView(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: ResponsiveUtil.height(40),
+                          left: ResponsiveUtil.width(15),
+                          right: ResponsiveUtil.width(15),
                         ),
-                      ),
-                    ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                _scaffoldKey.currentState?.openDrawer();
+                              },
+                              child:
+                                  Icon(Icons.dehaze_rounded, color: Colors.black),
+                            ),
+                            SizedBox(width: ResponsiveUtil.width(10)),
 
-                    GestureDetector(
-                        onTap: () async {
-                          String? selectedCity = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LocationMapScreen()),
-                          );
-                          if (selectedCity != null) {
-                            print("Received City: $selectedCity");
-
-                            setState(() {
-                              updatedCity = selectedCity;
-                            });
-                            String? id = GetStorage().read<String>('userId');
-                            print("jjjjjjjj  $id");
-                            bool success = await authService.storeUserCity(
-                              id!,
-                              18.5204,
-                              73.8567,
-                              selectedCity,
-                            );
-
-                            if (success) {
-                              print("City successfully updated in backend!");
-                            } else {
-                              print("Failed to update city in backend.");
-                            }
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 5, left: 16, right: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 35,
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.8),
-                                    border: Border.all(
-                                        color: Colors.black26, width: 0.5),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_on,
-                                        size: SizeConfig.screenHeight * 0.025,
-                                        color: Color(0xff632883),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Name Text
+                                  Container(
+                                    width: double.infinity,
+                                    child: Text(
+                                      "Hi, Aayshaaa",
+                                      style: TextStyle(
+                                        fontSize: ResponsiveUtil.fontSize(15),
+                                        fontFamily: 'okra_extrabold',
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
                                       ),
-                                      SizedBox(width: 5),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  SizedBox(height: ResponsiveUtil.height(2)),
+
+                                  // Location Row
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/location.png',
+                                        height: ResponsiveUtil.height(16),
+                                        color: CupertinoColors.white,
+                                      ),
+                                      SizedBox(width: ResponsiveUtil.width(3)),
                                       Expanded(
                                         child: Text(
-                                          updatedCity,
+                                          "Opposite Sassoon Hospital, Station Road, Pune-411001",
                                           style: TextStyle(
-                                            color: Color(0xff632883),
-                                            letterSpacing: 0.0,
-                                            fontFamily: "okra_Bold",
-                                            fontSize:
-                                                SizeConfig.blockSizeHorizontal *
-                                                    3.8,
+                                            fontSize: ResponsiveUtil.fontSize(14),
+                                            fontFamily: 'Poppins_Bold',
                                             fontWeight: FontWeight.w400,
+                                            letterSpacing: 0.5,
+                                            color: CupertinoColors.white,
                                           ),
                                           overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
+                                          maxLines: 1, // Prevents text overflow
                                         ),
                                       ),
                                     ],
                                   ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(
+                                width: ResponsiveUtil.width(
+                                    10)), // Spacing before icon
+                            Image.asset(
+                              'assets/images/notification.png',
+                              height: ResponsiveUtil.height(20),
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveUtil.height(13)),
+
+                      // Tab Buttons
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveUtil.width(10)),
+                        child: Container(
+                          padding: EdgeInsets.all(ResponsiveUtil.width(2)),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Row(
+                            children: [
+                              // Product Button
+                              Expanded(
+                                flex: 3,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedIndex = 0;
+                                      _changeBackground(0);
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: ResponsiveUtil.height(9),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: selectedIndex == 0
+                                          ? LinearGradient(
+                                              colors: [
+                                                Color(0xfff12935),
+                                                Color(0xffFF5963)
+                                              ],
+                                              begin: Alignment.topRight,
+                                              end: Alignment.bottomLeft,
+                                            )
+                                          : null,
+                                      color: selectedIndex != 0
+                                          ? Colors.transparent
+                                          : null,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Service",
+                                      style: TextStyle(
+                                        fontFamily: "Montserrat-BoldItalic",
+                                        color: selectedIndex == 0
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: ResponsiveUtil.fontSize(15),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                              SizedBox(width: 30),
-                              AddPostButton(SizeConfig.screenHeight,
-                                  SizeConfig.screenWidth),
+
+                              // Service Button
+                              Expanded(
+                                flex: 3,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedIndex = 1;
+                                      _changeBackground(1);
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: ResponsiveUtil.height(9),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: selectedIndex == 1
+                                          ? LinearGradient(
+                                              colors: [
+                                                Color(0xff632883),
+                                                Color(0xff8d42a3)
+                                              ],
+                                              begin: Alignment.topRight,
+                                              end: Alignment.bottomLeft,
+                                            )
+                                          : null,
+                                      color: selectedIndex != 1
+                                          ? Colors.transparent
+                                          : null,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Product",
+                                      style: TextStyle(
+                                        fontFamily: "Montserrat-BoldItalic",
+                                        color: selectedIndex == 1
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: ResponsiveUtil.fontSize(15),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                        )),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                        child: Text(
+                          "   ANYTHING ON RENT",
+                          style: TextStyle(
+                            fontFamily: "okra_extrabold",
+                            fontSize: SizeConfig.blockSizeHorizontal * 5.0,
+                            color: CupertinoColors.white,
+                            fontWeight: FontWeight.w200,
+                          ),
+                        ),
+                      ),
 
-                    SizedBox(height: 5),
-                    HomeSearchBar(
-                        SizeConfig.screenHeight, SizeConfig.screenWidth),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 13),
-            sliderData(
-              images,
-              SizeConfig.screenHeight,
-              SizeConfig.screenWidth,
-            ),
-            PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
-            Padding(
-              padding:
-              EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03,top: 10),
-              child: getAddGameTabLayout(
-                  SizeConfig.screenHeight, SizeConfig.screenWidth),
-            ),
-          ],
-        ));
+                      GestureDetector(
+                          onTap: () async {
+                            String? selectedCity = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LocationMapScreen()),
+                            );
+                            if (selectedCity != null) {
+                              print("Received City: $selectedCity");
+
+                              setState(() {
+                                updatedCity = selectedCity;
+                              });
+                              String? id = GetStorage().read<String>('userId');
+                              print("jjjjjjjj  $id");
+                              bool success = await authService.storeUserCity(
+                                id!,
+                                18.5204,
+                                73.8567,
+                                selectedCity,
+                              );
+
+                              if (success) {
+                                print("City successfully updated in backend!");
+                              } else {
+                                print("Failed to update city in backend.");
+                              }
+                            }
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 5, left: 16, right: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 35,
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.8),
+                                      border: Border.all(
+                                          color: Colors.black26, width: 0.5),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          size: SizeConfig.screenHeight * 0.025,
+                                          color: Color(0xff632883),
+                                        ),
+                                        SizedBox(width: 5),
+                                        Expanded(
+                                          child: Text(
+                                            updatedCity,
+                                            style: TextStyle(
+                                              color: Color(0xff632883),
+                                              letterSpacing: 0.0,
+                                              fontFamily: "okra_Bold",
+                                              fontSize:
+                                                  SizeConfig.blockSizeHorizontal *
+                                                      3.8,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 30),
+                                AddPostButton(SizeConfig.screenHeight,
+                                    SizeConfig.screenWidth),
+                              ],
+                            ),
+                          )),
+
+                      SizedBox(height: 5),
+                      HomeSearchBar(
+                          SizeConfig.screenHeight, SizeConfig.screenWidth),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 13),
+              sliderData(
+                images,
+                SizeConfig.screenHeight,
+                SizeConfig.screenWidth,
+              ),
+              //PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
+Padding(
+padding:
+EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03,top: 0),
+child: Popular(
+SizeConfig.screenHeight, SizeConfig.screenWidth),
+),
+
+            ],
+          ),
+        )
+
+    );
   }
 
   Widget HomeSearchBar(double parentHeight, double parentWidth) {
@@ -1844,621 +1850,1030 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
   }
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
-    return Padding(
-      padding: EdgeInsets.only(top: parentHeight * 0.0),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Expanded(child: Divider()),
-              SizedBox(
-                width: 10,
-              ),
-              Center(
-                  child: Text("WHAT'S ON YOUR RENTAL MATERIALS?",
-                      style: TextStyle(
-                          color: Colors.grey[500]!,
-                          fontFamily: "okra_Medium",
-                          fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 0.9),
-                      overflow: TextOverflow.ellipsis)),
-              SizedBox(
-                width: 10,
-              ),
-              const Expanded(child: Divider()),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            height: SizeConfig.screenHeight * 0.97,
-            child: Column(
+    return IntrinsicHeight(
+      child: Container(
+        height: SizeConfig.screenHeight * 0.97,
+        color: Colors.red,
+        child: Expanded(
+          child: Container(
+            alignment: Alignment.center,
+            child: selectedIndex == 1
+                ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: selectedIndex == 1
-                        ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Text(
-                              "  Near by Location",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Montserrat-Medium",
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+
+
+
+                PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                SizedBox(height: 10),
+
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Expanded(child: Divider()),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Center(
+                        child: Text("WHAT'S ON YOUR RENTAL MATERIALS?",
+                            style: TextStyle(
+                                color: Colors.grey[500]!,
+                                fontFamily: "okra_Medium",
+                                fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 0.9),
+                            overflow: TextOverflow.ellipsis)),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                SizedBox(height: 15),
+                Row(
+                  children: [
+                    Text(
+                      "  Near by Location",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Montserrat-Medium",
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        /*Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          PhoneRegistrationPage(
+                                            mobileNumber: '',
+                                            email: '',
+                                            phoneNumber: '', showLoginWidget: false,
+                                          )));*/
+
+
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ChangeHome()));
+
+
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: parentWidth * 0.38, top: 5),
+                        child: Container(
+                          height: parentHeight * 0.03,
+                          width: parentWidth * 0.22,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Color(0xff3684F0),
+                                  width: 0.5),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(5))),
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceAround,
+                            children: [
+                              Text(
+                                " View All",
+                                style: TextStyle(
+                                  fontFamily: "okra_Medium",
+                                  fontSize: SizeConfig
+                                      .blockSizeHorizontal *
+                                      3.1,
+                                  color: Color(0xff3684F0),
+                                  fontWeight: FontWeight.w200,
+                                ),
                               ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                /*Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PhoneRegistrationPage(
-                                                    mobileNumber: '',
-                                                    email: '',
-                                                    phoneNumber: '', showLoginWidget: false,
-                                                  )));*/
+                              Image(
+                                image: AssetImage(
+                                    'assets/images/arrow.png'),
+                                height: 20,
+                                width: 15,
+                                color: Color(0xff3684F0),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Text(
+                  "   Near by place",
+                  style: TextStyle(
+                    color: CommonColor.grayText,
+                    fontFamily: "Montserrat-Medium",
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                GridView.builder(
+                  padding: EdgeInsets.only(top: 15),
+                  physics:
+                  NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                  shrinkWrap: true,
+                  gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 1.0,
+                    mainAxisSpacing: 0.0,
+                    childAspectRatio: 1.0, // Adjust as needed
+                  ),
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: EdgeInsets.only(
+                          left: 10.0,
+                          right: 5.0,
+                          top: 0.0,
+                          bottom: 30.0),
 
+                      decoration: BoxDecoration(
+                          color: CommonColor.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Color(0xff000000)
+                                    .withOpacity(0.2),
+                                blurRadius: 2,
+                                spreadRadius: 0,
+                                offset: Offset(0, 1)),
+                          ],
+                          border: Border.all(
+                              color: Colors.black38, width: 0.9),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(7))),
 
+                      // alignment: Alignment.center,
 
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ChangeHome()));
-
-
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: parentWidth * 0.38, top: 5),
-                                child: Container(
-                                  height: parentHeight * 0.03,
-                                  width: parentWidth * 0.22,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color(0xff3684F0),
-                                          width: 0.5),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5))),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        " View All",
-                                        style: TextStyle(
-                                          fontFamily: "okra_Medium",
-                                          fontSize: SizeConfig
-                                              .blockSizeHorizontal *
-                                              3.1,
-                                          color: Color(0xff3684F0),
-                                          fontWeight: FontWeight.w200,
-                                        ),
-                                      ),
-                                      Image(
-                                        image: AssetImage(
-                                            'assets/images/arrow.png'),
-                                        height: 20,
-                                        width: 15,
-                                        color: Color(0xff3684F0),
-                                      )
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Container(
+                                height: SizeConfig.screenHeight *
+                                    0.19,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(10)),
+                                  child: AnotherCarousel(
+                                    images: const [
+                                      NetworkImage(
+                                          "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
+                                      NetworkImage(
+                                          "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
+                                      NetworkImage(
+                                          "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
+                                      NetworkImage(
+                                          "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
+                                      NetworkImage(
+                                          "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
                                     ],
+                                    autoplay: false,
+                                    dotSize: 6,
+                                    dotSpacing: 10,
+                                    dotColor: Colors.white70,
+                                    // overlayShadow: false,
+
+                                    dotIncreasedColor:
+                                    Colors.black45,
+                                    indicatorBgPadding: 3.0,
                                   ),
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                        Text(
-                          "   Near by place",
-                          style: TextStyle(
-                            color: CommonColor.grayText,
-                            fontFamily: "Montserrat-Medium",
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        GridView.builder(
-                          padding: EdgeInsets.only(top: 15),
-                          physics:
-                          NeverScrollableScrollPhysics(), // Disable GridView's scrolling
-                          shrinkWrap: true,
-                          gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 1.0,
-                            mainAxisSpacing: 0.0,
-                            childAspectRatio: 1.0, // Adjust as needed
-                          ),
-                          itemCount: 4,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              margin: EdgeInsets.only(
-                                  left: 10.0,
-                                  right: 5.0,
-                                  top: 0.0,
-                                  bottom: 30.0),
-
-                              decoration: BoxDecoration(
-                                  color: CommonColor.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color(0xff000000)
-                                            .withOpacity(0.2),
-                                        blurRadius: 2,
-                                        spreadRadius: 0,
-                                        offset: Offset(0, 1)),
-                                  ],
-                                  border: Border.all(
-                                      color: Colors.black38, width: 0.9),
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(7))),
-
-                              // alignment: Alignment.center,
-
-                              child: Column(
-                                children: [
-                                  Stack(
-                                    children: [
-                                      Container(
-                                        height: SizeConfig.screenHeight *
-                                            0.19,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
-                                          child: AnotherCarousel(
-                                            images: const [
-                                              NetworkImage(
-                                                  "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
-                                              NetworkImage(
-                                                  "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
-                                              NetworkImage(
-                                                  "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
-                                              NetworkImage(
-                                                  "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
-                                              NetworkImage(
-                                                  "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
-                                            ],
-                                            autoplay: false,
-                                            dotSize: 6,
-                                            dotSpacing: 10,
-                                            dotColor: Colors.white70,
-                                            // overlayShadow: false,
-
-                                            dotIncreasedColor:
-                                            Colors.black45,
-                                            indicatorBgPadding: 3.0,
-                                          ),
-                                        ),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: parentHeight * 0.125),
+                                  child: Align(
+                                    alignment:
+                                    Alignment.bottomLeft,
+                                    child: Container(
+                                      height:
+                                      parentHeight * 0.055,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black
+                                            .withOpacity(0.3),
+                                        borderRadius:
+                                        BorderRadius.circular(
+                                            0),
                                       ),
-                                      Padding(
-                                          padding: EdgeInsets.only(
-                                              top: parentHeight * 0.125),
-                                          child: Align(
-                                            alignment:
-                                            Alignment.bottomLeft,
-                                            child: Container(
-                                              height:
-                                              parentHeight * 0.055,
-                                              decoration: BoxDecoration(
-                                                color: Colors.black
-                                                    .withOpacity(0.3),
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    0),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 8,
+                                            right: 10,
+                                            top: 2),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'HD Camera (black & white) dfgdf',
+                                              style: TextStyle(
+                                                color:
+                                                Colors.white,
+                                                fontFamily:
+                                                "okra_Medium",
+                                                fontSize: 13,
+                                                fontWeight:
+                                                FontWeight
+                                                    .w600,
                                               ),
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 8,
-                                                    right: 10,
-                                                    top: 2),
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                      'HD Camera (black & white) dfgdf',
-                                                      style: TextStyle(
-                                                        color:
-                                                        Colors.white,
+                                              overflow:
+                                              TextOverflow
+                                                  .ellipsis,
+                                            ),
+                                            Padding(
+                                              padding:
+                                              EdgeInsets.only(
+                                                  top: 2),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons
+                                                        .location_on,
+                                                    size: SizeConfig
+                                                        .screenHeight *
+                                                        0.019,
+                                                    color: Color(
+                                                        0xffffffff)
+                                                        .withOpacity(
+                                                        0.8),
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(
+                                                      'park Street pune 004120',
+                                                      style:
+                                                      TextStyle(
+                                                        color: Colors
+                                                            .white
+                                                            .withOpacity(
+                                                            0.8),
                                                         fontFamily:
-                                                        "okra_Medium",
-                                                        fontSize: 13,
+                                                        "Montserrat-Medium",
+                                                        fontSize:
+                                                        11,
                                                         fontWeight:
                                                         FontWeight
-                                                            .w600,
+                                                            .w500,
                                                       ),
                                                       overflow:
                                                       TextOverflow
                                                           .ellipsis,
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                      EdgeInsets.only(
-                                                          top: 2),
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons
-                                                                .location_on,
-                                                            size: SizeConfig
-                                                                .screenHeight *
-                                                                0.019,
-                                                            color: Color(
-                                                                0xffffffff)
-                                                                .withOpacity(
-                                                                0.8),
-                                                          ),
-                                                          Flexible(
-                                                            child: Text(
-                                                              'park Street pune 004120',
-                                                              style:
-                                                              TextStyle(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                    0.8),
-                                                                fontFamily:
-                                                                "Montserrat-Medium",
-                                                                fontSize:
-                                                                11,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .w500,
-                                                              ),
-                                                              overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
-                                                              maxLines: 1,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                      Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 0, left: 110),
-                                          child: Align(
-                                            alignment:
-                                            Alignment.bottomLeft,
-                                            child: Container(
-                                              height: 15,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xff632883),
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    5),
-                                              ),
-                                              child: Row(children: [
-                                                Icon(
-                                                  Icons.location_on,
-                                                  size: SizeConfig
-                                                      .screenHeight *
-                                                      0.019,
-                                                  color: Colors.white,
-                                                ),
-                                                Text(
-                                                  '1.2 Km   ',
-                                                  style: TextStyle(
-                                                    fontFamily:
-                                                    "Montserrat-Regular",
-                                                    fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                        2.5,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                    FontWeight.w600,
-                                                  ),
-                                                  overflow: TextOverflow
-                                                      .ellipsis,
-                                                ),
-                                              ]),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                  SizedBox(height: 4),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "  All Product List",
-                              style: TextStyle(
-                                fontFamily: "Montserrat-Medium",
-                                fontSize:
-                                SizeConfig.blockSizeHorizontal * 4.1,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            NewService(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: parentWidth * 0.38, top: 3),
-                                child: Container(
-                                  height: parentHeight * 0.03,
-                                  width: parentWidth * 0.22,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color(0xff3684F0),
-                                          width: 0.5),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5))),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        " View All",
-                                        style: TextStyle(
-                                          fontFamily: "okra_Medium",
-                                          fontSize: SizeConfig
-                                              .blockSizeHorizontal *
-                                              3.1,
-                                          color: Color(0xff3684F0),
-                                          fontWeight: FontWeight.w200,
-                                        ),
-                                      ),
-                                      Image(
-                                        image: AssetImage(
-                                            'assets/images/arrow.png'),
-                                        height: 20,
-                                        width: 15,
-                                        color: Color(0xff3684F0),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 3, left: 10),
-                          child: Container(
-                            width: 350,
-                            child: Text(
-                              "Display All rental product options in your choose location",
-                              style: TextStyle(
-                                color: CommonColor.grayText,
-                                fontFamily: "Montserrat-Medium",
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 2, // Limit to 2 lines
-                              overflow: TextOverflow
-                                  .ellipsis, // Add ellipsis if text overflows
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Expanded(
-                          child: ListView.builder(
-                              padding: EdgeInsets.zero,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: filteredItemss
-                                  .length, // Define the number of items
-                              itemBuilder: (context, index) {
-                                final product = filteredItemss[index];
-
-                                final productImages =
-                                    product.images ?? [];
-
-                                return Container(
-                                  width: parentWidth * 0.55,
-
-                                  // Set width for each item
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 10.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                    BorderRadius.circular(7),
-                                    border: Border.all(
-                                        color: CommonColor.grayText,
-                                        width: 0.3),
-                                  ),
-                                  child: ListView(
-                                    physics:
-                                    NeverScrollableScrollPhysics(),
-                                    children: [
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.all(3.0),
-                                        child: Container(
-                                          height:
-                                          SizeConfig.screenHeight *
-                                              0.16,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                            BorderRadius.only(
-                                              topLeft: Radius.circular(7),
-                                              topRight:
-                                              Radius.circular(7),
-                                            ),
-                                            child: CarouselSlider.builder(
-                                              key: PageStorageKey(
-                                                  'carouselKey'),
-                                              carouselController:
-                                              _controller,
-                                              itemCount:
-                                              productImages.length,
-                                              options: CarouselOptions(
-                                                onPageChanged:
-                                                    (index, reason) {
-                                                  setState(() {
-                                                    currentIndex = index;
-                                                  });
-                                                },
-                                                initialPage: 0,
-                                                height:
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                    .4,
-                                                viewportFraction: 1.0,
-                                                enableInfiniteScroll:
-                                                false,
-                                                autoPlay: false,
-                                                enlargeStrategy:
-                                                CenterPageEnlargeStrategy
-                                                    .height,
-                                              ),
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                  int itemIndex,
-                                                  int index1) {
-                                                final imgUrl =
-                                                    productImages[index1]
-                                                        .url ??
-                                                        "";
-
-                                                return Container(
-                                                  height: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .height *
-                                                      0.3,
-                                                  decoration:
-                                                  BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius
-                                                        .circular(10),
-                                                    image:
-                                                    DecorationImage(
-                                                      image: NetworkImage(
-                                                          imgUrl),
-                                                      fit: BoxFit.cover,
+                                                      maxLines: 1,
                                                     ),
                                                   ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width:
-                                        SizeConfig.screenWidth * 0.5,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(height: 7),
-                                            Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .start,
-                                              children: [
-                                                Text(
-                                                  filteredItemss[index]
-                                                      .name
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                    fontFamily:
-                                                    "Montserrat-Regular",
-                                                    fontSize: SizeConfig
-                                                        .blockSizeHorizontal *
-                                                        3.7,
-                                                    color:
-                                                    CommonColor.Black,
-                                                    fontWeight:
-                                                    FontWeight.w400,
-                                                  ),
-                                                  overflow: TextOverflow
-                                                      .ellipsis,
-                                                ),
-                                                SizedBox(height: 3),
-                                                Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.location_on,
-                                                      size: SizeConfig
-                                                          .screenHeight *
-                                                          0.019,
-                                                      color: Color(
-                                                          0xff3684F0),
-                                                    ),
-                                                    Flexible(
-                                                      child: Text(
-                                                        ' Park Street,pune banner 20023',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                          "Montserrat-Regular",
-                                                          fontSize: SizeConfig
-                                                              .blockSizeHorizontal *
-                                                              3.0,
-                                                          color: Color(
-                                                              0xff3684F0),
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .w400,
-                                                        ),
-                                                        overflow:
-                                                        TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                        )
-                      ],
-                    )
-                        : Text(
-                      "Zepto Super Saver Content",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                                    ),
+                                  )),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 0, left: 110),
+                                  child: Align(
+                                    alignment:
+                                    Alignment.bottomLeft,
+                                    child: Container(
+                                      height: 15,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xff632883),
+                                        borderRadius:
+                                        BorderRadius.circular(
+                                            5),
+                                      ),
+                                      child: Row(children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          size: SizeConfig
+                                              .screenHeight *
+                                              0.019,
+                                          color: Colors.white,
+                                        ),
+                                        Text(
+                                          '1.2 Km   ',
+                                          style: TextStyle(
+                                            fontFamily:
+                                            "Montserrat-Regular",
+                                            fontSize: SizeConfig
+                                                .blockSizeHorizontal *
+                                                2.5,
+                                            color: Colors.white,
+                                            fontWeight:
+                                            FontWeight.w600,
+                                          ),
+                                          overflow: TextOverflow
+                                              .ellipsis,
+                                        ),
+                                      ]),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                        ],
                       ),
+                    );
+                  },
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "  All Product List",
+                      style: TextStyle(
+                        fontFamily: "Montserrat-Medium",
+                        fontSize:
+                        SizeConfig.blockSizeHorizontal * 4.1,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    NewService(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: parentWidth * 0.38, top: 3),
+                        child: Container(
+                          height: parentHeight * 0.03,
+                          width: parentWidth * 0.22,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Color(0xff3684F0),
+                                  width: 0.5),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(5))),
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceAround,
+                            children: [
+                              Text(
+                                " View All",
+                                style: TextStyle(
+                                  fontFamily: "okra_Medium",
+                                  fontSize: SizeConfig
+                                      .blockSizeHorizontal *
+                                      3.1,
+                                  color: Color(0xff3684F0),
+                                  fontWeight: FontWeight.w200,
+                                ),
+                              ),
+                              Image(
+                                image: AssetImage(
+                                    'assets/images/arrow.png'),
+                                height: 20,
+                                width: 15,
+                                color: Color(0xff3684F0),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 3, left: 10),
+                  child: Container(
+                    width: 350,
+                    child: Text(
+                      "Display All rental product options in your choose location",
+                      style: TextStyle(
+                        color: CommonColor.grayText,
+                        fontFamily: "Montserrat-Medium",
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2, // Limit to 2 lines
+                      overflow: TextOverflow
+                          .ellipsis, // Add ellipsis if text overflows
                     ),
                   ),
                 ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: filteredItemss
+                          .length, // Define the number of items
+                      itemBuilder: (context, index) {
+                        final product = filteredItemss[index];
+
+                        final productImages =
+                            product.images ?? [];
+
+                        return Container(
+                          width: parentWidth * 0.55,
+
+                          // Set width for each item
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                            BorderRadius.circular(7),
+                            border: Border.all(
+                                color: CommonColor.grayText,
+                                width: 0.3),
+                          ),
+                          child: ListView(
+                            physics:
+                            NeverScrollableScrollPhysics(),
+                            children: [
+                              Padding(
+                                padding:
+                                const EdgeInsets.all(3.0),
+                                child: Container(
+                                  height:
+                                  SizeConfig.screenHeight *
+                                      0.16,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                    BorderRadius.only(
+                                      topLeft: Radius.circular(7),
+                                      topRight:
+                                      Radius.circular(7),
+                                    ),
+                                    child: CarouselSlider.builder(
+                                      key: PageStorageKey(
+                                          'carouselKey'),
+                                      carouselController:
+                                      _controller,
+                                      itemCount:
+                                      productImages.length,
+                                      options: CarouselOptions(
+                                        onPageChanged:
+                                            (index, reason) {
+                                          setState(() {
+                                            currentIndex = index;
+                                          });
+                                        },
+                                        initialPage: 0,
+                                        height:
+                                        MediaQuery.of(context)
+                                            .size
+                                            .height *
+                                            .4,
+                                        viewportFraction: 1.0,
+                                        enableInfiniteScroll:
+                                        false,
+                                        autoPlay: false,
+                                        enlargeStrategy:
+                                        CenterPageEnlargeStrategy
+                                            .height,
+                                      ),
+                                      itemBuilder:
+                                          (BuildContext context,
+                                          int itemIndex,
+                                          int index1) {
+                                        final imgUrl =
+                                            productImages[index1]
+                                                .url ??
+                                                "";
+
+                                        return Container(
+                                          height: MediaQuery.of(
+                                              context)
+                                              .size
+                                              .height *
+                                              0.3,
+                                          decoration:
+                                          BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius
+                                                .circular(10),
+                                            image:
+                                            DecorationImage(
+                                              image: NetworkImage(
+                                                  imgUrl),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width:
+                                SizeConfig.screenWidth * 0.5,
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 7),
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Text(
+                                          filteredItemss[index]
+                                              .name
+                                              .toString(),
+                                          style: TextStyle(
+                                            fontFamily:
+                                            "Montserrat-Regular",
+                                            fontSize: SizeConfig
+                                                .blockSizeHorizontal *
+                                                3.7,
+                                            color:
+                                            CommonColor.Black,
+                                            fontWeight:
+                                            FontWeight.w400,
+                                          ),
+                                          overflow: TextOverflow
+                                              .ellipsis,
+                                        ),
+                                        SizedBox(height: 3),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.location_on,
+                                              size: SizeConfig
+                                                  .screenHeight *
+                                                  0.019,
+                                              color: Color(
+                                                  0xff3684F0),
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                ' Park Street,pune banner 20023',
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                  "Montserrat-Regular",
+                                                  fontSize: SizeConfig
+                                                      .blockSizeHorizontal *
+                                                      3.0,
+                                                  color: Color(
+                                                      0xff3684F0),
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .w400,
+                                                ),
+                                                overflow:
+                                                TextOverflow
+                                                    .ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                )
               ],
+            )
+                : Text(
+              "Zepto Super Saver Content",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
 
 
+  Widget Popular(double parentHeight, double parentWidth) {
+    return
+  Container(
+    child: selectedIndex == 1? Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
+        SizedBox(height: 15),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Expanded(child: Divider()),
+            SizedBox(
+              width: 10,
+            ),
+            Center(
+                child: Text("WHAT'S ON YOUR RENTAL MATERIALS?",
+                    style: TextStyle(
+                        color: Colors.grey[500]!,
+                        fontFamily: "okra_Medium",
+                        fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.9),
+                    overflow: TextOverflow.ellipsis)),
+            SizedBox(
+              width: 10,
+            ),
+            const Expanded(child: Divider()),
+          ],
+        ),
+        Row(
+          children: [
+            Text(
+              "  Near by Location",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "Montserrat-Medium",
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                /*Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PhoneRegistrationPage(
+                                        mobileNumber: '',
+                                        email: '',
+                                        phoneNumber: '', showLoginWidget: false,
+                                      )));*/
 
+
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ChangeHome()));
+
+
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: parentWidth * 0.38, top: 5),
+                child: Container(
+                  height: parentHeight * 0.03,
+                  width: parentWidth * 0.22,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Color(0xff3684F0),
+                          width: 0.5),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(5))),
+                  child: Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        " View All",
+                        style: TextStyle(
+                          fontFamily: "okra_Medium",
+                          fontSize: SizeConfig
+                              .blockSizeHorizontal *
+                              3.1,
+                          color: Color(0xff3684F0),
+                          fontWeight: FontWeight.w200,
+                        ),
+                      ),
+                      Image(
+                        image: AssetImage(
+                            'assets/images/arrow.png'),
+                        height: 20,
+                        width: 15,
+                        color: Color(0xff3684F0),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+        Text(
+          "   Near by place",
+          style: TextStyle(
+            color: CommonColor.grayText,
+            fontFamily: "Montserrat-Medium",
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        GridView.builder(
+          padding: EdgeInsets.only(top: 15),
+          physics:
+          NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+          shrinkWrap: true,
+          gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 1.0,
+            mainAxisSpacing: 0.0,
+            childAspectRatio: 1.0, // Adjust as needed
+          ),
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            return Container(
+              margin: EdgeInsets.only(
+                  left: 10.0,
+                  right: 5.0,
+                  top: 0.0,
+                  bottom: 30.0),
+
+              decoration: BoxDecoration(
+                  color: CommonColor.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color(0xff000000)
+                            .withOpacity(0.2),
+                        blurRadius: 2,
+                        spreadRadius: 0,
+                        offset: Offset(0, 1)),
+                  ],
+                  border: Border.all(
+                      color: Colors.black38, width: 0.9),
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(7))),
+
+              // alignment: Alignment.center,
+
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        height: SizeConfig.screenHeight *
+                            0.19,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(10)),
+                          child: AnotherCarousel(
+                            images: const [
+                              NetworkImage(
+                                  "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
+                              NetworkImage(
+                                  "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
+                              NetworkImage(
+                                  "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
+                              NetworkImage(
+                                  "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
+                              NetworkImage(
+                                  "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
+                            ],
+                            autoplay: false,
+                            dotSize: 6,
+                            dotSpacing: 10,
+                            dotColor: Colors.white70,
+                            // overlayShadow: false,
+
+                            dotIncreasedColor:
+                            Colors.black45,
+                            indicatorBgPadding: 3.0,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              top: parentHeight * 0.125),
+                          child: Align(
+                            alignment:
+                            Alignment.bottomLeft,
+                            child: Container(
+                              height:
+                              parentHeight * 0.055,
+                              decoration: BoxDecoration(
+                                color: Colors.black
+                                    .withOpacity(0.3),
+                                borderRadius:
+                                BorderRadius.circular(
+                                    0),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 8,
+                                    right: 10,
+                                    top: 2),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'HD Camera (black & white) dfgdf',
+                                      style: TextStyle(
+                                        color:
+                                        Colors.white,
+                                        fontFamily:
+                                        "okra_Medium",
+                                        fontSize: 13,
+                                        fontWeight:
+                                        FontWeight
+                                            .w600,
+                                      ),
+                                      overflow:
+                                      TextOverflow
+                                          .ellipsis,
+                                    ),
+                                    Padding(
+                                      padding:
+                                      EdgeInsets.only(
+                                          top: 2),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons
+                                                .location_on,
+                                            size: SizeConfig
+                                                .screenHeight *
+                                                0.019,
+                                            color: Color(
+                                                0xffffffff)
+                                                .withOpacity(
+                                                0.8),
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              'park Street pune 004120',
+                                              style:
+                                              TextStyle(
+                                                color: Colors
+                                                    .white
+                                                    .withOpacity(
+                                                    0.8),
+                                                fontFamily:
+                                                "Montserrat-Medium",
+                                                fontSize:
+                                                11,
+                                                fontWeight:
+                                                FontWeight
+                                                    .w500,
+                                              ),
+                                              overflow:
+                                              TextOverflow
+                                                  .ellipsis,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              top: 0, left: 110),
+                          child: Align(
+                            alignment:
+                            Alignment.bottomLeft,
+                            child: Container(
+                              height: 15,
+                              decoration: BoxDecoration(
+                                color: Color(0xff632883),
+                                borderRadius:
+                                BorderRadius.circular(
+                                    5),
+                              ),
+                              child: Row(children: [
+                                Icon(
+                                  Icons.location_on,
+                                  size: SizeConfig
+                                      .screenHeight *
+                                      0.019,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  '1.2 Km   ',
+                                  style: TextStyle(
+                                    fontFamily:
+                                    "Montserrat-Regular",
+                                    fontSize: SizeConfig
+                                        .blockSizeHorizontal *
+                                        2.5,
+                                    color: Colors.white,
+                                    fontWeight:
+                                    FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow
+                                      .ellipsis,
+                                ),
+                              ]),
+                            ),
+                          )),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                ],
+              ),
+            );
+          },
+        ),
+        Row(
+          children: [
+            Text(
+              "  All Product List",
+              style: TextStyle(
+                fontFamily: "Montserrat-Medium",
+                fontSize:
+                SizeConfig.blockSizeHorizontal * 4.1,
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            NewService(lat: '', long: '', ProductAddress: '', BusinessOfficeAddress: '',)));
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: parentWidth * 0.38, top: 3),
+                child: Container(
+                  height: parentHeight * 0.03,
+                  width: parentWidth * 0.22,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Color(0xff3684F0),
+                          width: 0.5),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(5))),
+                  child: Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        " View All",
+                        style: TextStyle(
+                          fontFamily: "okra_Medium",
+                          fontSize: SizeConfig
+                              .blockSizeHorizontal *
+                              3.1,
+                          color: Color(0xff3684F0),
+                          fontWeight: FontWeight.w200,
+                        ),
+                      ),
+                      Image(
+                        image: AssetImage(
+                            'assets/images/arrow.png'),
+                        height: 20,
+                        width: 15,
+                        color: Color(0xff3684F0),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 3, left: 10),
+          child: Container(
+            width: 350,
+            child: Text(
+              "Display All rental product options in your choose location",
+              style: TextStyle(
+                color: CommonColor.grayText,
+                fontFamily: "Montserrat-Medium",
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 2, // Limit to 2 lines
+              overflow: TextOverflow
+                  .ellipsis, // Add ellipsis if text overflows
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+
+
+      ],
+    ):  Text(
+    "Zepto Super Saver Content",
+    style: TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  );
+  }
 
 
 }

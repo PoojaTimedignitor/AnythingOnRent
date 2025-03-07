@@ -9,6 +9,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../ApiConstant/api_constant.dart';
 import 'Authentication/login_screen.dart';
+import 'ResponseModule/getSubCatagories.dart';
 
 class NewDioClient {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -306,7 +307,8 @@ class NewApiClients {
 
 
   Future<Map<String, dynamic>?> newloginWithPhoneOrEmail(String identifier,
-      String password) async {
+      String password) async
+  {
     String baseUrl = "https://backend.anythingonrent.com/";
     String url;
 
@@ -522,20 +524,21 @@ class NewApiClients {
   }
 
 
-  Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
-    String url =
-        "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().getAllSubCatagries(categoryId)}";
-    print("Constructed URL: $url");
+/*
+  Future<Map<String, dynamic>> NewGetAllSubCat(String categoryId) async {
+    // Correct API URL
+    String url = "https://rental-api-5vfa.onrender.com/category/$categoryId/subcategories";
+    print("Corrected API URL: $url");
 
     String? accessToken = NewAuthStorage.getAccessToken();
-    print(" Stored Access Token: $accessToken");
+    print("Stored Access Token: $accessToken");
+
     try {
       Response response = await _dio.get(
         url,
         options: Options(
           headers: {
-            'Authorization':
-            'Bearer $accessToken',
+            'Authorization': 'Bearer $accessToken',
           },
         ),
       );
@@ -554,6 +557,54 @@ class NewApiClients {
       }
     }
   }
+*/
+
+
+  Future<GetSubCategories> NewGetAllSubCat(String categoryId) async {
+    String url = "https://rental-api-5vfa.onrender.com/category/$categoryId/subcategories";
+    print("Corrected API URL: $url");
+
+    String? accessToken = NewAuthStorage.getAccessToken();
+    print("Stored Access Token: $accessToken");
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+
+      print("✅ Response Status Code: ${response.statusCode}");
+      print("🔹 Response Data Type: ${response.data.runtimeType}");
+      print("🔹 Response Data: ${response.data}");
+
+      // ✅ Fix: Ensure response is a Map
+      if (response.data is String) {
+        Map<String, dynamic> decodedData = jsonDecode(response.data);
+        print("🔹 Decoded Data Type: ${decodedData.runtimeType}");
+        print("🔹 Decoded Data: $decodedData");
+        return GetSubCategories.fromJson(decodedData);
+      } else if (response.data is Map<String, dynamic>) {
+        return GetSubCategories.fromJson(response.data);
+      } else {
+        throw Exception("Unexpected response format");
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print("❌ Dio Error Response: ${e.response?.data}");
+        return GetSubCategories.fromJson(e.response?.data is Map<String, dynamic>
+            ? e.response?.data
+            : {'success': false, 'data': []});
+      } else {
+        print("❌ Dio Error: No response from server.");
+        return GetSubCategories(success: false, data: []);
+      }
+    }
+  }
+
 
 
   Future<Map<String, dynamic>> NewPostfeedbackUser(

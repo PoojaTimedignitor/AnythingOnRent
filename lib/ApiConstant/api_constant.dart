@@ -14,7 +14,7 @@ class ApiConstant {
   String products = "/addproduct/jhdfs";
   String getAllCatagries = "/categories";
   String getAllSubCatagries(String categoryId) {
-    return "/subcatetgories/$categoryId";
+    return "/$categoryId/subcatetgories";
   }
 
   String userProfile = "/users/profile";

@@ -2991,3 +2991,13 @@ class CustomImageClipper extends CustomClipper<Path> {
                 ),
               ),
             ),*/
+
+
+
+/*
+Padding(
+padding:
+EdgeInsets.only(bottom: SizeConfig.screenHeight * 0.03,top: 0),
+child: getAddGameTabLayout(
+SizeConfig.screenHeight, SizeConfig.screenWidth),
+),*/

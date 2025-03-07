@@ -29,6 +29,7 @@ import 'newGetStorage.dart';
 
 class NewProduct extends StatefulWidget {
   final String categoryName;
+  final String catagoriesId;
   final String lat;
   final String long;
   final String imagePath;
@@ -42,7 +43,7 @@ class NewProduct extends StatefulWidget {
       required this.ProductAddress,
       required this.BusinessOfficeAddress,
       required this.categoryName,
-      required this.imagePath});
+      required this.imagePath, required this.catagoriesId});
 
   @override
   State<NewProduct> createState() => _NewProductState();
@@ -110,7 +111,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
     try {
       Map<String, dynamic> response =
           await ApiClients().getAllSubCat(categoryId);
-      var jsonList = GetSubCategories.fromJson(response);
+      var jsonList = GetAllCategoriesResponseModel.fromJson(response);
       setState(() {
         SubCat = jsonList.subCategoryData ?? [];
         filteredSubCat = List.from(SubCat);
@@ -563,10 +564,11 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   isScrollControlled: true,
                   isDismissible: true,
                   builder: (BuildContext bc) {
+                    print("objectssss ${widget.catagoriesId}");
                     return SizedBox(
                       height: MediaQuery.of(context).size.height *
-                          0.5, // Adjust height
-                      child: AllSubCat(),
+                          0.8, // Adjust height
+                      child: AllSubCat(categoryId: widget.catagoriesId,),
                     );
                   },
                 );

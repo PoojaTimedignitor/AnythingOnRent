@@ -154,7 +154,7 @@ class NewAuthStorage {
   static String? getProfileImage() => _storage.read<String>('profileImage');
 
 
-  /// 📌 Store Phone Number
+
   static void setPhoneNumber(String phoneNumber) {
     _storage.write(StorageKeys.phoneNumber, phoneNumber);
   }

@@ -83,13 +83,13 @@ class SubCategoryData {
 
 
 
-class GetSubCategories {
+class GetAllCategoriesResponseModel {
   bool? success;
   List<SubCategoryData>? subCategoryData;
 
-  GetSubCategories({this.success, this.subCategoryData});
+  GetAllCategoriesResponseModel({this.success, this.subCategoryData});
 
-  GetSubCategories.fromJson(Map<String, dynamic> json) {
+  GetAllCategoriesResponseModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['subCategoryData'] != null) {
       subCategoryData = <SubCategoryData>[];

@@ -138,7 +138,7 @@ class _CatagriesListState extends State<CatagriesList> {
                     child: Center(
                       child: !isSearchingData
                           ? Text(
-                              "Popular Categories",
+                              "Product Categories",
                               style: TextStyle(
                                 fontFamily: "Montserrat-Medium",
                                 fontSize: SizeConfig.blockSizeHorizontal * 4.5,

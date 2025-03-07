@@ -117,7 +117,7 @@ class _CreateProductServiceState extends State<CreateProductService>
     try {
       Map<String, dynamic> response =
           await ApiClients().getAllSubCat(categoryId);
-      var jsonList = GetSubCategories.fromJson(response);
+      var jsonList = GetAllCategoriesResponseModel.fromJson(response);
       setState(() {
         SubCat = jsonList.subCategoryData ?? [];
         filteredSubCat = List.from(SubCat);

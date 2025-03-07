@@ -5,7 +5,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:anything/ResponseModule/getCatFAQ.dart' as FAQs;
-import 'package:anything/ResponseModule/getIdByCatagories.dart' as Categories;
+import 'package:anything/ResponseModule/getSubCatagories.dart' as Categories;
 
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
