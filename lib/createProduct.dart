@@ -13,6 +13,9 @@ import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
 import 'MyBehavior.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'NewDioClient.dart';
+import 'ResponseModule/getDynamicFieldsResponseModel.dart';
 import 'ResponseModule/getSubCatResponseModel.dart';
 import 'dummyData.dart';
 import 'package:get_storage/get_storage.dart';
@@ -20,6 +23,8 @@ import 'package:shimmer/shimmer.dart';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'ResponseModule/getSubCatResponseModel.dart' as subCatDatass;
+import 'package:anything/ResponseModule/getDynamicFieldsResponseModel.dart' as dynamicFields;
+
 
 import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
@@ -92,10 +97,16 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   bool perMonth = false;
   bool perWeek = false;
   int quantity = 0;
+  List<String> dynamicFieldTitles = [];
+
   String categoryId = '';
 
   List<subCatDatass.SubCategoryData> SubCat = [];
   List<subCatDatass.SubCategoryData> filteredSubCat = [];
+
+  List<dynamicFields.Data> filteredItemsDynamicFields = [];
+
+  List<dynamicFields.Data> itemsDynamicFields = [];
 
   void updateCitys(String newCity) {
     setState(() {
@@ -125,9 +136,38 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
     }
   }
 
+
+  void fetchDymanicFieldsSubCategories(String categoryName) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      Map<String, dynamic> response =
+      await NewApiClients().NewGetSubCatDynamicFeilds(categoryName);
+
+      var jsonList = GetDaynamicResponseModel.fromJson(response);
+
+      setState(() {
+        if (jsonList.data != null) {
+          dynamicFieldTitles = jsonList.data!.toJson().keys.toList();
+        }
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching fields: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+   // fetchDymanicFieldsSubCategories();
+
     if (categoryId.isNotEmpty) {
       print("Selected Category ID: $categoryId");
       fetchSubCategories(categoryId);
@@ -369,6 +409,8 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -508,14 +550,38 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-              Container(
-                //  height: 600,
-                child:
-                    DataInfo(SizeConfig.screenHeight, SizeConfig.screenWidth),
-              )
+
+
+              DataInfo(SizeConfig.screenHeight, SizeConfig.screenWidth),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+
+
+
+  Widget DynamicFieldsData(double parentHeight,double parentWidth){
+    return  Container(
+      color: Colors.red,
+      height: 100,
+      child: ListView.builder(
+        itemCount: dynamicFieldTitles.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              dynamicFieldTitles[index], // ✅ Show field names
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -564,7 +630,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   isScrollControlled: true,
                   isDismissible: true,
                   builder: (BuildContext bc) {
-                    print("objectssss ${widget.catagoriesId}");
+
                     return SizedBox(
                       height: MediaQuery.of(context).size.height *
                           0.8, // Adjust height
@@ -577,6 +643,9 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   setState(() {
                     SubCatController.text = selectedSubCategory;
                   });
+                  print("🚀 Fetching dynamic fields for: $selectedSubCategory");
+                  fetchDymanicFieldsSubCategories(selectedSubCategory);
+
                 }
               },
               controller: SubCatController,
@@ -608,6 +677,12 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
             ),
           ),
           SizedBox(height: 10),
+          Visibility(
+              visible: itemsDynamicFields.isNotEmpty,
+              child: Container(
+                color: Colors.red,
+                  height: 100,
+                  child: DynamicFieldsData(SizeConfig.screenHeight, SizeConfig.screenWidth))),
           SizedBox(height: 17),
           Text(
             "    Product Name",
@@ -2688,7 +2763,6 @@ class _AllInformationWidgetState extends State<AllInformationWidget>
     super.initState();
 
     firstname = NewAuthStorage.getFName() ?? "Guest";
-    //  firstname = AuthStorage().
     print("name   $firstname");
 
     _controller = AnimationController(

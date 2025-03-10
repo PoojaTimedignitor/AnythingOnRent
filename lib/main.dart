@@ -175,7 +175,7 @@ class _SplashScreenState extends State<SplashScreen>
                 )
 
             ),
-            AnimatedBuilder(
+           /* AnimatedBuilder(
               animation: _scaleAnimation,
               builder: (context, child) {
                 return Transform.scale(
@@ -222,7 +222,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ],
                 ),
               ),
-            ),
+            ),*/
 
           ],
         ),

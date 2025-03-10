@@ -1,91 +1,101 @@
-class GetSubCategories {
-  bool success; // ✅ Always bool, avoid null
-  List<SubCatData> data; // ✅ Always List, no null
+class GetSubCategoriesResponseModel {
+  bool? success;
+  List<SubCategory>? data;
 
-  GetSubCategories({
-    required this.success,
-    required this.data,
-  });
+  GetSubCategoriesResponseModel({this.success, this.data});
 
-  factory GetSubCategories.fromJson(Map<String, dynamic> json) {
-    return GetSubCategories(
-      success: json['success'] == true, // ✅ Ensure it's bool
-      data: json['data'] is List
-          ? List<SubCatData>.from(
-          json['data'].map((x) => SubCatData.fromJson(x)))
-          : [], // ✅ Ensure List type
-    );
+  GetSubCategoriesResponseModel.fromJson(Map<String, dynamic> json) {
+    success = json['success'];
+    if (json['data'] != null) {
+      data = List<SubCategory>.from(json['data'].map((x) => SubCategory.fromJson(x)));
+    }
   }
 
   Map<String, dynamic> toJson() {
     return {
       'success': success,
-      'data': data.map((x) => x.toJson()).toList(),
+      'data': data?.map((e) => e.toJson()).toList(),
     };
   }
 }
 
-class SubCatData {
-  String sId;
-  String name;
-  String slug;
-  List<DynamicFields> dynamicFields; // ✅ Ensure List type
 
-  SubCatData({
-    required this.sId,
-    required this.name,
-    required this.slug,
-    required this.dynamicFields,
+class Data {
+  SubCategory? fish;
+  SubCategory? dog;
+  SubCategory? rodents;
+  SubCategory? cats;
+  SubCategory? hamster;
+  SubCategory? guineaPigs;
+  SubCategory? birds;
+  SubCategory? horse;
+  SubCategory? rabbits;
+  SubCategory? reptiles;
+
+  Data({
+    this.fish,
+    this.dog,
+    this.rodents,
+    this.cats,
+    this.hamster,
+    this.guineaPigs,
+    this.birds,
+    this.horse,
+    this.rabbits,
+    this.reptiles,
   });
 
-  factory SubCatData.fromJson(Map<String, dynamic> json) {
-    return SubCatData(
-      sId: json['_id'] ?? '', // ✅ Default empty string
-      name: json['name'] ?? 'No Name', // ✅ Avoid null issues
-      slug: json['slug'] ?? '',
-      dynamicFields: json['dynamicFields'] is List
-          ? List<DynamicFields>.from(
-          json['dynamicFields'].map((x) => DynamicFields.fromJson(x)))
-          : [], // ✅ Ensure List
-    );
+  Data.fromJson(Map<String, dynamic> json) {
+    fish = _parseSubCategory(json, 'fish');
+    dog = _parseSubCategory(json, 'dog');
+    rodents = _parseSubCategory(json, 'rodents');
+    cats = _parseSubCategory(json, 'cats');
+    hamster = _parseSubCategory(json, 'hamster');
+    guineaPigs = _parseSubCategory(json, 'guinea-pigs');
+    birds = _parseSubCategory(json, 'birds');
+    horse = _parseSubCategory(json, 'horse');
+    rabbits = _parseSubCategory(json, 'rabbits');
+    reptiles = _parseSubCategory(json, 'reptiles');
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': sId,
+      'fish': fish?.toJson(),
+      'dog': dog?.toJson(),
+      'rodents': rodents?.toJson(),
+      'cats': cats?.toJson(),
+      'hamster': hamster?.toJson(),
+      'guinea-pigs': guineaPigs?.toJson(),
+      'birds': birds?.toJson(),
+      'horse': horse?.toJson(),
+      'rabbits': rabbits?.toJson(),
+      'reptiles': reptiles?.toJson(),
+    };
+  }
+
+  static SubCategory? _parseSubCategory(Map<String, dynamic> json, String key) {
+    return json[key] != null ? SubCategory.fromJson(json[key]) : null;
+  }
+}
+
+class SubCategory {
+  String? id;
+  String? name;
+  String? slug;
+
+  SubCategory({this.id, this.name, this.slug});
+
+  SubCategory.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    name = json['name'];
+    slug = json['slug'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
       'name': name,
       'slug': slug,
-      'dynamicFields': dynamicFields.map((e) => e.toJson()).toList(),
-    };
-  }
-}
-
-class DynamicFields {
-  String sId;
-  String fieldName;
-  List<dynamic> fieldValues; // ✅ Always List
-
-  DynamicFields({
-    required this.sId,
-    required this.fieldName,
-    required this.fieldValues,
-  });
-
-  factory DynamicFields.fromJson(Map<String, dynamic> json) {
-    return DynamicFields(
-      sId: json['_id'] ?? '',
-      fieldName: json['fieldName'] ?? 'Unknown Field', // ✅ Avoid null
-      fieldValues: json['fieldValues'] is List
-          ? List<dynamic>.from(json['fieldValues'])
-          : [], // ✅ Ensure List
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': sId,
-      'fieldName': fieldName,
-      'fieldValues': fieldValues,
     };
   }
 }

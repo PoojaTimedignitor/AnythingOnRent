@@ -524,14 +524,13 @@ class NewApiClients {
   }
 
 
-/*
+
   Future<Map<String, dynamic>> NewGetAllSubCat(String categoryId) async {
-    // Correct API URL
     String url = "https://rental-api-5vfa.onrender.com/category/$categoryId/subcategories";
-    print("Corrected API URL: $url");
+    print("🚀 API URL: $url");
 
     String? accessToken = NewAuthStorage.getAccessToken();
-    print("Stored Access Token: $accessToken");
+    print("🔑 Access Token: $accessToken");
 
     try {
       Response response = await _dio.get(
@@ -543,29 +542,27 @@ class NewApiClients {
         ),
       );
 
-      print("Response Status Code: ${response.statusCode}");
-      print("Response Data: ${response.data}");
+      print(" Response Status Code: ${response.statusCode}");
+      print(" Raw Response Data: ${response.data}");
+
+      print("getCatList Status Code --> ${response.statusCode}");
+      print("Response Data --> ${response.data}");
 
       return response.data;
     } on DioError catch (e) {
-      if (e.response != null) {
-        print("Dio Error Response: ${e.response?.data}");
-        return e.response?.data ?? {'error': 'Unknown error'};
-      } else {
-        print("Dio Error: No response from server.");
-        return {'error': 'No response from server'};
-      }
+      print("Dio Error: ${e.response}");
+      return e.response!.data;
     }
   }
-*/
 
 
-  Future<GetSubCategories> NewGetAllSubCat(String categoryId) async {
-    String url = "https://rental-api-5vfa.onrender.com/category/$categoryId/subcategories";
-    print("Corrected API URL: $url");
+  Future<Map<String, dynamic>> NewGetSubCatDynamicFeilds(String categoryId) async {
+    String baseeUrl = "https://backend.anythingonrent.com";
+    String url = "$baseeUrl/category/$categoryId/dynamicfields";
+    print("🚀 API URL: $url");
 
     String? accessToken = NewAuthStorage.getAccessToken();
-    print("Stored Access Token: $accessToken");
+    print("🔑 Access Token: $accessToken");
 
     try {
       Response response = await _dio.get(
@@ -573,37 +570,83 @@ class NewApiClients {
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
+            'Accept': 'application/json',
           },
         ),
       );
 
       print("✅ Response Status Code: ${response.statusCode}");
-      print("🔹 Response Data Type: ${response.data.runtimeType}");
-      print("🔹 Response Data: ${response.data}");
+      print("✅ Raw Response Data: ${response.data}");
 
-      // ✅ Fix: Ensure response is a Map
-      if (response.data is String) {
-        Map<String, dynamic> decodedData = jsonDecode(response.data);
-        print("🔹 Decoded Data Type: ${decodedData.runtimeType}");
-        print("🔹 Decoded Data: $decodedData");
-        return GetSubCategories.fromJson(decodedData);
-      } else if (response.data is Map<String, dynamic>) {
-        return GetSubCategories.fromJson(response.data);
+      if (response.statusCode == 200) {
+        return response.data;
       } else {
-        throw Exception("Unexpected response format");
+        throw Exception("API Error: ${response.statusCode}");
       }
-    } on DioError catch (e) {
-      if (e.response != null) {
-        print("❌ Dio Error Response: ${e.response?.data}");
-        return GetSubCategories.fromJson(e.response?.data is Map<String, dynamic>
-            ? e.response?.data
-            : {'success': false, 'data': []});
-      } else {
-        print("❌ Dio Error: No response from server.");
-        return GetSubCategories(success: false, data: []);
-      }
+    } on DioException catch (e) {
+      print("❌ Dio Error: ${e.response?.data}");
+      return {};
+    } catch (e) {
+      print("❌ Unexpected Error: $e");
+      return {};
     }
   }
+
+
+
+
+
+
+
+
+
+  // Future<Map<String, dynamic>> NewGetAllSubCat(String categoryId) async {
+  //   String url = "https://rental-api-5vfa.onrender.com/category/$categoryId/subcategories";
+  //   print("🚀 API URL: $url");
+  //
+  //   String? accessToken = NewAuthStorage.getAccessToken();
+  //   print("🔑 Access Token: $accessToken");
+  //
+  //   try {
+  //     Response response = await _dio.get(
+  //       url,
+  //       options: Options(
+  //         headers: {
+  //           'Authorization': 'Bearer $accessToken',
+  //         },
+  //       ),
+  //     );
+  //
+  //     print("✅ Response Status Code: ${response.statusCode}");
+  //     print("📜 Raw Response Data: ${response.data}");
+  //
+  //     if (response.statusCode == 200) {
+  //       if (response.data is String) {
+  //         print("📌 Decoding String Response...");
+  //         return jsonDecode(response.data);
+  //       } else if (response.data is Map<String, dynamic>) {
+  //         print("📌 Response is already a Map.");
+  //         return response.data;
+  //       } else {
+  //         throw Exception("❌ Unexpected response format");
+  //       }
+  //     } else {
+  //       print("⚠️ Server returned status code: ${response.statusCode}");
+  //       throw Exception("Server error");
+  //     }
+  //   } on DioError catch (e) {
+  //     if (e.response != null) {
+  //       print("🛑 Dio Error Response: ${e.response?.data}");
+  //       return e.response?.data is Map<String, dynamic> ? e.response?.data : {'error': 'Unknown error'};
+  //     } else {
+  //       print("🛑 Dio Error: No response from server.");
+  //       return {'error': 'No response from server'};
+  //     }
+  //   }
+  // }
+
+
+
 
 
 

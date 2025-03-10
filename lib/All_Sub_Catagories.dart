@@ -1,19 +1,16 @@
-import 'dart:convert';
+
 
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
-import 'package:anything/ResponseModule/getSubCatResponseModel.dart';
 import 'package:anything/ResponseModule/getSubCatagories.dart';
-import 'package:anything/ResponseModule/getSubCatagories.dart';
+
 import 'package:flutter/material.dart';
-import '../ResponseModule/getSubCatResponseModel.dart';
 
 
 import 'MyBehavior.dart';
 import 'NewDioClient.dart';
-//import 'ResponseModule/getSubCatResponseModel.dart';
+import 'ResponseModule/getDynamicFieldsResponseModel.dart';
 
-import 'ResponseModule/getSubCatagories.dart';
 
 class AllSubCat extends StatefulWidget {
   final String categoryId;
@@ -26,24 +23,29 @@ class AllSubCat extends StatefulWidget {
 
 class _AllSubCatState extends State<AllSubCat> {
   TextEditingController emailController = TextEditingController();
-  List<String> categories = ["Electronics", "Clothing", "Books", "Furniture","Books", "Books", "Books", "Books", "Books", "Books", ];
   String? selectedCategory;
+  String? selectedCategoryId;
   bool isLoading = true;
-  List<SubCatData> filteredItems = [];
+  List<SubCategory> filteredItems = [];
 
-  List<SubCatData> items = [];
-
+  List<dynamic> items = [];
 /*
+  List<dynamic> filteredItems = [];
+*/
+  List<dynamic> itemsDynamicFields = [];
+  List<dynamic> filteredItemsDynamicFields = [];
+
+/*  List<SubCategory> items = [];*/
+
+
+
   void fetchSubCategories() async {
-
     try {
-
       Map<String, dynamic> response = await NewApiClients().NewGetAllSubCat(widget.categoryId);
-      var jsonList = GetSubCategories.fromJson(response);
+      var jsonList = GetSubCategoriesResponseModel.fromJson(response);
+
       setState(() {
         items = jsonList.data ?? [];
-     //  items = jsonList.SubCatData ?? [];
-
         filteredItems = List.from(items);
         isLoading = false;
       });
@@ -54,46 +56,17 @@ class _AllSubCatState extends State<AllSubCat> {
       print("Error fetching categories: $e");
     }
   }
-*/
 
 
-  void fetchSubCategories() async {
-    try {
-      // 🔹 API Call - GetSubCategories object milega
-      GetSubCategories response = await NewApiClients().NewGetAllSubCat(widget.categoryId);
 
-      print("✅ API Raw Response: ${response.toJson()}"); // ✅ Convert to JSON for debugging
-
-      // ✅ Ensure response has 'data' key and it's a List
-      if (response.data != null && response.data is List) {
-        setState(() {
-          items = response.data ?? [];  // ✅ Ensure list is not null
-          filteredItems = List.from(items);
-          isLoading = false;
-        });
-
-        // ✅ Debugging
-        for (var item in filteredItems) {
-          print("🛠 Filtered Item Name: ${item.name}");
-        }
-      } else {
-        print("⚠️ API Response Error: No 'data' key found or not a List");
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      print("❌ Error fetching categories: $e");
-    }
-  }
 
 
   @override
   void initState() {
     fetchSubCategories();
+
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +74,6 @@ class _AllSubCatState extends State<AllSubCat> {
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
-       // height: SizeConfig.screenHeight * 0.42,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -186,14 +158,21 @@ class _AllSubCatState extends State<AllSubCat> {
             Expanded(
               child: ScrollConfiguration(
                 behavior: MyBehavior(),
-                child: ListView.builder(
+                child: isLoading
+                    ? Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40),
+                      child: Image(
+                          image: AssetImage("assets/images/logo.gif"),
+                          height: SizeConfig.screenHeight * 0.16),
+                    ))
+                    : ListView.builder(
                   itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
-                    print("🛠 Displaying Name: ${filteredItems[index].name}");
                     return RadioListTile<String>(
                       activeColor: Color(0xff632883),
                       title: Text(
-                        filteredItems[index].name ?? "No Name",
+                        filteredItems[index].name.toString(),
                         style: TextStyle(
                           color: Color(0xff000000),
                           fontFamily: "okra_Medium",
@@ -201,19 +180,30 @@ class _AllSubCatState extends State<AllSubCat> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      value:   filteredItems[index].name ?? "No Name",
+                      value: filteredItems[index].name.toString(),
                       groupValue: selectedCategory,
                       onChanged: (String? value) {
                         setState(() {
+                          print("Selected Category Name: ${value}");
                           selectedCategory = value;
+                          selectedCategoryId = filteredItems.firstWhere((item) => item.name == value).id;
+                          print("Selected Category ID: ${selectedCategoryId}");
+
+
+                          //   selectedCategoryId = filteredItems[index].id.toString();
+
+                          print("Selected Category ID: $selectedCategoryId");
                         });
-                        Navigator.pop(context, value);
+
+
+                        Navigator.pop(context, selectedCategory);
                       },
                     );
                   },
                 ),
               ),
             ),
+
           ],
         ),
       ),
