@@ -18,7 +18,6 @@ class GetDaynamicResponseModel {
     return data;
   }
 }
-
 class Data {
   List<String>? petItemTypes;
   List<String>? doYouProvideAnyPetConsultation;
@@ -49,4 +48,10 @@ class Data {
     }
     return data;
   }
+
+  @override
+  String toString() {
+    return 'Data(petItemTypes: $petItemTypes, doYouProvideAnyPetConsultation: $doYouProvideAnyPetConsultation, petItemsDelivery: $petItemsDelivery)';
+  }
 }
+
