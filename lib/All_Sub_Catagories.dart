@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 
 import 'MyBehavior.dart';
 import 'NewDioClient.dart';
-import 'ResponseModule/getDynamicFieldsResponseModel.dart';
 
 
 class AllSubCat extends StatefulWidget {
@@ -186,17 +185,17 @@ class _AllSubCatState extends State<AllSubCat> {
                         setState(() {
                           print("Selected Category Name: ${value}");
                           selectedCategory = value;
-                          selectedCategoryId = filteredItems.firstWhere((item) => item.name == value).id;
-                          print("Selected Category ID: ${selectedCategoryId}");
+                         // selectedCategoryId = filteredItems.firstWhere((item) => item.name == value).id;
+                          print("Selected Category ID: $selectedCategoryId");
 
 
                           //   selectedCategoryId = filteredItems[index].id.toString();
 
-                          print("Selected Category ID: $selectedCategoryId");
+                          print("subCat $selectedCategoryId");
                         });
 
 
-                        Navigator.pop(context, selectedCategory);
+                        Navigator.pop(context, value);
                       },
                     );
                   },

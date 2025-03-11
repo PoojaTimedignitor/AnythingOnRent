@@ -98,15 +98,15 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   bool perWeek = false;
   int quantity = 0;
   List<String> dynamicFieldTitles = [];
+  bool isSubCategorySelected = false;
 
   String categoryId = '';
 
   List<subCatDatass.SubCategoryData> SubCat = [];
   List<subCatDatass.SubCategoryData> filteredSubCat = [];
-
+  List<dynamicFields.Data> itemsDynamicFields = [];
   List<dynamicFields.Data> filteredItemsDynamicFields = [];
 
-  List<dynamicFields.Data> itemsDynamicFields = [];
 
   void updateCitys(String newCity) {
     setState(() {
@@ -137,14 +137,13 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   }
 
 
-  void fetchDymanicFieldsSubCategories(String categoryName) async {
+  /*void fetchDymanicFieldsSubCategories(String categoryId) async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      Map<String, dynamic> response =
-      await NewApiClients().NewGetSubCatDynamicFeilds(categoryName);
+      Map<String, dynamic> response = await NewApiClients().NewGetSubCatDynamicFeilds(categoryId);
 
       var jsonList = GetDaynamicResponseModel.fromJson(response);
 
@@ -160,7 +159,38 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
       });
       print("Error fetching fields: $e");
     }
+  }*/
+
+  void fetchDymanicFieldsSubCategories(String categoryId) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      Map<String, dynamic> response =
+      await NewApiClients().NewGetSubCatDynamicFeilds(categoryId);
+
+      var jsonList = GetDynamicResponseModel.fromJson(response);
+
+      setState(() {
+        itemsDynamicFields = jsonList.data != null ? [jsonList.data!] : [];
+        isSubCategorySelected = itemsDynamicFields.isNotEmpty;
+        isLoading = false;
+      });
+
+      print("Fetched Dynamic Fields: ${itemsDynamicFields}");
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching fields: $e");
+    }
   }
+
+
+
+
+
 
   @override
   void initState() {
@@ -563,28 +593,91 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 
 
 
-  Widget DynamicFieldsData(double parentHeight,double parentWidth){
-    return  Container(
-      color: Colors.red,
-      height: 100,
-      child: ListView.builder(
-        itemCount: dynamicFieldTitles.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              dynamicFieldTitles[index], // ✅ Show field names
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+  Widget DynamicFieldsData(double parentHeight, double parentWidth) {
+    if (!isSubCategorySelected || itemsDynamicFields.isEmpty) {
+      return SizedBox();
+    }
+
+    final dynamicData = itemsDynamicFields.first;
+
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: ListView(
+        shrinkWrap: true,
+        children: dynamicData.dynamicFields.entries.map((entry) {
+          String key = entry.key;
+          List<String> values = entry.value;
+
+          if (key == "Pet Item Types") {
+
+            bool accessoriesSelected = values.contains("Accessories");
+            bool petTransportSelected = values.contains("Pet Transport");
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  key,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                CheckboxListTile(
+                  title: Text("Accessories"),
+                  value: accessoriesSelected,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      if (newValue == true) {
+                        if (!values.contains("Accessories")) {
+                          values.add("Accessories");
+                        }
+                      } else {
+                        values.remove("Accessories");
+                      }
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: Text("Pet Transport"),
+                  value: petTransportSelected,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      if (newValue == true) {
+                        if (!values.contains("Pet Transport")) {
+                          values.add("Pet Transport");
+                        }
+                      } else {
+                        values.remove("Pet Transport");
+                      }
+                    });
+                  },
+                ),
+              ],
+            );
+          } else {
+
+            final valueText = values.isNotEmpty ? values.join(', ') : '';
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Text(
+                valueText.isNotEmpty ? "$key: $valueText" : key,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          );
-        },
+            );
+          }
+        }).toList(),
       ),
     );
   }
+
+
+
 
   Widget DataInfo(double parentHeight, double parentWidth) {
     String text =
@@ -624,7 +717,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                       topRight: Radius.circular(20),
                     ),
                   ),
-                  context: context, // Ensure proper context
+                  context: context,
                   backgroundColor: Colors.white,
                   elevation: 2,
                   isScrollControlled: true,
@@ -633,7 +726,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 
                     return SizedBox(
                       height: MediaQuery.of(context).size.height *
-                          0.8, // Adjust height
+                          0.8,
                       child: AllSubCat(categoryId: widget.catagoriesId,),
                     );
                   },
@@ -642,10 +735,11 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 if (selectedSubCategory != null) {
                   setState(() {
                     SubCatController.text = selectedSubCategory;
+                    isSubCategorySelected = false; // Reset before fetching data
                   });
-                  print("🚀 Fetching dynamic fields for: $selectedSubCategory");
-                  fetchDymanicFieldsSubCategories(selectedSubCategory);
 
+                  print("daynamicccc ${widget.catagoriesId}");
+                  fetchDymanicFieldsSubCategories(widget.catagoriesId);
                 }
               },
               controller: SubCatController,
@@ -677,12 +771,13 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
             ),
           ),
           SizedBox(height: 10),
-          Visibility(
-              visible: itemsDynamicFields.isNotEmpty,
-              child: Container(
-                color: Colors.red,
-                  height: 100,
-                  child: DynamicFieldsData(SizeConfig.screenHeight, SizeConfig.screenWidth))),
+
+          Column(
+            children: [
+
+              DynamicFieldsData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+            ],
+          ),
           SizedBox(height: 17),
           Text(
             "    Product Name",

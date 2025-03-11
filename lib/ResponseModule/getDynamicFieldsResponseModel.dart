@@ -1,52 +1,43 @@
-class GetDaynamicResponseModel {
+class GetDynamicResponseModel {
   bool? success;
   Data? data;
 
-  GetDaynamicResponseModel({this.success, this.data});
+  GetDynamicResponseModel({this.success, this.data});
 
-  GetDaynamicResponseModel.fromJson(Map<String, dynamic> json) {
+  GetDynamicResponseModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['success'] = success;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    return data;
+    return {
+      'success': success,
+      'data': data?.toJson(),
+    };
   }
 }
 
 class Data {
-  List<String>? petItemTypes;
-  List<String>? doYouProvideAnyPetConsultation;
-  List<String>? petItemsDelivery;
+  Map<String, List<String>> dynamicFields = {};
 
-  Data({this.petItemTypes, this.doYouProvideAnyPetConsultation, this.petItemsDelivery});
+  Data({required this.dynamicFields});
 
   Data.fromJson(Map<String, dynamic> json) {
-    petItemTypes = json['Pet Item Types'] != null ? List<String>.from(json['Pet Item Types']) : [];
-    doYouProvideAnyPetConsultation = json['Do you provide any pet consultation?'] != null
-        ? List<String>.from(json['Do you provide any pet consultation?'])
-        : [];
-    petItemsDelivery = json["Pet Item's Delivery"] != null
-        ? List<String>.from(json["Pet Item's Delivery"])
-        : [];
+    json.forEach((key, value) {
+      if (value is List) {
+        dynamicFields[key] = List<String>.from(value.map((e) => e.toString()));
+      } else {
+        dynamicFields[key] = [];
+      }
+    });
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (petItemTypes != null) {
-      data['Pet Item Types'] = petItemTypes;
-    }
-    if (doYouProvideAnyPetConsultation != null) {
-      data['Do you provide any pet consultation?'] = doYouProvideAnyPetConsultation;
-    }
-    if (petItemsDelivery != null) {
-      data["Pet Item's Delivery"] = petItemsDelivery;
-    }
-    return data;
+    return dynamicFields;
+  }
+
+  @override
+  String toString() {
+    return 'Data(dynamicFields: $dynamicFields)';
   }
 }

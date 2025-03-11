@@ -555,14 +555,61 @@ class NewApiClients {
     }
   }
 
+  //
+  // Future<Map<String, dynamic>> NewGetSubCatDynamicFeilds(String categoryId) async {
+  //   String baseeUrl = "https://backend.anythingonrent.com";
+  //   String url = "$baseeUrl/category/${categoryId}/dynamicfields";
+  //   print("API URL: $url");
+  //
+  //   String? accessToken = NewAuthStorage.getAccessToken();
+  //   print(" Access Token: $accessToken");
+  //
+  //   try {
+  //     Response response = await _dio.get(
+  //       url,
+  //       options: Options(
+  //         headers: {
+  //           'Authorization': 'Bearer $accessToken',
+  //           'Accept': 'application/json',
+  //         },
+  //       ),
+  //     );
+  //
+  //     print("Response Status Code: ${response.statusCode}");
+  //     print("Raw Response Data: ${response.data}");
+  //
+  //     if (response.statusCode == 200) {
+  //       return response.data;
+  //     } else {
+  //       throw Exception("API Error: ${response.statusCode}");
+  //     }
+  //   } on DioException catch (e) {
+  //     print("Dio Error: ${e.response?.data}");
+  //     return {};
+  //   } catch (e) {
+  //     print("Unexpected Error: $e");
+  //     return {};
+  //   }
+  // }
 
-  Future<Map<String, dynamic>> NewGetSubCatDynamicFeilds(String categoryId) async {
+
+  Future<Map<String, dynamic>> NewGetSubCatDynamicFeilds(String categoryIdsss) async {
     String baseeUrl = "https://backend.anythingonrent.com";
-    String url = "$baseeUrl/category/$categoryId/dynamicfields";
-    print("🚀 API URL: $url");
+    String url = "$baseeUrl/category/$categoryIdsss/dynamicfields";
+    print("API URL: $url");
+    print("Final API URL: $url");
+    print("Category ID: $categoryIdsss");
 
     String? accessToken = NewAuthStorage.getAccessToken();
-    print("🔑 Access Token: $accessToken");
+
+    if (accessToken == null || accessToken.isEmpty) {
+      print("Error: Access token is null or empty.");
+      return {};
+    }
+
+    print("Access Token: $accessToken");
+
+    Dio _dio = Dio();
 
     try {
       Response response = await _dio.get(
@@ -575,25 +622,27 @@ class NewApiClients {
         ),
       );
 
-      print("✅ Response Status Code: ${response.statusCode}");
-      print("✅ Raw Response Data: ${response.data}");
+      print("Response Status Code: ${response.statusCode}");
+      print("Raw Response Data: ${response.data}");
 
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data as Map<String, dynamic>;
       } else {
-        throw Exception("API Error: ${response.statusCode}");
+        print("API Error: ${response.statusCode} - ${response.statusMessage}");
+        return {};
       }
     } on DioException catch (e) {
-      print("❌ Dio Error: ${e.response?.data}");
+      print("Dio Error: ${e.message}");
+      if (e.response != null) {
+        print("Error Response Code: ${e.response?.statusCode}");
+        print("Error Response Data: ${e.response?.data}");
+      }
       return {};
     } catch (e) {
-      print("❌ Unexpected Error: $e");
+      print("Unexpected Error: $e");
       return {};
     }
   }
-
-
-
 
 
 
