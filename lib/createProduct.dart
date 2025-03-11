@@ -23,8 +23,8 @@ import 'package:shimmer/shimmer.dart';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'ResponseModule/getSubCatResponseModel.dart' as subCatDatass;
-import 'package:anything/ResponseModule/getDynamicFieldsResponseModel.dart' as dynamicFields;
-
+import 'package:anything/ResponseModule/getDynamicFieldsResponseModel.dart'
+    as dynamicFields;
 
 import 'package:image_picker/image_picker.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
@@ -48,7 +48,8 @@ class NewProduct extends StatefulWidget {
       required this.ProductAddress,
       required this.BusinessOfficeAddress,
       required this.categoryName,
-      required this.imagePath, required this.catagoriesId});
+      required this.imagePath,
+      required this.catagoriesId});
 
   @override
   State<NewProduct> createState() => _NewProductState();
@@ -72,6 +73,8 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
       TextEditingController();
 
   TextEditingController businessNameController = TextEditingController();
+  TextEditingController petItemTypesController = TextEditingController();
+  List<String> selectedPetItemTypes = [];
   TextEditingController businessContactController = TextEditingController();
   TextEditingController businessEmailController = TextEditingController();
   TextEditingController businessGSTINController = TextEditingController();
@@ -107,7 +110,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   List<dynamicFields.Data> itemsDynamicFields = [];
   List<dynamicFields.Data> filteredItemsDynamicFields = [];
 
-
   void updateCitys(String newCity) {
     setState(() {
       updatedCitys = newCity;
@@ -135,7 +137,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
       print("Error fetching subcategories: $e");
     }
   }
-
 
   /*void fetchDymanicFieldsSubCategories(String categoryId) async {
     setState(() {
@@ -168,7 +169,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 
     try {
       Map<String, dynamic> response =
-      await NewApiClients().NewGetSubCatDynamicFeilds(categoryId);
+          await NewApiClients().NewGetSubCatDynamicFeilds(categoryId);
 
       var jsonList = GetDynamicResponseModel.fromJson(response);
 
@@ -187,16 +188,11 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
     }
   }
 
-
-
-
-
-
   @override
   void initState() {
     super.initState();
 
-   // fetchDymanicFieldsSubCategories();
+    // fetchDymanicFieldsSubCategories();
 
     if (categoryId.isNotEmpty) {
       print("Selected Category ID: $categoryId");
@@ -222,7 +218,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
         ),
       ));
     }
-
 
     _controller.forward();
 
@@ -292,7 +287,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                       ),
                     ),
                     SizedBox(height: 10),
-
                     Container(
                       height: 400,
                       width: 200,
@@ -303,12 +297,10 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                             children: [
                               GestureDetector(
                                 onTap: () async {
-                                  selectedIndex =
-                                      index;
+                                  selectedIndex = index;
                                   await _pickImageForReplacement(selectedIndex);
                                   Navigator.pop(context);
-                                  setState(
-                                      () {});
+                                  setState(() {});
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -337,7 +329,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                   ),
                                   onPressed: () {
                                     setState(() {
-
                                       _selectedImages.removeAt(index);
                                     });
                                     Navigator.pop(context);
@@ -438,8 +429,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
       _getReplaceIndex();
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -580,8 +569,6 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-
-
               DataInfo(SizeConfig.screenHeight, SizeConfig.screenWidth),
             ],
           ),
@@ -590,9 +577,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
     );
   }
 
-
-
-
+/*
   Widget DynamicFieldsData(double parentHeight, double parentWidth) {
     if (!isSubCategorySelected || itemsDynamicFields.isEmpty) {
       return SizedBox();
@@ -675,9 +660,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
       ),
     );
   }
-
-
-
+*/
 
   Widget DataInfo(double parentHeight, double parentWidth) {
     String text =
@@ -723,11 +706,11 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   isScrollControlled: true,
                   isDismissible: true,
                   builder: (BuildContext bc) {
-
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height *
-                          0.8,
-                      child: AllSubCat(categoryId: widget.catagoriesId,),
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: AllSubCat(
+                        categoryId: widget.catagoriesId,
+                      ),
                     );
                   },
                 );
@@ -735,7 +718,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 if (selectedSubCategory != null) {
                   setState(() {
                     SubCatController.text = selectedSubCategory;
-                    isSubCategorySelected = false; // Reset before fetching data
+                    isSubCategorySelected = false;
                   });
 
                   print("daynamicccc ${widget.catagoriesId}");
@@ -758,9 +741,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.grey[400]!,
-                      width: 1.0), // Focused underline color and width
+                  borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
                 ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -771,11 +752,10 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
             ),
           ),
           SizedBox(height: 10),
-
           Column(
             children: [
-
-              DynamicFieldsData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+              DynamicFieldsData(
+                  SizeConfig.screenHeight, SizeConfig.screenWidth),
             ],
           ),
           SizedBox(height: 17),
@@ -2824,7 +2804,163 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           SizedBox(height: 17),
         ]);
   }
+
+  Widget DynamicFieldsData(double parentHeight, double parentWidth) {
+
+    if (!isSubCategorySelected || itemsDynamicFields.isEmpty) {
+      return SizedBox();
+    }
+
+    final dynamicData = itemsDynamicFields.first;
+
+    return Visibility(
+      visible: isSubCategorySelected && itemsDynamicFields.isNotEmpty,
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: ListView(
+          shrinkWrap: true,
+          children: dynamicData.dynamicFields.entries.map((entry) {
+            String key = entry.key;
+            List<String> values = entry.value;
+            if (key == "Pet Item Types") {
+
+              return Padding(
+                padding: EdgeInsets.only(left: 15, right: 15, top: 10),
+                child: TextField(
+                  readOnly: true,
+
+                  controller: TextEditingController(text: values.join(', ')),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Pet Item Types',
+                    contentPadding: EdgeInsets.all(10.0),
+                    fillColor: Color(0xffF5F6FB),
+                    filled: true,
+                    border: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey[400]!, width: 1.0),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey[400]!, width: 1.0),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.grey[400]!, width: 1.0),
+                    ),
+                  ),
+                  onTap: () async {
+
+                    List<String>? selectedOptions =
+                        await showModalBottomSheet<List<String>>(
+                      context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      isScrollControlled: true,
+                      builder: (BuildContext bc) {
+                        return PetItemTypesBottomSheet(
+                          selectedOptions: values,
+                        );
+                      },
+                    );
+                    if (selectedOptions != null) {
+                      setState(() {
+                        dynamicData.dynamicFields[key] = selectedOptions;
+                      });
+                    }
+                  },
+                ),
+              );
+            } else {
+              final valueText = values.isNotEmpty ? values.join(', ') : '';
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  valueText.isNotEmpty ? "$key: $valueText" : key,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }
+          }).toList(),
+        ),
+      ),
+    );
+  }
 }
+
+class PetItemTypesBottomSheet extends StatefulWidget {
+  final List<String> selectedOptions;
+  const PetItemTypesBottomSheet({Key? key, required this.selectedOptions})
+      : super(key: key);
+
+  @override
+  _PetItemTypesBottomSheetState createState() =>
+      _PetItemTypesBottomSheetState();
+}
+
+class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
+  bool accessoriesSelected = false;
+  bool petTransportSelected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    accessoriesSelected = widget.selectedOptions.contains("Accessories");
+    petTransportSelected = widget.selectedOptions.contains("Pet Transport");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(15),
+      // Bottom sheet की ऊंचाई सामग्री के अनुसार तय होगी
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Select Pet Item Types",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          CheckboxListTile(
+            title: Text("Accessories"),
+            value: accessoriesSelected,
+            onChanged: (bool? value) {
+              setState(() {
+                accessoriesSelected = value ?? false;
+              });
+            },
+          ),
+          CheckboxListTile(
+            title: Text("Pet Transport"),
+            value: petTransportSelected,
+            onChanged: (bool? value) {
+              setState(() {
+                petTransportSelected = value ?? false;
+              });
+            },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              List<String> selected = [];
+              if (accessoriesSelected) selected.add("Accessories");
+              if (petTransportSelected) selected.add("Pet Transport");
+              Navigator.pop(context, selected);
+            },
+            child: Text("Done"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
 
 class AllInformationWidget extends StatefulWidget {
   final String categoryName;
