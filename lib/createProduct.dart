@@ -731,9 +731,10 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 hintText: 'SubCategories',
                 contentPadding: EdgeInsets.all(10.0),
                 hintStyle: TextStyle(
-                  fontFamily: "Roboto_Regular",
-                  color: Color(0xffa1a1a1),
-                  fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                  color: Color(0xff000000),
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
                 fillColor: Color(0xffF5F6FB),
                 filled: true,
@@ -751,13 +752,9 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
               ),
             ),
           ),
-          SizedBox(height: 10),
-          Column(
-            children: [
-              DynamicFieldsData(
-                  SizeConfig.screenHeight, SizeConfig.screenWidth),
-            ],
-          ),
+
+          DynamicFieldsData(
+              SizeConfig.screenHeight, SizeConfig.screenWidth),
           SizedBox(height: 17),
           Text(
             "    Product Name",
@@ -2815,80 +2812,85 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 
     return Visibility(
       visible: isSubCategorySelected && itemsDynamicFields.isNotEmpty,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: ListView(
-          shrinkWrap: true,
-          children: dynamicData.dynamicFields.entries.map((entry) {
-            String key = entry.key;
-            List<String> values = entry.value;
-            if (key == "Pet Item Types") {
+      child: ListView(
+        shrinkWrap: true,
+        children: dynamicData.dynamicFields.entries.map((entry) {
+          String key = entry.key;
+          List<String> values = entry.value;
+          if (key == "Pet Item Types") {
 
-              return Padding(
-                padding: EdgeInsets.only(left: 15, right: 15, top: 10),
-                child: TextField(
-                  readOnly: true,
+            return Padding(
+              padding: EdgeInsets.only(left: 15, right: 15),
+              child: TextField(
+                readOnly: true,
 
-                  controller: TextEditingController(text: values.join(', ')),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    hintText: 'Pet Item Types',
-                    contentPadding: EdgeInsets.all(10.0),
-                    fillColor: Color(0xffF5F6FB),
-                    filled: true,
-                    border: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey[400]!, width: 1.0),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey[400]!, width: 1.0),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey[400]!, width: 1.0),
-                    ),
+                controller: TextEditingController(text: values.join(', ')),
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: 'Pet Item Types',
+
+
+                  hintStyle: TextStyle(
+                    color: Color(0xff000000),
+                    fontFamily: "okra_Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
                   ),
-                  onTap: () async {
-
-                    List<String>? selectedOptions =
-                        await showModalBottomSheet<List<String>>(
-                      context: context,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      isScrollControlled: true,
-                      builder: (BuildContext bc) {
-                        return PetItemTypesBottomSheet(
-                          selectedOptions: values,
-                        );
-                      },
-                    );
-                    if (selectedOptions != null) {
-                      setState(() {
-                        dynamicData.dynamicFields[key] = selectedOptions;
-                      });
-                    }
-                  },
-                ),
-              );
-            } else {
-              final valueText = values.isNotEmpty ? values.join(', ') : '';
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text(
-                  valueText.isNotEmpty ? "$key: $valueText" : key,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  contentPadding: EdgeInsets.all(10.0),
+                  fillColor: Color(0xffF5F6FB),
+                  filled: true,
+                  border: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.grey[400]!, width: 1.0),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.grey[400]!, width: 1.0),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.grey[400]!, width: 1.0),
                   ),
                 ),
-              );
-            }
-          }).toList(),
-        ),
+                onTap: () async {
+
+                  List<String>? selectedOptions =
+                      await showModalBottomSheet<List<String>>(
+                    context: context,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    isScrollControlled: true,
+                    builder: (BuildContext bc) {
+                      return PetItemTypesBottomSheet(
+                        selectedOptions: values,
+                      );
+                    },
+                  );
+                  if (selectedOptions != null) {
+                    setState(() {
+                      dynamicData.dynamicFields[key] = selectedOptions;
+                    });
+                  }
+                },
+              ),
+            );
+          } else {
+            final valueText = values.isNotEmpty ? values.join(', ') : '';
+            return Padding(
+              padding:  EdgeInsets.only(top: 25,left: 18),
+              child: Text(
+                valueText.isNotEmpty ? "$key: $valueText" : key,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }
+        }).toList(),
       ),
     );
   }
@@ -2906,29 +2908,46 @@ class PetItemTypesBottomSheet extends StatefulWidget {
 
 class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
   bool accessoriesSelected = false;
-  bool petTransportSelected = false;
+  bool petAccomodation = false;
+  bool petToys = false;
+  bool petTransport = false;
+  bool petDresses = false;
+  bool petSetting = false;
 
   @override
   void initState() {
     super.initState();
     accessoriesSelected = widget.selectedOptions.contains("Accessories");
-    petTransportSelected = widget.selectedOptions.contains("Pet Transport");
+    petAccomodation = widget.selectedOptions.contains("Pet's Accomodation");
+    petToys = widget.selectedOptions.contains("Pet's Toys");
+    petTransport = widget.selectedOptions.contains("Pet Transport");
+    petDresses = widget.selectedOptions.contains("Pet Dresses");
+    petSetting = widget.selectedOptions.contains("Pet sitting");
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(15),
-      // Bottom sheet की ऊंचाई सामग्री के अनुसार तय होगी
+
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             "Select Pet Item Types",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+            style: TextStyle(
+                fontSize: SizeConfig.blockSizeHorizontal * 5.0,
+                fontFamily: 'Roboto_Medium',
+                fontWeight: FontWeight.w400,
+                color: CommonColor.Black),
+          ), SizedBox(height: 10),
           CheckboxListTile(
-            title: Text("Accessories"),
+            title: Text("Accessories",style: TextStyle(
+                color: Color(0xff000000),
+            fontFamily: "okra_Medium",
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),),
             value: accessoriesSelected,
             onChanged: (bool? value) {
               setState(() {
@@ -2937,22 +2956,118 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
             },
           ),
           CheckboxListTile(
-            title: Text("Pet Transport"),
-            value: petTransportSelected,
+            title: Text("Pet's Accomodation",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
+            value: petAccomodation,
             onChanged: (bool? value) {
               setState(() {
-                petTransportSelected = value ?? false;
+                petAccomodation = value ?? false;
               });
             },
           ),
-          ElevatedButton(
-            onPressed: () {
+          CheckboxListTile(
+            title: Text("Pet Toys",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
+            value: petToys,
+            onChanged: (bool? value) {
+              setState(() {
+                petToys = value ?? false;
+              });
+            },
+          ),
+          CheckboxListTile(
+            title: Text("Pet Transport",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
+            value: petTransport,
+            onChanged: (bool? value) {
+              setState(() {
+                petTransport = value ?? false;
+              });
+            },
+          ),
+          CheckboxListTile(
+            title: Text("Pet Dresses",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
+            value: petDresses,
+            onChanged: (bool? value) {
+              setState(() {
+                petDresses = value ?? false;
+              });
+            },
+          ),
+
+          CheckboxListTile(
+            title: Text("Pet sitting",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
+            value: petSetting,
+            onChanged: (bool? value) {
+              setState(() {
+                petSetting = value ?? false;
+              });
+            },
+          ),
+
+
+          GestureDetector(
+            onTap: (){
               List<String> selected = [];
               if (accessoriesSelected) selected.add("Accessories");
-              if (petTransportSelected) selected.add("Pet Transport");
+              if (petAccomodation) selected.add("Pet Accomodation");
+              if (petToys) selected.add("Pet Toys");
+              if (petTransport) selected.add("Pet Transport");
+              if (petDresses) selected.add("Pet Dresses");
+              if (petSetting) selected.add("Pet Sitting");
               Navigator.pop(context, selected);
             },
-            child: Text("Done"),
+            child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: IntrinsicWidth(
+                  //  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 40,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xff632883), Color(0xff8d42a3)],
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      "Done",
+                      style: TextStyle(
+                        fontFamily: "Montserrat-BoldItalic",
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ),
         ],
       ),

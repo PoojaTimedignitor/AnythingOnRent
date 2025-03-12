@@ -527,7 +527,7 @@ class NewApiClients {
 
   Future<Map<String, dynamic>> NewGetAllSubCat(String categoryId) async {
     String url = "https://rental-api-5vfa.onrender.com/category/$categoryId/subcategories";
-    print("🚀 API URL: $url");
+    print("API URL: $url");
 
     String? accessToken = NewAuthStorage.getAccessToken();
     print("🔑 Access Token: $accessToken");

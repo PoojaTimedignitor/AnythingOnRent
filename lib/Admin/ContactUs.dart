@@ -33,6 +33,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   String updatedDescription = "";
   TextEditingController messageController = TextEditingController();
 
+
   void showTopSnackBar(BuildContext context, String message) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
@@ -70,7 +71,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
     super.initState();
   }
 
-  void showSuccessDialog(BuildContext context) {
+
+  /*void showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -184,6 +186,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         ),
                       ),
                     ),
+
                     SizedBox(height: 16),
                   ],
                 ),
@@ -194,6 +197,144 @@ class _ContactUsPageState extends State<ContactUsPage> {
       },
     );
   }
+*/
+
+
+  void showSuccessDialog(BuildContext context) {
+    if (messageController.text.trim().isEmpty) {
+      showTopSnackBar(context, "Message is required!");
+      return;
+    }
+
+    bool isSubmitting = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return WillPopScope(
+              onWillPop: () async => false,
+              child: Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 10),
+                      Image.asset(
+                        'assets/images/sucess.png',
+                        height: MediaQuery.of(context).size.height * 0.08,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 5),
+                            Text(
+                              "Your ticket has been raised successfully!",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "okra_Medium",
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            Text(
+                              "Now track the status of all your tickets in the Support section.",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Montserrat-Medium",
+                                fontSize: MediaQuery.of(context).size.width * 0.035,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: isSubmitting
+                            ? null
+                            : () async {
+                          setState(() => isSubmitting = true);
+                          print("Submitting Ticket...");
+
+                          var response = await NewApiClients().NewCreateTicket(
+                            selectedCategoryId,
+                            messageController.text,
+                          );
+
+                          print("API Response: $response");
+
+                          if (response['success'] == true) {
+                            String? userId = response['data']?['userId'];
+                            print("User ID: $userId");
+
+                            if (userId != null) {
+                              NewAuthStorage.setUserId(userId);
+                            }
+                            messageController.clear();
+                            showTopSnackBar(context, 'Question submitted successfully!');
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => HelpCenterScreen()),
+                            );
+                          } else {
+                            print("Error Message: ${response['message']}");
+                            showTopSnackBar(context, "Failed to submit question!");
+                            setState(() => isSubmitting = false);
+                          }
+                        },
+                        child: Center(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            decoration: BoxDecoration(
+                              color: isSubmitting ? Colors.grey : const Color(0xfff44343),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            alignment: Alignment.center,
+                            child: isSubmitting
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : Text(
+                              "Okay",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Roboto-Regular',
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -225,10 +366,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               width: 400,
-              child: Text(
+              child: const Text(
                 "Tell us about your issues so we can help you more quickly. ",
                 style: TextStyle(
                   color: CommonColor.Black,
@@ -240,11 +381,11 @@ class _ContactUsPageState extends State<ContactUsPage> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             GestureDetector(
               onTap: () async {
                 final result = await showModalBottomSheet(
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -256,7 +397,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     isScrollControlled: true,
                     isDismissible: true,
                     builder: (BuildContext bc) {
-                      return ContactUs();
+                      return const ContactUs();
                     });
 
                 if (result != null) {
@@ -276,7 +417,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
+                      const Padding(
                           padding: EdgeInsets.only(left: 15),
                           child: Image(
                             image: AssetImage('assets/images/questionmark.png'),
@@ -284,7 +425,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           )),
                       Container(
                         width: SizeConfig.screenHeight * 0.3,
-                        child: Text(
+                        child: const Text(
                           "choose a Question Here",
                           style: TextStyle(
                             color: Colors.black,
@@ -295,7 +436,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Padding(
+                      const Padding(
                           padding: EdgeInsets.only(right: 10),
                           child: Image(
                             image: AssetImage('assets/images/downarrow.png'),
@@ -324,7 +465,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         children: [
                           Text(
                             (updatedTexts),
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xfff4823b),
                               fontFamily: "okra_Bold",
                               fontSize: 16,
@@ -336,7 +477,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             width: 500,
                             child: Text(
                               (updatedDescription),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xfff4823b),
                                 fontFamily: "Montserrat-Medium",
                                 fontSize: 13,
@@ -350,8 +491,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 34),
-                  Text(
+                  const SizedBox(height: 34),
+
+                  const Text(
                     " Send us a message",
                     style: TextStyle(
                       color: Colors.black,
@@ -361,7 +503,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 0, right: 0, top: 10),
+                    padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
                     child: TextFormField(
                         textAlign: TextAlign.start,
                         maxLines: 5,
@@ -382,7 +524,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           hoverColor: Colors.white,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                   color: Color(0xffD9D9D9), width: 1),
                               borderRadius: BorderRadius.circular(10.0)),
                           focusedBorder: OutlineInputBorder(
@@ -397,6 +539,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     onTap: () {
                       showSuccessDialog(context);
                     },
+
                     /* onTap: () {
                       ApiClients()
                           .CreateTicket(selectedCategoryId, messageController.text)
@@ -443,6 +586,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         }
                       });
                     },*/
+
                     child: Center(
                       child: Container(
                         width: parentWidth * 0.77,
@@ -455,7 +599,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 spreadRadius: 1,
                                 offset: Offset(1, 1)),
                           ],
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             begin: Alignment.topRight,
                             end: Alignment.bottomLeft,
                             colors: [
