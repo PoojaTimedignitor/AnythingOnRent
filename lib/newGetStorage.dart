@@ -153,7 +153,17 @@ class NewAuthStorage {
   static String? getGender() => _storage.read<String>('gender');
   static String? getProfileImage() => _storage.read<String>('profileImage');
 
+  static Future<void> setUserIds(String userId) async {
+    await _storage.write(userIdKey, userId);
+    print("✅ User ID Stored: $userId");
+  }
 
+  /// ✅ Retrieve User ID & Debug
+  static String? getUserIds() {
+    String? userId = _storage.read<String>(userIdKey);
+    print("🔵 Retrieved User ID from Storage: $userId");
+    return userId;
+  }
 
   static void setPhoneNumber(String phoneNumber) {
     _storage.write(StorageKeys.phoneNumber, phoneNumber);

@@ -526,7 +526,6 @@ class NewApiClients {
   }
 
 
-
   Future<Map<String, dynamic>> NewGetAllSubCat(String categoryId) async {
     String url = "https://rental-api-5vfa.onrender.com/category/$categoryId/subcategories";
     print("API URL: $url");
@@ -595,7 +594,8 @@ class NewApiClients {
   // }
 
 
-  Future<Map<String, dynamic>> NewGetSubCatDynamicFeilds(String categoryIdsss) async {
+  Future<Map<String, dynamic>> NewGetSubCatDynamicFeilds(
+      String categoryIdsss) async {
     String baseeUrl = "https://backend.anythingonrent.com";
     String url = "$baseeUrl/category/$categoryIdsss/dynamicfields";
     print("API URL: $url");
@@ -647,13 +647,14 @@ class NewApiClients {
   }
 
 
-
   String getBigSupportTicket(String userId, String ticketNumber) {
     return "/app-support/$userId/$ticketNumber";
   }
 
-  Future<Map<String, dynamic>> getBigViewTicket(String? userId, String? ticketNumber) async {
-    if (userId == null || userId.isEmpty || ticketNumber == null || ticketNumber.isEmpty) {
+  Future<Map<String, dynamic>> getBigViewTicket(String? userId,
+      String? ticketNumber) async {
+    if (userId == null || userId.isEmpty || ticketNumber == null ||
+        ticketNumber.isEmpty) {
       throw Exception(" userId or ticketNumber is missing!");
     }
 
@@ -693,7 +694,6 @@ class NewApiClients {
       throw Exception("Error fetching ticket: ${e.message}");
     }
   }
-
 
 
   // Future<Map<String, dynamic>> NewGetAllSubCat(String categoryId) async {
@@ -742,13 +742,7 @@ class NewApiClients {
   // }
 
 
-
-
-
-
-  Future<Map<String, dynamic>> NewPostfeedbackUser(
-      String suggest,
-      ) async
+  Future<Map<String, dynamic>> NewPostfeedbackUser(String suggest,) async
   {
     String url = ApiConstant().AdminBaseUrl + ApiConstant().UserFeedback;
 
@@ -785,14 +779,13 @@ class NewApiClients {
   }
 
 
-
-  Future<Map<String, dynamic>> NewCreateTicket(
-      String categoryId, String description) async
+  Future<Map<String, dynamic>> NewCreateTicket(String categoryId,
+      String description) async
   {
-
     print("Creating Ticket...");
 
-    String url = ApiConstant().AdminBaseUrl + ApiConstant().AdminContactUsMessage;
+    String url = ApiConstant().AdminBaseUrl +
+        ApiConstant().AdminContactUsMessage;
     String? sessionToken = await NewAuthStorage.getAccessToken();
     String? userId = await NewAuthStorage.getUserIdd();
 
@@ -826,7 +819,6 @@ class NewApiClients {
   }
 
 
-
   Future<Map<String, dynamic>> getAllTicket() async {
     String? userId = await NewAuthStorage.getUserIdd();
 
@@ -837,7 +829,8 @@ class NewApiClients {
 
     print(" User ID: $userId");
 
-    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
+    String url = "${ApiConstant().AdminBaseUrl}${ApiConstant()
+        .getAllTicketsSupport(userId)}";
     print("📡"
         " API URL: $url");
 
@@ -857,7 +850,8 @@ class NewApiClients {
       print(" Status Code: ${response.statusCode}");
       print(" Response Data: ${response.data}");
 
-      if (response.headers.value('content-type')?.contains('application/json') ?? false) {
+      if (response.headers.value('content-type')?.contains(
+          'application/json') ?? false) {
         return response.data;
       } else {
         throw Exception(" Unexpected response format: ${response.data}");
@@ -865,14 +859,15 @@ class NewApiClients {
     } on DioException catch (e) {
       if (e.response != null) {
         print(" Dio Error Response: ${e.response?.data}");
-        throw Exception("Error fetching data: ${e.response?.statusCode ?? 'Unknown'} - ${e.response?.data}");
+        throw Exception(
+            "Error fetching data: ${e.response?.statusCode ?? 'Unknown'} - ${e
+                .response?.data}");
       } else {
         print(" Dio Error Message: ${e.message}");
         throw Exception("Dio Error: ${e.message}");
       }
     }
   }
-
 
 
 /*
@@ -1000,53 +995,116 @@ class NewApiClients {
 */
 
 
-  Future<Map<String, dynamic>> NewCreateProductApi(String name) async {
+  // Future<Map<String, dynamic>> NewCreateProductApi(String name) async {
+  //   String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
+  //   String? userId = await NewAuthStorage.getUserId();
+  //
+  //
+  //   if (userId == null || userId.isEmpty) {
+  //     print("❌ Error: User ID is missing from storage.");
+  //     return {"success": false, "message": "User ID not found"};
+  //   }
+  //
+  //   String? accessToken = NewAuthStorage.getAccessToken();
+  //   print("🟢 AuthStorage User ID: $userId");
+  //   print("🟢 Access Token: $accessToken");
+  //   print("Access Token: $accessToken");
+  //
+  //   try {
+  //     FormData formData = FormData.fromMap({
+  //       'name': name,
+  //       'userId': userId,
+  //     });
+  //
+  //     Response response = await _dio.post<Map<String, dynamic>>(
+  //       url,
+  //       data: formData,
+  //       options: Options(
+  //         headers: {'Authorization': 'Bearer $accessToken'},
+  //       ),
+  //     );
+  //
+  //     if (response.data != null && response.statusCode == 200) {
+  //       return {
+  //         "success": true,
+  //         "message": "Product created successfully!",
+  //         "data": {
+  //           "name": name,
+  //         }
+  //       };
+  //     } else {
+  //       return {"success": false, "error": "Unexpected response"};
+  //     }
+  //   } on DioError catch (e) {
+  //     print("DioError: ${e.response?.data}");
+  //
+  //     return {
+  //       "success": false,
+  //       "error": e.response?.data.toString() ?? "Dio error occurred",
+  //     };
+  //   } catch (e) {
+  //     print("General Error: $e");
+  //
+  //     return {
+  //       "success": false,
+  //       "error": e.toString(),
+  //     };
+  //   }
+  // }
+  Future<Map<String, dynamic>> NewCreateProductApi(String name,String description) async {
     String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
-    String? accessToken = NewAuthStorage.getAccessToken();
-    print("Access Token: $accessToken");
+    String? userId = await NewAuthStorage.getUserId(); // Ensure it's awaited
+
+    if (userId == null || userId.isEmpty) {
+      print("❌ Error: User ID is missing from storage.");
+      return {"success": false, "message": "User ID not found"};
+    }
+
+    String? accessToken = await NewAuthStorage.getAccessToken();
+
+
+    if (accessToken == null || accessToken.isEmpty) {
+      return {"success": false, "message": "Access token is missing"};
+    }
 
     try {
-      FormData formData = FormData.fromMap({
-        'name': name,
-      });
+      var requestData = {
+        "name": name,
+        "description": description,
+        "userId": int.tryParse(userId) ?? userId,
+      };
 
-      Response response = await _dio.post<Map<String, dynamic>>(
+      print("📤 Sending Request: $requestData");
+
+      Response response = await _dio.post(
         url,
-        data: formData,
+        data: jsonEncode(requestData), // Sending JSON
         options: Options(
-          headers: {'Authorization': 'Bearer $accessToken'},
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json', // Ensure correct format
+          },
         ),
       );
+
+      print("✅ API Response: ${response.data}");
 
       if (response.data != null && response.statusCode == 200) {
         return {
           "success": true,
-          "message": "Product created successfully!",
-          "data": {
-            "name": name,
-          }
+          "message": response.data['message'] ?? "Product created successfully!",
+          "data": response.data['data'],
         };
       } else {
-        return {"success": false, "error": "Unexpected response"};
+        return {"success": false, "error": "Unexpected response from server"};
       }
     } on DioError catch (e) {
-      print("DioError: ${e.response?.data}");
+
 
       return {
         "success": false,
-        "error": e.response?.data.toString() ?? "Dio error occurred",
+        "error": e.response?.data?['message'] ?? "Unknown error occurred",
       };
-    } catch (e) {
-      print("General Error: $e");
+    }}
 
-      return {
-        "success": false,
-        "error": e.toString(),
-      };
-    }
-  }
 }
-
-
-
-

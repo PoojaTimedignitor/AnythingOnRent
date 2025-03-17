@@ -2075,27 +2075,15 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Image(
-                            image: AssetImage('assets/images/star.png'),
-                            height: 22,
-                          ),
-                          Text(
-                            "  DEAL ZONE  ",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "okra_Bold",
-                              letterSpacing: 1.0,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Image(
-                            image: AssetImage('assets/images/star.png'),
-                            height: 22,
-                          ),
-                        ],
+                      child: Text(
+                        "  DEAL ZONE  ",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: "okra_Bold",
+                          letterSpacing: 1.0,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -2773,14 +2761,38 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           SizedBox(height: 10),
           GestureDetector(
             onTap: () async {
+
+              print(" api  $productNameController.text");
               String productName = productNameController.text;
+              String productDescription = productDiscriptionController.text;
 
               if (productName.isNotEmpty) {
                 var response = await   NewApiClients()
-                    .NewCreateProductApi(productName);
+                    .NewCreateProductApi(productName,productDescription);
+
 
                 if (response['success'] == true) {
-                  print("Product Created: ${response['data']['name']}");
+                  if (response.containsKey('data') && response['data'] != null) {
+                    var data = response['data'];
+                    if (data.containsKey('userId')) {
+                      String? userId = data['userId'];
+                      if (userId != null) {
+                        await NewAuthStorage.setUserId(userId);
+                        print(" User ID Stored: $userId");
+
+                        // Debugging: Verify if userId is stored properly
+                        String? storedUserId = await NewAuthStorage.getUserId();
+                        print("🔍 Retrieved User ID from storage: $storedUserId");
+                      } else {
+                        print(" Error: userId is null in response data");
+                      }
+                    } else {
+                      print("Error: userId key not found in response data");
+                    }
+                  } else {
+                    print("Error: Response data is null or missing");
+                  }
+                // Corrected print stat
 
                   // Navigate to Home Screen
                   Navigator.pushReplacement(
@@ -2848,13 +2860,14 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           shrinkWrap: true,
           physics: BouncingScrollPhysics(),
           children: dynamicData.dynamicFields.entries
-              .where((entry) => entry.key.trim() != "Pet Items Delivery?")
+              .where((entry) => !entry.key.trim().contains("Pet Items Deliverydfgdfgdf"))
+
               .map((entry) {
             String key = entry.key.trim();
             List<String> values = entry.value;
-        
-        
-        
+
+
+
             if (key == "Pet Item Types") {
               return Padding(
                 padding: EdgeInsets.only(left: 15, right: 15),
@@ -3020,7 +3033,11 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(15),
+decoration: BoxDecoration(
+  color: Colors.white,
 
+  borderRadius: BorderRadius.all(Radius.circular(10)),
+),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

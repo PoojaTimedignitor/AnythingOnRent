@@ -1143,7 +1143,6 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
   Widget _buildOTPWidget() {
 
     print("mmmm ${ NewAuthStorage.getPhoneNumber()}");
-  // String? phoneNumber = GetStorage().read<String>('phoneNumber');
     String? phoneNumber = NewAuthStorage.getPhoneNumber();
     return Column(
       children: [
