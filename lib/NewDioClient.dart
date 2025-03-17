@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:anything/api_constants.dart';
 import 'package:anything/newGetStorage.dart';
@@ -9,7 +10,8 @@ import 'package:get_storage/get_storage.dart';
 
 import '../ApiConstant/api_constant.dart';
 import 'Authentication/login_screen.dart';
-import 'ResponseModule/getSubCatagories.dart';
+
+
 
 class NewDioClient {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -646,6 +648,51 @@ class NewApiClients {
 
 
 
+  String getBigSupportTicket(String userId, String ticketNumber) {
+    return "/app-support/$userId/$ticketNumber";
+  }
+
+  Future<Map<String, dynamic>> getBigViewTicket(String? userId, String? ticketNumber) async {
+    if (userId == null || userId.isEmpty || ticketNumber == null || ticketNumber.isEmpty) {
+      throw Exception(" userId or ticketNumber is missing!");
+    }
+
+    String baseUrl = "https://admin-fyu1.onrender.com/api/app";
+    NewApiClients apiClient = NewApiClients();
+    String endpoint = apiClient.getBigSupportTicket(userId, ticketNumber);
+    String url = "$baseUrl$endpoint";
+
+    print(" Fixed API Request URL: $url");
+
+    String? sessionToken = await NewAuthStorage.getAccessToken();
+    if (sessionToken == null || sessionToken.isEmpty) {
+      throw Exception(" Session token missing");
+    }
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $sessionToken',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print(" API Response: ${response.data}");
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(" Failed to fetch data: ${response.statusCode}");
+      }
+    } on DioError catch (e) {
+      print(" DioError Message: ${e.message}");
+      throw Exception("Error fetching ticket: ${e.message}");
+    }
+  }
 
 
 
@@ -738,6 +785,7 @@ class NewApiClients {
   }
 
 
+
   Future<Map<String, dynamic>> NewCreateTicket(
       String categoryId, String description) async
   {
@@ -778,17 +826,20 @@ class NewApiClients {
   }
 
 
+
   Future<Map<String, dynamic>> getAllTicket() async {
     String? userId = await NewAuthStorage.getUserIdd();
 
     if (userId == null || userId.isEmpty) {
-      throw Exception("⚠ UserId is missing!");
+      throw Exception("⚠"
+          " UserId is missing!");
     }
 
     print(" User ID: $userId");
 
     String url = "${ApiConstant().AdminBaseUrl}${ApiConstant().getAllTicketsSupport(userId)}";
-    print("📡 API URL: $url");
+    print("📡"
+        " API URL: $url");
 
     String? sessionToken = await NewAuthStorage.getAccessToken();
     if (sessionToken == null || sessionToken.isEmpty) {
@@ -824,9 +875,176 @@ class NewApiClients {
 
 
 
+/*
+  Future<Map<String, dynamic>> NewCreateProductApi(
+      String name,
+      String description,
+      String categoryName,
+      int quantity,
+      List<File> images,
+      double rating,
+      String productCurrentAddress,
+      String price,
+      ) async
+  {
+    String url =
+        ApiConstant().BaseUrl + ApiConstant().createProduct;
+
+    String? accessToken = NewAuthStorage.getAccessToken();
+    print("Access Token: $accessToken");
+
+    try {
+      FormData formData = FormData.fromMap({
+        'name': name,
+        'description': description,
+        'categoryName': categoryName,
+        'quantity': quantity,
+        'productCurrentAddress': productCurrentAddress,
+        'price': price,
+        'rating': rating,
+        'rent': {
+          'perHour': 200,
+          'perDay': 600,
+          'perWeek': 500,
+          'toSell': 500,
+        },
+        'type': 'Product',
+        'images': images.map((file) {
+          return MultipartFile.fromFileSync(
+            file.path,
+            filename: file.path.split('/').last,
+          );
+        }).toList(),
+      });
+
+      print("URL: $url");
+      print("FormData: $formData");
+
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: formData,
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      print("Responsesss: ${response.data}");
+
+      if (response.data != null && response.statusCode == 200) {
+
+        Map<String, dynamic> formattedResponse = {
+          "success": true,
+          "message": "Product created successfully!",
+          "data": {
+            "name": name,
+            "description": description,
+            "rent": [
+              "per-hour",
+              "200",
+              "per-day",
+              "600",
+              "per-week",
+              "500",
+              "to-sell",
+              "500"
+            ],
+            "sell": ["21"],
+            "productionYear": [""],
+            "specialtyofProductUses": "",
+            "quantity": quantity,
+            "images": images.map((file) {
+              return {
+                "url": "http://localhost:3910/uploads/${file.path.split('/').last}",
+                "_id": "67d27c5090e53e64beee469e"
+              };
+            }).toList(),
+            "dynamicFields": {
+              "Pet Item Types": [200],
+              "Do you provide any pet consultation?": ["yes"],
+              "Pet Item's Delivery": ["No"]
+            },
+            "businessDetails": {
+              "businessName": "pashan",
+              "businessAddress": "sdfs",
+              "businessPhone": "8542587898",
+              "businessEmail": "jay@gmail.com",
+              "website": "www.time.com",
+              "gstNumber": "254697745",
+              "whatsapp": "8542587898",
+              "providerName": "sdfs",
+              "BusinessStartedSince": "0896-01-01T00:00:00.000Z"
+            },
+            "createdBy": "67cc27716c7b961f9d84f99c",
+            "_id": "67d27c5090e53e64beee469d",
+            "createdAt": DateTime.now().toIso8601String(),
+            "updatedAt": DateTime.now().toIso8601String(),
+            "__v": 0
+          }
+        };
+        return formattedResponse;
+      } else {
+        return {"error": "Unexpected response"};
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print("DioError Response: ${e.response!.data}");
+      } else {
+        print("DioError Message: ${e.message}");
+      }
+      return e.response?.data ?? {'error': 'Unknown error'};
+    } catch (e) {
+      print("Error: $e");
+      return {'error': e.toString()};
+    }
+  }
+*/
 
 
+  Future<Map<String, dynamic>> NewCreateProductApi(String name) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
+    String? accessToken = NewAuthStorage.getAccessToken();
+    print("Access Token: $accessToken");
 
+    try {
+      FormData formData = FormData.fromMap({
+        'name': name,
+      });
+
+      Response response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: formData,
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.data != null && response.statusCode == 200) {
+        return {
+          "success": true,
+          "message": "Product created successfully!",
+          "data": {
+            "name": name,
+          }
+        };
+      } else {
+        return {"success": false, "error": "Unexpected response"};
+      }
+    } on DioError catch (e) {
+      print("DioError: ${e.response?.data}");
+
+      return {
+        "success": false,
+        "error": e.response?.data.toString() ?? "Dio error occurred",
+      };
+    } catch (e) {
+      print("General Error: $e");
+
+      return {
+        "success": false,
+        "error": e.toString(),
+      };
+    }
+  }
 }
 
 

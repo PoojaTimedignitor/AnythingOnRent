@@ -1,3 +1,5 @@
+
+/*
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/ResponseModule/getBigSupportViewResponse.dart';
 import 'package:flutter/material.dart';
@@ -143,3 +145,127 @@ class _BigSupportScreenState extends State<BigSupportScreen> {
     );
   }
 }
+ */
+
+
+
+
+
+
+import 'package:flutter/material.dart';
+import '../Common_File/ResponsiveUtil.dart';
+import '../Common_File/common_color.dart';
+import '../Common_File/new_responsive_helper.dart';
+import '../NewDioClient.dart';
+import '../ResponseModule/getBigSupportViewResponse.dart' as Datasss;
+
+class BigSupportScreen extends StatefulWidget {
+  final Datasss.BigSupportData? ticket;
+
+  const BigSupportScreen({super.key, this.ticket});
+
+  @override
+  State<BigSupportScreen> createState() => _BigSupportScreenState();
+}
+
+class _BigSupportScreenState extends State<BigSupportScreen> {
+  bool isLoading = true;
+  Datasss.BigSupportData? subBigTicket;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBigTicketSupport();
+  }
+  void fetchBigTicketSupport() async {
+    setState(() => isLoading = true);
+    try {
+      Map<String, dynamic> response = await NewApiClients().getBigViewTicket(
+        widget.ticket?.userId ?? '',
+        widget.ticket?.ticketNumber ?? '',
+      );
+
+      if (response.isNotEmpty) {
+        var jsonList = Datasss.getBigSupportTicketResponseModel.fromJson(response);
+        setState(() {
+          subBigTicket = jsonList.data?.isNotEmpty == true ? jsonList.data!.first : null;
+          isLoading = false;
+        });
+      } else {
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      print("Error fetching Ticket: $e");
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+    return Scaffold(
+      backgroundColor: const Color(0xffF5F6FB),
+      appBar: AppBar(
+        title: const Text(
+          "Help Center",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 1,
+        iconTheme: const IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildInfoRow(Icons.confirmation_number, "Ticket Number", subBigTicket?.ticketNumber),
+                buildInfoRow(Icons.description, "Description", subBigTicket?.description),
+                buildInfoRow(Icons.date_range, "Date", subBigTicket?.createdAt),
+                buildInfoRow(Icons.category, "Category", subBigTicket?.category?.name),
+                buildInfoRow(Icons.phone_callback, "Request Call", subBigTicket?.status),
+                buildInfoRow(Icons.check_circle_outline, "Status", subBigTicket?.status, isStatus: true),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildInfoRow(IconData icon, String label, String? value, {bool isStatus = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        children: [
+          Icon(icon, color: isStatus ? (value == "Open" ? Colors.green : Colors.red) : Colors.blue),
+
+          const SizedBox(width:10),
+
+          Expanded(
+            child: Text(
+              "$label: ${value ?? 'N/A'}",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: isStatus ? Colors.green : Colors.black),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+

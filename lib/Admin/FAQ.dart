@@ -9,10 +9,9 @@ import 'package:anything/ResponseModule/getSubCatagories.dart' as Categories;
 
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
+import '../Common_File/new_responsive_helper.dart';
 import '../MyBehavior.dart';
-
 import '../ResponseModule/getCatFAQ.dart';
-
 import '../model/dio_client.dart';
 
 class FAQ extends StatefulWidget {
@@ -25,6 +24,7 @@ class FAQ extends StatefulWidget {
 }
 
 class _FAQState extends State<FAQ> {
+
   List<Data> itemss = [];
   List<Data> filteredItemss = [];
   bool isLoading = true;
@@ -74,6 +74,9 @@ class _FAQState extends State<FAQ> {
 
   @override
   Widget build(BuildContext context) {
+
+    // final responsive = ResponsiveHelper(context);        /// new change
+
     return Scaffold(
       backgroundColor: Color(0xffF5F6FB),
       body: ListView(
@@ -98,7 +101,8 @@ class _FAQState extends State<FAQ> {
         children: [
           Container(
             width: 250,
-            child: Text(
+            child:
+            Text(
               "Frequently Asked Questions?",
               style: TextStyle(
                 fontFamily: "okra_extrabold",
@@ -108,10 +112,12 @@ class _FAQState extends State<FAQ> {
               ),
             ),
           ),
-          SizedBox(height: 10),
+       //   const SizedBox(height: 10),
+        //  SizedBox(height: responsive.height(40)),
+
           Container(
             width: 400,
-            child: Text(
+            child: const Text(
               "Find questions and answers related to the design system,perches,updates and support. ",
               style: TextStyle(
                 color: CommonColor.grayText,
@@ -235,7 +241,8 @@ class _FAQState extends State<FAQ> {
                                         mainAxisSize: MainAxisSize.min,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          SizedBox(height: 8),
+
+                                          SizedBox(height: 10,),
                                           GestureDetector(
                                             onTap: () {
                                               setState(() {
@@ -262,16 +269,18 @@ class _FAQState extends State<FAQ> {
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 2),
+                                                    padding: const EdgeInsets.only(right: 2),
                                                     child: selectedName == filteredItemss[index].questions![questionIndex].title
-                                                        ? Icon(Icons.keyboard_arrow_up, size: 25, color: Color(0xfff44343))
-                                                        : Icon(Icons.keyboard_arrow_down, size: 25, color: Color(0xfff44343)),
+                                                        ? const Icon(Icons.keyboard_arrow_up, size: 25, color: Color(0xfff44343))
+                                                        : const Icon(Icons.keyboard_arrow_down, size: 25, color: Color(0xfff44343)),
                                                   ),
                                                 ],
                                               ),
                                             ),
                                           ),
-                                          SizedBox(height: 4),
+
+                                          const SizedBox(height: 4,),
+
                                           if (selectedName == filteredItemss[index].questions![questionIndex].title)
                                             Padding(
                                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -329,7 +338,7 @@ class _FAQState extends State<FAQ> {
         ),
         child: Container(
           height: parentHeight * 0.09,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
@@ -358,11 +367,13 @@ class _FAQState extends State<FAQ> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+
                   SizedBox(height: 10),
+
                   Container(
-                    height: parentHeight * 0.034,
-                    width: 130,
-                    decoration: BoxDecoration(
+                    height: parentHeight* 0.025,
+                    width: 140,
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(
                         Radius.circular(10),
@@ -388,9 +399,11 @@ class _FAQState extends State<FAQ> {
       ),
     );
   }
-
-
 }
+
+
+
+
 
 /*
 

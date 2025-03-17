@@ -2,15 +2,11 @@ import 'package:anything/Admin/helpCentre.dart';
 import 'package:anything/ResponseModule/getContactUsCatResponse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../Common_File/SizeConfig.dart';
 import '../Common_File/common_color.dart';
-import 'package:get_storage/get_storage.dart';
-
-import '../ConstantData/Constant_data.dart';
+import '../Common_File/new_responsive_helper.dart';
 import '../MyBehavior.dart';
 import '../NewDioClient.dart';
-import '../model/dio_client.dart';
 import '../newGetStorage.dart';
 import 'ContactUsQuestions.dart';
 
@@ -72,7 +68,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   }
 
 
-  /*void showSuccessDialog(BuildContext context) {
+ /* void showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -200,6 +196,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
 */
 
 
+
+
   void showSuccessDialog(BuildContext context) {
     if (messageController.text.trim().isEmpty) {
       showTopSnackBar(context, "Message is required!");
@@ -230,7 +228,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+
                       const SizedBox(height: 10),
+
                       Image.asset(
                         'assets/images/sucess.png',
                         height: MediaQuery.of(context).size.height * 0.08,
@@ -241,25 +241,46 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 5),
-                            Text(
+                            Text(                                                                           /// new changes
                               "Your ticket has been raised successfully!",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontFamily: "okra_Medium",
-                                fontSize: MediaQuery.of(context).size.width * 0.045,
                                 fontWeight: FontWeight.w600,
+                                fontFamily: 'okra_Medium',
+                                fontSize: ResponsiveHelper.getFontSize(context, 28),
                               ),
                             ),
+
+                            // Text(
+                            //   "Your ticket has been raised successfully!",
+                            //   style: TextStyle(
+                            //     color: Colors.black,
+                            //     fontFamily: "okra_Medium",
+                            //     fontSize: MediaQuery.of(context).size.width * 0.045,
+                            //     fontWeight: FontWeight.w600,
+                            //   ),
+                            // ),
+
                             const SizedBox(height: 15),
-                            Text(
+
+                            Text(                                                                           /// new changes
                               "Now track the status of all your tickets in the Support section.",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontFamily: "Montserrat-Medium",
-                                fontSize: MediaQuery.of(context).size.width * 0.035,
                                 fontWeight: FontWeight.w500,
+                                fontFamily: 'Montserrat-Medium',
+                                fontSize: ResponsiveHelper.getFontSize(context, 20),
                               ),
-                            ),
+                            )
+                            // Text(
+                            //   "Now track the status of all your tickets in the Support section.",
+                            //   style: TextStyle(
+                            //     color: Colors.black,
+                            //     fontFamily: "Montserrat-Medium",
+                            //     fontSize: MediaQuery.of(context).size.width * 0.035,
+                            //     fontWeight: FontWeight.w500,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
@@ -308,15 +329,26 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             alignment: Alignment.center,
                             child: isSubmitting
                                 ? const CircularProgressIndicator(color: Colors.white)
-                                : Text(
+                                 : Text(                                                                 /// new changes
                               "Okay",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'Roboto-Regular',
-                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                                fontSize: ResponsiveHelper.getFontSize(context,20),
                               ),
-                            ),
+                            )
+
+
+                            //Text(
+                            //   "Okay",
+                            //   style: TextStyle(
+                            //     color: Colors.white,
+                            //     fontWeight: FontWeight.w700,
+                            //     fontFamily: 'Roboto-Regular',
+                            //     fontSize: MediaQuery.of(context).size.width * 0.045,
+                            //   ),
+                            // ),
                           ),
                         ),
                       ),
@@ -338,6 +370,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final responsive = ResponsiveHelper(context);                 /// new changes
+
     return Scaffold(
       backgroundColor: Color(0xffF5F6FB),
       body: FAQQuations(SizeConfig.screenHeight, SizeConfig.screenWidth),
@@ -355,7 +390,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
           //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 250,
+              width: SizeConfig.blockSizeHorizontal,                                 /// new changes
+              // width: 250,
               child: Text(
                 "Let's Talk?",
                 style: TextStyle(

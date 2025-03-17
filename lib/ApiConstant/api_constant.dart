@@ -1,7 +1,7 @@
 class ApiConstant {
   String BaseUrl = "https://backend.anythingonrent.com";
 
-  String BaseUrlCreateProduct = "https://rental-api-5vfa.onrender.com/api";
+  String CreateProduct = "/create-product";
   String BaseUrlGetAllCat = "https://admin-fyu1.onrender.com/api";
   String BaseUrlGetAllCats = "https://rental-api-5vfa.onrender.com";
   String PhoneRegister = "/sendPhoneOtp";

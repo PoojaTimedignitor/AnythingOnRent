@@ -235,7 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Padding(
                             padding: EdgeInsets.only(
                                 top: SizeConfig.screenHeight * 0.024),
-                            child: Image(
+                            child: const Image(
                               image: AssetImage('assets/images/camerapop.png'),
                               height: 20,
                             )),

@@ -11,6 +11,7 @@ import 'Authentication/forget_pass_OTP_verify.dart';
 import 'Common_File/ResponsiveUtil.dart';
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
+import 'MainHome.dart';
 import 'MyBehavior.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -2065,7 +2066,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
               Center(
                 child: Container(
                   height: parentHeight * 0.06,
-                  width: parentWidth * 0.47,
+                  width: parentWidth * 0.49,
                   decoration: BoxDecoration(
                     color: Color(0xff7937a1),
                     border: Border.all(color: Color(0xffe8a33e), width: 2),
@@ -2770,29 +2771,59 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
               ),
             ]),
           SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: IntrinsicWidth(
-              //  padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: parentHeight * 0.06,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xff632883), Color(0xff8d42a3)],
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
+          GestureDetector(
+            onTap: () async {
+              String productName = productNameController.text;
+
+              if (productName.isNotEmpty) {
+                var response = await   NewApiClients()
+                    .NewCreateProductApi(productName);
+
+                if (response['success'] == true) {
+                  print("Product Created: ${response['data']['name']}");
+
+                  // Navigate to Home Screen
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MainHome(
+                        lat: '',
+                        long: '',
+                        showLoginWidget: false,
+                      ),
+                    ),
+                  );
+                } else {
+                  print("Error: ${response['error']}");
+                }
+              } else {
+                print("Product name is required!");
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: IntrinsicWidth(
+                //  padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: parentHeight * 0.06,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xff632883), Color(0xff8d42a3)],
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  "Add Product",
-                  style: TextStyle(
-                    fontFamily: "Montserrat-BoldItalic",
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    "Add Product",
+                    style: TextStyle(
+                      fontFamily: "Montserrat-BoldItalic",
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ),
@@ -2812,87 +2843,147 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
 
     return Visibility(
       visible: isSubCategorySelected && itemsDynamicFields.isNotEmpty,
-      child: ListView(
-        shrinkWrap: true,
-        children: dynamicData.dynamicFields.entries.map((entry) {
-          String key = entry.key;
-          List<String> values = entry.value;
-          if (key == "Pet Item Types") {
-
-            return Padding(
-              padding: EdgeInsets.only(left: 15, right: 15),
-              child: TextField(
-                readOnly: true,
-
-                controller: TextEditingController(text: values.join(', ')),
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Pet Item Types',
-
-
-                  hintStyle: TextStyle(
-                    color: Color(0xff000000),
-                    fontFamily: "okra_Medium",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  contentPadding: EdgeInsets.all(10.0),
-                  fillColor: Color(0xffF5F6FB),
-                  filled: true,
-                  border: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.grey[400]!, width: 1.0),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.grey[400]!, width: 1.0),
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.grey[400]!, width: 1.0),
-                  ),
-                ),
-                onTap: () async {
-
-                  List<String>? selectedOptions =
-                      await showModalBottomSheet<List<String>>(
-                    context: context,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20)),
+      child: Expanded(
+        child: ListView(
+          shrinkWrap: true,
+          physics: BouncingScrollPhysics(),
+          children: dynamicData.dynamicFields.entries
+              .where((entry) => entry.key.trim() != "Pet Items Delivery?")
+              .map((entry) {
+            String key = entry.key.trim();
+            List<String> values = entry.value;
+        
+        
+        
+            if (key == "Pet Item Types") {
+              return Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: TextField(
+                  readOnly: true,
+                  controller: TextEditingController(text: values.join(', ')),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Pet Item Types',
+                    hintStyle: TextStyle(
+                      color: Color(0xff000000),
+                      fontFamily: "okra_Medium",
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
                     ),
-                    isScrollControlled: true,
-                    builder: (BuildContext bc) {
-                      return PetItemTypesBottomSheet(
-                        selectedOptions: values,
-                      );
-                    },
-                  );
-                  if (selectedOptions != null) {
-                    setState(() {
-                      dynamicData.dynamicFields[key] = selectedOptions;
-                    });
-                  }
-                },
-              ),
-            );
-          } else {
-            final valueText = values.isNotEmpty ? values.join(', ') : '';
-            return Padding(
-              padding:  EdgeInsets.only(top: 25,left: 18),
-              child: Text(
-                valueText.isNotEmpty ? "$key: $valueText" : key,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                    contentPadding: EdgeInsets.all(10.0),
+                    fillColor: Color(0xffF5F6FB),
+                    filled: true,
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
+                    ),
+                  ),
+                  onTap: () async {
+                    List<String>? selectedOptions =
+                    await showModalBottomSheet<List<String>>(
+                      context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      isScrollControlled: true,
+                      builder: (BuildContext bc) {
+                        return PetItemTypesBottomSheet(
+                          selectedOptions: values,
+                        );
+                      },
+                    );
+                    if (selectedOptions != null) {
+                      setState(() {
+                        dynamicData.dynamicFields[key] = selectedOptions;
+                      });
+                    }
+                  },
                 ),
-              ),
-            );
-          }
-        }).toList(),
+              );
+            } else if (key == "Do you provide any pet consultation?") {
+              return Padding(
+                padding: EdgeInsets.only(left: 20, right: 15, top: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      key, // Question
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Radio<String>(
+                          value: "Yes",
+                          groupValue: values.isNotEmpty ? values.first : null,
+                          onChanged: (String? value) {
+                            setState(() {
+                              dynamicData.dynamicFields[key] = [value!];
+                            });
+                          },
+                        ),
+                        Text(
+                          "Yes",
+                          style: TextStyle(
+                            color: Color(0xff000000),
+                            fontFamily: "okra_Regular",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Radio<String>(
+                          value: "No",
+                          groupValue: values.isNotEmpty ? values.first : null,
+                          onChanged: (String? value) {
+                            setState(() {
+                              dynamicData.dynamicFields[key] = [value!];
+                            });
+                          },
+                        ),
+                        Text(
+                          "No",
+                          style: TextStyle(
+                            color: Color(0xff000000),
+                            fontFamily: "okra_Regular",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              final valueText = values.isNotEmpty ? values.join(', ') : '';
+              return Padding(
+                padding: EdgeInsets.only(top: 25, left: 18),
+                child: Text(
+                  valueText.isNotEmpty ? "$key: $valueText" : key,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }
+          }).toList(),
+        ),
       ),
     );
+
+
   }
 }
 
@@ -2942,7 +3033,7 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
                 color: CommonColor.Black),
           ), SizedBox(height: 10),
           CheckboxListTile(
-            title: Text("Accessories",style: TextStyle(
+            title: const Text("Accessories",style: TextStyle(
                 color: Color(0xff000000),
             fontFamily: "okra_Medium",
             fontSize: 16,
@@ -2984,7 +3075,7 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
             },
           ),
           CheckboxListTile(
-            title: Text("Pet Transport",style:  TextStyle(
+            title: const Text("Pet Transport",style:  TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
               fontSize: 16,
@@ -2998,7 +3089,7 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
             },
           ),
           CheckboxListTile(
-            title: Text("Pet Dresses",style:  TextStyle(
+            title: const Text("Pet Dresses",style:  TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
               fontSize: 16,
@@ -3013,7 +3104,7 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
           ),
 
           CheckboxListTile(
-            title: Text("Pet sitting",style:  TextStyle(
+            title: const Text("Pet sitting",style:  TextStyle(
               color: Color(0xff000000),
               fontFamily: "okra_Medium",
               fontSize: 16,
@@ -3046,7 +3137,7 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
                   child: Container(
                     height: 40,
                     width: 300,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Color(0xff632883), Color(0xff8d42a3)],
                         begin: Alignment.topRight,
@@ -3056,7 +3147,7 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
                     ),
                     alignment: Alignment.center,
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
+                    child: const Text(
                       "Done",
                       style: TextStyle(
                         fontFamily: "Montserrat-BoldItalic",

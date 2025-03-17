@@ -886,6 +886,7 @@ class ApiClients {
     }
   }
 
+
   Future<Map<String, dynamic>> editUserProfile(
     String userId,
     String firstName,
@@ -937,6 +938,7 @@ class ApiClients {
     }
   }
 
+
   Future<Map<String, dynamic>> getUserProfileData() async {
     String url = ApiConstant().BaseUrl + ApiConstant().userProfile;
 
@@ -961,6 +963,7 @@ class ApiClients {
       return e.response!.data;
     }
   }
+
 
   Future<Map<String, dynamic>> getCatFAQ() async {
     String url = ApiConstant().AdminBaseUrl + ApiConstant().AdminGetCatFAQ;
@@ -1015,6 +1018,8 @@ class ApiClients {
     }
   }
 
+
+
   Future<Map<String, dynamic>> getBigViewTicket(
       String userId, String ticketNumber) async
   {
@@ -1058,6 +1063,8 @@ class ApiClients {
       throw Exception("Error fetching ticket: ${e.message}");
     }
   }
+
+
 
   Future<Map<String, dynamic>> getAllTicket(String userIds) async
   {
@@ -1183,6 +1190,7 @@ class ApiClients {
     }
   }
 
+
   Future<Map<String, dynamic>> getAllSubCat(String categoryId) async {
     String url =
         "${ApiConstant().BaseUrlGetAllCats}${ApiConstant().getAllSubCatagries(categoryId)}";
@@ -1227,7 +1235,8 @@ class ApiClients {
     double rating,
     String productCurrentAddress,
     String price,
-  ) async {
+  ) async
+  {
     String url =
         ApiConstant().BaseUrlCreateProdcut + ApiConstant().createProduct;
 
