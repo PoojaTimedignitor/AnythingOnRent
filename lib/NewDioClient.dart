@@ -1051,16 +1051,17 @@ class NewApiClients {
   //     };
   //   }
   // }
-  Future<Map<String, dynamic>> NewCreateProductApi(String name,String description) async {
+  Future<Map<String, dynamic>> NewCreateProductApi(String name,String description,String BName,String BContact,String BEmail,
+      String BWhatapps,String GSTINO,String bSpecialty,int quantity,) async {
     String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
-    String? userId = await NewAuthStorage.getUserId(); // Ensure it's awaited
+    String? userId = NewAuthStorage.getUserId();
 
     if (userId == null || userId.isEmpty) {
-      print("❌ Error: User ID is missing from storage.");
+
       return {"success": false, "message": "User ID not found"};
     }
 
-    String? accessToken = await NewAuthStorage.getAccessToken();
+    String? accessToken = NewAuthStorage.getAccessToken();
 
 
     if (accessToken == null || accessToken.isEmpty) {
@@ -1071,23 +1072,30 @@ class NewApiClients {
       var requestData = {
         "name": name,
         "description": description,
+        "businessName": BName,
+        "businessPhone": BContact,
+        "businessEmail": BEmail,
+        "website": BWhatapps,
+        "gstNumber": GSTINO,
+        "specialtyofProductUses": bSpecialty,
+        "quantity": quantity,
         "userId": int.tryParse(userId) ?? userId,
       };
 
-      print("📤 Sending Request: $requestData");
+      print("Sending Request: $requestData");
 
       Response response = await _dio.post(
         url,
-        data: jsonEncode(requestData), // Sending JSON
+        data: jsonEncode(requestData),
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
-            'Content-Type': 'application/json', // Ensure correct format
+            'Content-Type': 'application/json',
           },
         ),
       );
 
-      print("✅ API Response: ${response.data}");
+      print("API Response: ${response.data}");
 
       if (response.data != null && response.statusCode == 200) {
         return {

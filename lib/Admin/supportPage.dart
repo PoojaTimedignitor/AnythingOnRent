@@ -21,6 +21,7 @@ class Supportpage extends StatefulWidget {
 }
 
 class _SupportpageState extends State<Supportpage> {
+
   bool isLoading = true;
   List<Data> SubTicket = [];
   List<Data> filteredTicket = [];
@@ -70,10 +71,101 @@ class _SupportpageState extends State<Supportpage> {
     fetchAllTicketSupport();
   }
 
+
   @override
   Widget build(BuildContext context) {
 
     final responsive = ResponsiveHelper(context);
+
+
+    List<Widget> options = [
+      {
+        'label': "Need Help? Contact Us",
+        'icon': Icons.help_outline,
+        'onTap': () async => widget.onNeedHelpTap(),
+      },
+      {
+        'label': "Terms and Conditions",
+        'icon': Icons.article_outlined,
+        'onTap': () async {
+          final url = 'https://admin-fyu1.onrender.com/api/pages/display/terms-of-service';
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            print("Could not launch the URL");
+          }
+        },
+      },
+      {
+        'label': "Privacy Policy",
+        'icon': Icons.privacy_tip_outlined,
+        'onTap': () async {
+          final url = 'https://admin-fyu1.onrender.com/api/pages/display/privacy-policy';
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            print("Could not launch the URL");
+          }
+        },
+      },
+    ].map((item) {
+      return GestureDetector(
+        onTap: item['onTap'] as Function(),
+        child: Padding(
+          padding: responsive.getPadding(all: 10),
+          child: Container(
+            height: responsive.height(responsive.isMobile ? 50 : responsive.isTablet ? 55 : 70),
+            width: responsive.width(responsive.isMobile ? 320 : responsive.isTablet ? 370 : 420),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(responsive.width(12)),
+              border: Border.all(
+                color: Colors.orange.shade400,
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.orange.withOpacity(0.2),
+                  blurRadius: 6,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: responsive.getPadding(all: 10),
+              child: Row(
+                children: [
+                  Icon(
+                    item['icon'] as IconData,
+                    color: Colors.black,
+                    size: responsive.width(22),
+                  ),
+                  SizedBox(width: responsive.width(12)),
+                  Expanded(
+                    child: Text(
+                      item['label'] as String,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "okra_Medium",
+                        fontSize: responsive.fontSize(16),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.black,
+                    size: responsive.width(18),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }).toList();
+
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F6FB),
@@ -84,254 +176,32 @@ class _SupportpageState extends State<Supportpage> {
           padding: EdgeInsets.zero,
           children: [
 
-            //SizedBox(height: 20),
+
             SizedBox(height: responsive.height(20),),        /// new changes
 
-            GestureDetector(
-              onTap: () async {
-                widget.onNeedHelpTap();
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(13.0),
-                child: Container(
-                  // height: 40,
-                  // height: SizeConfig.screenHeight * 0.06,                             /// new changes
-                  // width: SizeConfig.screenHeight * 0.5,
-                  // height: responsive.height(40,),                            /// NEW CHANGES
-                  // width: responsive.width(187.5),
-                  height: responsive.height(responsive.isMobile ? 40 : responsive.isTablet ? 50 : 60),                   /// new changes
-                  width: responsive.width(responsive.isMobile ? 187.5 : responsive.isTablet ? 300 : 400),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(responsive.width(10))), // Responsive border radius
-                  ),
-                  child:  Padding(
-                      padding: responsive.getPadding(all: 8), // Responsive padding
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.help_outline,
-                            color: Colors.black,
-                            size: responsive.width(20),
-                          ),
-                          //const SizedBox(width: 8),
-                          SizedBox( width: responsive.width(8)),                 /// new changes
-
-                          Text(
-                            " Need Help? Contact Us",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "okra_Medium",
-                              //fontSize: 15,
-                              fontSize: responsive.fontSize(15),                  /// new changes
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const Spacer(),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.black,
-                            size: responsive.width(16),
-                          ),
-                        ],
-                      )),
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () async {
-                final url =
-                    'https://admin-fyu1.onrender.com/api/pages/display/terms-of-service';
-                print("Ad URLllll: $url");
-
-                if (await canLaunch(url)) {
-                  await launch(url);
-                } else {
-                  print("Could not launch the URL");
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 4, left: 10, right: 10),
-                child: Container(
-                  // height: 40,
-                  // width: SizeConfig.screenHeight * 0.5,
-                  // height: responsive.height(40),                                /// NEW CHANGES
-                  // width: responsive.width(0.5),
-                  height: responsive.height(responsive.isMobile ? 40 : responsive.isTablet ? 50 : 60),                       /// new changes
-                  width: responsive.width(responsive.isMobile ? 187.5 : responsive.isTablet ? 300 : 400),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(responsive.width(10))),
-                  ),
-                  child:  Padding(
-                      padding: responsive.getPadding(all: 8), // Responsive padding
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.help_outline,
-                            color: Colors.black,
-                            size: responsive.width(20),
-                          ),
-
-                          //SizedBox(width: 8),
-                          SizedBox( width: responsive.width(8)),                 /// new changes
-
-                          Text(
-                            " Terms and conditions",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "okra_Medium",
-                              // fontSize: 15,
-                              fontSize: responsive.fontSize(15),             /// new changes
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Spacer(),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.black,
-                            size: responsive.width(16),
-                          ),
-                        ],
-                      )),
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () async {
-                final url =
-                    'https://admin-fyu1.onrender.com/api/pages/display/privacy-policy';
-                print("Ad URLllll: $url");
-
-
-                if (await canLaunch(url)) {
-                  await launch(url);
-                } else {
-                  print("Could not launch the URL");
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 14, left: 10, right: 10),
-
-                child:
-
-                /* Container(
-                  // height: 40,
-                  // width: SizeConfig.screenHeight * 0.5,
-                  height: responsive.height(40),                                /// NEW CHANGES
-                  width: responsive.width(0.5),
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child:  Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.help_outline, // Icon before the text
-                            color: Colors.black,
-                            size: 20,
-                          ),
-
-                          //const SizedBox(width: 8),
-                          SizedBox( width: responsive.width(8)),                 /// new changes
-
-                          Text(
-                            " Privacy Policy",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "okra_Medium",
-                             // fontSize: 15,
-                              fontSize: responsive.fontSize(15),                      /// new changes
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const Spacer(),
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.black,
-                            size: 16,
-                          ),
-                        ],
-                      )),
-                ),*/
-
-                Container(
-                  // height: responsive.height(40),
-                  // width: responsive.width(187.5),
-                  height: responsive.height(responsive.isMobile ? 40 : responsive.isTablet ? 50 : 60),           /// new changes
-                  width: responsive.width(responsive.isMobile ? 187.5 : responsive.isTablet ? 300 : 400),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(responsive.width(10))),
-                  ),
-                  child: Padding(
-                    padding: responsive.getPadding(all: 8), // Responsive padding
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.help_outline,
-                          color: Colors.black,
-                          size: responsive.width(20), // Responsive icon size
-                        ),
-
-                        SizedBox(width: responsive.width(10)),
-
-                        Text(
-                          "Privacy Policy",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "okra_Medium",
-                            fontSize: responsive.fontSize(15),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-
-                        const Spacer(),
-
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.black,
-                          size: responsive.width(16), // Responsive icon size
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-              ),
+            Column(
+              children: options,
             ),
 
-            //const SizedBox(height: 50),
+
             SizedBox(height: responsive.height(30),),        /// new changes
 
             Container(
               width: responsive.width(0.5),                       /// new changes
-              // width: SizeConfig.screenWidth,
+
               child: filteredTicket.isEmpty
                   ? SizedBox(
-                  height: responsive.height(30),                                /// NEW CHANGES
-                  // height: SizeConfig.screenHeight * 0.3,
+                  height: responsive.height(300),                                /// NEW CHANGES
+
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image(
                         image: const AssetImage('assets/images/ticket.png'),
-                        //height: SizeConfig.screenHeight * 0.18
-                        height: responsive.height(18),                                /// NEW CHANGES
+
+                        height: responsive.height(130),                                /// NEW CHANGES
                       ),
 
-                      // const  SizedBox(height: 16),
                       SizedBox(height: responsive.height(16),),        /// new changes
 
                       Text(
@@ -339,7 +209,6 @@ class _SupportpageState extends State<Supportpage> {
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "okra_Medium",
-                          // fontSize: 17,
                           fontSize: responsive.fontSize(17),                      /// new changes
                           fontWeight: FontWeight.w600,
                         ),
@@ -380,11 +249,11 @@ class _SupportpageState extends State<Supportpage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(height: responsive.height(17),),        /// new changes
-                        // SizedBox(height: 17),
+
                         Text(
                           "    Raise Ticket",
                           style: TextStyle(
-                            color: Color(0xfff44343),
+                            color: const Color(0xfff44343),
                             fontFamily: "okra_bold",
                             //fontSize: 19,
                             fontSize: responsive.fontSize(19),                    /// new changes
@@ -392,137 +261,9 @@ class _SupportpageState extends State<Supportpage> {
                           ),
                         ),
 
-                        /* ListView.builder(
-                                itemCount:
-                                    isShowMore ? filteredTicket.length : 1,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                scrollDirection: Axis.vertical,
-                                itemBuilder: (context, index) {
-                                  final ticket = filteredTicket[index];
-                                  String formattedDate =
-                                      formatDate(ticket.createdAt.toString());
-
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 12),
-                                    child: Container(
-                                      // height: 140,
-                                    //  height: responsive.height(140),                                /// NEW CHANGES
-                                    height: responsive.height(responsive.isMobile ? 160 : responsive.isTablet ? 180 : 200),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: const Color(0xffea926f)
-                                                  .withOpacity(0.2),
-                                              blurRadius: 2,
-                                              spreadRadius: 0,
-                                              offset: const Offset(0, 1)),
-                                        ],
-                                        border: Border.all(
-                                            color: const Color(0xfff4823b),
-                                            width: 0.3),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(13.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "${ticket.ticketNumber}",
-                                                  style:  TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                     // fontSize: 16
-                                                    fontSize: responsive.fontSize(16),              /// new changes
-                                                  ),
-                                                ),
-                                                const Icon(
-                                                  Icons.arrow_forward_ios_sharp,
-                                                  size: 15,
-                                                )
-                                              ],
-                                            ),
-                                           // const SizedBox(height: 5),
-                                            SizedBox(height: responsive.height(5),),                  /// NEW CHANGES
 
 
-                                            Container(
-                                              width:
-                                                 // ResponsiveUtil.fontSize(350),
-                                              responsive.fontSize(350),                                            /// new changes
-                                        child: Text(
-                                                "${ticket.category?.name.toString()} Display All rental product options in your choose location ",
-                                                style: TextStyle(
-                                                  color: CommonColor.grayText,
-                                                  fontFamily:
-                                                      "Montserrat-Medium",
-                                                 // fontSize: ResponsiveUtil.fontSize(12),
-                                                  fontSize: responsive.fontSize(12),                   /// new changes
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-
-                                           // SizedBox(height: 23),
-                                            SizedBox(height: responsive.height(23),),        /// new changes
-
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "$formattedDate",
-                                                  style: TextStyle(
-                                                      color: Color(0xff3684F0),
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      //fontSize: ResponsiveUtil.fontSize(13)
-                                                    fontSize: responsive.fontSize(13),                    /// new changes
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Container(
-                                                  // height: ResponsiveUtil.height(25),
-                                                  // width: ResponsiveUtil.width(75),
-                                                  height: responsive.height(25),                                /// NEW CHANGES
-                                                  width: responsive.width(75),
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.topRight,
-                                                    child: Text(
-                                                      " ${ticket.status.toString()} ",
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      //  fontSize: ResponsiveUtil.fontSize(15),
-                                                        fontSize: responsive.fontSize(15),                    /// new changes
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-*/
-                        SizedBox(height: responsive.height(10)),
+                        SizedBox(height: responsive.height(20)),
 
                         ListView.builder(
                           itemCount: isShowMore ? filteredTicket.length : 1,
@@ -534,181 +275,184 @@ class _SupportpageState extends State<Supportpage> {
                             String formattedDate = formatDate(ticket.createdAt.toString());
 
                             return Padding(
-                              padding: responsive.getPadding(horizontal: 13, vertical: 12),
-                              child: Container(
-                                height: responsive.height(responsive.isMobile ? 150 : responsive.isTablet ? 180 : 200),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xffea926f).withOpacity(0.2),
-                                      blurRadius: 2,
-                                      spreadRadius: 0,
-                                      offset: const Offset(0, 1),
-                                    ),
-                                  ],
-                                  border: Border.all(
-                                    color: const Color(0xfff4823b),
-                                    width: 0.3,
-                                  ),
-                                  borderRadius: BorderRadius.circular(responsive.width(10)),
-                                ),
-                                child: Padding(
-                                  padding: responsive.getPadding(all: 13),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "${ticket.ticketNumber}",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: responsive.fontSize(16),
-                                            ),
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios_sharp,
-                                            size: responsive.width(15),
-                                          ),
-                                        ],
+                              padding: responsive.getPadding(horizontal: 13),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: responsive.height(responsive.isMobile ? 170 : responsive.isTablet ? 190 : 210),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      gradient: LinearGradient(
+                                        colors: [Colors.white, Colors.orange.shade50],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                       ),
-
-                                      SizedBox(height: responsive.height(5)),
-
-
-                                      Container(
-                                        width: responsive.width(responsive.isMobile ? 370 : 500),
-                                        child: Text(
-                                          "${ticket.category?.name.toString()} Display All rental product options in your choose location",
-                                          style: TextStyle(
-                                            color: CommonColor.grayText,
-                                            fontFamily: "Montserrat-Medium",
-                                            fontSize: responsive.fontSize(12),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 6,
+                                          spreadRadius: 2,
+                                          offset: const Offset(0, 4),
                                         ),
+                                      ],
+                                      border: Border.all(
+                                        color: Colors.orange.shade300, // Premium Orange Border
+                                        width: 1.2,
                                       ),
-
-                                      SizedBox(height: responsive.height(20)),
-
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      borderRadius: BorderRadius.circular(responsive.width(12)),
+                                    ),
+                                    child: Padding(
+                                      padding: responsive.getPadding(all: 14),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "$formattedDate",
-                                            style: TextStyle(
-                                              color: const Color(0xff3684F0),
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: responsive.fontSize(13),
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Container(
-                                            height: responsive.height(27),
-                                            width: responsive.width(75),
-                                            child: Align(
-                                              alignment: Alignment.topRight,
-                                              child: Text(
-                                                " ${ticket.status.toString()} ",
+
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "${ticket.ticketNumber}",
                                                 style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: responsive.fontSize(15),
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: responsive.fontSize(18),
+                                                  color: Colors.black87,
                                                 ),
                                               ),
+                                              Icon(
+                                                Icons.arrow_forward_ios_rounded,
+                                                size: responsive.width(18),
+                                                color: Colors.orange.shade700,
+                                              ),
+                                            ],
+                                          ),
+
+                                          SizedBox(height: responsive.height(6)),
+
+
+                                          Container(
+                                            width: responsive.width(responsive.isMobile ? 370 : 500),
+                                            child: Text(
+                                              "${ticket.category?.name.toString()} - Explore rental product options at your selected location",
+                                              style: TextStyle(
+                                                color: Colors.grey.shade700,
+                                                fontFamily: "Montserrat-Medium",
+                                                fontSize: responsive.fontSize(13),
+                                                fontWeight: FontWeight.w500,
+                                                letterSpacing: 0.4,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
+                                          ),
+
+                                          SizedBox(height: responsive.height(18)),
+
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.calendar_today_rounded, size: responsive.width(14), color: Colors.blue),
+                                                  SizedBox(width: 4),
+                                                  Text(
+                                                    formattedDate,
+                                                    style: TextStyle(
+                                                      color: Colors.blue.shade700,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: responsive.fontSize(13),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              Container(                                                                                           /// Ticket status
+                                                height: responsive.height(responsive.isMobile ? 30 : responsive.isTablet ? 32 : 36),
+                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  color: ticket.status.toString().toLowerCase() == "open"
+                                                      ? Colors.green.shade50
+                                                      : Colors.red.shade50,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                    color: ticket.status.toString().toLowerCase() == "open"
+                                                        ? Colors.green
+                                                        : Colors.red,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    ticket.status.toString().toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: responsive.fontSize(14),
+                                                      color: ticket.status.toString().toLowerCase() == "open"
+                                                          ? Colors.green
+                                                          : Colors.red,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
+
+                                  SizedBox(height: responsive.height(25)),                  /// space in ticket
+                                ],
                               ),
                             );
                           },
                         ),
 
 
-                        if (filteredTicket.length > 2 && !isShowMore)
 
-                        /* GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isShowMore = true;
-                                    });
-                                  },
-                                  child: Center(
-                                    child: Container(
-                                      width: 200,
-                                      height: 35,
-                                      child: const Padding(
-                                        padding: EdgeInsets.only(right: 15),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.keyboard_arrow_down_rounded,
-                                              color: Colors.black,
-                                              size: 20,
-                                            ),
-                                            SizedBox(width: 12),
-                                            Text(
-                                              "Show More",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontFamily: "okra_Medium",
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+
+                        if (filteredTicket.length > 2)                                                                     /// new changes in show more button
+                          Column(
+                            children: [
+                              SizedBox(height: responsive.height(responsive.isMobile ? 1 : responsive.isTablet ? 15 : 20)),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        isShowMore = !isShowMore;
+                                      });
+                                    },
+                                    child: Text(
+                                      isShowMore ? 'Show Less' : 'Show More',
+                                      style: TextStyle(
+                                        fontSize: responsive.fontSize(16),
                                       ),
                                     ),
                                   ),
-                                ),*/
-
-                          SizedBox(height: responsive.height(7)),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextButton(onPressed: (){
-                              setState(() {
-                                isShowMore = true;
-                              });
-                            },
-                                child:  Text('Show More', style: TextStyle(
-                                  // fontSize: 16
-                                  fontSize: responsive.fontSize(16),                        /// new changes
-                                ),)),
-                            IconButton(onPressed: (){
-                              setState(() {
-                                isShowMore = true;
-                              });
-                            } ,
-                                icon:  Icon(Icons.keyboard_arrow_down_rounded, size: responsive.width(22) ,))
-                          ],
-                        )
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        isShowMore = !isShowMore;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      isShowMore ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                                      size: responsive.width(22),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-
-            /*  Text("    ANYTHING ON RENT",
-                style: TextStyle(
-                  fontFamily: "okra_extrabold",
-                  fontSize: SizeConfig.blockSizeHorizontal * 5.5,
-                  color: Color(0xffC6C6C6),
-                  fontWeight: FontWeight.w600,
-                ))*/
           ],
         ),
       ),

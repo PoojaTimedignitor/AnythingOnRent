@@ -1370,7 +1370,7 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
                 Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    "Your Phone", // Dynamic Mobile Number / Email
+                    "Your Phone",
                     style: TextStyle(
                       fontFamily: "okra_Medium",
                       fontWeight: FontWeight.w400,
@@ -1848,7 +1848,8 @@ class _PhoneRegistrationPageState extends State<PhoneRegistrationPage>
             ),
           ),
         ),
-    ))]
+    ))
+      ]
     );
 
   }

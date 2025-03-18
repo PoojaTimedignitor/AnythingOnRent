@@ -75,269 +75,251 @@ class _FAQState extends State<FAQ> {
   @override
   Widget build(BuildContext context) {
 
-    // final responsive = ResponsiveHelper(context);        /// new change
+    final responsive = ResponsiveHelper(context);        /// new change
 
     return Scaffold(
-      backgroundColor: Color(0xffF5F6FB),
-      body: ListView(
+      // backgroundColor: Color(0xffF5F6FB),
+      body:
+      ListView(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         children: [
-          FAQQuations(SizeConfig.screenHeight, SizeConfig.screenWidth),
+          FAQQuestions(responsive),SizedBox(height: 20,),
           Align(
-              alignment: Alignment.bottomCenter,
-              child: AddContactUsButton(
-                  SizeConfig.screenHeight, SizeConfig.screenWidth))
+            alignment: Alignment.bottomRight,
+            child: AddContactUsButton(
+                responsive ),
+          )
         ],
+      ),
+
+    );
+  }
+
+
+  Widget FAQQuestions(ResponsiveHelper responsive) {
+    return Padding(
+      padding: responsive.getPadding(vertical: 4.0),
+      child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: responsive.width(responsive.isMobile ? 187.5 : responsive.isTablet ? 300 : 400),
+              child: Text(
+                "Frequently Asked Questions?",
+                style: TextStyle(
+                  fontFamily: "okra_extrabold",
+                  fontSize: responsive.fontSize(20),
+                  color: Colors.black,
+                  fontWeight: FontWeight.w200,
+                ),
+              ),
+            ),
+
+            SizedBox(height: responsive.height(10)),
+
+            Container(
+              width: responsive.width(responsive.isMobile ? 600 : responsive.isTablet ? 1024 : 1200),
+              child: Text(
+                "Find questions and answers related to the design system, purchases, updates, and support.",
+                style: TextStyle(
+                  color: CommonColor.grayText,
+                  fontFamily: "Montserrat-Medium",
+                  fontSize: responsive.fontSize(12),
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+
+            SizedBox(height: responsive.height(20)),
+
+            ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: filteredItemss.length,
+              itemBuilder: (context, index) {
+                return FAQItem(index, responsive);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget FAQQuations(double parentHeight, double parentWidth) {
+  Widget FAQItem(int index, ResponsiveHelper responsive) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedCategoryId = selectedCategoryId == filteredItemss[index].category!.name ? null : filteredItemss[index].category!.name;
+        });
+      },
+      child: Container(
+        margin: responsive.getMargin(vertical: 10),
+        width: responsive.width(responsive.isMobile ? 600 : responsive.isTablet ? 1024 : 1200),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(responsive.width(12)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blueGrey.withOpacity(0.15),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: responsive.getPadding(all: 4),
+              child: Container(
+                height: responsive.height(responsive.isMobile ? 40 : responsive.isTablet ? 60 : 65),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(responsive.width(10)),
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: responsive.getPadding(all: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: responsive.width(responsive.isMobile ? 250 : responsive.isTablet ? 250 : 260),
+                          child: Text(
+                            filteredItemss[index].category!.name.toString(),
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "okra_Medium",
+                              fontSize: responsive.fontSize(16),
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Padding(
+                          padding: responsive.getPadding(horizontal: 10),
+                          child: selectedCategoryId == filteredItemss[index].category!.name
+                              ? Image.asset(
+                            'assets/images/minus.png',
+                            height: responsive.height(responsive.isMobile ? 12 : responsive.isTablet ? 20 : 22),
+                            color: Colors.deepPurple,
+                          )
+                              : Image.asset(
+                            'assets/images/add.png',
+                            height: responsive.height(responsive.isMobile ? 12 : responsive.isTablet ? 20 : 22),
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            if (selectedCategoryId == filteredItemss[index].category!.name)
+              Container(
+                margin: responsive.getMargin(vertical: 7),
+                decoration: const BoxDecoration(color: Colors.white),
+                child: Padding(
+                  padding: responsive.getPadding(horizontal: 10),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: filteredItemss[index].questions?.length ?? 0,
+                    itemBuilder: (context, questionIndex) {
+                      var question = filteredItemss[index].questions![questionIndex];
+                      return FAQQuestionItem(question, responsive);
+                    },
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget FAQQuestionItem(var question, ResponsiveHelper responsive) {
     return Padding(
-      padding: const EdgeInsets.all(14.0),
+      padding: responsive.getPadding(vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 250,
-            child:
-            Text(
-              "Frequently Asked Questions?",
-              style: TextStyle(
-                fontFamily: "okra_extrabold",
-                fontSize: SizeConfig.blockSizeHorizontal * 5.1,
-                color: Colors.black,
-                fontWeight: FontWeight.w200,
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedName = selectedName == question.title ? null : question.title;
+              });
+            },
+            child: Padding(
+              padding: responsive.getPadding(all: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: responsive.width(responsive.isMobile ? 250 : responsive.isTablet ? 260 : 270),
+                    child: Text(
+                      question.title ?? '',
+                      style: TextStyle(
+                        fontSize: responsive.fontSize(15),
+                        color: Colors.indigo.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    selectedName == question.title ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    size: responsive.width(20),
+                    color: Colors.deepPurple,
+                  ),
+                ],
               ),
             ),
           ),
-       //   const SizedBox(height: 10),
-        //  SizedBox(height: responsive.height(40)),
 
-          Container(
-            width: 400,
-            child: const Text(
-              "Find questions and answers related to the design system,perches,updates and support. ",
-              style: TextStyle(
-                color: CommonColor.grayText,
-                fontFamily: "Montserrat-Medium",
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            height: SizeConfig.screenHeight * 0.58,
-            child: ScrollConfiguration(
-              behavior: MyBehavior(),
-              child: filteredItemss.isEmpty ? Center(child: Text("No data available")): ListView.builder(
-                padding: EdgeInsets.zero,
-                scrollDirection: Axis.vertical,
-                itemCount: filteredItemss.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (selectedCategoryId ==
-                            filteredItemss[index].category!.name) {
-                          selectedCategoryId = null;
-                        } else {
-                          selectedCategoryId =
-                              filteredItemss[index].category!.name;
-                        }
-                      });
-                    },
-                    child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 7.0),
-                        width: SizeConfig.screenHeight * 0.5,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: 2,
-                              ),
-                              child: Container(
-                                height: 42,
-                                child: Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(9.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: SizeConfig.screenHeight * 0.35,
-                                          child: Text(
-                                            filteredItemss[index]
-                                                .category!
-                                                .name
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "okra_Medium",
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(right: 10),
-                                          child: selectedCategoryId ==
-                                                  filteredItemss[index]
-                                                      .category!
-                                                      .name
-                                              ? Image(
-                                                  image: AssetImage(
-                                                      'assets/images/minus.png'),
-                                                  height: 15,
-                                                  color: Color(0xfff44343),
-                                                )
-                                              : Image(
-                                                  image: AssetImage(
-                                                      'assets/images/add.png'),
-                                                  height: 15,
-                                                  color: Color(0xfff44343),
-                                                ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            if (selectedCategoryId ==
-                                filteredItemss[index].category!.name)
-                              Container(
-                                margin: EdgeInsets.symmetric(vertical: 7.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 12, right: 10),
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.zero,
-                                    scrollDirection: Axis.vertical,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: filteredItemss[index]
-                                            .questions
-                                            ?.length ??
-                                        0,
-                                    itemBuilder: (context, questionIndex) {
-                                      var question = filteredItemss[index]
-                                          .questions![questionIndex];
-                                      return Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-
-                                          SizedBox(height: 10,),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                if (selectedName == filteredItemss[index].questions![questionIndex].title) {
-                                                  selectedName = null;
-                                                } else {
-                                                  selectedName = filteredItemss[index].questions![questionIndex].title;
-                                                }
-                                              });
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(1.0),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Container(
-                                                    width: SizeConfig.screenHeight * 0.37,
-                                                    child: Text(
-                                                      filteredItemss[index].questions![questionIndex].title ?? '',
-                                                      style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(right: 2),
-                                                    child: selectedName == filteredItemss[index].questions![questionIndex].title
-                                                        ? const Icon(Icons.keyboard_arrow_up, size: 25, color: Color(0xfff44343))
-                                                        : const Icon(Icons.keyboard_arrow_down, size: 25, color: Color(0xfff44343)),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 4,),
-
-                                          if (selectedName == filteredItemss[index].questions![questionIndex].title)
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                              child: HtmlWidget(
-                                                filteredItemss[index].questions![questionIndex].description ?? '',
-                                                onTapUrl: (String? url) async {
-                                                  if (url != null && await canLaunchUrl(Uri.parse(url))) {
-                                                    await launchUrl(Uri.parse(url));
-                                                    return true;
-                                                  } else {
-                                                    throw 'Could not launch $url';
-                                                  }
-                                                },
-                                                onErrorBuilder: (context, element, error) => Text('$element error: $error'),
-                                                onLoadingBuilder: (context, element, loadingProgress) =>
-                                                    Center(child: CircularProgressIndicator()),
-                                                renderMode: RenderMode.column,
-                                                textStyle: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: SizeConfig.blockSizeHorizontal * 4.0,
-                                                  fontFamily: 'Poppins_Regular',
-                                                ),
-                                              ),
-                                            ),
-                                          Divider(),
-                                        ],
-                                      );
-
-                                    },
-                                  ),
-                                ),
-                              ),
-                          ],
-                        )),
-                  );
-                },
+          if (selectedName == question.title)
+            Container(
+              margin: responsive.getMargin(vertical: 10),
+              padding: responsive.getPadding(all: 12),
+              child: HtmlWidget(
+                question.description ?? '',
+                textStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: responsive.fontSize(14),
+                  fontFamily: 'Poppins_Regular',
+                ),
               ),
             ),
-          ),
+
+          Divider(color: Colors.blueGrey.shade300, thickness: 1),
         ],
       ),
     );
   }
 
-  Widget AddContactUsButton(double parentHeight, double parentWidth) {
+
+  // Widget AddContactUsButton(double parentHeight, double parentWidth) {
+
+  Widget AddContactUsButton(ResponsiveHelper responsive) {
+
     return GestureDetector(
       onTap: () {
         widget.onContactUsTap();
       },
       child: Padding(
-        padding: EdgeInsets.only(
-          left: parentWidth * 0.2,
-          right: parentWidth * 0.06,
-          top: parentHeight * 0.01,
-        ),
+        padding: responsive.getPadding(vertical: 0.0),                            /// new changes
         child: Container(
-          height: parentHeight * 0.09,
+          height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 80),                        /// new changes
+          // height: parentHeight * 0.09,
+          width: responsive.width(responsive.isMobile ? 200 : responsive.isTablet ? 250 : 300),                       /// new changes
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topRight,
@@ -354,7 +336,7 @@ class _FAQState extends State<FAQ> {
           child: Align(
             alignment: Alignment.topLeft,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(4.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -362,17 +344,20 @@ class _FAQState extends State<FAQ> {
                     "Do You still need aur help?",
                     style: TextStyle(
                       fontFamily: "Montserrat-BoldItalic",
-                      fontSize: parentWidth * 0.034,
+                      //fontSize: parentWidth * 0.034,
+                      fontSize: responsive.fontSize(13),                           /// new changes
                       color: CupertinoColors.white,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
 
-                  SizedBox(height: 10),
+                  SizedBox(height: 5),
 
                   Container(
-                    height: parentHeight* 0.025,
-                    width: 140,
+                    // height: parentHeight* 0.035,
+                    height: responsive.height(responsive.isMobile ? 20 : responsive.isTablet ? 30 : 40),                        /// new changes
+                    //  width: parentWidth * 0.3,
+                    width: responsive.width(responsive.isMobile ? 100 : responsive.isTablet ? 200 : 300),                       /// new changes
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(
@@ -384,7 +369,8 @@ class _FAQState extends State<FAQ> {
                         "Contact Us",
                         style: TextStyle(
                           fontFamily: "Montserrat-BoldItalic",
-                          fontSize: parentWidth * 0.032,
+                          fontSize: responsive.fontSize(13),                                 /// new changes
+                          // fontSize: parentWidth * 0.032,
                           color: CupertinoColors.black,
                           fontWeight: FontWeight.w500,
                         ),
@@ -399,35 +385,5 @@ class _FAQState extends State<FAQ> {
       ),
     );
   }
+
 }
-
-
-
-
-
-/*
-
-HtmlWidget(
-widget.htmlText,
-onTapUrl: (String? url) async {
-if (await canLaunchUrl(Uri.parse(url!))) {
-await launchUrl(Uri.parse(url));
-return true;
-} else {
-throw 'Could not launch $url';
-}
-},
-onErrorBuilder: (context, element, error) =>
-Text('$element error: $error'),
-onLoadingBuilder: (context, element, loadingProgress) =>
-showCircularProgress(
-true, Theme.of(context).primaryColor),
-renderMode: RenderMode.column,
-textStyle: TextStyle(
-color: Colors.black,
-fontSize: SizeConfig.blockSizeHorizontal * 4.0,
-fontFamily: 'Poppins_Regular'),
-),
-),
-),
-)*/

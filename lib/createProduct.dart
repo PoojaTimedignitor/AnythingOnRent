@@ -70,8 +70,8 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   TextEditingController productPriceController = TextEditingController();
   TextEditingController productRatingController = TextEditingController();
   TextEditingController productNameController = TextEditingController();
-  TextEditingController productCurrentAddressController =
-      TextEditingController();
+  TextEditingController productSpacilityController = TextEditingController();
+  TextEditingController productCurrentAddressController = TextEditingController();
 
   TextEditingController businessNameController = TextEditingController();
   TextEditingController petItemTypesController = TextEditingController();
@@ -79,6 +79,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   TextEditingController businessContactController = TextEditingController();
   TextEditingController businessEmailController = TextEditingController();
   TextEditingController businessGSTINController = TextEditingController();
+  TextEditingController businessWhatappsontroller = TextEditingController();
   TextEditingController businessStartedController = TextEditingController();
 
   TextEditingController SubCatController = TextEditingController();
@@ -105,6 +106,8 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   bool isSubCategorySelected = false;
 
   String categoryId = '';
+  String selectedYear = "Year";
+  String businessSelectedYear = "Year";
 
   List<subCatDatass.SubCategoryData> SubCat = [];
   List<subCatDatass.SubCategoryData> filteredSubCat = [];
@@ -139,29 +142,100 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
     }
   }
 
-  /*void fetchDymanicFieldsSubCategories(String categoryId) async {
-    setState(() {
-      isLoading = true;
-    });
+  void _showYearBottomSheet(BuildContext context) {
+    List<String> years = List.generate(26, (index) => (2000 + index).toString()); // 2000 - 2025
 
-    try {
-      Map<String, dynamic> response = await NewApiClients().NewGetSubCatDynamicFeilds(categoryId);
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          child: Container(
 
-      var jsonList = GetDaynamicResponseModel.fromJson(response);
+            color: Colors.white,
+            padding: EdgeInsets.all(16),
+            height: 700,
+            child: Column(
+              children: [
+                Text(
+                  "Select Production Year",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Divider(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: years.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(years[index]),
+                        onTap: () {
+                          setState(() {
+                            selectedYear = years[index]; // Update selected year
+                          });
+                          Navigator.pop(context); // Close Bottom Sheet
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
-      setState(() {
-        if (jsonList.data != null) {
-          dynamicFieldTitles = jsonList.data!.toJson().keys.toList();
-        }
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      print("Error fetching fields: $e");
-    }
-  }*/
+  void _showBusinessYearBottomSheet(BuildContext context) {
+    List<String> years = List.generate(26, (index) => (2000 + index).toString()); // 2000 - 2025
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          child: Container(
+
+            color: Colors.white,
+            padding: EdgeInsets.all(16),
+            height: 700,
+            child: Column(
+              children: [
+                Text(
+                  "Select Business Stared Year",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Divider(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: years.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(years[index]),
+                        onTap: () {
+                          setState(() {
+                            businessSelectedYear = years[index]; // Update selected year
+                          });
+                          Navigator.pop(context); // Close Bottom Sheet
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
   void fetchDymanicFieldsSubCategories(String categoryId) async {
     setState(() {
@@ -192,9 +266,12 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});  // Ensures widget is fully built before accessing size
+    });
     // fetchDymanicFieldsSubCategories();
-
+    quantity = 0;
+    quantity = box.read<int>('quantity') ?? 0;
     if (categoryId.isNotEmpty) {
       print("Selected Category ID: $categoryId");
       fetchSubCategories(categoryId);
@@ -250,7 +327,10 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   @override
   void dispose() {
     _controller.dispose();
+    quantity = 0;
     _controllerzoom.dispose();
+    businessWhatappsontroller.dispose();
+    productDiscriptionController.dispose();
     super.dispose();
   }
 
@@ -1286,6 +1366,69 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                     )
             ],
           ),
+
+          SizedBox(
+            height: parentHeight * 0.035,
+          ),
+          Text(
+            "     Speciality of product uses",
+            style: TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 15, right: 10, top: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xffd5abff).withOpacity(0.3),
+                    spreadRadius: 0,
+                    blurRadius: 5,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: TextFormField(
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                keyboardType: TextInputType.text,
+                controller: productSpacilityController,
+                autocorrect: true,
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: 'Ex.HD Camera (black & white)',
+                  contentPadding:
+                  EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                  hintStyle: TextStyle(
+                    fontFamily: "Roboto_Regular",
+                    color: Color(0xffa1a1a1),
+                    fontSize: SizeConfig.blockSizeHorizontal * 3.5,
+                  ),
+                  fillColor: Colors.white,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                    BorderSide(color: Color(0xffd5abff), width: 0.5),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+
+
           SizedBox(
             height: parentHeight * 0.025,
           ),
@@ -1344,10 +1487,56 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                           ],
                         )),
                   ),
+
+
+
                 ],
               ),
             ),
           ),
+          SizedBox(
+            height: parentHeight * 0.025,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "     Production Year",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "okra_Medium",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _showYearBottomSheet(context),
+                child: Padding(
+                  padding: EdgeInsets.only(right: 15),
+                  child: Container(
+                      height: 43,
+                      width: 130,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black,width: 0.4),
+                          borderRadius: BorderRadius.circular(10)),
+                    child: Center(child: Text( selectedYear, style: TextStyle(
+                        fontFamily:
+                        "Montserrat-Medium",
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14),)),
+
+                      ),
+                ),
+              ),
+
+
+
+            ],
+          ),
+
+
           SizedBox(
             height: parentHeight * 0.030,
           ),
@@ -2104,7 +2293,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   child: Container(
                     height: parentHeight * 0.08,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                     /* gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
                         colors: [
@@ -2112,14 +2301,14 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                           Color(0xfffd4952),
                           Color(0xfffd4952),
                         ],
-                      ),
+                      ),*/
                       border: Border.all(color: Color(0xffe8a33e), width: 2),
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
                     child: Center(
                         child: Shimmer.fromColors(
-                      baseColor: Colors.white, // Light color
-                      highlightColor: Color(0xff632883), // Highlight color
+                      baseColor: Color(0xff632883), // Light color
+                      highlightColor: Colors.white, // Highlight color
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -2212,7 +2401,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
               ),
               SizedBox(height: 25),
               Text(
-                "    Business WhatsApss Contact",
+                "    Business whatsapp contact",
                 style: TextStyle(
                   color: Color(0xff000000),
                   fontFamily: "okra_Medium",
@@ -2238,7 +2427,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   child: TextFormField(
                     textAlign: TextAlign.start,
                     maxLines: 1,
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.number,
                     controller: businessContactController,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
@@ -2267,6 +2456,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+
               SizedBox(height: 25),
               Text(
                 "    Business email",
@@ -2587,11 +2777,53 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+
+              SizedBox(height: 25),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "   Business Started Since",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "okra_Medium",
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => _showBusinessYearBottomSheet(context),
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 15),
+                      child: Container(
+                        height: 43,
+                        width: 130,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black,width: 0.4),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(child: Text( businessSelectedYear, style: TextStyle(
+                            fontFamily:
+                            "Montserrat-Medium",
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14),)),
+
+                      ),
+                    ),
+                  ),
+
+
+
+                ],
+              ),
+
+
               SizedBox(height: 25),
               Text(
-                "    Business Started Since",
+                "    Add Business Website",
                 style: TextStyle(
-                  color: Color(0xff000000),
+                  color: Color(0xff3d87f1),
                   fontFamily: "okra_Medium",
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -2603,27 +2835,21 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xffd5abff).withOpacity(0.3),
-                        spreadRadius: 0,
-                        blurRadius: 5,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
+
                   ),
                   child: TextFormField(
+
                     textAlign: TextAlign.start,
                     maxLines: 1,
                     keyboardType: TextInputType.text,
-                    controller: businessStartedController,
+                    controller: businessWhatappsontroller,
                     autocorrect: true,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       isDense: true,
-                      hintText: 'Business Name',
+                      hintText: 'Business Website',
                       contentPadding:
-                          EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                      EdgeInsets.only(left: 10, top: 14, bottom: 12),
                       hintStyle: TextStyle(
                         fontFamily: "Roboto_Regular",
                         color: Color(0xffa1a1a1),
@@ -2632,12 +2858,14 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                       fillColor: Colors.white,
                       filled: true,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
+                      borderSide:
+    BorderSide(color: Colors.black12, width: 1),
+    borderRadius: BorderRadius.circular(10.0)),
+
+
                       focusedBorder: OutlineInputBorder(
                         borderSide:
-                            BorderSide(color: Color(0xffd5abff), width: 0.5),
+                        BorderSide(color: Color(0xffd5abff), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
@@ -2761,14 +2989,22 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           SizedBox(height: 10),
           GestureDetector(
             onTap: () async {
-
+              int qty = quantity;
+              print("Quan: $quantity");
               print(" api  $productNameController.text");
               String productName = productNameController.text;
               String productDescription = productDiscriptionController.text;
+              String BName = businessNameController.text;
+              String BContact = businessContactController.text;
+              String BEmail = businessEmailController.text;
+              String BWebsite = businessWhatappsontroller.text;
+              String BGSTINO = businessGSTINController.text;
+              String BSpeciality = productSpacilityController.text;
 
-              if (productName.isNotEmpty) {
+
+              if (productName.isNotEmpty && qty > 0) {
                 var response = await   NewApiClients()
-                    .NewCreateProductApi(productName,productDescription);
+                    .NewCreateProductApi(productName,productDescription,BName,BContact,BEmail,BWebsite,BGSTINO,BSpeciality,quantity);
 
 
                 if (response['success'] == true) {
@@ -2780,9 +3016,9 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                         await NewAuthStorage.setUserId(userId);
                         print(" User ID Stored: $userId");
 
-                        // Debugging: Verify if userId is stored properly
-                        String? storedUserId = await NewAuthStorage.getUserId();
-                        print("🔍 Retrieved User ID from storage: $storedUserId");
+
+                        String? storedUserId = NewAuthStorage.getUserId();
+                        print("Retrieved User ID from storage: $storedUserId");
                       } else {
                         print(" Error: userId is null in response data");
                       }
