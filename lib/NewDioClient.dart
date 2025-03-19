@@ -496,7 +496,7 @@ class NewApiClients {
   }
 
 
- /* Future<Map<String, dynamic>> NewGetAllCat() async {
+  /* Future<Map<String, dynamic>> NewGetAllCat() async {
     String url =
         ApiConstant().BaseUrl + ApiConstant().getAllCatagries;
 
@@ -553,7 +553,6 @@ class NewApiClients {
   }
 
 
-
   Future<Map<String, dynamic>> NewGetAllSubCat(String categoryId) async {
     if (!RegExp(r"^[0-9a-fA-F]{24}$").hasMatch(categoryId)) {
       print("📌 Category ID is a name, fetching ObjectId...");
@@ -606,9 +605,6 @@ class NewApiClients {
     }
     return null;
   }
-
-
-
 
 
   //
@@ -1106,19 +1102,119 @@ class NewApiClients {
   //     };
   //   }
   // }
-  Future<Map<String, dynamic>> NewCreateProductApi(String name,String description,String BName,String BContact,String BEmail,
-      String BWhatapps,String GSTINO,String bSpecialty,int quantity,String PYear,String categoryId,String SubCategoryId ) async {
+//   Future<Map<String, dynamic>> NewCreateProductApi(
+//       String name,
+//       String description,
+//       String BName,
+//       String BContact,
+//       String BEmail,
+//       String BWhatapps,
+//       String GSTINO,
+//       String bSpecialty,
+//       int quantity,
+//       String PYear,
+//       String categoryId,
+//       String SubCategoryId) async
+//   {
+//     String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
+//     String? userId = NewAuthStorage.getUserId();
+//
+//     if (userId == null || userId.isEmpty) {
+//       return {"success": false, "message": "User ID not found"};
+//     }
+//
+//     String? accessToken = NewAuthStorage.getAccessToken();
+//
+//     if (accessToken == null || accessToken.isEmpty) {
+//       return {"success": false, "message": "Access token is missing"};
+//     }
+//
+//     try {
+//       var requestData = {
+//         "name": name,
+//         "description": description,
+//         "businessName": BName,
+//         "businessPhone": BContact,
+//         "businessEmail": BEmail,
+//         "website": BWhatapps,
+//         "gstNumber": GSTINO,
+//         "specialtyofProductUses": bSpecialty,
+//         "quantity": quantity,
+//         "productionYear": PYear,
+//         "categoryId": categoryId,
+//         "subCategoryId": SubCategoryId,
+//         "userId": int.tryParse(userId) ?? userId,
+//       };
+//
+//       print("🔹 Sending Request: $requestData");
+//
+//       Response response = await _dio.post(
+//         url,
+//         data: jsonEncode(requestData),
+//         options: Options(
+//           headers: {
+//             'Authorization': 'Bearer $accessToken',
+//             'Content-Type': 'application/json',
+//           },
+//         ),
+//       );
+//
+//       print("🔹 API Response: ${response.data}");
+//
+//       // ✅ Check Response Data & Success Key
+//       if (response.statusCode == 200 && response.data != null) {
+//         if (response.data["success"] == true) {
+//           return {
+//             "success": true,
+//             "message": response.data['message'] ?? "Product created successfully!",
+//             "data": response.data['data'],
+//           };
+//         } else {
+//           return {
+//             "success": false,
+//             "error": response.data["message"] ?? "Server did not return success",
+//           };
+//         }
+//       } else {
+//         return {"success": false, "error": "Unexpected response from server"};
+//       }
+//     }  on DioError catch (e) {
+//   print("❌ DioError Caught!");
+//   print("⚠️ Error Type: ${e.type}");
+//   print("🔍 Response: ${e.response?.data}");
+//   print("🌍 Status Code: ${e.response?.statusCode}");
+//
+//   return {
+//   "success": false,
+//   "error": e.response?.data?['message'] ?? "Unknown error occurred",
+//   };
+//   }
+//
+// }
+
+
+  Future<Map<String, dynamic>> NewCreateProductApi(
+      String name,
+      String description,
+      String BName,
+      String BContact,
+      String BEmail,
+      String BWhatsApp,
+      String GSTINO,
+      String bSpecialty,
+      int quantity,
+      String PYear,
+      String categoryId,
+      String SubCategoryId) async {
+
     String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
     String? userId = NewAuthStorage.getUserId();
 
     if (userId == null || userId.isEmpty) {
-
       return {"success": false, "message": "User ID not found"};
     }
 
     String? accessToken = NewAuthStorage.getAccessToken();
-
-
     if (accessToken == null || accessToken.isEmpty) {
       return {"success": false, "message": "Access token is missing"};
     }
@@ -1130,19 +1226,19 @@ class NewApiClients {
         "businessName": BName,
         "businessPhone": BContact,
         "businessEmail": BEmail,
-        "website": BWhatapps,
+        "website": BWhatsApp,
         "gstNumber": GSTINO,
         "specialtyofProductUses": bSpecialty,
         "quantity": quantity,
         "productionYear": PYear,
         "categoryId": categoryId,
         "subCategoryId": SubCategoryId,
-        "userId": int.tryParse(userId) ?? userId,
+        "userId": userId, // Keeping as string if backend expects it as string
       };
 
-      print("Sending Request: $requestData");
+      print("🔹 Sending Request: ${jsonEncode(requestData)}");
 
-      Response response = await _dio.post(
+      Response response = await Dio().post(
         url,
         data: jsonEncode(requestData),
         options: Options(
@@ -1153,24 +1249,50 @@ class NewApiClients {
         ),
       );
 
-      print("API Response: ${response.data}");
+      print("🔹 Response Status Code: ${response.statusCode}");
+      print("🔹 Raw API Response Type: ${response.data.runtimeType}");
+      print("🔹 Raw API Response: ${response.data}");
 
-      if (response.data != null && response.statusCode == 200) {
-        return {
-          "success": true,
-          "message": response.data['message'] ?? "Product created successfully!",
-          "data": response.data['data'],
-        };
-      } else {
-        return {"success": false, "error": "Unexpected response from server"};
+      // Ensure we have a JSON Map
+      var responseData = response.data;
+      if (responseData is String) {
+        try {
+          responseData = jsonDecode(responseData);
+        } catch (e) {
+          print("🚨 Response is not valid JSON: $responseData");
+          return {"success": false, "error": "Invalid response format from server"};
+        }
       }
-    } on DioError catch (e) {
 
+      if (response.statusCode == 200 && responseData is Map<String, dynamic>) {
+        if (responseData.containsKey("success") && responseData["success"] == true) {
+          return {
+            "success": true,
+            "message": responseData['message'] ?? "Product created successfully!",
+            "data": responseData['data'] ?? {},
+          };
+        } else {
+          return {
+            "success": false,
+            "error": responseData["message"] ?? "Server did not return success",
+          };
+        }
+      } else {
+        return {
+          "success": false,
+          "error": "Unexpected response from server - Status Code: ${response.statusCode}",
+        };
+      }
+    } on DioException catch (e) {
+      print("❌ DioError Caught!");
+      print("⚠️ Error Type: ${e.type}");
+      print("🔍 Full Response: ${e.response?.data}");
+      print("🌍 Status Code: ${e.response?.statusCode}");
 
       return {
         "success": false,
-        "error": e.response?.data?['message'] ?? "Unknown error occurred",
+        "error": e.response?.data?['message'] ?? e.message ?? "Unknown error occurred",
       };
-    }}
-
+    }
+  }
 }

@@ -52,8 +52,7 @@ class NewProduct extends StatefulWidget {
       required this.BusinessOfficeAddress,
       required this.categoryName,
       required this.imagePath,
-      required this.catagoriesId,
-      required this.subCategoryId});
+      required this.catagoriesId, required this.subCategoryId});
 
   @override
   State<NewProduct> createState() => _NewProductState();
@@ -74,8 +73,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   TextEditingController productRatingController = TextEditingController();
   TextEditingController productNameController = TextEditingController();
   TextEditingController productSpacilityController = TextEditingController();
-  TextEditingController productCurrentAddressController =
-      TextEditingController();
+  TextEditingController productCurrentAddressController = TextEditingController();
 
   TextEditingController businessNameController = TextEditingController();
   TextEditingController petItemTypesController = TextEditingController();
@@ -110,6 +108,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   bool isSubCategorySelected = false;
 
   String selectedCategoryId = "";
+
 
   String categoryId = '';
   String selectedYear = "Year";
@@ -149,8 +148,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   }
 
   void _showYearBottomSheet(BuildContext context) {
-    List<String> years =
-        List.generate(26, (index) => (2000 + index).toString()); // 2000 - 2025
+    List<String> years = List.generate(26, (index) => (2000 + index).toString()); // 2000 - 2025
 
     showModalBottomSheet(
       context: context,
@@ -161,6 +159,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
         return ClipRRect(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           child: Container(
+
             color: Colors.white,
             padding: EdgeInsets.all(16),
             height: 700,
@@ -196,8 +195,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   }
 
   void _showBusinessYearBottomSheet(BuildContext context) {
-    List<String> years =
-        List.generate(26, (index) => (2000 + index).toString()); // 2000 - 2025
+    List<String> years = List.generate(26, (index) => (2000 + index).toString()); // 2000 - 2025
 
     showModalBottomSheet(
       context: context,
@@ -208,6 +206,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
         return ClipRRect(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           child: Container(
+
             color: Colors.white,
             padding: EdgeInsets.all(16),
             height: 700,
@@ -226,8 +225,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                         title: Text(years[index]),
                         onTap: () {
                           setState(() {
-                            businessSelectedYear =
-                                years[index]; // Update selected year
+                            businessSelectedYear = years[index]; // Update selected year
                           });
                           Navigator.pop(context); // Close Bottom Sheet
                         },
@@ -242,6 +240,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
       },
     );
   }
+
 
   void fetchDymanicFieldsSubCategories(String categoryId) async {
     setState(() {
@@ -799,43 +798,49 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                     return SizedBox(
                       height: MediaQuery.of(context).size.height * 0.8,
                       child: AllSubCat(
-                        categoryId: widget.categoryName,
+                        categoryId:widget.categoryName
+
+
+
+                        ,
                       ),
                     );
                   },
                 );
 
-                if (selectedSubCategory != null) {
-                  try {
-                    if (selectedSubCategory.startsWith("{") &&
-                        selectedSubCategory.endsWith("}")) {
-                      final Map<String, dynamic> data =
-                          jsonDecode(selectedSubCategory);
 
-                      setState(() {
-                        SubCatController.text = data["name"] ?? "";
-                        selectedCategoryId = data["id"] ?? "";
-                      });
+    if (selectedSubCategory != null) {
+    try {
 
-                      print("✅ Selected SubCategory Name: ${data["name"]}");
-                      print("✅ Selected SubCategory ID: ${data["id"]}");
+    if (selectedSubCategory.startsWith("{") && selectedSubCategory.endsWith("}")) {
+    final Map<String, dynamic> data = jsonDecode(selectedSubCategory);
 
-                      // 🔹 Fetch Dynamic Fields
-                      fetchDymanicFieldsSubCategories(widget.catagoriesId);
-                    } else {
-                      setState(() {
-                        SubCatController.text = selectedSubCategory;
-                        isSubCategorySelected = false;
-                      });
+    setState(() {
+    SubCatController.text = data["name"] ?? "";
+    selectedCategoryId = data["id"] ?? "";
+    });
 
-                      print("✅ Selected SubCategory: $selectedSubCategory");
-                    }
-                  } catch (e) {
-                    print("⚠️ JSON Decoding Error: $e");
-                  }
-                }
+    print("✅ Selected SubCategory Name: ${data["name"]}");
+    print("✅ Selected SubCategory ID: ${data["id"]}");
 
-                /* if (selectedSubCategory != null) {
+    // 🔹 Fetch Dynamic Fields
+    fetchDymanicFieldsSubCategories(widget.catagoriesId);
+    } else {
+    setState(() {
+    SubCatController.text = selectedSubCategory;
+    isSubCategorySelected = false;
+    });
+
+    print("✅ Selected SubCategory: $selectedSubCategory");
+    }
+    } catch (e) {
+    print("⚠️ JSON Decoding Error: $e");
+    }
+    }
+
+
+
+               /* if (selectedSubCategory != null) {
                   setState(() {
                     SubCatController.text = selectedSubCategory;
                     isSubCategorySelected = false;
@@ -872,7 +877,9 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
               ),
             ),
           ),
-          DynamicFieldsData(SizeConfig.screenHeight, SizeConfig.screenWidth),
+
+          DynamicFieldsData(
+              SizeConfig.screenHeight, SizeConfig.screenWidth),
           SizedBox(height: 17),
           Text(
             "    Product Name",
@@ -1403,6 +1410,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                     )
             ],
           ),
+
           SizedBox(
             height: parentHeight * 0.035,
           ),
@@ -1441,7 +1449,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   isDense: true,
                   hintText: 'Ex.HD Camera (black & white)',
                   contentPadding:
-                      EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                  EdgeInsets.only(left: 10, top: 14, bottom: 12),
                   hintStyle: TextStyle(
                     fontFamily: "Roboto_Regular",
                     color: Color(0xffa1a1a1),
@@ -1455,13 +1463,16 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
-                        BorderSide(color: Color(0xffd5abff), width: 0.5),
+                    BorderSide(color: Color(0xffd5abff), width: 0.5),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
               ),
             ),
           ),
+
+
+
           SizedBox(
             height: parentHeight * 0.025,
           ),
@@ -1520,6 +1531,9 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                           ],
                         )),
                   ),
+
+
+
                 ],
               ),
             ),
@@ -1544,26 +1558,29 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                 child: Padding(
                   padding: EdgeInsets.only(right: 15),
                   child: Container(
-                    height: 43,
-                    width: 130,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black, width: 0.4),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Center(
-                        child: Text(
-                      selectedYear,
-                      style: TextStyle(
-                          fontFamily: "Montserrat-Medium",
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14),
-                    )),
-                  ),
+                      height: 43,
+                      width: 130,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black,width: 0.4),
+                          borderRadius: BorderRadius.circular(10)),
+                    child: Center(child: Text( selectedYear, style: TextStyle(
+                        fontFamily:
+                        "Montserrat-Medium",
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14),)),
+
+                      ),
                 ),
               ),
+
+
+
             ],
           ),
+
+
           SizedBox(
             height: parentHeight * 0.030,
           ),
@@ -2320,7 +2337,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   child: Container(
                     height: parentHeight * 0.08,
                     decoration: BoxDecoration(
-                      /* gradient: LinearGradient(
+                     /* gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
                         colors: [
@@ -2483,6 +2500,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+
               SizedBox(height: 25),
               Text(
                 "    Business email",
@@ -2803,6 +2821,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+
               SizedBox(height: 25),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2825,22 +2844,25 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                         width: 130,
                         decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(color: Colors.black, width: 0.4),
+                            border: Border.all(color: Colors.black,width: 0.4),
                             borderRadius: BorderRadius.circular(10)),
-                        child: Center(
-                            child: Text(
-                          businessSelectedYear,
-                          style: TextStyle(
-                              fontFamily: "Montserrat-Medium",
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14),
-                        )),
+                        child: Center(child: Text( businessSelectedYear, style: TextStyle(
+                            fontFamily:
+                            "Montserrat-Medium",
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14),)),
+
                       ),
                     ),
                   ),
+
+
+
                 ],
               ),
+
+
               SizedBox(height: 25),
               Text(
                 "    Add Business Website",
@@ -2857,8 +2879,10 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.0),
+
                   ),
                   child: TextFormField(
+
                     textAlign: TextAlign.start,
                     maxLines: 1,
                     keyboardType: TextInputType.text,
@@ -2869,7 +2893,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                       isDense: true,
                       hintText: 'Business Website',
                       contentPadding:
-                          EdgeInsets.only(left: 10, top: 14, bottom: 12),
+                      EdgeInsets.only(left: 10, top: 14, bottom: 12),
                       hintStyle: TextStyle(
                         fontFamily: "Roboto_Regular",
                         color: Color(0xffa1a1a1),
@@ -2878,12 +2902,14 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                       fillColor: Colors.white,
                       filled: true,
                       enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black12, width: 1),
-                          borderRadius: BorderRadius.circular(10.0)),
+                      borderSide:
+    BorderSide(color: Colors.black12, width: 1),
+    borderRadius: BorderRadius.circular(10.0)),
+
+
                       focusedBorder: OutlineInputBorder(
                         borderSide:
-                            BorderSide(color: Color(0xffd5abff), width: 0.5),
+                        BorderSide(color: Color(0xffd5abff), width: 0.5),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
@@ -3022,56 +3048,50 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
               String? categoryId = widget.catagoriesId;
               String? subCategoryId = selectedCategoryId;
 
-              var response = await NewApiClients().NewCreateProductApi(
-                  productName,
-                  productDescription,
-                  BName,
-                  BContact,
-                  BEmail,
-                  BWebsite,
-                  BGSTINO,
-                  BSpeciality,
-                  quantity,
-                  pYears,
-                  categoryId,
-                  subCategoryId);
 
-              if (response['success'] == true) {
-                if (response.containsKey('data') && response['data'] != null) {
-                  var data = response['data'];
-                  if (data.containsKey('userId')) {
-                    String? userId = data['userId'];
-                    if (userId != null) {
-                      await NewAuthStorage.setUserId(userId);
-                      print(" User ID Stored: $userId");
 
-                      String? storedUserId = NewAuthStorage.getUserId();
-                      print("Retrieved User ID from storage: $storedUserId");
+                var response = await   NewApiClients()
+                    .NewCreateProductApi(productName,productDescription,BName,BContact,BEmail,BWebsite,BGSTINO,BSpeciality,quantity,pYears,categoryId,subCategoryId);
+
+
+                if (response['success'] == true) {
+                  if (response.containsKey('data') && response['data'] != null) {
+                    var data = response['data'];
+                    if (data.containsKey('userId')) {
+                      String? userId = data['userId'];
+                      if (userId != null) {
+                        await NewAuthStorage.setUserId(userId);
+                        print(" User ID Stored: $userId");
+
+
+                        String? storedUserId = NewAuthStorage.getUserId();
+                        print("Retrieved User ID from storage: $storedUserId");
+                      } else {
+                        print(" Error: userId is null in response data");
+                      }
                     } else {
-                      print(" Error: userId is null in response data");
+                      print("Error: userId key not found in response data");
                     }
                   } else {
-                    print("Error: userId key not found in response data");
+                    print("Error: Response data is null or missing");
                   }
-                } else {
-                  print("Error: Response data is null or missing");
-                }
                 // Corrected print stat
 
-                // Navigate to Home Screen
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MainHome(
-                      lat: '',
-                      long: '',
-                      showLoginWidget: false,
+                  // Navigate to Home Screen
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MainHome(
+                        lat: '',
+                        long: '',
+                        showLoginWidget: false,
+                      ),
                     ),
-                  ),
-                );
-              } else {
-                print("Error: ${response['error']}");
-              }
+                  );
+                } else {
+                  print("Error: ${response['error']}");
+                }
+
             },
             child: Padding(
               padding: const EdgeInsets.all(18.0),
@@ -3107,6 +3127,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
   }
 
   Widget DynamicFieldsData(double parentHeight, double parentWidth) {
+
     if (!isSubCategorySelected || itemsDynamicFields.isEmpty) {
       return SizedBox();
     }
@@ -3120,11 +3141,13 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
           shrinkWrap: true,
           physics: BouncingScrollPhysics(),
           children: dynamicData.dynamicFields.entries
-              .where((entry) =>
-                  !entry.key.trim().contains("Pet Items Deliverydfgdfgdf"))
+              .where((entry) => !entry.key.trim().contains("Pet Items Deliverydfgdfgdf"))
+
               .map((entry) {
             String key = entry.key.trim();
             List<String> values = entry.value;
+
+
 
             if (key == "Pet Item Types") {
               return Padding(
@@ -3145,25 +3168,21 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                     fillColor: Color(0xffF5F6FB),
                     filled: true,
                     border: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey[400]!, width: 1.0),
+                      borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
                     ),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey[400]!, width: 1.0),
+                      borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
                     ),
                     enabledBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.grey[400]!, width: 1.0),
+                      borderSide: BorderSide(color: Colors.grey[400]!, width: 1.0),
                     ),
                   ),
                   onTap: () async {
                     List<String>? selectedOptions =
-                        await showModalBottomSheet<List<String>>(
+                    await showModalBottomSheet<List<String>>(
                       context: context,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                       ),
                       isScrollControlled: true,
                       builder: (BuildContext bc) {
@@ -3257,6 +3276,8 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
         ),
       ),
     );
+
+
   }
 }
 
@@ -3293,10 +3314,11 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
+decoration: BoxDecoration(
+  color: Colors.white,
+
+  borderRadius: BorderRadius.all(Radius.circular(10)),
+),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -3307,18 +3329,14 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
                 fontFamily: 'Roboto_Medium',
                 fontWeight: FontWeight.w400,
                 color: CommonColor.Black),
-          ),
-          SizedBox(height: 10),
+          ), SizedBox(height: 10),
           CheckboxListTile(
-            title: const Text(
-              "Accessories",
-              style: TextStyle(
+            title: const Text("Accessories",style: TextStyle(
                 color: Color(0xff000000),
-                fontFamily: "okra_Medium",
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            fontFamily: "okra_Medium",
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),),
             value: accessoriesSelected,
             onChanged: (bool? value) {
               setState(() {
@@ -3327,15 +3345,12 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
             },
           ),
           CheckboxListTile(
-            title: Text(
-              "Pet's Accomodation",
-              style: TextStyle(
-                color: Color(0xff000000),
-                fontFamily: "okra_Medium",
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            title: Text("Pet's Accomodation",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
             value: petAccomodation,
             onChanged: (bool? value) {
               setState(() {
@@ -3344,15 +3359,12 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
             },
           ),
           CheckboxListTile(
-            title: Text(
-              "Pet Toys",
-              style: TextStyle(
-                color: Color(0xff000000),
-                fontFamily: "okra_Medium",
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            title: Text("Pet Toys",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
             value: petToys,
             onChanged: (bool? value) {
               setState(() {
@@ -3361,15 +3373,12 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
             },
           ),
           CheckboxListTile(
-            title: const Text(
-              "Pet Transport",
-              style: TextStyle(
-                color: Color(0xff000000),
-                fontFamily: "okra_Medium",
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            title: const Text("Pet Transport",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
             value: petTransport,
             onChanged: (bool? value) {
               setState(() {
@@ -3378,15 +3387,12 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
             },
           ),
           CheckboxListTile(
-            title: const Text(
-              "Pet Dresses",
-              style: TextStyle(
-                color: Color(0xff000000),
-                fontFamily: "okra_Medium",
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            title: const Text("Pet Dresses",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
             value: petDresses,
             onChanged: (bool? value) {
               setState(() {
@@ -3394,16 +3400,14 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
               });
             },
           ),
+
           CheckboxListTile(
-            title: const Text(
-              "Pet sitting",
-              style: TextStyle(
-                color: Color(0xff000000),
-                fontFamily: "okra_Medium",
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            title: const Text("Pet sitting",style:  TextStyle(
+              color: Color(0xff000000),
+              fontFamily: "okra_Medium",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),),
             value: petSetting,
             onChanged: (bool? value) {
               setState(() {
@@ -3411,8 +3415,10 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
               });
             },
           ),
+
+
           GestureDetector(
-            onTap: () {
+            onTap: (){
               List<String> selected = [];
               if (accessoriesSelected) selected.add("Accessories");
               if (petAccomodation) selected.add("Pet Accomodation");
@@ -3423,40 +3429,42 @@ class _PetItemTypesBottomSheetState extends State<PetItemTypesBottomSheet> {
               Navigator.pop(context, selected);
             },
             child: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: IntrinsicWidth(
-                //  padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 40,
-                  width: 300,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xff632883), Color(0xff8d42a3)],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
+                padding: const EdgeInsets.all(18.0),
+                child: IntrinsicWidth(
+                  //  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 40,
+                    width: 300,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xff632883), Color(0xff8d42a3)],
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: const Text(
-                    "Done",
-                    style: TextStyle(
-                      fontFamily: "Montserrat-BoldItalic",
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: const Text(
+                      "Done",
+                      style: TextStyle(
+                        fontFamily: "Montserrat-BoldItalic",
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
           ),
         ],
       ),
     );
   }
 }
+
+
 
 class AllInformationWidget extends StatefulWidget {
   final String categoryName;
