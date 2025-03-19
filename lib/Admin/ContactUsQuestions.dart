@@ -135,7 +135,7 @@ bool isSelected = false;
 
                                 Column(
                                   children: [
-                                    Container(
+                                    SizedBox(
                                       width: SizeConfig.screenHeight * 0.37,
                                       child: Text(
                                         filteredItemss[index]

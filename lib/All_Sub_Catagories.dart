@@ -1,5 +1,7 @@
 
 
+import 'dart:convert';
+
 import 'package:anything/Common_File/SizeConfig.dart';
 import 'package:anything/Common_File/common_color.dart';
 import 'package:anything/ResponseModule/getSubCatagories.dart';
@@ -38,7 +40,7 @@ class _AllSubCatState extends State<AllSubCat> {
 
 
 
-  void fetchSubCategories() async {
+/*  void fetchSubCategories() async {
     try {
       Map<String, dynamic> response = await NewApiClients().NewGetAllSubCat(widget.categoryId);
       var jsonList = GetSubCategoriesResponseModel.fromJson(response);
@@ -54,7 +56,47 @@ class _AllSubCatState extends State<AllSubCat> {
       });
       print("Error fetching categories: $e");
     }
+  }*/
+
+  void fetchSubCategories() async {
+    try {
+      String? categoryId = widget.categoryId;
+
+
+      if (!RegExp(r"^[0-9a-fA-F]{24}$").hasMatch(categoryId)) {
+        print("📌 Category ID is a name, fetching ObjectId...");
+        categoryId = await NewApiClients().getCategoryIdByName(categoryId);
+      }
+
+      if (categoryId == null) {
+        print("❌ Error: Category ID not found!");
+        return;
+      }
+
+      print("📢 Fetching subcategories for Category ID: $categoryId");
+
+      Map<String, dynamic> response = await NewApiClients().NewGetAllSubCat(categoryId);
+
+      if (response['success'] == true) {
+        var jsonList = GetSubCategoriesResponseModel.fromJson(response);
+
+        setState(() {
+          items = jsonList.data ?? [];
+          filteredItems = List.from(items);
+          isLoading = false;
+        });
+      } else {
+        print("❌ Error fetching subcategories: ${response['message']}");
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("❌ Error fetching categories: $e");
+    }
   }
+
+
 
 
 
@@ -181,22 +223,24 @@ class _AllSubCatState extends State<AllSubCat> {
                       ),
                       value: filteredItems[index].name.toString(),
                       groupValue: selectedCategory,
-                      onChanged: (String? value) {
-                        setState(() {
-                          print("Selected Category Name: ${value}");
-                          selectedCategory = value;
-                         // selectedCategoryId = filteredItems.firstWhere((item) => item.name == value).id;
-                          print("Selected Category ID: $selectedCategoryId");
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            final selectedItem = filteredItems.firstWhere((item) => item.name == value);
+
+                            setState(() {
+                              selectedCategory = value;
+                              selectedCategoryId = selectedItem.id;
+                            });
+
+                            Navigator.pop(context, jsonEncode({
+                              "name": selectedCategory,
+                              "id": selectedCategoryId,
+                            }));
+
+                          }
+                        }
 
 
-                          //   selectedCategoryId = filteredItems[index].id.toString();
-
-                          print("subCat $selectedCategoryId");
-                        });
-
-
-                        Navigator.pop(context, value);
-                      },
                     );
                   },
                 ),

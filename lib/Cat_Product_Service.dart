@@ -242,7 +242,7 @@ class _CatProductServiceState extends State<CatProductService> {
                                                             .name
                                                             .toString(),
 
-                                                    imagePath: imagePath, catagoriesId: filteredItems[index].sId.toString(),
+                                                    imagePath: imagePath, catagoriesId: filteredItems[index].sId.toString(), subCategoryId: '',
                                                   )));
 
                                       /*Navigator.pop(context,

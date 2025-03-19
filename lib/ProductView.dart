@@ -83,21 +83,21 @@ class _ProductDetailsState extends State<ProductDetails> {
       child: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.only(right: 50, top: 80),
+            padding: const EdgeInsets.only(right: 50, top: 80),
             child: Align(
               alignment: Alignment.topRight,
               child: CustomPaint(
-                size: Size(50, 50), // Size of the triangle container
+                size: const Size(50, 50),    // Size of the triangle container
                 painter: TrianglePainter(),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 25, top: 130),
+            padding: const EdgeInsets.only(left: 25, top: 130),
             child: Container(
               width: parentWidth * 0.39,
               height: parentHeight * 0.7,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Color(0xffE9F2FF),
                   borderRadius: BorderRadius.all(Radius.circular(20))),
               child: Padding(
@@ -106,7 +106,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "HD Camera (black & white)",
                       style: TextStyle(
                           fontSize: 15,
@@ -114,8 +114,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                           fontWeight: FontWeight.w500,
                           color: Colors.black),
                     ),
-                    SizedBox(height: 7),
-                    Row(
+
+                    const SizedBox(height: 7),
+
+                    const Row(
                       children: [
                         Icon(
                           Icons.location_on_outlined,
@@ -132,8 +134,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4),
-                    Text(
+
+                    const SizedBox(height: 4),
+
+                    const Text(
                       "Last updated on 10 Jun '24",
                       style: TextStyle(
                           fontSize: 13,
@@ -141,7 +145,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           fontWeight: FontWeight.w600,
                           color: Color(0xff414141)),
                     ),
-                    SizedBox(height: 7),
+                    const SizedBox(height: 7),
                     Row(
                       children: [
                         Container(

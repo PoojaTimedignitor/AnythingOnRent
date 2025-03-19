@@ -496,7 +496,7 @@ class NewApiClients {
   }
 
 
-  Future<Map<String, dynamic>> NewGetAllCat() async {
+ /* Future<Map<String, dynamic>> NewGetAllCat() async {
     String url =
         ApiConstant().BaseUrl + ApiConstant().getAllCatagries;
 
@@ -523,12 +523,45 @@ class NewApiClients {
       print("Dio Error: ${e.response}");
       return e.response!.data;
     }
+  }*/
+
+
+  Future<Map<String, dynamic>> NewGetAllCat() async {
+    String url = "https://rental-api-5vfa.onrender.com/categories";
+
+    String? accessToken = NewAuthStorage.getAccessToken();
+    print("🔑 Stored Access Token: $accessToken");
+
+    try {
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+
+      print("✅ getCatList Status Code --> ${response.statusCode}");
+      print("📢 Response Data --> ${response.data}");
+
+      return response.data;
+    } on DioError catch (e) {
+      print("❌ Dio Error: ${e.response}");
+      return e.response?.data ?? {};
+    }
   }
 
 
+
   Future<Map<String, dynamic>> NewGetAllSubCat(String categoryId) async {
+    if (!RegExp(r"^[0-9a-fA-F]{24}$").hasMatch(categoryId)) {
+      print("📌 Category ID is a name, fetching ObjectId...");
+      categoryId = await getCategoryIdByName(categoryId) ?? categoryId;
+    }
+
     String url = "https://rental-api-5vfa.onrender.com/category/$categoryId/subcategories";
-    print("API URL: $url");
+    print("🌐 API URL: $url");
 
     String? accessToken = NewAuthStorage.getAccessToken();
     print("🔑 Access Token: $accessToken");
@@ -546,15 +579,37 @@ class NewApiClients {
       print(" Response Status Code: ${response.statusCode}");
       print(" Raw Response Data: ${response.data}");
 
-      print("getCatList Status Code --> ${response.statusCode}");
-      print("Response Data --> ${response.data}");
-
       return response.data;
     } on DioError catch (e) {
-      print("Dio Error: ${e.response}");
-      return e.response!.data;
+      print(" Dio Error: ${e.response}");
+      return e.response?.data ?? {};
     }
   }
+
+  Future<String?> getCategoryIdByName(String categoryName) async {
+    String url = "https://backend.anythingonrent.com/categories";
+
+    try {
+      Response response = await _dio.get(url);
+
+      if (response.statusCode == 200) {
+        List categories = response.data['data'];
+
+        for (var category in categories) {
+          if (category['name'] == categoryName) {
+            return category['_id']; // सही ObjectId लौटाएगा
+          }
+        }
+      }
+    } catch (e) {
+      print("❌ Error fetching category ID: $e");
+    }
+    return null;
+  }
+
+
+
+
 
   //
   // Future<Map<String, dynamic>> NewGetSubCatDynamicFeilds(String categoryId) async {
@@ -1052,7 +1107,7 @@ class NewApiClients {
   //   }
   // }
   Future<Map<String, dynamic>> NewCreateProductApi(String name,String description,String BName,String BContact,String BEmail,
-      String BWhatapps,String GSTINO,String bSpecialty,int quantity,) async {
+      String BWhatapps,String GSTINO,String bSpecialty,int quantity,String PYear,String categoryId,String SubCategoryId ) async {
     String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
     String? userId = NewAuthStorage.getUserId();
 
@@ -1079,6 +1134,9 @@ class NewApiClients {
         "gstNumber": GSTINO,
         "specialtyofProductUses": bSpecialty,
         "quantity": quantity,
+        "productionYear": PYear,
+        "categoryId": categoryId,
+        "subCategoryId": SubCategoryId,
         "userId": int.tryParse(userId) ?? userId,
       };
 
