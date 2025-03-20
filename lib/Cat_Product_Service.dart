@@ -7,6 +7,7 @@ import 'ApiConstant/api_constant.dart';
 import 'Common_File/common_color.dart';
 import 'NewDioClient.dart';
 import 'ResponseModule/getAllCatList.dart';
+import 'addProductService.dart';
 import 'createProduct.dart';
 import 'model/dio_client.dart';
 
@@ -231,7 +232,7 @@ class _CatProductServiceState extends State<CatProductService> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  NewProduct(
+                                                 /* NewProduct(
                                                     lat: '',
                                                     long: '',
                                                     ProductAddress: '',
@@ -243,7 +244,24 @@ class _CatProductServiceState extends State<CatProductService> {
                                                             .toString(),
 
                                                     imagePath: imagePath, catagoriesId: filteredItems[index].sId.toString(), subCategoryId: '',
-                                                  )));
+                                                  )
+                                          */
+
+                                              CreateProductService(
+                                                  /*  lat: '',
+                                                    long: '',
+                                                    ProductAddress: '',
+                                                    BusinessOfficeAddress:
+                                                        '',
+                                                    categoryName:
+                                                        filteredItems[index]
+                                                            .name
+                                                            .toString(),
+
+                                                    imagePath: imagePath, catagoriesId: filteredItems[index].sId.toString(), subCategoryId: '',*/
+                                                  )
+
+                                          ));
 
                                       /*Navigator.pop(context,
                                 filteredItems[index].name.toString());*/

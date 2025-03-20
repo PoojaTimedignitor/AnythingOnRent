@@ -1120,7 +1120,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                                       SizeConfig.screenHeight *
                                                           0.5,
                                                   width: SizeConfig
-                                                      .screenWidth, // 80% of the screen height
+                                                      .screenWidth,
                                                   decoration: BoxDecoration(
                                                     color: Colors.transparent,
                                                     borderRadius:
@@ -2203,7 +2203,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                           ),
                                           SizedBox(
                                               width:
-                                                  10), // Space between checkbox and text
+                                                  10),
                                           Text(
                                             "To Sell",
                                             style: TextStyle(
@@ -2234,7 +2234,7 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
                                     ),
                                     if (isDropdownOpenSell)
                                       Container(
-                                        height: 60, // Limit the dropdown height
+                                        height: 60,
                                         child: Padding(
                                           padding: EdgeInsets.only(
                                             left: 11,
@@ -3047,11 +3047,36 @@ class _NewProductState extends State<NewProduct> with TickerProviderStateMixin {
               String BSpeciality = productSpacilityController.text;
               String? categoryId = widget.catagoriesId;
               String? subCategoryId = selectedCategoryId;
+              String sellValue = isDropdownOpenSell ? sellController.text.trim() : "";
+             // _selectedImages;
+             // String perHour = isDropdownOpenRent ? PerHourController.text.trim() : "";
+              //String perDay = isDropdownOpenRent ? PerHourController.text.trim() : "";
 
+              List<String> rentList = [];
+
+              if (isDropdownOpenRent) {
+                if (perHour) {
+                  rentList.add("per-hour");
+                  rentList.add(PerHourController.text.trim());
+                }
+                if (perDay) {
+                  rentList.add("per-day");
+                  rentList.add(PerDayController.text.trim());
+                }
+                if (perWeek) {
+                  rentList.add("per-week");
+                  rentList.add(PerWeekController.text.trim());
+                }
+
+                if (perMonth) {
+                  rentList.add("per-Month");
+                  rentList.add(PerMonthController.text.trim());
+                }
+              }
 
 
                 var response = await   NewApiClients()
-                    .NewCreateProductApi(productName,productDescription,BName,BContact,BEmail,BWebsite,BGSTINO,BSpeciality,quantity,pYears,categoryId,subCategoryId);
+                    .NewCreateProductApi(productName,productDescription,BName,BContact,BEmail,BWebsite,BGSTINO,BSpeciality,quantity,pYears,categoryId,subCategoryId,sellValue,rentList,_selectedImages);
 
 
                 if (response['success'] == true) {

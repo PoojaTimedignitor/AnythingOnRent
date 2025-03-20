@@ -1,7 +1,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:anything/api_constants.dart';
 import 'package:anything/newGetStorage.dart';
 import 'package:dio/dio.dart';
@@ -10,6 +9,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../ApiConstant/api_constant.dart';
 import 'Authentication/login_screen.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 
 
@@ -1193,7 +1193,7 @@ class NewApiClients {
 // }
 
 
-  Future<Map<String, dynamic>> NewCreateProductApi(
+/*  Future<Map<String, dynamic>> NewCreateProductApi(
       String name,
       String description,
       String BName,
@@ -1205,7 +1205,11 @@ class NewApiClients {
       int quantity,
       String PYear,
       String categoryId,
-      String SubCategoryId) async {
+      String SubCategoryId,String sells,
+      List<String> rents,
+      List<File> images,
+
+      ) async {
 
     String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
     String? userId = NewAuthStorage.getUserId();
@@ -1233,7 +1237,21 @@ class NewApiClients {
         "productionYear": PYear,
         "categoryId": categoryId,
         "subCategoryId": SubCategoryId,
-        "userId": userId, // Keeping as string if backend expects it as string
+        "sell": sells,
+        "rent": rents,
+
+
+        "images": images.isNotEmpty
+            ? await Future.wait(
+          images.map(
+                (file) async => await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+          ),
+        )
+            : [],
+
+
+
+        "userId": userId,
       };
 
       print("🔹 Sending Request: ${jsonEncode(requestData)}");
@@ -1253,7 +1271,124 @@ class NewApiClients {
       print("🔹 Raw API Response Type: ${response.data.runtimeType}");
       print("🔹 Raw API Response: ${response.data}");
 
-      // Ensure we have a JSON Map
+      var responseData = response.data;
+      if (responseData is String) {
+        try {
+          responseData = jsonDecode(responseData);
+        } catch (e) {
+          print("🚨 Response is not valid JSON: $responseData");
+          return {"success": false, "error": "Invalid response format from server"};
+        }
+      }
+
+      if (response.statusCode == 200 && responseData is Map<String, dynamic>) {
+        if (responseData.containsKey("success") && responseData["success"] == true) {
+          return {
+            "success": true,
+            "message": responseData['message'] ?? "Product created successfully!",
+            "data": responseData['data'] ?? {},
+          };
+        } else {
+          return {
+            "success": false,
+            "error": responseData["message"] ?? "Server did not return success",
+          };
+        }
+      } else {
+        return {
+          "success": false,
+          "error": "Unexpected response from server - Status Code: ${response.statusCode}",
+        };
+      }
+    } on DioException catch (e) {
+      print("❌ DioError Caught!");
+      print("⚠️ Error Type: ${e.type}");
+      print("🔍 Full Response: ${e.response?.data}");
+      print("🌍 Status Code: ${e.response?.statusCode}");
+
+      return {
+        "success": false,
+        "error": e.response?.data?['message'] ?? e.message ?? "Unknown error occurred",
+      };
+    }
+  }*/
+
+
+
+  Future<Map<String, dynamic>> NewCreateProductApi(
+      String name,
+      String description,
+      String BName,
+      String BContact,
+      String BEmail,
+      String BWhatsApp,
+      String GSTINO,
+      String bSpecialty,
+      int quantity,
+      String PYear,
+      String categoryId,
+      String SubCategoryId,
+      String sells,
+      List<String> rents,
+      List<File> images,
+      ) async {
+    String url = ApiConstant().BaseUrl + ApiConstant().CreateProduct;
+    String? userId = NewAuthStorage.getUserId();
+
+    if (userId == null || userId.isEmpty) {
+      return {"success": false, "message": "User ID not found"};
+    }
+
+    String? accessToken = NewAuthStorage.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      return {"success": false, "message": "Access token is missing"};
+    }
+
+    try {
+      Dio dio = Dio();
+      FormData formData = FormData();
+
+      // ✅ Compress Images Before Upload
+
+
+      // ✅ Add Fields
+      formData.fields.addAll([
+        MapEntry("name", name),
+        MapEntry("description", description),
+        MapEntry("businessName", BName),
+        MapEntry("businessPhone", BContact),
+        MapEntry("businessEmail", BEmail),
+        MapEntry("website", BWhatsApp),
+        MapEntry("gstNumber", GSTINO),
+        MapEntry("specialtyofProductUses", bSpecialty),
+        MapEntry("quantity", quantity.toString()),  // ✅ Ensure it's an Integer
+        MapEntry("productionYear", PYear),
+        MapEntry("categoryId", categoryId),
+        MapEntry("subCategoryId", SubCategoryId),
+        MapEntry("sell", sells),
+        MapEntry("userId", userId),
+      ]);
+
+      // 🔹 Rent list as JSON string
+      formData.fields.add(MapEntry("rent", jsonEncode(rents)));
+
+      // ✅ Attach Compressed Image Files
+
+      // 🔥 Send POST request using Dio
+      Response response = await dio.post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $accessToken",
+            "Content-Type": "multipart/form-data",
+          },
+        ),
+      );
+
+      print("✅ Response Status Code: ${response.statusCode}");
+      print("✅ Response Data: ${response.data}");
+
       var responseData = response.data;
       if (responseData is String) {
         try {
@@ -1295,4 +1430,8 @@ class NewApiClients {
       };
     }
   }
+
+
+
+
 }
