@@ -141,7 +141,7 @@ bool isSelected = false;
                                         filteredItemss[index]
                                             .name
                                             .toString(),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.black,
                                           fontFamily: "okra_Medium",
                                           fontSize: 16,
@@ -156,7 +156,7 @@ bool isSelected = false;
                                       width: 300,
                                       child: Text(
                                         filteredItemss[index].description.toString(),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: CommonColor.grayText,
                                           fontFamily: "Montserrat-Medium",
                                           fontSize: 13,

@@ -12,6 +12,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 
 import 'Common_File/common_color.dart';
+import 'Common_File/new_responsive_helper.dart';
 import 'dummy.dart';
 
 
@@ -29,6 +30,9 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+
+    final responsive = ResponsiveHelper(context);
+
     return ZoomDrawer(
       controller: z,
       borderRadius: 25,
@@ -43,11 +47,11 @@ class _HomeScreenState extends State<HomeScreen>
       menuScreenTapClose: true,
 
       // angle: 0.0,
-      menuBackgroundColor: Color(0xFFFEDEDE),
+      menuBackgroundColor: const Color(0xFFFEDEDE),
       mainScreen: const Body(),
       // moveMenuScreen: false,
       menuScreen: Scaffold(
-        backgroundColor: Color(0xFFFEDEDE),
+        backgroundColor: const Color(0xFFFEDEDE),
         body: Column(
           //shrinkWrap: true,
          // physics: const NeverScrollableScrollPhysics(),
@@ -61,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Container(
                     width: 108,
                     height: 120,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       borderRadius:
                           BorderRadius.only(bottomRight: Radius.circular(100)),
                       color: Color(0xffFBB3B3),
@@ -73,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Container(
                     width: 85,
                     height: 95,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       borderRadius:
                           BorderRadius.only(bottomRight: Radius.circular(100)),
                       color: Color(0xffF48A8A),
@@ -83,20 +87,18 @@ class _HomeScreenState extends State<HomeScreen>
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.only(left: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 25,
                     backgroundImage: AssetImage("assets/images/profile.png"),
                   ),
 
-                  SizedBox(
-                      width: 10,
-                      height:
-                          5), // Add some space between the avatar and the column
-                  Text(
+                   SizedBox(width: 10, height: responsive.height(20)),     // Add some space between the avatar and the column            /// new changes
+
+                  const Text(
                     "Hii, Aaysha",
                     style: TextStyle(
                       color: Colors.black,
@@ -105,7 +107,10 @@ class _HomeScreenState extends State<HomeScreen>
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(height: 2),
+
+                  //SizedBox(height: 2),
+                  SizedBox(height: responsive.height(2),),        /// new changes
+
                   // Adds space between the icon and text
 
                   GestureDetector(
@@ -113,9 +118,9 @@ class _HomeScreenState extends State<HomeScreen>
                     child: Wrap(
                       spacing: 8,
                       children: [
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.only(top: 3),
-                          child: const Image(
+                          child: Image(
                             image: AssetImage('assets/images/location.png'),
                             height: 13,
                             color: Colors.black54,
@@ -124,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen>
                         Container(
                           width: 160,
                           //  color: Colors.red,
-                          child: Text(
+                          child: const Text(
                             "Park pashan pune, 2004 pune pashan... ",
                             style: TextStyle(
                               fontSize: 12,
@@ -141,9 +146,12 @@ class _HomeScreenState extends State<HomeScreen>
                 ],
               ),
             ),
-            SizedBox(height: 5),
+
+            //SizedBox(height: 5),
+            SizedBox(height: responsive.height(5),),        /// new changes
+
             Padding(
-              padding: EdgeInsets.only(top: 30, left: 10),
+              padding: const EdgeInsets.only(top: 30, left: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -155,12 +163,12 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
                     },
-                    child: Wrap(
+                    child: const Wrap(
                       spacing: 10,
                       children: [
                         Image(
@@ -178,7 +186,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                  //SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -187,12 +198,12 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
                     },
-                    child: Wrap(
+                    child: const Wrap(
                       spacing: 10,
                       children: [
                         Image(
@@ -209,7 +220,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                 // SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -218,12 +232,12 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
                     },
-                    child: Wrap(
+                    child: const Wrap(
                       spacing: 10,
                       children: [
                         Image(
@@ -241,7 +255,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                  //SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -250,12 +267,12 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
                     },
-                    child: Wrap(
+                    child: const Wrap(
                       spacing: 10,
                       children: [
                         Image(
@@ -273,7 +290,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                  //SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -282,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
@@ -301,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Container(
                               width: 140,
                               //  color: Colors.red,
-                              child: Text(
+                              child: const Text(
                                   // the text of the row.
                                   "My Transaction History",
                                   style: TextStyle(
@@ -315,7 +335,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                  //SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -324,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
@@ -342,7 +365,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Container(
                               width: 108,
                               //  color: Colors.red,
-                              child: Text(
+                              child: const Text(
                                   // the text of the row.
                                   "My Ratings",
                                   style: TextStyle(
@@ -356,7 +379,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                 // SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -365,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
@@ -383,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Container(
                               width: 108,
                               //  color: Colors.red,
-                              child: Text(
+                              child: const Text(
                                   // the text of the row.
                                   "Notifications",
                                   style: TextStyle(
@@ -397,7 +423,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                 // SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -406,7 +435,7 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
@@ -424,7 +453,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Container(
                               width: 140,
                               //  color: Colors.red,
-                              child: Text(
+                              child: const Text(
                                   // the text of the row.
                                   "My Payment History",
                                   style: TextStyle(
@@ -438,7 +467,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                  //SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -447,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
@@ -465,7 +497,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Container(
                               width: 108,
                               //  color: Colors.red,
-                              child: Text(
+                              child: const Text(
                                   // the text of the row.
                                   "privacy policy",
                                   style: TextStyle(
@@ -479,7 +511,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                 // SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -488,7 +523,7 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
@@ -506,7 +541,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Container(
                               width: 108,
                               //  color: Colors.red,
-                              child: Text(
+                              child: const Text(
                                   // the text of the row.
                                   "Terms & Conditions",
                                   style: TextStyle(
@@ -520,7 +555,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                 // SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -529,7 +567,7 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
@@ -547,7 +585,7 @@ class _HomeScreenState extends State<HomeScreen>
                             Container(
                               width: 108,
                               //  color: Colors.red,
-                              child: Text(
+                              child: const Text(
                                   // the text of the row.
                                   "Support",
                                   style: TextStyle(
@@ -561,13 +599,19 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+
+                 // SizedBox(height: 20),
+                  SizedBox(height: responsive.height(20),),        /// new changes
+
                   Container(
                     height: SizeConfig.screenHeight * 0.0007,
                     width: 160,
                     color: Colors.black54,
                   ),
-                  SizedBox(height: 18),
+
+                  //SizedBox(height: 18),
+                  SizedBox(height: responsive.height(18),),        /// new changes
+
                   GestureDetector(
                     onTap: () {
                       final navigator = Navigator.of(
@@ -576,25 +620,26 @@ class _HomeScreenState extends State<HomeScreen>
                       z.close?.call()?.then(
                             (value) => navigator.push(
                               MaterialPageRoute(
-                                builder: (_) => TestPage(),
+                                builder: (_) => const TestPage(),
                               ),
                             ),
                           );
                     },
-                    child: Row(
+                    child:  Row(
                       children: [
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.only(left: 0),
-                          child: const Image(
+                          child: Image(
                             image: AssetImage('assets/images/logout.png'),
                             height: 20,
                             color: Colors.blueAccent,
                           ),
                         ),
-                        SizedBox(
-                            width:
-                                10), // Add spacing between the image and text
-                        Expanded(
+
+                      //  SizedBox(width: 10),                  // Add spacing between the image and text
+                        SizedBox(width: responsive.width(10)),                                                  /// new changes
+
+                        const Expanded(
                           child: Text(
                             "Logout",
                             style: TextStyle(
@@ -608,7 +653,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  SizedBox(height: 18),
+
+                 // SizedBox(height: 18),
+                  SizedBox(height: responsive.height(18),),        /// new changes
+
                 ],
               ),
             ),
@@ -796,7 +844,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
         child: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.zero,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             Container(
                 height: SizeConfig.screenHeight * 0.17,
@@ -969,6 +1017,9 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   }
 
   Widget getAddMainHeadingLayout(double parentHeight, double parentWidth) {
+
+    final responsive = ResponsiveHelper(context);
+
     return Row(
       children: [
         GestureDetector(
@@ -982,7 +1033,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
             child: Padding(
               padding: EdgeInsets.only(top: parentHeight * 0.04),
               child: Image(
-                image: AssetImage('assets/images/sidebar.png'),
+                image: const AssetImage('assets/images/sidebar.png'),
                 height: parentHeight * 0.045,
               ),
             ),
@@ -1002,13 +1053,16 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                     color: Colors.black),
               ),
             ),
-            SizedBox(height: 4),
+
+           // SizedBox(height: 4),
+            SizedBox(height: responsive.height(4),),        /// new changes
+
             Padding(
               padding: EdgeInsets.only(left: parentWidth * 0.03),
               child: Row(
                 children: [
                   Image(
-                    image: AssetImage('assets/images/location.png'),
+                    image: const AssetImage('assets/images/location.png'),
                     height: parentHeight * 0.017,
                   ),
                   Text(
@@ -1029,7 +1083,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
           child: Padding(
             padding: EdgeInsets.only(top: parentHeight * 0.04),
             child: Image(
-              image: AssetImage('assets/images/notification.png'),
+              image: const AssetImage('assets/images/notification.png'),
               height: parentHeight * 0.025,
             ),
           ),
@@ -1039,6 +1093,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   }
 
   Widget HomeSearchBar(double parentHeight, double parentWidth) {
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -1066,7 +1121,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                         prefixIcon: IconButton(
                             onPressed: () {},
                             icon: Image(
-                              image: AssetImage("assets/images/search.png"),
+                              image: const AssetImage("assets/images/search.png"),
                               height: SizeConfig.screenWidth * 0.07,
                             )),
                         hintText: "Search product/service",
@@ -1079,7 +1134,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                         contentPadding: EdgeInsets.only(
                           top: parentWidth * 0.05,
                         ),
-                        fillColor: Color(0xfffbf3f3),
+                        fillColor: const Color(0xfffbf3f3),
                         hoverColor: Colors.white,
                         filled: true,
                         enabledBorder: OutlineInputBorder(
@@ -1087,7 +1142,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(10.0)),
                         focusedBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.black12, width: 1),
+                              const BorderSide(color: Colors.black12, width: 1),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ))),
@@ -1099,6 +1154,9 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   }
 
   Widget sliderData(double parentHeight, double parentWidth) {
+
+    final responsive = ResponsiveHelper(context);                                /// new add
+
     return Column(
       children: [
         CarouselSlider.builder(
@@ -1119,10 +1177,10 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
             itemBuilder: (BuildContext context, int itemIndex, int index1) {
               final img = images.isNotEmpty
                   ? NetworkImage(images[index1])
-                  : NetworkImage("");
+                  : const NetworkImage("");
 
               return Container(
-                  margin: EdgeInsets.all(16),
+                  margin: const EdgeInsets.all(16),
                   height: MediaQuery.of(context).size.height * 0.17,
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
@@ -1167,10 +1225,10 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                   ? Container(
                       width: 25,
                       height: 7,
-                      margin: EdgeInsets.all(2),
+                      margin: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                             begin: Alignment.topRight,
                             end: Alignment.bottomLeft,
                             colors: [
@@ -1182,8 +1240,8 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
                   : Container(
                       width: 7,
                       height: 7,
-                      margin: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
+                      margin: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
                           gradient: LinearGradient(
                               begin: Alignment.topRight,
                               end: Alignment.bottomLeft,
@@ -1200,6 +1258,9 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   }
 
   Widget AddPostButton(double parentHeight, double parentWidth) {
+
+    final responsive = ResponsiveHelper(context);                                   /// new add
+
     return GestureDetector(
       onTap: () {
         Navigator.pushReplacement(
@@ -1218,7 +1279,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
           height: parentHeight * 0.030,
           decoration: BoxDecoration(
             border: Border.all(width: 0.5, color: CommonColor.Blue),
-            borderRadius: BorderRadius.all(
+            borderRadius: const BorderRadius.all(
               Radius.circular(5),
             ),
           ),
@@ -1228,7 +1289,7 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
             style: TextStyle(
               fontFamily: "okra_regular",
               fontSize: SizeConfig.blockSizeHorizontal * 3.1,
-              color: Color(0xff3684F0),
+              color: const Color(0xff3684F0),
               fontWeight: FontWeight.w300,
             ),
           )),
@@ -1238,8 +1299,10 @@ class _TwoPanelsState extends State<TwoPanels> with TickerProviderStateMixin {
   }
 
   Widget PopularCategories(double parentHeight, double parentWidth) {
-    return
-Column(
+
+    final responsive = ResponsiveHelper(context);
+
+    return Column(
 
   children: [
      Row(
@@ -1247,21 +1310,25 @@ Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Expanded(child: Divider()),
-        SizedBox(
-          width: 10,
-        ),
+
+        //SizedBox(width: 10,),
+        SizedBox(width: responsive.width(10)),                            /// new changes
+
         Center(
             child: Text(
               " POPULAR CATEGORIES",
-              style: TextStyle(color: Colors.grey[500]!, fontFamily: "okra_Regular",
-    fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-    fontWeight: FontWeight.w400,
+              style: TextStyle(color: Colors.grey[500]!,
+                  fontFamily: "okra_Regular",
+                  fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                  fontWeight: FontWeight.w400,
                 letterSpacing: 0.9
-    ),overflow: TextOverflow.ellipsis
+             ),overflow: TextOverflow.ellipsis
             )),
-        SizedBox(
-          width: 10,
-        ),
+
+        //SizedBox(width: 10,),
+        SizedBox(width: responsive.width(10)),                            /// new changes
+
+
         const Expanded(child: Divider()),
       ],
     ),
@@ -1271,7 +1338,7 @@ Column(
         height: 200, // Set a fixed height for the GridView
         child: GridView.builder(
           scrollDirection: Axis.horizontal, // Enable horizontal scrolling
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // Number of rows
             crossAxisSpacing: 2, // Space between columns
             mainAxisSpacing: 23, // Space between rows
@@ -1304,12 +1371,14 @@ Column(
                       fontSize: SizeConfig.blockSizeHorizontal * 3.5,
                       fontWeight: FontWeight.w500,
                     ),overflow: TextOverflow.ellipsis,
+
                    /* style: TextStyle(
                       color: CommonColor.Black,
                       fontFamily: "Roboto_Regular",
                       fontSize: SizeConfig.blockSizeHorizontal * 2.7,
                       fontWeight: FontWeight.w500,
                     ),*/
+
                   ),
                 ),
               ],
@@ -1412,9 +1481,10 @@ Column(
   }
 
   Widget getAddGameTabLayout(double parentHeight, double parentWidth) {
-    return
 
-      Padding(
+    final responsive = ResponsiveHelper(context);                                    /// new add
+
+    return Padding(
         padding:  EdgeInsets.only(top: parentHeight*0.04),
         child: Column(
 
@@ -1424,9 +1494,11 @@ Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Expanded(child: Divider()),
-                SizedBox(
-                  width: 10,
-                ),
+
+                //SizedBox(width: 10,),
+                SizedBox(width: responsive.width(10)),                            /// new changes
+
+
                 Center(
                     child: Text(
                         "WHAT'S ON YOUR RENTAL MATERIALS?",
@@ -1436,9 +1508,11 @@ Column(
                             letterSpacing: 0.9
                         ),overflow: TextOverflow.ellipsis
                     )),
-                SizedBox(
-                  width: 10,
-                ),
+
+               // SizedBox(width: 10,),
+                SizedBox(width: responsive.width(10)),                            /// new changes
+
+
                 const Expanded(child: Divider()),
               ],
             ),
@@ -1451,16 +1525,16 @@ Column(
                     Container(
                       height: 60,
 
-                      padding: EdgeInsets.only(left: 0, bottom: 20, right: 0),
+                      padding: const EdgeInsets.only(left: 0, bottom: 20, right: 0),
                       child: ButtonsTabBar(
                         backgroundColor: CommonColor.ViewAll,
-                        buttonMargin: EdgeInsets.symmetric(horizontal: 25),
+                        buttonMargin: const EdgeInsets.symmetric(horizontal: 25),
                         unselectedBackgroundColor: Colors.grey[200],
-                        physics: NeverScrollableScrollPhysics(),
-                        unselectedLabelStyle: TextStyle(color: Colors.black),
+                        physics: const NeverScrollableScrollPhysics(),
+                        unselectedLabelStyle: const TextStyle(color: Colors.black),
                          // center:true,
                         labelStyle:
-                        TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
 
 
                         tabs: [
@@ -1468,14 +1542,14 @@ Column(
                             child: Container(
                               height: 40,
                               width: 150,
-                              padding: EdgeInsets.only(left: 10, right: 0),
+                              padding: const EdgeInsets.only(left: 10, right: 0),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
 
                                 children: [
-                                  Image(
+                                  const Image(
                                       image: AssetImage('assets/images/pro.png'),
                                       height: 72,
                                       width: 50),
@@ -1497,16 +1571,18 @@ Column(
                             child: Container(
                               height: 40,
                               width: 150,
-                              padding: EdgeInsets.only(left: 10, right: 20),
+                              padding: const EdgeInsets.only(left: 10, right: 20),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
+                               // borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(responsive.width(12)),                      /// new change
+
                                 /* border: Border.all(color: Colors.black, width: 0.5)*/),
                               child: Align(
                                   alignment: Alignment.center,
                                   child: Center(
                                       child: Row(
                                         children: [
-                                          Image(
+                                          const Image(
                                               image: AssetImage('assets/images/service.png'),
                                               height: 72,
                                               width: 50),
@@ -1540,7 +1616,10 @@ Column(
                           Flexible(
                             child: Column(
                               children: [
-                                SizedBox(height: 10),
+
+                               // SizedBox(height: 10),
+                                SizedBox(height: responsive.height(4),),        /// new changes
+
                                 Row(
                                   children: [
                                     Text(
@@ -1559,7 +1638,7 @@ Column(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    PopularCatagoriesData()));
+                                                    const PopularCatagoriesData()));
                                       },
                                       child: Padding(
                                         padding:
@@ -1567,7 +1646,8 @@ Column(
                                         child: Container(
                                           height: parentHeight * 0.035,
                                           width: parentWidth * 0.22,
-                                          decoration: BoxDecoration(
+                                         // width: responsive.width(10),                               /// new changes
+                                          decoration: const BoxDecoration(
                                               color: CommonColor.ViewAll,
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5))),
@@ -1584,7 +1664,7 @@ Column(
                                                     color: CommonColor.TextBlack,
                                                     fontWeight: FontWeight.w400,
                                                   )),
-                                              Image(
+                                              const Image(
                                                 image: AssetImage(
                                                     'assets/images/arrow.png'),
                                                 height: 20,
@@ -1608,12 +1688,12 @@ Column(
                                   ),
                                 ),
                                 GridView.builder(
-                                  padding: EdgeInsets.only(top: 15),
+                                  padding: const EdgeInsets.only(top: 15),
                                   physics:
-                                  NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                                  const NeverScrollableScrollPhysics(), // Disable GridView's scrolling
                                   shrinkWrap: true, // Take only the space it needs
                                   gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount:
                                     2, // Number of columns in the grid
                                     crossAxisSpacing: 1.0,
@@ -1623,7 +1703,7 @@ Column(
                                   itemCount: 4, // Number of items in the grid
                                   itemBuilder: (context, index) {
                                     return Container(
-                                      margin: EdgeInsets.only(
+                                      margin: const EdgeInsets.only(
                                           left: 10.0,
                                           right: 5.0,
                                           top: 0.0,
@@ -1633,16 +1713,16 @@ Column(
                                           color: CommonColor.redContainer,
                                           boxShadow: [
                                             BoxShadow(
-                                                color: Color(0xff000000)
+                                                color: const Color(0xff000000)
                                                     .withOpacity(0.2),
                                                 blurRadius: 2,
                                                 spreadRadius: 0,
-                                                offset: Offset(0, 1)),
+                                                offset: const Offset(0, 1)),
                                           ],
                                    /*       border: Border.all(
                                               color: Colors.black38, width: 0.9),*/
-                                          borderRadius:
-                                          BorderRadius.all(Radius.circular(7))),
+
+                                          borderRadius: const BorderRadius.all(Radius.circular(7))),
 
                                       // alignment: Alignment.center,
 
@@ -1654,7 +1734,7 @@ Column(
                                               Container(
                                                 height: SizeConfig.screenHeight * 0.1,
                                                 child: ClipRRect(
-                                                  borderRadius: BorderRadius.only(
+                                                  borderRadius: const BorderRadius.only(
                                                     topLeft: Radius.circular(7),
                                                     topRight: Radius.circular(7),
                                                   ),
@@ -1682,17 +1762,16 @@ Column(
                                                 //  border: Border.all(color: CommonColor.bottomsheet, width: 0.2),
 
                                                 child: Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                         top: 67, left: 111),
                                                     child: Align(
                                                       alignment: Alignment.bottomLeft,
                                                       child: Container(
                                                         height: 15,
                                                         decoration: BoxDecoration(
-                                                          color: Color(0xff5095f1),
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
+                                                          color: const Color(0xff5095f1),
+                                                          borderRadius: BorderRadius.circular(0),
+                                                        //  borderRadius: BorderRadius.circular(responsive.width(0)),                /// new change
                                                         ),
                                                         child: Row(
                                                           // mainAxisAlignment: MainAxisAlignment.end,                           // mainAxisAlignment: MainAxisAlignment.s,
@@ -1724,7 +1803,7 @@ Column(
                                                     )),
                                               ),
                                               Padding(
-                                                  padding: EdgeInsets.only(
+                                                  padding: const EdgeInsets.only(
                                                       top: 65, left: 2),
                                                   child: Align(
                                                     alignment:
@@ -1738,7 +1817,7 @@ Column(
                                                                 .screenHeight *
                                                                 0.02,
                                                             color:
-                                                            Color(0xffFFB905),
+                                                            const Color(0xffFFB905),
                                                           ),
                                                           Text(
                                                             " 4.5",
@@ -1758,7 +1837,10 @@ Column(
                                                   ))
                                             ],
                                           ),
-                                          SizedBox(height: 4),
+
+                                          //SizedBox(height: 4),
+                                          SizedBox(height: responsive.height(4),),        /// new changes
+
                                           Container(
                                             width: SizeConfig.screenWidth * 0.42,
                                             child: Column(
@@ -1777,14 +1859,17 @@ Column(
                                                   ),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
-                                                SizedBox(height: 2),
+
+                                                //SizedBox(height: 2),
+                                                SizedBox(height: responsive.height(2),),        /// new changes
+
                                                 Row(
                                                   children: [
                                                     Icon(
                                                       Icons.location_on,
                                                       size: SizeConfig.screenHeight *
                                                           0.019,
-                                                      color: Color(0xff3684F0),
+                                                      color: const Color(0xff3684F0),
                                                     ),
                                                     Flexible(
                                                       child: Text(
@@ -1795,7 +1880,7 @@ Column(
                                                           fontSize: SizeConfig
                                                               .blockSizeHorizontal *
                                                               2.6,
-                                                          color: Color(0xff3684F0),
+                                                          color: const Color(0xff3684F0),
                                                           fontWeight: FontWeight.w400,
                                                         ),
                                                         overflow:
@@ -1805,7 +1890,10 @@ Column(
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 5),
+
+                                              //  SizedBox(height: 5),
+                                                SizedBox(height: responsive.height(5),),        /// new changes
+
                                                 Row(
                                                   children: [
                                                     // color: Color(0xff3684F0),
@@ -1822,17 +1910,23 @@ Column(
                                                       ),
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
-                                                    SizedBox(width: 6),
-                                                    Image(
+
+                                                   // SizedBox(width: 6),
+                                                    SizedBox(width: responsive.width(6)),                            /// new changes
+
+                                                    const Image(
                                                         image: AssetImage(
                                                             'assets/images/share.png'),
                                                         height: 13),
-                                                    SizedBox(width: 71),
+
+                                                    //SizedBox(width: 71),
+                                                    SizedBox(width: responsive.width(71)),                            /// new changes
+
                                                     Container(
                                                       width: SizeConfig.screenWidth *
                                                           0.1,
                                                       decoration: BoxDecoration(
-                                                          color: Color(0xffffffff),
+                                                          color: const Color(0xffffffff),
                                                           borderRadius:
                                                           BorderRadius.circular(
                                                               3)),
@@ -1843,7 +1937,7 @@ Column(
                                                             size: SizeConfig
                                                                 .screenHeight *
                                                                 0.016,
-                                                            color: Color(0xffFFB905),
+                                                            color: const Color(0xffFFB905),
                                                           ),
                                                           Text(
                                                             "  4.5",
@@ -1890,7 +1984,7 @@ Column(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    AllProductList()));
+                                                    const AllProductList()));
                                       },
                                       child: Padding(
                                         padding:
@@ -1898,7 +1992,7 @@ Column(
                                         child: Container(
                                           height: parentHeight * 0.035,
                                           width: parentWidth * 0.22,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                               color: CommonColor.ViewAll,
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5))),
@@ -1915,7 +2009,7 @@ Column(
                                                     color: CommonColor.TextBlack,
                                                     fontWeight: FontWeight.w400,
                                                   )),
-                                              Image(
+                                              const Image(
                                                 image: AssetImage(
                                                     'assets/images/arrow.png'),
                                                 height: 20,
@@ -1942,7 +2036,7 @@ Column(
                                   child: Container(
                                     height: 10,
                                    // color: Colors.red,
-                                    padding: EdgeInsets.only(top: 15.0),
+                                    padding: const EdgeInsets.only(top: 15.0),
                                     // Set height to fit the horizontal list
                                     child: ListView.builder(
                                         padding: EdgeInsets.zero,
@@ -1954,7 +2048,7 @@ Column(
 
                                             // Set width for each item
                                             margin:
-                                            EdgeInsets.symmetric(horizontal: 9.0),
+                                            const EdgeInsets.symmetric(horizontal: 9.0),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
@@ -1968,15 +2062,15 @@ Column(
 
                                               boxShadow: [
                                                 BoxShadow(
-                                                    color: Color(0xff000000)
+                                                    color: const Color(0xff000000)
                                                         .withOpacity(0.2),
                                                     blurRadius: 2,
                                                     spreadRadius: 0,
-                                                    offset: Offset(0, 1)),
+                                                    offset: const Offset(0, 1)),
                                               ],
                                             ),
                                             child: ListView(
-                                              physics: NeverScrollableScrollPhysics(),
+                                              physics: const NeverScrollableScrollPhysics(),
                                               children: [
                                                 Padding(
                                                   padding: const EdgeInsets.all(3.0),
@@ -1984,7 +2078,7 @@ Column(
                                                     height: SizeConfig.screenHeight *
                                                         0.13,
                                                     child: ClipRRect(
-                                                      borderRadius: BorderRadius.only(
+                                                      borderRadius: const BorderRadius.only(
                                                         topLeft: Radius.circular(7),
                                                         topRight: Radius.circular(7),
                                                       ),
@@ -2019,7 +2113,10 @@ Column(
                                                     crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                     children: [
-                                                      SizedBox(height: 7),
+
+                                                     // SizedBox(height: 7),
+                                                      SizedBox(height: responsive.height(7),),        /// new changes
+
                                                       Column(
                                                         crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -2041,7 +2138,10 @@ Column(
                                                             overflow: TextOverflow
                                                                 .ellipsis,
                                                           ),
-                                                          SizedBox(height: 3),
+
+                                                         // SizedBox(height: 3),
+                                                          SizedBox(height: responsive.height(3),),        /// new changes
+
                                                           Row(
                                                             children: [
                                                               Icon(
@@ -2049,7 +2149,7 @@ Column(
                                                                 size: SizeConfig
                                                                     .screenHeight *
                                                                     0.019,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xff3684F0),
                                                               ),
                                                               Flexible(
@@ -2061,7 +2161,7 @@ Column(
                                                                     fontSize: SizeConfig
                                                                         .blockSizeHorizontal *
                                                                         3.0,
-                                                                    color: Color(
+                                                                    color: const Color(
                                                                         0xff3684F0),
                                                                     fontWeight:
                                                                     FontWeight
@@ -2076,12 +2176,15 @@ Column(
 
                                                             ],
                                                           ),
-                                                          SizedBox(height: 5),
+
+                                                         // SizedBox(height: 5),
+                                                          SizedBox(height: responsive.height(5),),        /// new changes
+
                                                           Container(
                                                             height: 25,
                                                             decoration:
                                                             BoxDecoration(
-                                                              color: Color(
+                                                              color: const Color(
                                                                   0xfff8e8e8),
                                                               borderRadius:
                                                               BorderRadius
@@ -2117,19 +2220,22 @@ Column(
                                                                       fontSize:
                                                                       SizeConfig.blockSizeHorizontal * 2.8,
                                                                       color:
-                                                                      Color(0xffC56262),
+                                                                      const Color(0xffC56262),
                                                                       fontWeight:
                                                                       FontWeight.w400,
                                                                     ),
                                                                     overflow:
                                                                     TextOverflow.ellipsis,
                                                                   ),
-                                                                  SizedBox(width: 38),
+
+                                                                  //const SizedBox(width: 38),
+                                                                  SizedBox(width: responsive.width(38)),                            /// new changes
+
                                                                   Container(
                                                                     width: SizeConfig.screenWidth *
                                                                         0.1,
                                                                     decoration: BoxDecoration(
-                                                                        color: Color(0xffffffff),
+                                                                        color: const Color(0xffffffff),
                                                                         borderRadius:
                                                                         BorderRadius.circular(
                                                                             3)),
@@ -2140,7 +2246,7 @@ Column(
                                                                           size: SizeConfig
                                                                               .screenHeight *
                                                                               0.016,
-                                                                          color: Color(0xffFFB905),
+                                                                          color: const Color(0xffFFB905),
                                                                         ),
                                                                         Text(
                                                                           "  4.5",
@@ -2159,12 +2265,12 @@ Column(
                                                                       ],
                                                                     ),
                                                                   ),
-
-
-
                                                                 ]),
                                                           ),
-                                                          SizedBox(height: 10),
+
+                                                          //SizedBox(height: 10),
+                                                          SizedBox(height: responsive.height(10),),        /// new changes
+
                                                           Row(
                                                             children: [
                                                               // color: Color(0xff3684F0),
@@ -2187,19 +2293,19 @@ Column(
                                                                 TextOverflow
                                                                     .ellipsis,
                                                               ),
-                                                              SizedBox(width: 17),
-                                                              Image(
+
+                                                            //  SizedBox(width: 17),
+                                                              SizedBox(width: responsive.width(17)),                            /// new changes
+
+                                                              const Image(
                                                                   image: AssetImage(
                                                                       'assets/images/share.png'),
                                                                   height: 15),
 
                                                             ],
                                                           ),
-
                                                         ],
                                                       ),
-
-
                                                     ],
                                                   ),
                                                 ),
@@ -2213,7 +2319,7 @@ Column(
                             ),
                           ),
 
-                          Text('Two'),
+                          const Text('Two'),
 
                         ],
                       ),
@@ -2247,7 +2353,7 @@ class TestPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Center(
+      body: const Center(
         child: Text("Test Page !"),
       ),
     );

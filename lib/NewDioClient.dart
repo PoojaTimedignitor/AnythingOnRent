@@ -527,9 +527,11 @@ class NewApiClients {
 
 
   Future<Map<String, dynamic>> NewGetAllCat() async {
-    String url = "https://rental-api-5vfa.onrender.com/categories";
+    String url = "${ApiConstant().BaseUrl}${ApiConstant().getAllCatagries}";
 
-    String? accessToken = NewAuthStorage.getAccessToken();
+    // String url = "https://rental-api-5vfa.onrender.com/categories";
+
+    String? accessToken = await NewAuthStorage.getAccessToken();
     print("🔑 Stored Access Token: $accessToken");
 
     try {
@@ -542,7 +544,7 @@ class NewApiClients {
         ),
       );
 
-      print("✅ getCatList Status Code --> ${response.statusCode}");
+      print(" getCatList Status Code --> ${response.statusCode}");
       print("📢 Response Data --> ${response.data}");
 
       return response.data;

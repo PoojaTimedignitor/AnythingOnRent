@@ -3,15 +3,11 @@ import 'package:anything/ResponseModule/getAllProductList.dart';
 import 'package:anything/model/dio_client.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
 import 'Common_File/common_color.dart';
-
 import 'dart:ui' as ui;
 import 'dart:ui';
-
 import 'DetailScreen.dart';
 import 'MyBehavior.dart';
-
 import 'ff.dart';
 
 class AllProductList extends StatefulWidget {
@@ -201,7 +197,7 @@ print("hgfhdgf");
       );*/
                       },
                       child: Padding(
-                        padding: EdgeInsets.all(18.0),
+                        padding: EdgeInsets.all(10.0),
                         child: Container(
                           height: 100,
                           width: 600,
@@ -240,7 +236,7 @@ print("hgfhdgf");
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    SizedBox(width: 50),
+                                    SizedBox(width: 40),
                                     Container(
                                       height: 30,
                                       width: 170,
@@ -378,7 +374,7 @@ print("hgfhdgf");
                         ))
                       : filteredItems.isNotEmpty
                           ? ListView.builder(
-                              itemCount: filteredItems.length,
+                              itemCount: 5,
                               physics: ClampingScrollPhysics(),
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,

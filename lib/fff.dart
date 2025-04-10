@@ -855,3 +855,791 @@ class _EnterOtpNumberState extends State<EnterOtpNumber> {
   }
 }
 */
+
+///
+
+/*
+
+import 'dart:async';
+import 'dart:math';
+import 'package:flutter/material.dart';
+
+class CircularSwapWithArcAnimation extends StatefulWidget {
+  const CircularSwapWithArcAnimation({super.key});
+
+  @override
+  State<CircularSwapWithArcAnimation> createState() =>
+      _CircularSwapWithArcAnimationState();
+}
+
+class _CircularSwapWithArcAnimationState
+    extends State<CircularSwapWithArcAnimation> with TickerProviderStateMixin {
+  List<String> adsUrlsList = [
+    'https://pune.accordequips.com/images/products/15ccb1ae241836.png',
+    'https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg',
+    'https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg',
+    'https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg',
+  ];
+
+  Timer? _autoPlayTimer;
+  bool isAnimating = false;
+  late AnimationController _arcController;
+
+  @override
+  void initState() {
+    super.initState();
+    _arcController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _startAutoRotation();
+  }
+
+  void _startAutoRotation() {
+    _autoPlayTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!isAnimating) _startArcSwap();
+    });
+  }
+
+  void _pauseAutoRotation() {
+    _autoPlayTimer?.cancel();
+  }
+
+  void _startArcSwap() {
+    setState(() {
+      isAnimating = true;
+    });
+
+    _arcController.forward(from: 0).then((_) {
+      setState(() {
+        final last = adsUrlsList.removeLast();
+        adsUrlsList.insert(0, last);
+        isAnimating = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoPlayTimer?.cancel();
+    _arcController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildImage(String url, {double? size}) {
+    return Container(
+      width: size ?? double.infinity,
+      height: size ?? double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xFFF57C00),
+            blurRadius: 8,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(url, fit: BoxFit.cover),
+      ),
+    );
+  }
+
+  Offset _calculateArcOffset(double t, Offset start, Offset end) {
+    final mid = Offset((start.dx + end.dx) / 2, start.dy - 100);
+    final x = pow(1 - t, 2) * start.dx +
+        2 * (1 - t) * t * mid.dx +
+        pow(t, 2) * end.dx;
+    final y = pow(1 - t, 2) * start.dy +
+        2 * (1 - t) * t * mid.dy +
+        pow(t, 2) * end.dy;
+    return Offset(x.toDouble(), y.toDouble());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+
+    final double heightFraction = screenSize.height * 0.08;
+    final double widthFraction = screenSize.width * 0.5;
+
+    // final double thumbSize = 70;
+    // final double spacing = 12;
+
+    final double thumbSize = 70;
+    final double spacing = 12;
+
+    final double thumbnailColumnHeight = (thumbSize * 3) + (spacing * 2); // 3 thumbs + 2 gaps
+    final double bigViewHeight = thumbSize * 3 + spacing * 2; // same height as thumbnail column
+    final double verticalCenter = (screenSize.height - bigViewHeight) / 2;
+
+
+    return Container(
+      color: Colors.pink,
+      height: heightFraction * 10,  //100,
+      padding: EdgeInsets.only(top: 20, bottom: 50),
+      child:
+      Stack(
+        children: [
+          /// Big View
+          // Positioned(
+          //   left: 0,
+          //   top: 20, // kuch padding bhi mil gaya
+          //   width: widthFraction,
+          //   height: heightFraction * 3,             //300, // ya jitni height chahiye
+          //
+          //   child: isAnimating
+          //       ? AnimatedBuilder(
+          //     animation: _arcController,
+          //     builder: (_, child) {
+          //       final offset = _calculateArcOffset(
+          //         _arcController.value,
+          //         Offset(widthFraction + spacing, 0),
+          //         Offset(0, 0),
+          //       );
+          //       return Transform.translate(
+          //         offset: offset,
+          //         child: _buildImage(adsUrlsList[3]),
+          //       );
+          //     },
+          //   )
+          //       : _buildImage(adsUrlsList[0]),
+          // ),
+
+
+          Positioned(
+            left: 0,
+            top: verticalCenter,
+            width: widthFraction,
+            height: bigViewHeight,
+            child: isAnimating
+                ? AnimatedBuilder(
+              animation: _arcController,
+              builder: (_, child) {
+                final offset = _calculateArcOffset(
+                  _arcController.value,
+                  Offset(widthFraction + spacing, 0),
+                  Offset(0, 0),
+                );
+                return Transform.translate(
+                  offset: offset,
+                  child: _buildImage(adsUrlsList[3]),
+                );
+              },
+            )
+                : _buildImage(adsUrlsList[0]),
+          ),
+
+
+          /// Thumbnails
+          Positioned(
+            right: 0,
+            top: verticalCenter,
+            // right: 0,
+            // top: 0,
+            child: Column(
+              children: List.generate(3, (i) {
+                final url = adsUrlsList[i + 1];
+                Widget thumb = _buildImage(url, size: thumbSize);
+
+                if (isAnimating) {
+                  if (i == 0) {
+                    return AnimatedBuilder(
+                      animation: _arcController,
+                      builder: (_, child) {
+                        final offset = _calculateArcOffset(
+                          _arcController.value,
+                          Offset(0, 0),
+                          Offset(0, (thumbSize + spacing) * i),
+                        );
+                        return Transform.translate(
+                          offset: offset,
+                          child: SizedBox(height: thumbSize, child: child),
+                        );
+                      },
+                      child: _buildImage(adsUrlsList[0], size: thumbSize),
+                    );
+                  }
+
+                  if (i == 1) {
+                    return AnimatedBuilder(
+                      animation: _arcController,
+                      builder: (_, child) {
+                        final offset =
+                        Offset(0, _arcController.value * (thumbSize + spacing));
+                        return Transform.translate(
+                          offset: offset,
+                          child: SizedBox(height: thumbSize, child: child),
+                        );
+                      },
+                      child: _buildImage(adsUrlsList[1], size: thumbSize),
+                    );
+                  }
+
+                  // i == 2 -> NO ANIMATION, just return normal static widget
+                  // so it remains stable
+                }
+
+                // Default (no animation or i==2 case)
+                return Padding(
+                  padding: EdgeInsets.only(bottom: spacing),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (!isAnimating) {
+                        _pauseAutoRotation();
+                        _startArcSwap();
+                      }
+                    },
+                    child: thumb,
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+*/
+
+
+///
+/*
+
+import 'dart:async';
+import 'dart:math';
+import 'package:flutter/material.dart';
+
+class CircularSwapWithArcAnimation extends StatefulWidget {
+  const CircularSwapWithArcAnimation({super.key});
+
+  @override
+  State<CircularSwapWithArcAnimation> createState() =>
+      _CircularSwapWithArcAnimationState();
+}
+
+class _CircularSwapWithArcAnimationState extends State<CircularSwapWithArcAnimation>
+    with TickerProviderStateMixin {
+  List<String> adsUrlsList = [
+    'https://pune.accordequips.com/images/products/15ccb1ae241836.png',
+    'https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg',
+    'https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg',
+    'https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg',
+  ];
+
+  late AnimationController _arcController;
+  bool isAnimating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _arcController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          final last = adsUrlsList.removeLast();
+          adsUrlsList.insert(0, last);
+        });
+        _arcController.forward(from: 0); // loop again
+      }
+    });
+
+    _arcController.forward();
+  }
+
+  void _pauseAnimation() {
+    _arcController.stop();
+  }
+
+  @override
+  void dispose() {
+    _arcController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildImage(String url, {double? size}) {
+    return Container(
+      width: size ?? double.infinity,
+      height: size ?? double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xFFF57C00),
+            blurRadius: 8,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(url, fit: BoxFit.cover),
+      ),
+    );
+  }
+
+  Offset _calculateArcOffset(double t, Offset start, Offset end) {
+    final curvedT = Curves.easeInOut.transform(t);
+    final mid = Offset((start.dx + end.dx) / 2, start.dy - 100);
+    final x = pow(1 - curvedT, 2) * start.dx +
+        2 * (1 - curvedT) * curvedT * mid.dx +
+        pow(curvedT, 2) * end.dx;
+    final y = pow(1 - curvedT, 2) * start.dy +
+        2 * (1 - curvedT) * curvedT * mid.dy +
+        pow(curvedT, 2) * end.dy;
+    return Offset(x.toDouble(), y.toDouble());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final double thumbSize = 70;
+    final double spacing = 12;
+
+    final double bigViewHeight = (thumbSize * 3) + (spacing * 2);
+    final double verticalCenter = (screenSize.height - bigViewHeight) / 2;
+    final double widthFraction = screenSize.width * 0.5;
+
+    return Container(
+      color: Colors.pink.shade50,
+      padding: const EdgeInsets.symmetric(vertical: 30),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Thumbnails Column
+          Positioned(
+            right: 0,
+            top: verticalCenter,
+            child: Column(
+              children: List.generate(3, (i) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: spacing),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (!isAnimating) _pauseAnimation();
+                    },
+                    child: _buildImage(adsUrlsList[i + 1], size: thumbSize),
+                  ),
+                );
+              }),
+            ),
+          ),
+
+          // Big View on top using stack layering
+          // Positioned(
+          //   left: 0,
+          //   top: verticalCenter,
+          //   width: widthFraction,
+          //   height: bigViewHeight,
+          //   child: AnimatedBuilder(
+          //     animation: _arcController,
+          //     builder: (_, child) {
+          //       final offset = _calculateArcOffset(
+          //         _arcController.value,
+          //         Offset(widthFraction + spacing, bigViewHeight - thumbSize),
+          //         Offset(0, 0),
+          //       );
+          //       return Transform.translate(
+          //         offset: offset,
+          //         child: _buildImage(adsUrlsList[3]),
+          //       );
+          //     },
+          //   ),
+          // ),
+
+          Positioned(
+            left: 0,
+            top: verticalCenter,
+            width: widthFraction,
+            height: bigViewHeight,
+            child: AnimatedBuilder(
+              animation: _arcController,
+              builder: (_, child) {
+                final offset = _calculateArcOffset(
+                  _arcController.value,
+                  Offset(widthFraction + spacing, bigViewHeight - thumbSize),
+                  Offset(0, 0),
+                );
+
+                return Transform.translate(
+                  offset: offset,
+                  child: Hero(
+                    tag: 'bigview-image',
+                    child: _buildImage(adsUrlsList[3]),
+                  ),
+                );
+              },
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+*/
+
+
+
+
+///
+
+
+
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ImageRotator(),
+    );
+  }
+}
+
+class ImageRotator extends StatefulWidget {
+  const ImageRotator({super.key});
+
+  @override
+  State<ImageRotator> createState() => _ImageRotatorState();
+}
+
+class _ImageRotatorState extends State<ImageRotator> {
+  final List<String> images = [
+    'https://pune.accordequips.com/images/products/15ccb1ae241836.png',
+    'https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg',
+    'https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg',
+    'https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg',
+  ];
+
+  late Timer _timer;
+
+  void rotateImages() {
+    setState(() {
+      final first = images.removeAt(0);
+      images.add(first);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) => rotateImages());
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return
+     /* Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: SizedBox(
+          width: 400,
+          height: 400,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Big image on the left
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(seconds: 1),
+                    transitionBuilder: (child, animation) {
+                      return ScaleTransition(scale: animation, child: child);
+                    },
+                    child: ClipRRect(
+                      key: ValueKey(images[0]),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        images[0],
+                        width: 250,
+                        height: 250,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Column of thumbnails on right
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(3, (index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(seconds: 1),
+                          child: ClipRRect(
+                            key: ValueKey(images[index + 1]),
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              images[index + 1],
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );*/
+
+      Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: SizedBox(
+            width: 400,
+            height: 400,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Big image on the left
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(seconds: 1),
+                      transitionBuilder: (child, animation) {
+                        return ScaleTransition(scale: animation, child: child);
+                      },
+                      child: Container(
+                        key: ValueKey(images[0]),
+                        width: 250,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0xFF3E2723),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.network(
+                            images[0],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Column of thumbnails on right
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(3, (index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+
+                          child: AnimatedSwitcher(
+                            duration: const Duration(seconds: 1),
+                            child: Container(
+                              key: ValueKey(images[index + 1]),
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0xFF3E2723),
+                                    blurRadius: 10,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  images[index + 1],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+  }
+}
+
+
+
+///
+
+/*
+
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CircularImageRotator(),
+    );
+  }
+}
+
+class CircularImageRotator extends StatefulWidget {
+  const CircularImageRotator({super.key});
+
+  @override
+  State<CircularImageRotator> createState() => _CircularImageRotatorState();
+}
+
+class _CircularImageRotatorState extends State<CircularImageRotator>
+    with SingleTickerProviderStateMixin {
+  final List<String> images = [
+    'https://pune.accordequips.com/images/products/15ccb1ae241836.png',
+    'https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg',
+    'https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg',
+    'https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg',
+  ];
+
+  late AnimationController _controller;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+      _controller.forward(from: 0).whenComplete(() {
+        setState(() {
+          final first = images.removeAt(0);
+          images.add(first);
+        });
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Offset _arcOffset(double progress, Offset from, Offset to) {
+    final center = Offset((from.dx + to.dx) / 2, (from.dy + to.dy) / 2 - 80);
+    final radius = (from - center).distance;
+    final angle1 = atan2(from.dy - center.dy, from.dx - center.dx);
+    final angle2 = atan2(to.dy - center.dy, to.dx - center.dx);
+    final angle = angle1 + (angle2 - angle1) * progress;
+
+    return Offset(
+      center.dx + radius * cos(angle),
+      center.dy + radius * sin(angle),
+    );
+  }
+
+  Widget _buildAnimatedImage(int index, Offset from, Offset to, double size,
+      {bool isMain = false}) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (_, __) {
+        final offset = _arcOffset(_controller.value, from, to);
+        return Positioned(
+          left: offset.dx,
+          top: offset.dy,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: Image.network(
+              images[index],
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final leftCenter = Offset(50, 150);
+    final rightTop = Offset(300, 50);
+    final rightMid = Offset(300, 150);
+    final rightBottom = Offset(300, 250);
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          _buildAnimatedImage(0, leftCenter, rightTop, 250),
+          _buildAnimatedImage(1, rightTop, rightMid, 80),
+          _buildAnimatedImage(2, rightMid, rightBottom, 80),
+          _buildAnimatedImage(3, rightBottom, leftCenter, 80),
+        ],
+      ),
+    );
+  }
+}
+*/
+
+
+
+

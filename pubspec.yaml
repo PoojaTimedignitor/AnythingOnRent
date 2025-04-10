@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   share_plus: ^10.1.4
   responsive_framework: ^1.5.1
+  google_fonts: ^4.0.4
 
 
 dev_dependencies:
@@ -195,7 +196,6 @@ flutter:
     - family: okra_medium
       fonts:
         - asset: assets/fonts/okra_medium.ttf
-
 
 flutter_icons:
   android: true

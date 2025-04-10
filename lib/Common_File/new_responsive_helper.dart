@@ -39,6 +39,7 @@ class ResponsiveHelper {
   }
 
 
+
   EdgeInsets getMargin({double all = 0, double vertical = 0, double horizontal = 0}) {
     return getPadding(all: all, vertical: vertical, horizontal: horizontal);
   }

@@ -17,8 +17,8 @@ class GetAllCategoriesList {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -28,38 +28,49 @@ class GetAllCategoriesList {
 }
 
 class Data {
+  BannerImage? bannerImage;
   String? sId;
   String? name;
   String? slug;
   String? desc;
-  String? bannerImage;
-  Null otherOption;
 
-  Data(
-      {this.sId,
-        this.name,
-        this.slug,
-        this.desc,
-        this.bannerImage,
-        this.otherOption});
+  Data({this.bannerImage, this.sId, this.name, this.slug, this.desc});
 
   Data.fromJson(Map<String, dynamic> json) {
+    bannerImage = json['bannerImage'] != null
+        ? new BannerImage.fromJson(json['bannerImage'])
+        : null;
     sId = json['_id'];
     name = json['name'];
     slug = json['slug'];
     desc = json['desc'];
-    bannerImage = json['bannerImage'];
-    otherOption = json['otherOption'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.bannerImage != null) {
+      data['bannerImage'] = this.bannerImage!.toJson();
+    }
     data['_id'] = this.sId;
     data['name'] = this.name;
     data['slug'] = this.slug;
     data['desc'] = this.desc;
-    data['bannerImage'] = this.bannerImage;
-    data['otherOption'] = this.otherOption;
+    return data;
+  }
+}
+
+class BannerImage {
+  String? url;
+
+  BannerImage({this.url});
+
+  BannerImage.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
     return data;
   }
 }

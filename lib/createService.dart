@@ -186,7 +186,7 @@ class _NewServiceState extends State<NewService> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    const Text(
                       "Replace Image",
                       style: TextStyle(
                         color: Colors.black,

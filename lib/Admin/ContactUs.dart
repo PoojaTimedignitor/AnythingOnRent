@@ -199,6 +199,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
 
   void showSuccessDialog(BuildContext context) {
+
+    final responsive = ResponsiveHelper(context);
+
     if (messageController.text.trim().isEmpty) {
       showTopSnackBar(context, "Message is required!");
       return;
@@ -229,7 +232,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
 
-                      const SizedBox(height: 10),
+                     // const SizedBox(height: 10),
+
+                      SizedBox(height: responsive.height(10),),           /// new changes
 
                       Image.asset(
                         'assets/images/sucess.png',
@@ -241,46 +246,29 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 5),
-                            Text(                                                                           /// new changes
+
+                            Text(
                               "Your ticket has been raised successfully!",
                               style: TextStyle(
                                 color: Colors.black,
+                                fontFamily: "okra_Medium",
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
                                 fontWeight: FontWeight.w600,
-                                fontFamily: 'okra_Medium',
-                                fontSize: ResponsiveHelper.getFontSize(context, 28),
                               ),
                             ),
 
-                            // Text(
-                            //   "Your ticket has been raised successfully!",
-                            //   style: TextStyle(
-                            //     color: Colors.black,
-                            //     fontFamily: "okra_Medium",
-                            //     fontSize: MediaQuery.of(context).size.width * 0.045,
-                            //     fontWeight: FontWeight.w600,
-                            //   ),
-                            // ),
+                            //const SizedBox(height: 15),
+                            SizedBox(height: responsive.height(15),),        /// new changes
 
-                            const SizedBox(height: 15),
-
-                            Text(                                                                           /// new changes
+                            Text(
                               "Now track the status of all your tickets in the Support section.",
                               style: TextStyle(
                                 color: Colors.black,
+                                fontFamily: "Montserrat-Medium",
+                                fontSize: MediaQuery.of(context).size.width * 0.035,
                                 fontWeight: FontWeight.w500,
-                                fontFamily: 'Montserrat-Medium',
-                                fontSize: ResponsiveHelper.getFontSize(context, 20),
                               ),
-                            )
-                            // Text(
-                            //   "Now track the status of all your tickets in the Support section.",
-                            //   style: TextStyle(
-                            //     color: Colors.black,
-                            //     fontFamily: "Montserrat-Medium",
-                            //     fontSize: MediaQuery.of(context).size.width * 0.035,
-                            //     fontWeight: FontWeight.w500,
-                            //   ),
-                            // ),
+                            ),
                           ],
                         ),
                       ),
@@ -329,30 +317,20 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             alignment: Alignment.center,
                             child: isSubmitting
                                 ? const CircularProgressIndicator(color: Colors.white)
-                                 : Text(                                                                 /// new changes
+                                 : Text(
                               "Okay",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'Roboto-Regular',
-                                fontSize: ResponsiveHelper.getFontSize(context,20),
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
                               ),
-                            )
-
-
-                            //Text(
-                            //   "Okay",
-                            //   style: TextStyle(
-                            //     color: Colors.white,
-                            //     fontWeight: FontWeight.w700,
-                            //     fontFamily: 'Roboto-Regular',
-                            //     fontSize: MediaQuery.of(context).size.width * 0.045,
-                            //   ),
-                            // ),
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                     // const SizedBox(height: 16),
+                      SizedBox(height: responsive.height(16),),        /// new changes
                     ],
                   ),
                 ),
@@ -371,7 +349,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   @override
   Widget build(BuildContext context) {
 
-    final responsive = ResponsiveHelper(context);                 /// new changes
+   // final responsive = ResponsiveHelper(context);                 /// new changes
 
     return Scaffold(
       backgroundColor: Color(0xffF5F6FB),
@@ -402,7 +380,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+           // const SizedBox(height: 10),
             Container(
               width: 400,
               child: const Text(

@@ -186,7 +186,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                 ],
                 border: Border.all(color: Colors.grey, width: 0.5),
-                borderRadius: BorderRadius.all(Radius.circular(20))),
+                borderRadius: const BorderRadius.all(Radius.circular(20))),
             child: Column(
               children: [
                 // Carousel Slider

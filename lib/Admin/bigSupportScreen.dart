@@ -179,6 +179,7 @@ class _BigSupportScreenState extends State<BigSupportScreen> {
     super.initState();
 
   }
+
   void fetchBigTicketSupport() async {
     setState(() => isLoading = true);
     try {
@@ -436,6 +437,8 @@ class _BigSupportScreenState extends State<BigSupportScreen> {
     return "${parsedDate.day}-${parsedDate.month}-${parsedDate.year}";
   }
 }
+
+
 
 
 

@@ -116,7 +116,7 @@ class _CatProductServiceState extends State<CatProductService> {
                           horizontal: 58, vertical: 10),
                       decoration: BoxDecoration(
                         gradient: selectedIndex != 1
-                            ? LinearGradient(
+                            ? const LinearGradient(
                                 colors: [Color(0xff632883), Color(0xff8d42a3)],
                                 begin: Alignment.topRight,
                                 end: Alignment.bottomLeft,
@@ -216,7 +216,7 @@ class _CatProductServiceState extends State<CatProductService> {
 
                                       String baseUrl =
                                           ApiConstant().BaseUrl;
-                                      String imagePath =
+                                     /* String imagePath =
                                           filteredItems[index]
                                                           .bannerImage !=
                                                       null &&
@@ -227,7 +227,7 @@ class _CatProductServiceState extends State<CatProductService> {
                                                   filteredItems[index]
                                                       .bannerImage!
                                               : 'assets/images/estione.png';
-                                      widget.onChanged(selectedCategoryId);
+                                      widget.onChanged(selectedCategoryId);*/
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -321,7 +321,7 @@ class _CatProductServiceState extends State<CatProductService> {
                               )
                             : Column(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.search_sharp,
                                     color: CommonColor.noResult,
                                     size: 50,

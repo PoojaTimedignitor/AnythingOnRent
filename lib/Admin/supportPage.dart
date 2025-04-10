@@ -114,8 +114,8 @@ class _SupportpageState extends State<Supportpage> {
         child: Padding(
           padding: responsive.getPadding(all: 6),
           child: Container(
-            height: responsive.height(responsive.isMobile ? 40 : responsive.isTablet ? 55 : 70),
-            width: responsive.width(responsive.isMobile ? 320 : responsive.isTablet ? 370 : 420),
+            height: responsive.height(responsive.isMobile ? 40 : responsive.isTablet ? 55 : 70),                          /// new change
+            width: responsive.width(responsive.isMobile ? 320 : responsive.isTablet ? 370 : 420),                      /// new change
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(responsive.width(12)),
@@ -141,7 +141,9 @@ class _SupportpageState extends State<Supportpage> {
                     color: Colors.black,
                     size: responsive.width(18),
                   ),
-                  SizedBox(width: responsive.width(12)),
+
+                  SizedBox(width: responsive.width(12)),                            /// new changes
+
                   Expanded(
                     child: Text(
                       item['label'] as String,
@@ -178,9 +180,6 @@ class _SupportpageState extends State<Supportpage> {
 
 
             SizedBox(height: responsive.height(20),),        /// new changes
-
-
-
 
 
             Column(

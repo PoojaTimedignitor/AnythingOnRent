@@ -1,9 +1,10 @@
 import 'package:get_storage/get_storage.dart';
-
 import 'package:flutter/material.dart';
-
 import 'Common_File/SizeConfig.dart';
 import 'Common_File/common_color.dart';
+import 'package:http/http.dart' as http;
+
+
 class RecentSearchesScreen extends StatefulWidget {
   @override
   _RecentSearchesScreenState createState() => _RecentSearchesScreenState();
@@ -14,12 +15,55 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
   final GetStorage storage = GetStorage();
   List<String> recentSearches = [];
 
+  bool isLoading = false;       /// new add
+  String searchResult = '';      ///
+
   @override
   void initState() {
     super.initState();
     // Load recent searches from GetStorage
     loadRecentSearches();
   }
+
+/// New add
+  Future<void> performSearch(String query) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await http.get(
+        Uri.parse("https://backend.anythingonrent.com/categories/search/petgrooming=$query"),
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any auth headers if needed
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.body; // You can parse JSON if needed
+
+        // Store or use data here
+        setState(() {
+          searchResult = data; // You can update with parsed JSON if needed
+        });
+
+
+      } else {
+        // Handle error
+        debugPrint('Search failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Search error: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+
+
 
   void loadRecentSearches() {
     recentSearches = storage.read<List<dynamic>>('recentSearches')?.cast<String>() ?? [];
@@ -46,12 +90,11 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor:Color(0xffF5F6FB),
-
+      backgroundColor:const Color(0xffF5F6FB),
 
       body: SingleChildScrollView(
         child: Padding(
-          padding:  EdgeInsets.only(top: 30),
+          padding:  const EdgeInsets.only(top: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -64,8 +107,9 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
                           Navigator.pop(context);
                         },
         
-                        child: Icon(Icons.arrow_back)),
-                    SizedBox(width: 10),
+                        child: const Icon(Icons.arrow_back)),
+
+                    const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
                         controller: searchController,
@@ -82,7 +126,7 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
                           prefixIcon: IconButton(
                               onPressed: () {},
                               icon: Image(
-                                image: AssetImage("assets/images/search.png"),
+                                image: const AssetImage("assets/images/search.png"),
                                 height: SizeConfig.screenWidth * 0.07,
                               )),
                           hintText: "Search Product / Service",
@@ -95,17 +139,17 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
                           contentPadding: EdgeInsets.only(
                             top: SizeConfig.screenWidth * 0.05,
                           ),
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           fillColor: Colors.white,
                           hoverColor: Colors.white,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
                               borderSide:
-                              BorderSide(color: Colors.black12, width: 1),
+                              const BorderSide(color: Colors.black12, width: 1),
                               borderRadius: BorderRadius.circular(10.0)),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
-                            BorderSide(color: Colors.black12, width: 1),
+                            const BorderSide(color: Colors.black12, width: 1),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
@@ -120,8 +164,8 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
                 children: [
                   // Show "Recent Searches" only if the list has items
                   if (recentSearches.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: Text(
                         'Recent Searches',  // Header text
                         style: TextStyle(
@@ -132,7 +176,9 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
                         ),
                       ),
                     ),
-                  SizedBox(height: 4),
+
+                  const SizedBox(height: 4),
+
                   // Only show ListView when recentSearches is not empty
                   if (recentSearches.isNotEmpty)
                   // Wrap the ListView in a Container or use Expanded to give it size
@@ -177,7 +223,7 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
                     ),
                   // Optionally, add a message if no recent searches are available
                   if (recentSearches.isEmpty)
-                    Padding(
+                    const Padding(
                       padding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: Center(
                         child: Text(
@@ -261,17 +307,12 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
                       ),
                     ),
                   )*/
-                  
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Image(image: AssetImage('assets/images/anthingAds.png')),
                   )
                 ],
               )
-        
-        
-        
-        
             ],
           ),
         ),
@@ -279,3 +320,7 @@ class _RecentSearchesScreenState extends State<RecentSearchesScreen> {
     );
   }
 }
+
+
+
+
