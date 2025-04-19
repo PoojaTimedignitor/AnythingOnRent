@@ -58,7 +58,7 @@ backgroundColor: Colors.white,
       body: ListView(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         children: [
           ProductBigView(MediaQuery.of(context).size.height,
               MediaQuery.of(context).size.width),
@@ -70,12 +70,12 @@ backgroundColor: Colors.white,
   Widget ProductBigView(double parentWidth, double parentHeight) {
     return  SingleChildScrollView(
       child: SizedBox(
-      
-        height: MediaQuery.of(context).size.height *1.1,
+       // height: MediaQuery.of(context).size.height *1.1,
+        height: MediaQuery.of(context).size.height * 1.2,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
-      
+
             AnimatedPositioned(
 
               duration: Duration(milliseconds: 500),
@@ -84,7 +84,7 @@ backgroundColor: Colors.white,
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.31,
                 width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                 gradient: LinearGradient(
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
@@ -100,7 +100,7 @@ backgroundColor: Colors.white,
                    children: [
 
                      Padding(
-                       padding: EdgeInsets.only(left: 8, top: 28),
+                       padding: const EdgeInsets.only(left: 8, top: 28),
                        child: Row(
                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                          children: [
@@ -108,7 +108,7 @@ backgroundColor: Colors.white,
                                onTap: () {
                                  Navigator.pop(context);
                                },
-                               child: Icon(Icons.arrow_back,
+                               child: const Icon(Icons.arrow_back,
                                    color: Colors.black, size: 23)),
                            Text(
                              "   PRODUCT CONFIGURATION",
@@ -124,7 +124,7 @@ backgroundColor: Colors.white,
                            PopupMenuButton<String>(
                              offset: Offset.zero,
 
-                             icon: Image(
+                             icon: const Image(
                                image: AssetImage('assets/images/more.png'),
                                height: 15,
                                color: Colors.black,
@@ -144,10 +144,10 @@ backgroundColor: Colors.white,
                                  value: 'edit',
                                  child: Row(
                                    children: [
-                                     Icon(Icons.edit, color: Colors.blue,size: 20),
-                                     SizedBox(width: 8),
+                                     const Icon(Icons.edit, color: Colors.blue,size: 20),
+                                     const SizedBox(width: 8),
                                      Text('Edit', style:TextStyle(
-                                       color: Color(
+                                       color: const Color(
                                            0xff000000),
                                        letterSpacing:
                                        0.2,
@@ -196,10 +196,10 @@ backgroundColor: Colors.white,
                      ),
 
                      Padding(
-                       padding:  EdgeInsets.only(top: 10,left: 20,right: 20),
+                       padding:  EdgeInsets.only(top: 10,left: 10,right: 20),
                        child: Container(
                          height: 145,
-                         decoration: BoxDecoration(
+                         decoration: const BoxDecoration(
                            borderRadius: BorderRadius.all(Radius.circular(20)),
                            color: Colors.white,),
                          child: Column(
@@ -208,8 +208,8 @@ backgroundColor: Colors.white,
                                children: [
                                  Padding(
                                    padding: EdgeInsets.only(
-                                       left:
-                                       SizeConfig.screenHeight * 0.015,top: 20),
+                                      // left: SizeConfig.screenHeight * 0.015,top: 20),
+                                       left: SizeConfig.screenHeight * 0.015,top: 20),
                                    child: Container(
                                      decoration: BoxDecoration(
                                        shape: BoxShape.circle,
@@ -218,12 +218,12 @@ backgroundColor: Colors.white,
                                            color: Colors.black.withOpacity(
                                                0.1), // Shadow color
                                            blurRadius: 5, // Shadow blur
-                                           offset: Offset(0,
+                                           offset: const Offset(0,
                                                2), // Shadow position (x, y)
                                          ),
                                        ],
                                      ),
-                                     child: CircleAvatar(
+                                     child: const CircleAvatar(
                                        radius: 23.0,
                                        backgroundColor: Colors.white,
                                        child: CircleAvatar(
@@ -237,9 +237,9 @@ backgroundColor: Colors.white,
                                      ),
                                    ),
                                  ),
-                                 SizedBox(width: 15),
+                                 const SizedBox(width: 15),
                                  // Name
-                                 Padding(
+                                 const Padding(
                                    padding:  EdgeInsets.only(top: 20),
                                    child: Column(
                                      crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +278,7 @@ backgroundColor: Colors.white,
                                ],
                              ),
                              Padding(
-                               padding:  EdgeInsets.only(right: 5),
+                               padding:  const EdgeInsets.only(right: 5),
                                child: Row(
                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                  children: [
@@ -286,7 +286,7 @@ backgroundColor: Colors.white,
                                      padding:  EdgeInsets.only(left: 70,top: 10),
                                      child: Container(
                                        width:250,
-                                       child: Text(
+                                       child: const Text(
                                          "Customize your product effortlessly and preview it instantly before confirming your choice",
                                          style: TextStyle(
                                            color: CommonColor.Black,
@@ -310,18 +310,19 @@ backgroundColor: Colors.white,
                    ],
                                   ),
               ),
-      
+
             ),
-      
+
             AnimatedPositioned(
               duration: Duration(milliseconds: 700),
               curve: Curves.easeInOut,
               right: _startAnimation ? 0 : -MediaQuery.of(context).size.width,
-              top: 310,
+              top: 300,
               child: Container(
-                height: MediaQuery.of(context).size.height *0.75 ,
+                height: 1000,
+               // height: MediaQuery.of(context).size.height *0.75 ,
                 width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xffF3F5FF),
                  // border: Border.all(color: Colors.grey, width: 0.5),
                   borderRadius: BorderRadius.all(
@@ -333,8 +334,8 @@ backgroundColor: Colors.white,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                
-                
+
+
                       Padding(
                         padding: const EdgeInsets.only(left: 80),
                         child: Text(
@@ -388,14 +389,14 @@ backgroundColor: Colors.white,
                       Padding(
                         padding:  EdgeInsets.only(left: 10,top: 10),
                         child: Container(
-                
-                
+
+
                           width: SizeConfig.screenWidth * 0.90,
-                
+
                           child: GradientText(
                             "3D camera capture",
                             style: TextStyle(
-                
+
                               fontFamily: "Roboto-Bold",
                               fontSize: SizeConfig
                                   .blockSizeHorizontal *
@@ -404,25 +405,25 @@ backgroundColor: Colors.white,
                               FontWeight.w600,
                               letterSpacing: 0.5
                             ),
-                            colors: [
+                            colors: const [
                               Color(0xff3033E9),
                               Colors.purple,
-                
+
                               Colors.purple,
-                
-                
+
+
                             ],
                           ),
                         ),
                       ),
-                
-                
+
+
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
                           width: SizeConfig.screenWidth * 0.80,
-                
-                          child: Text(
+
+                          child: const Text(
                             "HD camera capture images and videos in 1920x1080 pixels and a resolution of 1080p. 4K cameras, on the other hand, capture images and videos in 3840x2160 pixels. This results in better image quality and clarity. ",
                             style: TextStyle(
                               color: CommonColor.grayText,
@@ -433,13 +434,13 @@ backgroundColor: Colors.white,
                           ),
                         ),
                       ),
-                
-                
+
+
                       Container(
                         height: 130,
                         width: 350,
-                
-                
+
+
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                           child:   Stack(
@@ -462,7 +463,7 @@ backgroundColor: Colors.white,
                                 ),
                                 itemBuilder: (BuildContext context, int itemIndex, int index1) {
                                   final img = images.isNotEmpty ? images[index1] : "";
-                
+
                                   return Container(
                                     margin: EdgeInsets.all(14),
                                     child: ClipRRect(
@@ -479,7 +480,7 @@ backgroundColor: Colors.white,
                                   );
                                 },
                               ),
-                
+
                               // Indicator Row
                               Positioned(
                                 bottom: 0, // Adjust position as needed
@@ -510,14 +511,14 @@ backgroundColor: Colors.white,
                               ),
                             ],
                           )
-                
+
                         ),
                       ),
-                
+
 
                       Container(
                         width: SizeConfig.screenWidth * 0.90,
-                
+
                         child: Padding(
                           padding:  EdgeInsets.all(11.0),
                           child: Text(
@@ -536,7 +537,7 @@ backgroundColor: Colors.white,
 
                       Container(
                         width: SizeConfig.screenWidth * 0.90,
-                
+
                         child: Padding(
                           padding:  EdgeInsets.all(11.0),
                           child: Text(
@@ -550,13 +551,13 @@ backgroundColor: Colors.white,
                           ),
                         ),
                       ),
-                
-                
-                
+
+
+
 
                       Container(
                         width: SizeConfig.screenWidth * 0.90,
-                
+
                         child: Padding(
                           padding:  EdgeInsets.all(11.0),
                           child: Text(
@@ -570,7 +571,7 @@ backgroundColor: Colors.white,
                           ),
                         ),
                       ),
-                
+
 
                       Padding(
                         padding:  EdgeInsets.only(left: 10),
@@ -587,7 +588,8 @@ backgroundColor: Colors.white,
                             Container(
 
 
-                              child: Padding(
+                              child:
+                              const Padding(
                                 padding:  EdgeInsets.all(11.0),
                                 child: Text(
                                   "12",
@@ -613,7 +615,7 @@ backgroundColor: Colors.white,
                         },
                         child: Padding(
                           padding: EdgeInsets.only(
-                
+
                               left: parentWidth * 0.04,
                               right: parentWidth * 0.04),
                           child: Container(
@@ -627,8 +629,8 @@ backgroundColor: Colors.white,
                                           spreadRadius: 1,
                                           offset: Offset(1,1)),
                                     ],
-                                gradient: LinearGradient(
-                
+                                gradient: const LinearGradient(
+
                                   begin: Alignment.topRight,
                                   end: Alignment.bottomLeft,
                                   colors: [
@@ -636,7 +638,7 @@ backgroundColor: Colors.white,
                                     Color(0xffbd6dd6)
                                   ],
                                 ),
-                
+
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(30),
                                 ),
@@ -654,8 +656,8 @@ backgroundColor: Colors.white,
                                   ))),
                         ),
                       ),
-                
-                
+
+
                     ],
                   ),
                 ),

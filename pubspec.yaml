@@ -38,6 +38,7 @@ dependencies:
   share_plus: ^10.1.4
   responsive_framework: ^1.5.1
   google_fonts: ^4.0.4
+  flutter_rating_bar: ^4.0.1
 
 
 dev_dependencies:

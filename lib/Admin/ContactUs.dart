@@ -197,8 +197,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
 
 
-
-  void showSuccessDialog(BuildContext context) {
+/// ShowSuccessDialog
+ /* void showSuccessDialog(BuildContext context) {
 
     final responsive = ResponsiveHelper(context);
 
@@ -340,9 +340,290 @@ class _ContactUsPageState extends State<ContactUsPage> {
         );
       },
     );
+  }*/
+///
+
+  // void showSuccessDialog(BuildContext context) {
+  //   final responsive = ResponsiveHelper(context);
+  //
+  //   if (messageController.text.trim().isEmpty) {
+  //     showTopSnackBar(context, "Message is required!");
+  //     return;
+  //   }
+  //
+  //   bool isSubmitting = false;
+  //
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return StatefulBuilder(
+  //         builder: (context, setState) {
+  //           return WillPopScope(
+  //             onWillPop: () async => false,
+  //             child: Dialog(
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(10),
+  //               ),
+  //               child: Container(
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.white,
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //                 padding: const EdgeInsets.all(12.0),
+  //                 child: Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: [
+  //                     SizedBox(height: responsive.height(10)),
+  //
+  //                     Image.asset(
+  //                       'assets/images/sucess.png',
+  //                       height: MediaQuery.of(context).size.height * 0.08,
+  //                     ),
+  //
+  //                     Padding(
+  //                       padding: const EdgeInsets.all(14.0),
+  //                       child: Column(
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           const SizedBox(height: 5),
+  //                           Text(
+  //                             "Your ticket has been raised successfully!",
+  //                             style: TextStyle(
+  //                               color: Colors.black,
+  //                               fontFamily: "okra_Medium",
+  //                               fontSize: MediaQuery.of(context).size.width * 0.045,
+  //                               fontWeight: FontWeight.w600,
+  //                             ),
+  //                           ),
+  //                           SizedBox(height: responsive.height(15)),
+  //                           Text(
+  //                             "Now track the status of all your tickets in the Support section.",
+  //                             style: TextStyle(
+  //                               color: Colors.black,
+  //                               fontFamily: "Montserrat-Medium",
+  //                               fontSize: MediaQuery.of(context).size.width * 0.035,
+  //                               fontWeight: FontWeight.w500,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //
+  //                     GestureDetector(
+  //                       onTap: isSubmitting
+  //                           ? null
+  //                           : () async {
+  //                         setState(() => isSubmitting = true);
+  //                         print("Submitting Ticket...");
+  //
+  //                         var response = await NewApiClients().NewCreateTicket(
+  //                           selectedCategoryId,
+  //                           messageController.text,
+  //                         );
+  //
+  //                         print("API Response: $response");
+  //
+  //                         if (response['success'] == true) {
+  //                           String? userId = response['data']?['userId'];
+  //                           print("User ID: $userId");
+  //
+  //                           if (userId != null) {
+  //                             NewAuthStorage.setUserId(userId);
+  //                           }
+  //                           messageController.clear();
+  //                           showTopSnackBar(context, 'Question submitted successfully!');
+  //
+  //                           Navigator.pushReplacement(
+  //                             context,
+  //                             MaterialPageRoute(builder: (context) => HelpCenterScreen()),
+  //                           );
+  //                         } else {
+  //                           print("Error Message: ${response['message']}");
+  //                           Navigator.pop(context);     // Close dialog before showing error
+  //                           showTopSnackBar(context, "Failed to submit question!");
+  //                         //  Navigator.pop(context);     // Close dialog before showing error
+  //                         }
+  //                       },
+  //                       child: Center(
+  //                         child: Container(
+  //                           width: MediaQuery.of(context).size.width * 0.75,
+  //                           height: MediaQuery.of(context).size.height * 0.05,
+  //                           decoration: BoxDecoration(
+  //                             color: isSubmitting ? Colors.grey : const Color(0xfff44343),
+  //                             borderRadius: BorderRadius.circular(5),
+  //                           ),
+  //                           alignment: Alignment.center,
+  //                           child: isSubmitting
+  //                               ? const CircularProgressIndicator(color: Colors.white)
+  //                               : Text(
+  //                             "Okay",
+  //                             style: TextStyle(
+  //                               color: Colors.white,
+  //                               fontWeight: FontWeight.w700,
+  //                               fontFamily: 'Roboto-Regular',
+  //                               fontSize: MediaQuery.of(context).size.width * 0.045,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //
+  //                     SizedBox(height: responsive.height(16)),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
+
+  void showSuccessDialog(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+
+    if (messageController.text.trim().isEmpty) {
+      showTopSnackBar(context, "Message is required!");
+      return;
+    }
+
+    bool isSubmitting = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return WillPopScope(
+              onWillPop: () async => false,
+              child: Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: responsive.height(10)),
+
+                      Image.asset(
+                        'assets/images/sucess.png',
+                        height: MediaQuery.of(context).size.height * 0.08,
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 5),
+                            Text(
+                              "Your ticket has been raised successfully!",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "okra_Medium",
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: responsive.height(15)),
+                            Text(
+                              "Now track the status of all your tickets in the Support section.",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Montserrat-Medium",
+                                fontSize: MediaQuery.of(context).size.width * 0.035,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      GestureDetector(
+                        onTap: isSubmitting
+                            ? null
+                            : () async {
+                          setState(() => isSubmitting = true);
+                          print("Submitting Ticket...");
+
+                          var response = await NewApiClients().NewCreateTicket(
+                            selectedCategoryId,
+                            messageController.text,
+                          );
+
+                          print("API Response: $response");
+
+                          if (response['success'] == true) {
+                            String? userId = response['data']?['userId'];
+                            print("User ID: $userId");
+
+                            if (userId != null) {
+                              NewAuthStorage.setUserId(userId);
+                            }
+
+                            messageController.clear();
+                            showTopSnackBar(context, 'Question submitted successfully!');
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => HelpCenterScreen()),
+                            );
+                          } else {
+                            print("Error Message: ${response['message']}");
+                            showTopSnackBar(context, "Failed to submit question!");
+                            setState(() => isSubmitting = false);
+
+
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Center(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            decoration: BoxDecoration(
+                              color: isSubmitting ? Colors.grey : const Color(0xfff44343),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            alignment: Alignment.center,
+                            child: isSubmitting
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : Text(
+                              "Okay",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Roboto-Regular',
+                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: responsive.height(16)),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
-
-
 
 
 
@@ -470,10 +751,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     decoration: BoxDecoration(
                         color: Colors.white,
                         border:
-                            Border.all(color: Color(0xfff4823b), width: 0.3),
+                            Border.all(color: const Color(0xfff4823b), width: 0.3),
                         borderRadius: BorderRadius.circular(15)),
                     child: Padding(
-                      padding: EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

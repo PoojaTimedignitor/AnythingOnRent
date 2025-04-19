@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 //import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,8 +15,10 @@ import 'Admin/helpCentre.dart';
 import 'Admin/vedio_player.dart';
 import 'package:shimmer/shimmer.dart';
 import 'All_Product_List.dart';
+import 'Authentication/register_common.dart';
 import 'Cat_Product_Service.dart';
 import 'Common_File/new_responsive_helper.dart';
+import 'ConstantData/AuthStorage.dart';
 import 'ProductSeparateCat.dart';
 import 'Common_File/ResponsiveUtil.dart';
 import 'Common_File/SizeConfig.dart';
@@ -24,6 +27,8 @@ import 'ConstantData/Constant_data.dart';
 import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'ProductView.dart';
+import 'Product_Detail_Screen/Nearby_Product_Detail.dart';
+import 'Product_Detail_Screen/Product_Review.dart';
 import 'ResponseModule/getAllCatList.dart';
 
 import 'MyBehavior.dart';
@@ -35,17 +40,21 @@ import 'package:another_carousel_pro/another_carousel_pro.dart';
 
 import 'ResponseModule/getAllProductList.dart';
 import 'SearchCatagries.dart';
+import 'SideBar/ImageOrVideoWidget.dart';
 import 'SideBar/My Collection.dart';
 import 'SideBar/My Ratings.dart';
 import 'SideBar/My Transaction History.dart';
 import 'SideBar/MyFevorites.dart';
 import 'SideBar/MyProfileDetails.dart';
 import 'SideBar/chat.dart';
+import 'ViewAll_Screen/Nearby_ViewAll.dart';
+import 'ViewAll_Screen/RatingBased_ViewAll.dart';
 import 'createService.dart';
 import 'fff.dart';
 import 'location_map.dart';
 import 'mm.dart';
 import 'model/dio_client.dart';
+import 'newGetStorage.dart';
 
 class ChangeHome extends StatefulWidget {
   const ChangeHome({super.key});
@@ -63,6 +72,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
   final cs.CarouselSliderController _controller = cs.CarouselSliderController();
 
   String selectedLabel = 'All';        /// new add bottom line categories
+  ///
+  bool isButtonAttached = false;    /// add new Create Post
+
+  bool isTapped = false;                    /// ADD CREATE POST ANIMATION
 
   List<String> adsUrlsList = [];
   List<Products> filteredItemss = [];
@@ -156,7 +169,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
     fetchCategories();
     super.initState();
 
-    /// new add animation
+
 
     /// add new
     _lineController = AnimationController(
@@ -233,8 +246,179 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
     });
   }
 
+
+  void LogoutDialogBox(BuildContext context) {
+    SizeConfig().init(context);
+    showDialog(
+      context: context,
+      builder: (
+          BuildContext context,
+          ) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 6),
+                child: Text("Logout",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "okra_Medium",
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    )),
+              ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image(
+                    image: AssetImage('assets/images/logthree.png'),
+                    height: SizeConfig.screenHeight * 0.07,
+                  ),
+                ),
+              ),
+              Container(
+                height:
+                SizeConfig.screenHeight * 0.03, // Adjust height as needed
+
+                child: Text(
+                  " Are You Sure you want to Logout?",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Montserrat-Medium",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+
+
+                  GestureDetector(
+                    onTap: () async {
+                      print("Logout initiated...");
+
+                      String? accessToken = AuthStorage.getAccessToken();
+                      print(" Stored Access Token: $accessToken");
+                      /*String? sessionToken = GetStorage()
+                          .read<String>(ConstantData.userToken);*/
+
+
+                      if (accessToken == null || accessToken.isEmpty) {
+                        print("No session token found. Redirecting to login.");
+
+                        return;
+                      }
+
+                      // Call the logout API
+                      final response =
+                      await NewApiClients().getNewLogoutUser();
+
+                      if (response['success'] == true) {
+                        print("Logout Successful");
+                        NewAuthStorage.clearStorage();
+
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) =>  PhoneRegistrationPage( showLoginWidget: true, mobileNumber: '', email: '', phoneNumber: '',)),
+
+                              (route) => false,
+                        );
+
+
+                      } else {
+                        print("Logout failed: ${response['error']}");
+                      }
+                    },
+                    child: Padding(
+                      padding:
+                      EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                      child: Container(
+                        width: SizeConfig.screenWidth * 0.3,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffFEBA69),
+                              Color(0xffFE7F64),
+                            ],
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Yes",
+                            style: TextStyle(
+                                height: 2,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Medium',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Padding(
+                      padding:
+                      EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+                      child: Container(
+                        width: SizeConfig.screenWidth * 0.3,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          // color: Colors.white,
+
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffFEBA69),
+                              Color(0xffFE7F64),
+                            ],
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "No",
+                            style: TextStyle(
+                                height: 2,
+                                fontSize: SizeConfig.blockSizeHorizontal * 4.3,
+                                fontFamily: 'Roboto_Medium',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
+    final List<List<String>> data = List.generate(
+      10,
+          (index) => List.generate(4, (i) => 'Item ${index + 1}.${i + 1}'),
+    );
 
     List<String> imageList = [                                                                                                                    /// Recently Viewed
       "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg",
@@ -249,7 +433,9 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
 
     return Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Colors.white,
+       // backgroundColor: Colors.white,
+        //backgroundColor:Color(0xFFBCAAA4),
+        backgroundColor:Color(0xFFA1887F),
         resizeToAvoidBottomInset: false,
         drawer: Drawer(
           backgroundColor: const Color(0xffffffff),
@@ -307,6 +493,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
+
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -367,6 +554,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  const SizedBox(height: 2),
                                   SizedBox(
                                     width: ResponsiveUtil.width(150),
                                     child: Text(
@@ -411,6 +599,18 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                       ),
                                     ],
                                   ),
+
+                                  Row(
+                                    children: List.generate(
+                                        3,
+                                            (index) {
+                                          return Icon(
+                                            Icons.star,
+                                            color: Colors.amber.shade600,
+                                            size: responsive.width(12),
+                                          );
+                                        }),
+                                  ),
                                 ],
                               ),
                             ),
@@ -426,413 +626,1253 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                   behavior: MyBehavior(),
                   child: SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 20, left: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const MyCollection()));
-                            },
-                            child: Wrap(
-                              spacing: 13,
-                              children: [
-                                //SizedBox(width: 01),
-                                SizedBox(width: responsive.width(01)),
+                      padding: const EdgeInsets.only(top: 20, left: 0),   // 20, 10
+                      child: Container(
+                        //color:const Color(0xFFE3F2FD),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
 
-                                /// new changes
-
-                                const Image(
-                                  image: AssetImage('assets/images/myads.png'),
-                                  height: 22,
-                                ),
-                                const Text(
+                            ListTile(
+                              leading:  Image(
+                                image: const AssetImage('assets/images/myads.png'),
+                                // height: 22,
+                                height: responsive.height(responsive.isMobile ? 25 : responsive.isTablet ? 28 : 30),                          /// new change
+                              ),
+                              title:  const Text(
+                                // the text of the row.
                                   "Manage Posts",
-                                  /*style: TextStyle(
-                                      fontSize: SizeConfig.blockSizeHorizontal * 3.93,
-                                      fontFamily: "okra_Regular",
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400)*/
-
                                   style: TextStyle(
                                     color: Color(0xff2B2B2B),
                                     fontFamily: "okra_Medium",
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          //SizedBox(height: 20),
-                          SizedBox(
-                            height: responsive.height(20),
-                          ),
-
-                          /// new changes
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const AddToCart()));
-                            },
-                            child: Wrap(
-                              spacing: 13,
-                              children: [
-                                //SizedBox(width: 02),
-                                SizedBox(width: responsive.width(02)),
+                                  MaterialPageRoute(builder: (context) => const MyCollection()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
 
-                                /// new changes
+                                         /// Manage Post
+                            /*GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MyCollection()));
+                              },
+                              child: Wrap(
+                                spacing: 13,
+                                children: [
+                                  //SizedBox(width: 01),
+                                  SizedBox(width: responsive.width(01)),
 
-                                const Image(
-                                  image: AssetImage('assets/images/like.png'),
-                                  height: 20,
-                                  color: Colors.black54,
-                                ),
-                                const Text(
-                                  // the text of the row.
-                                  "My Favorites",
-                                  /* style: TextStyle(
-                                      fontSize: SizeConfig.blockSizeHorizontal * 3.9,
-                                      fontFamily: "okra_Regular",
-                                      color: CommonColor.Black,
-                                      fontWeight: FontWeight.w400)*/
-                                  style: TextStyle(
-                                    color: Color(0xff2B2B2B),
-                                    fontFamily: "okra_Medium",
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
+                                  /// new changes
+
+                                  Image(
+                                    image: const AssetImage('assets/images/myads.png'),
+                                   // height: 22,
+                                    height: responsive.height(responsive.isMobile ? 25 : responsive.isTablet ? 28 : 30),                          /// new change
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                  const Text(
+                                    "Manage Posts",
+                                    *//*style: TextStyle(
+                                        fontSize: SizeConfig.blockSizeHorizontal * 3.93,
+                                        fontFamily: "okra_Regular",
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400)*//*
 
-                          //SizedBox(height: 20),
-                          SizedBox(
-                            height: responsive.height(20),
-                          ),
-
-                          /// new changes
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const MyTransaction()));
-                            },
-                            child: Wrap(
-                              spacing: 10,
-                              children: [
-                                //SizedBox(width: 0),
-                                SizedBox(width: responsive.width(0)),
-
-                                /// new changes
-
-                                const Image(
-                                  image: AssetImage(
-                                      'assets/images/transaction.png'),
-                                  height: 27,
-                                ),
-                                Container(
-                                  width: 180,
-                                  //  color: Colors.red,
-                                  child: const Text(
-                                      // the text of the row.
-                                      "Contacted History",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          //SizedBox(height: 15),
-                          SizedBox(
-                            height: responsive.height(15),
-                          ),
-
-                          /// new changes
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MyTransaction()));
-                            },
-                            child: Wrap(
-                              spacing: 10,
-                              children: [
-                                //SizedBox(width: 0),
-                                SizedBox(width: responsive.width(12)),
-
-                                /// new changes
-
-                                const Image(
-                                  image: AssetImage(
-                                      'assets/images/transaction.png'),
-                                  height: 27,
-                                ),
-                                Container(
-                                  width: 180,
-                                  //  color: Colors.red,
-                                  child: const Text(
-                                      // the text of the row.
-                                      "Users Contacted",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          //SizedBox(height: 15),
-                          SizedBox(
-                            height: responsive.height(15),
-                          ),
-
-                          /// new changes
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const MyRatings()));
-                            },
-                            child: Wrap(
-                              spacing: 11,
-                              children: [
-                                // SizedBox(height: 10),
-                                SizedBox(
-                                  height: responsive.height(10),
-                                ),
-
-                                const Image(
-                                  image: AssetImage('assets/images/rating.png'),
-                                  height: 27,
-                                ),
-                                Container(
-                                  width: 108,
-                                  //  color: Colors.red,
-                                  child: const Text("My Ratings",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          //SizedBox(height: 15),
-                          SizedBox(
-                            height: responsive.height(15),
-                          ),
-
-                          /// new changes
-
-                          Center(
-                            child: Container(
-                              height: 0.4,
-                              // width:  0.95,
-                              color: CommonColor.bottomsheet,
-                            ),
-                          ),
-
-                          // SizedBox(height: 3),
-                          SizedBox(
-                            height: responsive.height(3),
-                          ),
-
-                          /// new changes
-
-                          Center(
-                            child: Container(
-                              height: 0.4,
-                              // width:  0.95,
-                              color: CommonColor.bottomsheet,
-                            ),
-                          ),
-
-                          // SizedBox(height: 15),
-                          SizedBox(
-                            height: responsive.height(15),
-                          ),
-
-                          /// new changes
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const chat()));
-                            },
-                            child: Wrap(
-                              spacing: 13,
-                              children: [
-                                SizedBox(width: 0),
-
-                                const Image(
-                                  image: AssetImage('assets/images/chat.png'),
-                                  height: 20,
-                                ),
-                                Container(
-                                  // width: 125,
-                                  //  color: Colors.red,
-                                  child: const Text(
-                                      // the text of the row.
-                                      "Subscription History",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-
-                                //  SizedBox(width: 50),
-                                SizedBox(width: responsive.width(50)),
-
-                                /// new changes
-
-                                /* Container(
-                                height: 23,
-                                width: 23,
-                                decoration: BoxDecoration(
-                                  color: Color(0xffF8C5C2),
-                                  borderRadius: BorderRadius.all(Radius.circular(6)),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "12",
                                     style: TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: "okra_Medium",
-                                        color: CommonColor.Black,
-                                        fontWeight: FontWeight.w400),
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
+                                ],
+                              ),
+                            ),*/
+                            ///
+
+                            // SizedBox(
+                            //   height: responsive.height(20),
+                            // ),
+
+                            /*Container(
+                              margin: responsive.getMargin(all: 0).copyWith(left: responsive.isMobile ? 5 : 4 , right: responsive.isMobile ? 5 : 4 , ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                border:
+                                Border.all(
+                                  color: Colors
+                                      .black87,
+                                  width:
+                                  1,
                                 ),
-                              )*/
-                              ],
-                            ),
-                          ),
+                              ),
 
-                          // SizedBox(height: 25),
-                          SizedBox(
-                            height: responsive.height(25),
-                          ),
-
-                          /// new changes
-
-                          GestureDetector(
-                            child: Wrap(
-                              spacing: 13,
-                              children: [
-                                // SizedBox(width: 0),
-                                SizedBox(width: responsive.width(0)),
-
-                                /// new changes
-
-                                const Image(
-                                  image: AssetImage('assets/images/chat.png'),
-                                  height: 20,
-                                ),
-                                Container(
-                                  width: 130,
-                                  //  color: Colors.red,
-                                  child: const Text("Due for renewal",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.drafts, size: 22,),
+                                    // Image(
+                                    //   image: const AssetImage('assets/images/like.png'),
+                                    //   //height: 20,
+                                    //   height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                    //   color: Colors.black54,
+                                    // ),
+                                    title:  const Text(
+                                        "Drafts",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => const AddToCart()),
+                                      );
+                                    },
+                                    dense: true, // reduces vertical padding
+                                    visualDensity: const VisualDensity(vertical: -4), // even tighter
+                                  ),
+                                  /// Product
+                                  Container(
+                                    padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 1 : 5, bottom: responsive.isMobile ? 2 : 5, right: responsive.isMobile ? 2 : 5),              /// new add responsive padding
+                                    height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),                          /// new change
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                      border:
+                                      Border.all(
+                                        color: Colors
+                                            .black87,
+                                        width:
+                                        1,
                                       ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
-                            ),
-                          ),
+                                    ),
+                                    child:  Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Product', style:
+                                        TextStyle(
+                                          fontSize:
+                                          responsive.fontSize(responsive.isMobile
+                                              ? 14
+                                              : 8), // responsive.fontSize(12),
+                                          // color: const Color(0xff3684F0),
+                                          color:
+                                          const Color(0xFF1976D2),
+                                          fontWeight:
+                                          FontWeight.w500,
+                                        ),)
+                                      ],
+                                    ),
+                                  ),
 
-                          // SizedBox(height: 25),
-                          SizedBox(
-                            height: responsive.height(25),
-                          ),
+                                  const SizedBox(height: 4,),
 
-                          /// new changes
+                                  /// Service
+                                  Container(
+                                    padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 1 : 5, bottom: responsive.isMobile ? 2 : 5, right: responsive.isMobile ? 2 : 5),              /// new add responsive padding
+                                    width: double.infinity,
+                                    height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),                          /// new change
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                      border:
+                                      Border.all(
+                                        color: Colors
+                                            .black87,
+                                        width:
+                                        1,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Services',
+                                          style:
+                                        TextStyle(
+                                          fontSize: responsive.fontSize(responsive.isMobile
+                                              ? 14
+                                              : 8), // responsive.fontSize(12),
+                                          // color: const Color(0xff3684F0),
+                                          color:
+                                          const Color(0xFF1976D2),
+                                          fontWeight:
+                                          FontWeight.w500,
+                                        ),)
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),*/
 
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+
+                            ListTile(
+                              leading: const Icon(Icons.drafts, size: 22,),
+                              // Image(
+                              //   image: const AssetImage('assets/images/like.png'),
+                              //   //height: 20,
+                              //   height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              //   color: Colors.black54,
+                              // ),
+                              title:  const Text(
+                                  "Drafts",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          HelpCenterScreen()));
-                            },
-                            child: Wrap(
-                              spacing: 12,
-                              children: [
-                                // SizedBox(width: 02),
-                                SizedBox(width: responsive.width(02)),
-
-                                /// new changes
-
-                                const Image(
-                                  image: AssetImage('assets/images/terms.png'),
-                                  height: 20,
-                                  color: Colors.black54,
-                                ),
-                                Container(
-                                  // width: 108,
-                                  //  color: Colors.red,
-                                  child: const Text("Help & Support",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
+                                  MaterialPageRoute(builder: (context) => const AddToCart()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: const VisualDensity(vertical: -4), // even tighter
                             ),
-                          ),
 
-                          //SizedBox(height: 25),
-                          SizedBox(
-                            height: responsive.height(25),
-                          ),
+                           // SizedBox(height: responsive.height(20),),
 
-                          /// new changes
+                           /* Container(
+                              margin: responsive.getMargin(all: 0).copyWith(left: responsive.isMobile ? 5 : 4 , right: responsive.isMobile ? 5 : 4 , ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                border:
+                                Border.all(
+                                  color: Colors
+                                      .black87,
+                                  width:
+                                  1,
+                                ),
+                              ),
 
-                          GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                     leading: const Icon(Icons.bookmark_border, size: 22,),
+                                    // Image(
+                                    //   image: const AssetImage('assets/images/like.png'),
+                                    //   //height: 20,
+                                    //   height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                    //   color: Colors.black54,
+                                    // ),
+                                    title:  const Text(
+                                      // the text of the row.
+                                        "My Favorites",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => const AddToCart()),
+                                      );
+                                    },
+                                    dense: true, // reduces vertical padding
+                                    visualDensity: const VisualDensity(vertical: -4), // even tighter
+                                  ),
+                           /// Product
+                                  Container(
+                                    padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 1 : 5, bottom: responsive.isMobile ? 2 : 5, right: responsive.isMobile ? 2 : 5),              /// new add responsive padding
+                                    height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),                          /// new change
+                                      decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                      border:
+                                      Border.all(
+                                        color: Colors
+                                            .black87,
+                                        width:
+                                        1,
+                                      ),
+                                    ),
+                                    child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: data.length,
+                                          itemBuilder: (context, index) {
+                                            return Container(
+                                              height: 120,
+                                              width: 90,
+                                              margin: const EdgeInsets.only(right: 6, top: 3, bottom: 1),
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue[100],
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child: GridView.builder(
+                                                padding: const EdgeInsets.only(bottom: 15, top: 2, left: 5, right: 5),
+                                                physics: const NeverScrollableScrollPhysics(),
+                                                shrinkWrap: true,
+                                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2, // 2 rows
+                                                  mainAxisSpacing: 3,
+                                                  crossAxisSpacing: 3,
+                                                  childAspectRatio: 1,
+                                                ),
+                                                itemCount: data[index].length,
+                                                itemBuilder: (context, gridIndex) {
+                                                  return Container(
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(8),
+                                                    ),
+                                                    child: Text(data[index][gridIndex]),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+
+                                  ),
+
+                                  Container(
+                                    padding: responsive.getPadding(all: 0).copyWith(
+                                      left: responsive.isMobile ? 3 : 30,
+                                      top: responsive.isMobile ? 1 : 5,
+                                      bottom: responsive.isMobile ? 2 : 5,
+                                      right: responsive.isMobile ? 2 : 5,
+                                    ),
+                                    height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),
+                                      border: Border.all(
+                                        color: Colors.black87,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: data.length,
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          height: 120,
+                                          width: 90,
+                                          margin: const EdgeInsets.only(right: 6, top: 3, bottom: 1),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[100],
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: GridView.builder(
+                                            padding: const EdgeInsets.only(bottom: 15, top: 2, left: 5, right: 5),
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              mainAxisSpacing: 3,
+                                              crossAxisSpacing: 3,
+                                              childAspectRatio: 1,
+                                            ),
+                                            itemCount: data[index].length,
+                                            itemBuilder: (context, gridIndex) {
+                                              // Use index and gridIndex to calculate the image index
+                                              int imageIndex = (index * data[index].length + gridIndex) % imageList.length;
+
+                                              return Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  child: Image.network(
+                                                    imageList[imageIndex],
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+
+
+                                  SizedBox(height: 4,),
+
+                           /// Service
+                                  Container(
+                                    padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 1 : 5, bottom: responsive.isMobile ? 2 : 5, right: responsive.isMobile ? 2 : 5),              /// new add responsive padding
+                                    height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),                          /// new change
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                      border:
+                                      Border.all(
+                                        color: Colors
+                                            .black87,
+                                        width:
+                                        1,
+                                      ),
+                                    ),
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: data.length,
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          height: 120,
+                                          width: 90,
+                                          margin: const EdgeInsets.only(right: 6, top: 3, bottom: 1),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[100],
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: GridView.builder(
+                                            padding: const EdgeInsets.only(bottom: 15, top: 2, left: 5, right: 5),
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2, // 2 rows
+                                              mainAxisSpacing: 3,
+                                              crossAxisSpacing: 3,
+                                              childAspectRatio: 1,
+                                            ),
+                                            itemCount: data[index].length,
+                                            itemBuilder: (context, gridIndex) {
+                                              return Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: Text(data[index][gridIndex]),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+
+                            ListTile(
+                              leading: const Icon(Icons.bookmark_border, size: 22,),
+                              // Image(
+                              //   image: const AssetImage('assets/images/like.png'),
+                              //   //height: 20,
+                              //   height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              //   color: Colors.black54,
+                              // ),
+                              title:  const Text(
+                                // the text of the row.
+                                  "My Favorites",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const AddToCart()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: const VisualDensity(vertical: -4), // even tighter
+                            ),
+
+
+                                     /// My Favorite
+                           /* GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const AddToCart()));
+                              },
+                              child: Wrap(
+                                spacing: 13,
+                                children: [
+                                  //SizedBox(width: 02),
+                                  SizedBox(width: responsive.width(02)),
+
+                                  /// new changes
+
+                             Image(
+                                    image: const AssetImage('assets/images/like.png'),
+                                    //height: 20,
+                               height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                    color: Colors.black54,
+                                  ),
+                                  const Text(
+                                    // the text of the row.
+                                    "My Favorites",
+                                    *//* style: TextStyle(
+                                        fontSize: SizeConfig.blockSizeHorizontal * 3.9,
+                                        fontFamily: "okra_Regular",
+                                        color: CommonColor.Black,
+                                        fontWeight: FontWeight.w400)*//*
+                                    style: TextStyle(
+                                      color: Color(0xff2B2B2B),
+                                      fontFamily: "okra_Medium",
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                         ///
+
+
+                          //  SizedBox(height: responsive.height(20),),
+
+                           /* Container(
+                              margin: responsive.getMargin(all: 0).copyWith(left: responsive.isMobile ? 5 : 4 , right: responsive.isMobile ? 5 : 4 , ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                border:
+                                Border.all(
+                                  color: Colors
+                                      .black87,
+                                  width:
+                                  1,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    leading:   Image(
+                                      image: const AssetImage(
+                                          'assets/images/transaction.png'),
+                                      height: responsive.height(responsive.isMobile ? 29 : responsive.isTablet ? 32 : 35),                          /// new change
+                                    ),
+                                    title:  const Text(
+                                        "Contacted History",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => const MyTransaction()),
+                                      );
+                                    },
+                                    dense: true, // reduces vertical padding
+                                    visualDensity: VisualDensity(vertical: -4), // even tighter
+                                  ),
+
+                                  /// Product
+                                  Container(
+                                    padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 1 : 5, bottom: responsive.isMobile ? 2 : 5, right: responsive.isMobile ? 2 : 5),              /// new add responsive padding
+                                    height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),                          /// new change
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                      border:
+                                      Border.all(
+                                        color: Colors
+                                            .black87,
+                                        width:
+                                        1,
+                                      ),
+                                    ),
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: data.length,
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          height: 120,
+                                          width: 90,
+                                          margin: const EdgeInsets.only(right: 6, top: 3, bottom: 1),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: GridView.builder(
+                                            padding: const EdgeInsets.only(bottom: 15, top: 2, left: 5, right: 5),
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2, // 2 rows
+                                              mainAxisSpacing: 3,
+                                              crossAxisSpacing: 3,
+                                              childAspectRatio: 1,
+                                            ),
+                                            itemCount: data[index].length,
+                                            itemBuilder: (context, gridIndex) {
+                                              return Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: Text(data[index][gridIndex]),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+
+                                  ),
+
+                                  SizedBox(height: 4,),
+
+                                  /// Service
+                                  Container(
+                                    padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 1 : 5, bottom: responsive.isMobile ? 2 : 5, right: responsive.isMobile ? 2 : 5),              /// new add responsive padding
+                                    height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),                          /// new change
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                      border:
+                                      Border.all(
+                                        color: Colors
+                                            .black87,
+                                        width:
+                                        1,
+                                      ),
+                                    ),
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: data.length,
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          height: 120,
+                                          width: 90,
+                                          margin: const EdgeInsets.only(right: 6, top: 3, bottom: 1),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: GridView.builder(
+                                            padding: const EdgeInsets.only(bottom: 15, top: 2, left: 5, right: 5),
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2, // 2 rows
+                                              mainAxisSpacing: 3,
+                                              crossAxisSpacing: 3,
+                                              childAspectRatio: 1,
+                                            ),
+                                            itemCount: data[index].length,
+                                            itemBuilder: (context, gridIndex) {
+                                              return Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: Text(data[index][gridIndex]),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+
+
+                            ListTile(
+                              leading:   Image(
+                                image: const AssetImage(
+                                    'assets/images/transaction.png'),
+                                height: responsive.height(responsive.isMobile ? 29 : responsive.isTablet ? 32 : 35),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Contacted History",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const MyTransaction()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+
+                                    /// Contacted History
+                            /*GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MyTransaction()));
+                              },
+                              child: Wrap(
+                                spacing: 10,
+                                children: [
+                                  //SizedBox(width: 0),
+                                  SizedBox(width: responsive.width(0)),
+
+                                  /// new changes
+
+                               Image(
+                                    image: const AssetImage(
+                                        'assets/images/transaction.png'),
+                                   // height: 27,
+                                 height: responsive.height(responsive.isMobile ? 29 : responsive.isTablet ? 32 : 35),                          /// new change
+                                  ),
+                                  Container(
+                                   // width: 180,
+                                    width: responsive.width(responsive.isMobile ? 180 : responsive.isTablet ? 185 : 190),                      /// new change
+                                    //  color: Colors.red,
+                                    child: const Text(
+                                        // the text of the row.
+                                        "Contacted History",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                            ///
+
+                            //SizedBox(height: responsive.height(15),),
+
+                            ListTile(
+                              leading:    Image(
+                                image: const AssetImage(
+                                    'assets/images/transaction.png'),
+                                //height: 27,
+                                height: responsive.height(responsive.isMobile ? 29 : responsive.isTablet ? 32 : 35),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Users Contacted",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const MyTransaction()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+                           /// Product
+                            /*Container(
+                              padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 1 : 5, bottom: responsive.isMobile ? 2 : 5, right: responsive.isMobile ? 2 : 5),              /// new add responsive padding
+                              height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),                          /// new change
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                border:
+                                Border.all(
+                                  color: Colors
+                                      .black87,
+                                  width:
+                                  1,
+                                ),
+                              ),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    height: 120,
+                                    width: 90,
+                                    margin: const EdgeInsets.only(right: 6, top: 3, bottom: 1),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red[100],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: GridView.builder(
+                                      padding: const EdgeInsets.only(bottom: 15, top: 2, left: 5, right: 5),
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2, // 2 rows
+                                        mainAxisSpacing: 3,
+                                        crossAxisSpacing: 3,
+                                        childAspectRatio: 1,
+                                      ),
+                                      itemCount: data[index].length,
+                                      itemBuilder: (context, gridIndex) {
+                                        return Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Text(data[index][gridIndex]),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+
+                            ),
+                        */
+
+                           // SizedBox(height: 4,),
+
+                            /// Service
+                           /* Container(
+                              padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 1 : 5, bottom: responsive.isMobile ? 2 : 5, right: responsive.isMobile ? 2 : 5),              /// new add responsive padding
+                              height: responsive.height(responsive.isMobile ? 100 : responsive.isTablet ? 55 : 70),                          /// new change
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(responsive.isMobile ? 10 : 55),                   /// border responsive
+                                border:
+                                Border.all(
+                                  color: Colors
+                                      .black87,
+                                  width:
+                                  1,
+                                ),
+                              ),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    height: 120,
+                                    width: 90,
+                                    margin: const EdgeInsets.only(right: 6, top: 3, bottom: 1),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red[100],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: GridView.builder(
+                                      padding: const EdgeInsets.only(bottom: 15, top: 2, left: 5, right: 5),
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2, // 2 rows
+                                        mainAxisSpacing: 3,
+                                        crossAxisSpacing: 3,
+                                        childAspectRatio: 1,
+                                      ),
+                                      itemCount: data[index].length,
+                                      itemBuilder: (context, gridIndex) {
+                                        return Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Text(data[index][gridIndex]),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),*/
+
+
+                                   /// Users Contacted
+                           /* GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyTransaction()));
+                              },
+                              child: Wrap(
+                                spacing: 10,
+                                children: [
+                                  //SizedBox(width: 0),
+                                  SizedBox(width: responsive.width(12)),
+
+                                  Image(
+                                    image: AssetImage(
+                                        'assets/images/transaction.png'),
+                                    //height: 27,
+                                    height: responsive.height(responsive.isMobile ? 29 : responsive.isTablet ? 32 : 35),                          /// new change
+                                  ),
+                                  Container(
+                                    //width: 180,
+                                    width: responsive.width(responsive.isMobile ? 180 : responsive.isTablet ? 185 : 190),                      /// new change
+                                    //  color: Colors.red,
+                                    child: const Text(
+                                        // the text of the row.
+                                        "Users Contacted",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                            ///
+
+
+                          //  SizedBox(height: responsive.height(15),),
+
+                            ListTile(
+                              leading:     Image(
+                                image: AssetImage('assets/images/rating.png'),
+                                // height: 27,
+                                height: responsive.height(responsive.isMobile ? 29 : responsive.isTablet ? 32 : 35),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "My Ratings",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const MyRatings()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+                                    /// My Ratings
+                            /*GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const MyRatings()));
+                              },
+                              child: Wrap(
+                                spacing: 11,
+                                children: [
+                                  // SizedBox(height: 10),
+                                  SizedBox(
+                                    height: responsive.height(10),
+                                  ),
+
+                                   Image(
+                                    image: AssetImage('assets/images/rating.png'),
+                                   // height: 27,
+                                    height: responsive.height(responsive.isMobile ? 29 : responsive.isTablet ? 32 : 35),                          /// new change
+                                  ),
+                                  Container(
+                                   // width: 108,
+                                    width: responsive.width(responsive.isMobile ? 180 : responsive.isTablet ? 185 : 190),                      /// new change
+                                    //  color: Colors.red,
+                                    child: const Text("My Ratings",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                         ///
+
+                            SizedBox(
+                              height: responsive.height(15),
+                            ),
+
+
+                            Center(
+                              child: Container(
+                                height: 0.4,
+                                // width:  0.95,
+                                color: CommonColor.bottomsheet,
+                              ),
+                            ),
+
+
+                            // SizedBox(height: 3),
+                            SizedBox(
+                              height: responsive.height(3),
+                            ),
+
+                            /// new changes
+
+                            Center(
+                              child: Container(
+                                height: 0.4,
+                                // width:  0.95,
+                                color: CommonColor.bottomsheet,
+                              ),
+                            ),
+
+                            // SizedBox(height: 15),
+                            SizedBox(
+                              height: responsive.height(15),
+                            ),
+
+                            ListTile(
+                              leading:  Image(
+                                image: AssetImage('assets/images/chat.png'),
+                                //height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Subscription History",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const chat()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+                                    ///  Subscription History
+                           /* GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const chat()));
+                              },
+                              child: Wrap(
+                                spacing: 13,
+                                children: [
+                                  SizedBox(width: 0),
+
+                                Image(
+                                    image: AssetImage('assets/images/chat.png'),
+                                    //height: 20,
+                                  height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  Container(
+                                    // width: 125,
+                                    //  color: Colors.red,
+                                    child: const Text(
+                                        // the text of the row.
+                                        "Subscription History",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+
+                                  //  SizedBox(width: 50),
+                                  SizedBox(width: responsive.width(50)),
+
+                                  /// new changes
+
+                                  *//* Container(
+                                  height: 23,
+                                  width: 23,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffF8C5C2),
+                                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "12",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: "okra_Medium",
+                                          color: CommonColor.Black,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                )*//*
+                                ],
+                              ),
+                            ),*/
+                          ///
+
+                         //   SizedBox(height: responsive.height(25),),
+
+                            ListTile(
+                              leading: Image(
+                                image: AssetImage('assets/images/chat.png'),
+                                // height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Due for renewal",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const AddToCart()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+                                  /// Due for renewal
+                            /*GestureDetector(
+                              child: Wrap(
+                                spacing: 13,
+                                children: [
+                                  // SizedBox(width: 0),
+                                  SizedBox(width: responsive.width(0)),
+
+                                   Image(
+                                    image: AssetImage('assets/images/chat.png'),
+                                   // height: 20,
+                                     height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  Container(
+                                    width: 130,
+                                    //  color: Colors.red,
+                                    child: const Text("Due for renewal",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                          ///
+
+                           // SizedBox(height: responsive.height(25),),
+
+                            ListTile(
+                              leading: Image(
+                                image: AssetImage('assets/images/terms.png'),
+                                //height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                color: Colors.black54,
+                              ),
+                              title:  const Text(
+                                  "Help & Support",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HelpCenterScreen()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+                                  /// Help & Support
+                           /* GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            HelpCenterScreen()));
+                              },
+                              child: Wrap(
+                                spacing: 12,
+                                children: [
+                                  // SizedBox(width: 02),
+                                  SizedBox(width: responsive.width(02)),
+
+                                  /// new changes
+
+                                   Image(
+                                    image: AssetImage('assets/images/terms.png'),
+                                    //height: 20,
+                                     height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                    color: Colors.black54,
+                                  ),
+                                  Container(
+                                    // width: 108,
+                                    //  color: Colors.red,
+                                    child: const Text("Help & Support",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                          ///
+
+                           // SizedBox(height: responsive.height(25),),
+
+                            ListTile(
+                              leading:Image(
+                                image:
+                                AssetImage('assets/images/setting.png'),
+                                //height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "FeedBack",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                showModalBottomSheet(
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(20),
@@ -846,393 +1886,764 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   isDismissible: true,
                                   builder: (BuildContext bc) {
                                     return const Userfeedback();
-                                  });
+                                  }
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
 
-                              /*   Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => AppImprov()));*/
-                            },
-                            child: Wrap(
-                              spacing: 09,
-                              children: [
-                                //SizedBox(width: 03),
-                                SizedBox(width: responsive.width(03)),
-
-                                /// new changes
-
-                                const Image(
-                                  image:
-                                      AssetImage('assets/images/setting.png'),
-                                  height: 20,
-                                ),
-                                Container(
-                                  width: 108,
-                                  child: const Text("FeedBack",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
+                                   /// FeedBack
+                           /* GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20),
                                       ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
-                            ),
-                          ),
+                                    ),
+                                    context: context,
+                                    backgroundColor: Colors.white,
+                                    elevation: 10,
+                                    isScrollControlled: true,
+                                    isDismissible: true,
+                                    builder: (BuildContext bc) {
+                                      return const Userfeedback();
+                                    });
 
-                          //SizedBox(height: 25),
-                          SizedBox(
-                            height: responsive.height(25),
-                          ),
+                                *//*   Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => AppImprov()));*//*
+                              },
+                              child: Wrap(
+                                spacing: 09,
+                                children: [
+                                  //SizedBox(width: 03),
+                                  SizedBox(width: responsive.width(03)),
 
-                          /// new changes
+                                  /// new changes
 
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                                 Image(
+                                    image:
+                                        AssetImage('assets/images/setting.png'),
+                                    //height: 20,
+                                   height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  Container(
+                                    width: 108,
+                                    child: const Text("FeedBack",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                         ///
+
+                         //   SizedBox(height: responsive.height(25),),
+
+                            /*ListTile(
+                              leading: Image(
+                                image:
+                                AssetImage('assets/images/setting.png'),
+                                //height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Report & Suggestions",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductConfigurations()));
-                            },
-                            child: Wrap(
-                              spacing: 09,
-                              children: [
-                                //SizedBox(width: 03),
-                                SizedBox(width: responsive.width(03)),
+                                  MaterialPageRoute(builder: (context) => const AddToCart()),
+                                );
+                              },
+                            ),*/
+                                  /// Report & Suggestions
+                            /*GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProductConfigurations()));
+                              },
+                              child: Wrap(
+                                spacing: 09,
+                                children: [
+                                  //SizedBox(width: 03),
+                                  SizedBox(width: responsive.width(03)),
 
-                                /// new changes
+                                  /// new changes
 
-                                const Image(
-                                  image:
-                                      AssetImage('assets/images/setting.png'),
-                                  height: 20,
-                                ),
-                                Container(
-                                  // width: 108,
-                                  //  color: Colors.red,
-                                  child: const Text("Report & Suggestions",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
+                                  Image(
+                                    image:
+                                        AssetImage('assets/images/setting.png'),
+                                    //height: 20,
+                                    height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  Container(
+                                    // width: 108,
+                                    //  color: Colors.red,
+                                    child: const Text("Report & Suggestions",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                         ///
+
+                            SizedBox(height: responsive.height(15),),
+
+
+                            Center(
+                              child: Container(
+                                height: 0.4,
+                                // width:  0.95,
+                                color: CommonColor.bottomsheet,
+                              ),
                             ),
-                          ),
 
-                          // SizedBox(height: 15),
-                          SizedBox(
-                            height: responsive.height(15),
-                          ),
 
-                          /// new changes
-
-                          Center(
-                            child: Container(
-                              height: 0.4,
-                              // width:  0.95,
-                              color: CommonColor.bottomsheet,
+                            SizedBox(
+                              height: responsive.height(3),
                             ),
-                          ),
 
-                          //SizedBox(height: 3),
-                          SizedBox(
-                            height: responsive.height(3),
-                          ),
 
-                          /// new changes
-
-                          Center(
-                            child: Container(
-                              height: 0.4,
-                              // width:  0.95,
-                              color: CommonColor.bottomsheet,
+                            Center(
+                              child: Container(
+                                height: 0.4,
+                                // width:  0.95,
+                                color: CommonColor.bottomsheet,
+                              ),
                             ),
-                          ),
 
-                          //SizedBox(height: 15),
-                          SizedBox(
-                            height: responsive.height(15),
-                          ),
+                            //SizedBox(height: 15),
+                            SizedBox(
+                              height: responsive.height(15),
+                            ),
 
-                          /// new changes
 
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                            ListTile
+                              (
+                              leading: Image(
+                                image:
+                                const AssetImage('assets/images/setting.png'),
+                                // height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "About Us",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ProductConfigurations()));
-                            },
-                            child: Wrap(
-                              spacing: 09,
-                              children: [
-                                //SizedBox(width: 03),
-                                SizedBox(width: responsive.width(03)),
-
-                                /// new changes
-
-                                const Image(
-                                  image:
-                                      AssetImage('assets/images/setting.png'),
-                                  height: 20,
-                                ),
-                                Container(
-                                  // width: 108,
-                                  //  color: Colors.red,
-                                  child: const Text("About Us",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
+                                //  MaterialPageRoute(builder: (context) => const ProductConfigurations()),
+                                  MaterialPageRoute(builder: (context) => const ProductReview()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
                             ),
-                          ),
 
-                          //SizedBox(height: 25),
-                          SizedBox(
-                            height: responsive.height(25),
-                          ),
+                                  /// About Us
+                           /* GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductConfigurations()));
+                              },
+                              child: Wrap(
+                                spacing: 09,
+                                children: [
+                                  //SizedBox(width: 03),
+                                  SizedBox(width: responsive.width(03)),
 
-                          /// new changes
+                                  /// new changes
 
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                                   Image(
+                                    image:
+                                        const AssetImage('assets/images/setting.png'),
+                                   // height: 20,
+                                     height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  Container(
+                                    // width: 108,
+                                    //  color: Colors.red,
+                                    child: const Text("About Us",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                         ///
+
+                           // SizedBox(height: responsive.height(25),),
+
+                            ListTile(
+                              leading: Image(
+                                image:
+                                AssetImage('assets/images/setting.png'),
+
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Rate Us",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ProductConfigurations()));
-                            },
-                            child: Wrap(
-                              spacing: 09,
-                              children: [
-                                //  SizedBox(width: 03),
-                                SizedBox(width: responsive.width(03)),
-
-                                /// new changes
-
-                                const Image(
-                                  image:
-                                      AssetImage('assets/images/setting.png'),
-                                  height: 20,
-                                ),
-                                Container(
-                                  // width: 108,
-                                  //  color: Colors.red,
-                                  child: const Text(
-                                      // the text of the row.
-                                      "Rate Us",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
+                                  MaterialPageRoute(builder: (context) => const ProductConfigurations()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
                             ),
-                          ),
 
-                          // SizedBox(height: 25),
-                          SizedBox(
-                            height: responsive.height(25),
-                          ),
+                                 /// Rate Us
+                            /*GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductConfigurations()));
+                              },
+                              child: Wrap(
+                                spacing: 09,
+                                children: [
+                                  //  SizedBox(width: 03),
+                                  SizedBox(width: responsive.width(03)),
 
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                                  /// new changes
+
+                                   Image(
+                                    image:
+                                        AssetImage('assets/images/setting.png'),
+                                   // height: 20,
+                                     height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  Container(
+                                    // width: 108,
+                                    //  color: Colors.red,
+                                    child: const Text(
+                                        // the text of the row.
+                                        "Rate Us",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                         ///
+
+                          //  SizedBox(height: responsive.height(25),),
+
+                           /* ListTile(
+                              leading:Image(
+                                image:
+                                AssetImage('assets/images/setting.png'),
+                                //height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Follow Us",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductConfigurations()));
-                            },
-                            child: Wrap(
-                              spacing: 09,
+                                  MaterialPageRoute(builder: (context) => const ProductConfigurations()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),*/
+
+                            /// Social media
+                           /* Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // SizedBox(width: 03),
-                                SizedBox(width: responsive.width(03)),
-
-                                /// new changes
-
-                                const Image(
-                                  image:
-                                      AssetImage('assets/images/setting.png'),
-                                  height: 20,
-                                ),
-                                Container(
-                                  // width: 108,
-                                  //  color: Colors.red,
-                                  child: const Text(
-                                      // the text of the row.
-                                      "Follow Us",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // SizedBox(height: 25),
-                          SizedBox(
-                            height: responsive.height(25),
-                          ),
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const chat()));
-                            },
-                            child: Wrap(
-                              spacing: 13,
-                              children: [
-                                // SizedBox(width: 0),
-                                SizedBox(width: responsive.width(0)),
-
-                                /// new changes
-
-                                const Image(
-                                  image: AssetImage('assets/images/chat.png'),
-                                  height: 20,
-                                ),
-                                Container(
-                                  // width: 125,
-                                  //  color: Colors.red,
-                                  child: const Text(
-                                      // the text of the row.
-                                      "Share App",
-                                      style: TextStyle(
-                                        color: Color(0xff2B2B2B),
-                                        fontFamily: "okra_Medium",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                                Container(
-                                  height: 23,
-                                  width: 23,
-                                  child: const Center(
-                                      child: Icon(
-                                    Icons.share_sharp,
-                                    size: 18,
-                                  )),
-                                )
-                              ],
-                            ),
-                          ),
-
-                          //  SizedBox(height: 25),
-                          SizedBox(
-                            height: responsive.height(25),
-                          ),
-
-                          /// new changes
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const chat()));
-                            },
-                            child: Wrap(
-                              spacing: 13,
-                              children: [
-                                //  SizedBox(width: 0),
-                                SizedBox(width: responsive.width(0)),
-
-                                /// new changes
-
-                                const Image(
-                                  image: AssetImage('assets/images/chat.png'),
-                                  height: 20,
-                                ),
-                                const Text(
-                                    // the text of the row.
-                                    "Legal",
+                                ListTile(
+                                  leading: Image(
+                                    image: const AssetImage('assets/images/setting.png'),
+                                    height: responsive.height(
+                                      responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27,
+                                    ),
+                                  ),
+                                  title: const Text(
+                                    "Follow Us",
                                     style: TextStyle(
                                       color: Color(0xff2B2B2B),
                                       fontFamily: "okra_Medium",
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
                                     ),
-                                    overflow: TextOverflow.ellipsis),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const ProductConfigurations()),
+                                    );
+                                  },
+                                  dense: true,
+                                  visualDensity: const VisualDensity(vertical: -4),
+                                ),
+
+                                // 👇 Add social media icons here
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 72, top: 4), // aligns with ListTile content
+                                  child:  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/FacebookIcon.png', height: 24),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/InstagramIcon.png', height: 28),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/TwitterIcon.png', height: 28),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/LinkedinIcon.png', height: 24),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/YouTubeIcon.png', height: 24),
+                                      ),
+                                    ],
+                                  ),
+                                  // Row(
+                                  //   children: [
+                                  //     Image.asset('assets/images/FacebookIcon.png', height: 24),
+                                  //     const SizedBox(width: 10),
+                                  //     Image.asset('assets/images/InstagramIcon.png', height: 28),
+                                  //     const SizedBox(width: 10),
+                                  //     Image.asset('assets/images/TwitterIcon.png', height: 28),
+                                  //     const SizedBox(width: 10),
+                                  //     Image.asset('assets/images/LinkedinIcon.png', height: 24),
+                                  //     const SizedBox(width: 10),
+                                  //     Image.asset('assets/images/YouTubeIcon.png', height: 24),
+                                  //   ],
+                                  // ),
+                                ),
                               ],
-                            ),
-                          ),
+                            ),*/
 
-                          // SizedBox(height: 15),
-                          SizedBox(
-                            height: responsive.height(15),
-                          ),
 
-                          /// new changes
+                            /// Follow Us
+                            /*GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProductConfigurations()));
+                              },
+                              child: Wrap(
+                                spacing: 09,
+                                children: [
+                                  // SizedBox(width: 03),
+                                  SizedBox(width: responsive.width(03)),
 
-                          GestureDetector(
-                            onTap: () {
-                              //  LogoutDialogBox(context);
-                            },
-                            child: Row(
-                              children: [
-                                //  Spacer(),
-                                Container(
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Row(
-                                      children: [
-                                        Image(
-                                          image: AssetImage(
-                                              'assets/images/logout.png'),
-                                          height: 20,
-                                          color: Colors.pink,
+                                  /// new changes
+
+                                   Image(
+                                    image:
+                                        AssetImage('assets/images/setting.png'),
+                                    //height: 20,
+                                     height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  Container(
+                                    // width: 108,
+                                    //  color: Colors.red,
+                                    child: const Text(
+                                        // the text of the row.
+                                        "Follow Us",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
                                         ),
-                                        Text(
-                                          "    Logout    ",
-                                          style: TextStyle(
-                                            color: Colors.pink,
-                                            fontFamily: "okra_Medium",
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              ),
+                            ),*/
+                         ///
 
-                                          /* style: TextStyle(
+                           // SizedBox(height: responsive.height(25),),
+
+                            ListTile(
+                              leading: Image(
+                                image: AssetImage('assets/images/chat.png'),
+                                //height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Share App",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Share.share('Check out this amazing app: https://example.com');
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(builder: (context) => const chat()),
+                                // );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+                                  /// Share App
+                            /*GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const chat()));
+                              },
+                              child: Wrap(
+                                spacing: 13,
+                                children: [
+                                  // SizedBox(width: 0),
+                                  SizedBox(width: responsive.width(0)),
+
+                                  /// new changes
+
+                                   Image(
+                                    image: AssetImage('assets/images/chat.png'),
+                                    //height: 20,
+                                    height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  Container(
+                                    // width: 125,
+                                    //  color: Colors.red,
+                                    child: const Text(
+                                        // the text of the row.
+                                        "Share App",
+                                        style: TextStyle(
+                                          color: Color(0xff2B2B2B),
+                                          fontFamily: "okra_Medium",
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                  Container(
+                                    height: 23,
+                                    width: 23,
+                                    child: const Center(
+                                        child: Icon(
+                                      Icons.share_sharp,
+                                      size: 18,
+                                    )),
+                                  )
+                                ],
+                              ),
+                            ),*/
+                          ///
+
+                           // SizedBox(height: responsive.height(25),),
+
+                            ListTile(
+                              leading: Image(
+                                image: AssetImage('assets/images/chat.png'),
+                                //height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                              ),
+                              title:  const Text(
+                                  "Legal",
+                                  style: TextStyle(
+                                    color: Color(0xff2B2B2B),
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const CustomDrawer()),
+                                );
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+                                  /// Legal
+                           /* GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const chat()));
+                              },
+                              child: Wrap(
+                                spacing: 13,
+                                children: [
+                                  //  SizedBox(width: 0),
+                                  SizedBox(width: responsive.width(0)),
+
+                                  /// new changes
+
+                                   Image(
+                                    image: AssetImage('assets/images/chat.png'),
+                                    //height: 20,
+                                    height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                  ),
+                                  const Text(
+                                      // the text of the row.
+                                      "Legal",
+                                      style: TextStyle(
+                                        color: Color(0xff2B2B2B),
+                                        fontFamily: "okra_Medium",
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis),
+                                ],
+                              ),
+                            ),*/
+                         ///
+
+                          //  SizedBox(height: responsive.height(15),),
+
+                            ListTile(
+                              leading: Image(
+                                image: const AssetImage(
+                                    'assets/images/logout.png'),
+                                //height: 20,
+                                height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
+                                color: Colors.pink,
+                              ),
+                              title:  const Text(
+                                  " Logout ",
+                                  style: TextStyle(
+                                    color: Colors.pink,
+                                    fontFamily: "okra_Medium",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              onTap: () {
+                                LogoutDialogBox(context);
+                              },
+                              dense: true, // reduces vertical padding
+                              visualDensity: VisualDensity(vertical: -4), // even tighter
+                            ),
+
+                                  /// Logout
+                            /*GestureDetector(
+                              onTap: () {
+                                //  LogoutDialogBox(context);
+                              },
+                              child: Row(
+                                children: [
+                                  //  Spacer(),
+                                  Container(
+                                    child:  Padding(
+                                      padding: EdgeInsets.all(5),
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                            image: AssetImage(
+                                                'assets/images/logout.png'),
+                                            //height: 20,
+                                            height: responsive.height(responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27),                          /// new change
                                             color: Colors.pink,
-                                            fontSize:
-                                                SizeConfig.blockSizeHorizontal * 3.9),*/
-                                        )
-                                      ],
+                                          ),
+                                          Text(
+                                            "    Logout    ",
+                                            style: TextStyle(
+                                              color: Colors.pink,
+                                              fontFamily: "okra_Medium",
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+
+                                            *//* style: TextStyle(
+                                              color: Colors.pink,
+                                              fontSize:
+                                                  SizeConfig.blockSizeHorizontal * 3.9),*//*
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
+                                  Spacer()
+                                ],
+                              ),
+                            ),*/
+                            ///
+
+
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  // leading: Image(
+                                  //   image: const AssetImage('assets/images/setting.png'),
+                                  //   height: responsive.height(
+                                  //     responsive.isMobile ? 22 : responsive.isTablet ? 25 : 27,
+                                  //   ),
+                                  // ),
+                                  // title: const Text(
+                                  //   "Follow Us",
+                                  //   style: TextStyle(
+                                  //     color: Color(0xff2B2B2B),
+                                  //     fontFamily: "okra_Medium",
+                                  //     fontSize: 15,
+                                  //     fontWeight: FontWeight.w600,
+                                  //   ),
+                                  //   overflow: TextOverflow.ellipsis,
+                                  // ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const ProductConfigurations()),
+                                    );
+                                  },
+                                  dense: true,
+                                  visualDensity: const VisualDensity(vertical: -4),
                                 ),
-                                Spacer()
+
+                                // 👇 Add social media icons here
+                                Padding(
+                                  //padding: const EdgeInsets.only(left: 72, top: 4),
+                                  padding: const EdgeInsets.only(left: 22, top: 0), // aligns with ListTile content
+                                  child:  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/FacebookIcon.png', height: 24),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/InstagramIcon.png', height: 28),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/TwitterIcon.png', height: 28),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/LinkedinIcon.png', height: 24),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NearbyViewAll()));
+                                        },
+                                        child: Image.asset('assets/images/YouTubeIcon.png', height: 24),
+                                      ),
+                                    ],
+                                  ),
+                                  // Row(
+                                  //   children: [
+                                  //     Image.asset('assets/images/FacebookIcon.png', height: 24),
+                                  //     const SizedBox(width: 10),
+                                  //     Image.asset('assets/images/InstagramIcon.png', height: 28),
+                                  //     const SizedBox(width: 10),
+                                  //     Image.asset('assets/images/TwitterIcon.png', height: 28),
+                                  //     const SizedBox(width: 10),
+                                  //     Image.asset('assets/images/LinkedinIcon.png', height: 24),
+                                  //     const SizedBox(width: 10),
+                                  //     Image.asset('assets/images/YouTubeIcon.png', height: 24),
+                                  //   ],
+                                  // ),
+                                ),
                               ],
                             ),
-                          ),
 
-                          //SizedBox(height: 30),
-                          SizedBox(
-                            height: responsive.height(30),
-                          ),
+                            SizedBox(height: responsive.height(30),),
 
-                          /// new changes
-                        ],
+                            /// new changes
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -1815,199 +3226,193 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
 
-            Expanded(
-            child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Name Text
-                Container(
-                  padding: EdgeInsets.only(top: 20, left: 20, right: 5),
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Hi, Aayshaaa",
-                        style: TextStyle(
-                          // fontSize: ResponsiveUtil.fontSize(15),
-                          fontSize: responsive.fontSize(
-                              responsive.isMobile ? 15 : 10),
+            Container(
+             // color: const Color(0xFFFFEBEE),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+             // crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Name Text
+                  Container(
+                    //color:Color(0xFFFFEBEE),
+                    padding: EdgeInsets.only(top: 10, left: 20, right: 10),
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Hi, Aayshaaa",
+                          style: TextStyle(
+                            // fontSize: ResponsiveUtil.fontSize(15),
+                            fontSize: responsive.fontSize(responsive.isMobile ? 15 : responsive.isTablet ? 11 : 12),
 
-                          /// new change in fontSize
-                          fontFamily: 'okra_extrabold',
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black38,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-
-                      SizedBox(
-                        width: responsive.width(10),
-                      ),
-
-                      SizedBox(
-                        width: responsive.width(30),
-                      ),
-
-                      Row(
-                        children: [
-                          /// Notification
-                          Image.asset(
-                            'assets/images/notification.png',
-                            // height: ResponsiveUtil.height(20),
-                            height: responsive.height(20),
-
-                            /// new change
+                            /// new change in fontSize
+                            fontFamily: 'okra_extrabold',
+                            fontWeight: FontWeight.w400,
                             color: Colors.black38,
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
 
-                          SizedBox(
-                            width: responsive.width(5),
-                          ),
 
-                          /// Profile Icon
-                          GestureDetector(
-                              onTap: () {
-                                _scaffoldKey.currentState?.openDrawer();
-                              },
-                              child:ClipOval(
-                                child: Image.asset(
-                                  'assets/images/ProfileIcon.jpg',
-                                  width: 25,  // set width
-                                  height: 25, // set height
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                          ),
 
-                        ],
-                      )
+                       // SizedBox(width: responsive.width(30),),
 
-                    ],
+                        Row(
+                          children: [
+                            /// Notification
+                            Image.asset(
+                              'assets/images/notification.png',
+                              height: responsive.height(responsive.isMobile ? 25 : responsive.isTablet ? 30 : 35),                          /// new change
+                              width: responsive.width(responsive.isMobile ? 25 : responsive.isTablet ? 30 : 35),                      /// new change
+                              color: Colors.black38,
+                            ),
+
+                            SizedBox(
+                              width: responsive.width(5),
+                            ),
+
+                            /// Profile Icon
+                            GestureDetector(
+                                onTap: () {
+                                  _scaffoldKey.currentState?.openDrawer();
+                                },
+                                child:ClipOval(
+                                  child: Image.asset(
+                                    'assets/images/ProfileIcon.jpg',
+                                    height: responsive.height(responsive.isMobile ? 25 : responsive.isTablet ? 30 : 32),                          /// new change
+                                    width: responsive.width(responsive.isMobile ? 25 : responsive.isTablet ? 23 : 25),                      /// new change
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                            ),
+
+                          ],
+                        )
+
+                      ],
+                    ),
                   ),
-                ),
 
-                SizedBox(height: responsive.height(4),),
+                  SizedBox(height: responsive.height(4),),
 
-                // Location Row
-                GestureDetector(
-                    onTap: () async {
-                      String? selectedCity = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                            const LocationMapScreen()),
-                      );
-                      if (selectedCity != null) {
-                        print("Received City: $selectedCity");
-
-                        setState(() {
-                          updatedCity = selectedCity;
-                        });
-                        String? id = GetStorage().read<String>('userId');
-                        print("jjjjjjjj  $id");
-                        bool success = await authService.storeUserCity(
-                          id!,
-                          18.5204,
-                          73.8567,
-                          selectedCity,
+                  // Location Row
+                  GestureDetector(
+                      onTap: () async {
+                        String? selectedCity = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                              const LocationMapScreen()),
                         );
+                        if (selectedCity != null) {
+                          print("Received City: $selectedCity");
 
-                        if (success) {
-                          print("City successfully updated in backend!");
-                        } else {
-                          print("Failed to update city in backend.");
+                          setState(() {
+                            updatedCity = selectedCity;
+                          });
+                          String? id = GetStorage().read<String>('userId');
+                          print("jjjjjjjj  $id");
+                          bool success = await authService.storeUserCity(
+                            id!,
+                            18.5204,
+                            73.8567,
+                            selectedCity,
+                          );
+
+                          if (success) {
+                            print("City successfully updated in backend!");
+                          } else {
+                            print("Failed to update city in backend.");
+                          }
                         }
-                      }
-                    },
-                    child: Padding(
-                      // padding: EdgeInsets.only(top: 5, left: 16, right: 16),
-                      padding: responsive.getPadding(all: 0).copyWith(
-                          left: responsive.isMobile ? 16 : 28,
-                          right: responsive.isMobile ? 16 : 120),
+                      },
+                      child: Padding(
+                        // padding: EdgeInsets.only(top: 5, left: 16, right: 16),
+                        padding: responsive.getPadding(all: 0).copyWith(
+                            left: responsive.isMobile ? 16 : 28,
+                            right: responsive.isMobile ? 16 : 120),
 
-                      /// new add responsive padding
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Container(
+                        /// new add responsive padding
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Container(
 
-                              padding: responsive.getPadding(horizontal: 12),
+                                padding: responsive.getPadding(horizontal: 12),
 
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: responsive.width(5),
-                                  ),
-
-                                  /// new add
-                                  Icon(
-                                    Icons.location_on,
-                                    // size: SizeConfig.screenHeight * 0.025,
-                                    size: responsive.fontSize(
-                                        responsive.isMobile ? 16 : 11),
-
-                                    /// new change IconSize
-                                    color: const Color(0xff632883),
-                                  ),
-
-                                  //SizedBox(width: 5),
-                                  SizedBox(
-                                    width: responsive.width(5),
-                                  ),
-
-                                  /// new change
-
-                                  Expanded(
-                                    child: Text(
-                                      updatedCity,
-                                      style: TextStyle(
-                                        color: const Color(0xff632883),
-                                        letterSpacing: 0.0,
-                                        fontFamily: "okra_Bold",
-                                        // fontSize: SizeConfig.blockSizeHorizontal * 3.8,
-                                        fontSize: responsive.fontSize(
-                                            responsive.isMobile ? 12 : 8),
-
-                                        /// new change fontSize
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: responsive.width(5),
                                     ),
-                                  ),
-                                ],
+
+                                    /// new add
+                                    Icon(
+                                      Icons.location_on,
+
+                                      size: responsive.fontSize(responsive.isMobile ? 16 : 11),
+
+                                      /// new change IconSize
+                                      color: const Color(0xff632883),
+                                    ),
+
+                                    //SizedBox(width: 5),
+                                    SizedBox(
+                                      width: responsive.width(5),
+                                    ),
+
+                                    /// new change
+
+                                    Expanded(
+                                      child: Text(
+                                        updatedCity,
+                                        style: TextStyle(
+                                          color: const Color(0xff632883),
+                                          letterSpacing: 0.0,
+                                          fontFamily: "okra_Bold",
+                                          // fontSize: SizeConfig.blockSizeHorizontal * 3.8,
+                                          fontSize: responsive.fontSize(
+                                              responsive.isMobile ? 12 : 8),
+
+                                          /// new change fontSize
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
 
 
-                          // AddPostButton(SizeConfig.screenHeight,
-                          //     SizeConfig.screenWidth),
-                        ],
+                            // AddPostButton(SizeConfig.screenHeight,
+                            //     SizeConfig.screenWidth),
+                          ],
+                        ),
                       ),
-                    )),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
 
 
 
              /// New Service/Product
                 Padding(
-                  padding: const EdgeInsets.only(right: 9, left: 9, top: 6, bottom: 10),
-                  // padding: EdgeInsets.symmetric(horizontal: ResponsiveUtil.width(9), vertical: 20),
+                  padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 9 : responsive.isTablet ? 40 : 50, right: responsive.isMobile ? 9 :  responsive.isTablet ? 40 : 50, top: responsive.isMobile ? 12 : 21, bottom: responsive.isMobile ? 9 : 10,),              /// new add responsive padding
                   child: Stack(
-                    alignment: Alignment.center,
+                   // alignment: Alignment.center,
                     clipBehavior: Clip.none,
                     children: [
                       // Background Container
                       Container(
-                      //  padding: EdgeInsets.all(ResponsiveUtil.width(2)),
-                        padding: EdgeInsets.only(left:5, right: 5 , bottom: 1, top: 1),
+                       padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 5 : 6, top: responsive.isMobile ? 1 : 2, right: responsive.isMobile ? 5 : 6, bottom: responsive.isMobile ? 1 : 2),              /// new add responsive padding
                         decoration: BoxDecoration(
                          color: Colors.black38,
                          // color: Colors.orangeAccent,
@@ -2217,12 +3622,15 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                       ),*/
 
                       Positioned(
-                        top: -ResponsiveUtil.width(28),
+                       // top: -ResponsiveUtil.width(28),
+                        top: responsive.isMobile ? -29 : responsive.isTablet ? -26 : -25,
+                        left: responsive.isMobile ? 121 : responsive.isTablet ? 285 : -25,
+
+                       // left: 121,
                         child: Container(
-                          width: 110,
-                          height: 110,
-                          // width: ResponsiveUtil.width(55),
-                          // height: ResponsiveUtil.width(70),
+                          alignment: Alignment.center,
+                          height: responsive.height(responsive.isMobile ? 110 : responsive.isTablet ? 70 : 75),                          /// new change
+                          width: responsive.width(responsive.isMobile ? 110 : responsive.isTablet ? 70 : 75),                      /// new change
                           decoration:  const BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
@@ -2238,96 +3646,114 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                             //   ),
                             // ],
                           ),
-                          child: IconButton(
-                            icon: Icon(Icons.add, color: Colors.white, size: ResponsiveUtil.fontSize(20)),
-                            onPressed: () {
-                              print("Add Button Pressed");
-                            },
-                          ),
                         ),
                       ),
 
 
                       /// glass
+                      // Positioned(
+                      //   top: responsive.isMobile
+                      //       ? -14
+                      //       : responsive.isTablet
+                      //       ? 0
+                      //       : 0,
+                      //   left: responsive.isMobile
+                      //       ? 150
+                      //       : responsive.isTablet
+                      //       ? 0
+                      //       : 0,
+                      //   right: responsive.isMobile
+                      //       ? 150
+                      //       : responsive.isTablet
+                      //       ? 290
+                      //       : 275,
+                      //   bottom: responsive.isMobile
+                      //       ? -18
+                      //       : responsive.isTablet
+                      //       ? 0
+                      //       : 0,
+                      //   child: ClipRRect(
+                      //     borderRadius: BorderRadius.circular(100),
+                      //     child: Stack(
+                      //       children: [
+                      //         BackdropFilter(
+                      //           //  filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+                      //           // filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3 ),
+                      //           filter: ImageFilter.blur(
+                      //               sigmaX: responsive.isMobile
+                      //                   ? 3
+                      //                   : 8,
+                      //               sigmaY: responsive.isMobile
+                      //                   ? 3
+                      //                   : 8),
+                      //           child: Container(
+                      //             ///                   // color: Colors.black26.withOpacity(0.2),
+                      //             color: Colors.white
+                      //                 .withOpacity(0.1),
+                      //           ),
+                      //         ),
+                      //         // Center(
+                      //         //   child: Container(
+                      //         //     margin: responsive.getMargin(
+                      //         //         all: 5),
+                      //         //     padding: responsive.getPadding(
+                      //         //         all: 2),
+                      //         //   ),
+                      //         // ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+
+
                       Positioned(
-                        top: responsive.isMobile
-                            ? -14
-                            : responsive.isTablet
-                            ? 0
-                            : 0,
-                        left: responsive.isMobile
-                            ? 150
-                            : responsive.isTablet
-                            ? 0
-                            : 0,
-                        right: responsive.isMobile
-                            ? 150
-                            : responsive.isTablet
-                            ? 290
-                            : 275,
-                        bottom: responsive.isMobile
-                            ? -18
-                            : responsive.isTablet
-                            ? 0
-                            : 0,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: Stack(
-                            children: [
-                              BackdropFilter(
-                                //  filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
-                                // filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3 ),
-                                filter: ImageFilter.blur(
-                                    sigmaX: responsive.isMobile
-                                        ? 3
-                                        : 8,
-                                    sigmaY: responsive.isMobile
-                                        ? 3
-                                        : 8),
-                                child: Container(
-                                  ///                   // color: Colors.black26.withOpacity(0.2),
-                                  color: Colors.white
-                                      .withOpacity(0.1),
-                                ),
-                              ),
-                              // Center(
-                              //   child: Container(
-                              //     margin: responsive.getMargin(
-                              //         all: 5),
-                              //     padding: responsive.getPadding(
-                              //         all: 2),
-                              //   ),
-                              // ),
-                            ],
+                        //top: responsive.isMobile ? -22 : 0,
+                       // left: responsive.isMobile ? 135 : 0,
+                      //  right: responsive.isMobile ? 135 : responsive.isTablet ? 320 : 325,
+                       // bottom: responsive.isMobile ? -22 : 0,
+                        top: responsive.isMobile ? -13 : responsive.isTablet ? -24 : responsive.isDesktop ? -23 : -23,
+                        left: responsive.isMobile ? 137 : responsive.isTablet ? 290 :  responsive.isDesktop ? 320 : 350,
+                        //left: 137,
+                        child: ClipOval( // <--- Make it perfectly circular
+                          child: Container(
+                            height: responsive.height(responsive.isMobile ? 75 : responsive.isTablet ? 65 : 70),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 75 : responsive.isTablet ? 65 : 70),                      /// new change
+                            //width: 110,
+                            //height: 110,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withOpacity(0.2),
+                            ),
                           ),
                         ),
                       ),
 
 
+
                       /// Plus Icon
                       Positioned(
                         top: responsive.isMobile
-                            ? -14
+                            ? -6
                             : responsive.isTablet
-                            ? 0
+                            ? -2
                             : 0,
                         left: responsive.isMobile
                             ? 150
                             : responsive.isTablet
-                            ? 0
+                            ? 335
                             : 0,
-                        right: responsive.isMobile
-                            ? 150
-                            : responsive.isTablet
-                            ? 290
-                            : 275,
-                        bottom: responsive.isMobile
-                            ? -14
-                            : responsive.isTablet
-                            ? 0
-                            : 0,
+                        // right: responsive.isMobile
+                        //     ? 150
+                        //     : responsive.isTablet
+                        //     ? 290
+                        //     : 275,
+                        // bottom: responsive.isMobile
+                        //     ? -14
+                        //     : responsive.isTablet
+                        //     ? 0
+                        //     : 0,
                         child:IconButton(
-                          icon: Icon(Icons.add, color: Colors.white, size: ResponsiveUtil.fontSize(24)),
+                          icon: Icon(Icons.add, color: Colors.white, size: ResponsiveUtil.fontSize(responsive.isMobile ? 30 : responsive.isTablet ? 40 : 45)),
                           onPressed: () {
                             print("Add Button Pressed");
                           },
@@ -2337,7 +3763,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                   ),
                 ),
 
-             /// Create Post
+
+                /// Create Post
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -2377,16 +3804,14 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         viewportFraction: 1.0,
                         enableInfiniteScroll: false,
                         autoPlay: true,
-                        enlargeStrategy:
-                        CenterPageEnlargeStrategy.height,
+                        enlargeStrategy: CenterPageEnlargeStrategy.height,
                       ),
                       itemBuilder: (BuildContext context,
                           int itemIndex, int index1) {
-                        final baseUrl =
-                            'https://admin-fyu1.onrender.com/';
+                        // final baseUrl ='https://admin-fyu1.onrender.com/';
 
                         final imgUrl = adsUrlsList.isNotEmpty
-                            ? '$baseUrl${adsUrlsList[index1].replaceAll("\\", "/")}'
+                            ? '${adsUrlsList[index1].replaceAll("\\", "/")}'
                             : null;
                         final isVideo = imgUrl != null &&
                             imgUrl.endsWith('.mp4');
@@ -2529,14 +3954,11 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                 ),
 
 
-
-
                 /// or ///
                 Stack(
                  // alignment: Alignment.center,
                   clipBehavior: Clip.none,
                   children: [
-
                     Positioned(
                       child: ClipRRect(
                         borderRadius: BorderRadius.only(
@@ -2564,7 +3986,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                               Container(
 
                                 color: Color(0xFF6D4C41).withOpacity(0.55),
-                                height:200,   // 392,
+                                height: responsive.height(responsive.isMobile ? 210 : responsive.isTablet ? 220 : 230),                          /// new change
+                                //height:200,   // 392,
                                 width: double.infinity,
 
                                 child: ClipRRect(
@@ -2572,8 +3995,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   child: BackdropFilter(
                                     filter: ImageFilter.blur(sigmaX: responsive.isMobile ? 7 : 8, sigmaY: responsive.isMobile ? 7 : 8),
                                     child: Container(
-                                      height: 200,
-                                      width: 150,
+                                      height: responsive.height(responsive.isMobile ? 200 : responsive.isTablet ? 220 : 240),
+                                     // width: responsive.width(responsive.isMobile ? 150 : responsive.isTablet ? 370 : 420),
+                                      //height: 200,
+                                      //width: 150,
                                       decoration: BoxDecoration(
                                         //  borderRadius: BorderRadius.circular(20.0),
                                         gradient: LinearGradient(
@@ -2629,7 +4054,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                                                        /// bottom line categories
 
                                                                                       Container(
-                                                                                        height: 140,
+                                                                                        height: responsive.height(responsive.isMobile ? 150 : responsive.isTablet ? 160 : 165),                          /// new change
+                                                                                       // height: 140,
                                                                                         child: ListView(
                                                                                           scrollDirection: Axis.horizontal,
                                                                                           children: [
@@ -2642,6 +4068,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                                                                             _buildIconItem('assets/images/Wedding_Dresses.png', 'Wedding Dress..'),
                                                                                             _buildIconItem('assets/images/Event_Material.png', 'Event Material'),
                                                                                             _buildIconItem('assets/images/Electricals_Image.png', 'Electricals'),
+                                                                                            _buildIconItem('assets/images/view-all.jpg', 'View All'),
                                                                                           ],
                                                                                         ),
                                                                                       )
@@ -2666,8 +4093,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                     ),
                   ],
                 ),
-          
-          
+
+
                 /// Home Screen orange color
           /*
                 Stack(
@@ -2695,7 +4122,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-          
+
                                 // ClipPath(
                                 //   clipper: BottomSemiCircle(),
                                 //   child: Container(
@@ -2770,7 +4197,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                 //     // ),
                                 //   ),
                                 // ),
-          
+
                                 ClipPath(
                                   clipper: BottomSemiCircle(),
                                   child: Container(
@@ -2779,7 +4206,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                     color: Colors.black87,
                                   ),
                                 ),
-          
+
                                 Container(
                                   width: double.infinity,
                                   height: 190,        //70,                        // Extra black height added below curve
@@ -2806,13 +4233,13 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                             ],
                                           ),
                                         )
-          
+
                  ListView.builder(
                                           scrollDirection: Axis.horizontal,
                                           itemCount: filteredItems.length >= 8 ? 8 : filteredItems.length,
                                           itemBuilder: (context, index) {
                                             double screenWidth = MediaQuery.of(context).size.width;
-          
+
                                             return Padding(
                                              // padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
                                               padding: responsive.getPadding(all: 0).copyWith(left: responsive.isMobile ? 3 : 30, right: responsive.isMobile ? 3 : 30, top: responsive.isMobile ? 10 : 5, bottom: responsive.isMobile ? 3 : 5),              /// new add responsive padding
@@ -2880,9 +4307,9 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                               ],
                             ),
                           ),
-          
+
                         ),
-          
+
                       ]),
                     ),
                     ListView(
@@ -2899,13 +4326,13 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-          
+
                               SizedBox(
                                 width: responsive.width(12),
                               ),
-          
+
                               /// new changes
-          
+
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2919,7 +4346,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           // fontSize: ResponsiveUtil.fontSize(15),
                                           fontSize: responsive.fontSize(
                                               responsive.isMobile ? 15 : 10),
-          
+
                                           /// new change in fontSize
                                           fontFamily: 'okra_extrabold',
                                           fontWeight: FontWeight.w400,
@@ -2929,12 +4356,12 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                         maxLines: 1,
                                       ),
                                     ),
-          
-          
+
+
                                    // SizedBox(height: responsive.height(4),),
-          
+
                                     /// new changes
-          
+
                                     // Location Row
                                     GestureDetector(
                                         onTap: () async {
@@ -2946,7 +4373,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           );
                                           if (selectedCity != null) {
                                             print("Received City: $selectedCity");
-          
+
                                             setState(() {
                                               updatedCity = selectedCity;
                                             });
@@ -2958,7 +4385,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                               73.8567,
                                               selectedCity,
                                             );
-          
+
                                             if (success) {
                                               print("City successfully updated in backend!");
                                             } else {
@@ -2971,7 +4398,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           padding: responsive.getPadding(all: 0).copyWith(
                                               left: responsive.isMobile ? 16 : 28,
                                               right: responsive.isMobile ? 16 : 120),
-          
+
                                           /// new add responsive padding
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2985,11 +4412,11 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                                   //     : responsive.isTablet
                                                   //     ? 30
                                                   //     : 25),
-          
+
                                                   ///  Add new change
                                                   //  padding: const EdgeInsets.symmetric(horizontal: 10),
                                                   padding: responsive.getPadding(horizontal: 12),
-          
+
                                                   /// new change
                                                   // decoration: BoxDecoration(
                                                   //   color: Colors.white.withOpacity(0.8),
@@ -3003,25 +4430,25 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                                       SizedBox(
                                                         width: responsive.width(5),
                                                       ),
-          
+
                                                       /// new add
                                                       Icon(
                                                         Icons.location_on,
                                                         // size: SizeConfig.screenHeight * 0.025,
                                                         size: responsive.fontSize(
                                                             responsive.isMobile ? 16 : 11),
-          
+
                                                         /// new change IconSize
                                                         color: const Color(0xff632883),
                                                       ),
-          
+
                                                       //SizedBox(width: 5),
                                                       SizedBox(
                                                         width: responsive.width(5),
                                                       ),
-          
+
                                                       /// new change
-          
+
                                                       Expanded(
                                                         child: Text(
                                                           updatedCity,
@@ -3032,7 +4459,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                                             // fontSize: SizeConfig.blockSizeHorizontal * 3.8,
                                                             fontSize: responsive.fontSize(
                                                                 responsive.isMobile ? 12 : 8),
-          
+
                                                             /// new change fontSize
                                                             fontWeight: FontWeight.w400,
                                                           ),
@@ -3044,14 +4471,14 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                                   ),
                                                 ),
                                               ),
-          
+
                                               // SizedBox(width: 30),
                                               SizedBox(
                                                 width: responsive.width(30),
                                               ),
-          
+
                                               /// new change
-          
+
                                               // AddPostButton(SizeConfig.screenHeight,
                                               //     SizeConfig.screenWidth),
                                             ],
@@ -3060,24 +4487,24 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ],
                                 ),
                               ),
-          
-          
+
+
                               SizedBox(
                                 width: responsive.width(10),
                               ),
-          
-          
+
+
                               /// new Change
-          
+
                               Image.asset(
                                 'assets/images/notification.png',
                                 // height: ResponsiveUtil.height(20),
                                 height: responsive.height(20),
-          
+
                                 /// new change
                                 color: Colors.white,
                               ),
-          
+
                               SizedBox(
                                 width: responsive.width(10),
                               ),
@@ -3095,25 +4522,25 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                     ),
                                   )
                               ),
-          
+
                             ],
                           ),
                         ),
-          
+
                         // SizedBox(height: ResponsiveUtil.height(13)),
                         SizedBox(
                           height: responsive.height(8),
                         ),
-          
+
                         /// new change
-          
+
                         // Tab Buttons
                         Padding(
                           // padding: EdgeInsets.symmetric(horizontal: responsive.width(10)),
                           padding: EdgeInsets.symmetric(
                               horizontal: responsive.width(responsive.isMobile ? 10 : 30)),   /// new change of padding
 
-          
+
                           /// Service & Product
                           child: Container(
                             padding: responsive.getPadding(all: 2),
@@ -3143,7 +4570,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           parent: animation,
                                           curve: Curves.easeOutBack,
                                         ));
-          
+
                                         return FadeTransition(
                                           opacity: animation,
                                           child: SlideTransition(
@@ -3169,16 +4596,16 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           begin: Alignment.topRight,
                                           end: Alignment.bottomLeft,
                                         ),
-          
+
                                         selected: selectedIndex == 0,
                                         fontSize: responsive.fontSize(responsive.isMobile ? 15 : 10),
                                       ),
                                     ),
                                   ),
                                 ),
-          
+
                                 const SizedBox(width: 10),
-          
+
                                 // Product Button (index 1)
                                 Expanded(
                                   flex: 3,
@@ -3199,7 +4626,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           parent: animation,
                                           curve: Curves.easeOutBack,
                                         ));
-          
+
                                         return FadeTransition(
                                           opacity: animation,
                                           child: SlideTransition(
@@ -3227,7 +4654,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                               ],
                             ),
                           ),
-          
+
                  Container(
                             // padding: EdgeInsets.all(ResponsiveUtil.width(2)),
                             padding: responsive.getPadding(all: 2),
@@ -3279,14 +4706,14 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           //  fontSize: ResponsiveUtil.fontSize(15),
                                           fontSize: responsive.fontSize(
                                               responsive.isMobile ? 15 : 10),
-          
+
                                           /// new change
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-          
+
                                 // Service Button
                                 Expanded(
                                   flex: 3,
@@ -3329,7 +4756,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           // fontSize: ResponsiveUtil.fontSize(15),
                                           fontSize: responsive.fontSize(
                                               responsive.isMobile ? 15 : 10),
-          
+
                                           /// new change
                                         ),
                                       ),
@@ -3340,16 +4767,16 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                             ),
                           ),
                         ),
-          
-          
-          
+
+
+
                         /// ANYTHING ON RENT
                 Padding(
                           //  padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
                           padding: responsive
                               .getPadding(all: 0)
                               .copyWith(top: responsive.isMobile ? 7 : 14),
-          
+
                           /// new add responsive padding
                           child: Text(
                             "   ANYTHING ON RENT",
@@ -3358,7 +4785,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                               // fontSize: SizeConfig.blockSizeHorizontal * 5.0,
                               fontSize: responsive
                                   .fontSize(responsive.isMobile ? 16 : 12),
-          
+
                               /// new change fontSize
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w200,
@@ -3370,9 +4797,9 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         SizedBox(
                           height: responsive.isMobile ? 2 : 10,
                         ),
-          
+
                         /// new change
-          
+
                       /// NO CITY Selected
                   GestureDetector(
                             onTap: () async {
@@ -3384,7 +4811,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                               );
                               if (selectedCity != null) {
                                 print("Received City: $selectedCity");
-          
+
                                 setState(() {
                                   updatedCity = selectedCity;
                                 });
@@ -3396,7 +4823,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   73.8567,
                                   selectedCity,
                                 );
-          
+
                                 if (success) {
                                   print("City successfully updated in backend!");
                                 } else {
@@ -3409,7 +4836,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                               padding: responsive.getPadding(all: 0).copyWith(
                                   left: responsive.isMobile ? 16 : 28,
                                   right: responsive.isMobile ? 16 : 120),
-          
+
                               /// new add responsive padding
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3423,12 +4850,12 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                               : responsive.isTablet
                                                   ? 30
                                                   : 25),
-          
+
                                       ///  Add new change
                                       //  padding: const EdgeInsets.symmetric(horizontal: 10),
                                       padding:
                                           responsive.getPadding(horizontal: 12),
-          
+
                                       /// new change
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.8),
@@ -3441,25 +4868,25 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                           SizedBox(
                                             width: responsive.width(5),
                                           ),
-          
+
                                           /// new add
                                           Icon(
                                             Icons.location_on,
                                             // size: SizeConfig.screenHeight * 0.025,
                                             size: responsive.fontSize(
                                                 responsive.isMobile ? 16 : 11),
-          
+
                                             /// new change IconSize
                                             color: const Color(0xff632883),
                                           ),
-          
+
                                           //SizedBox(width: 5),
                                           SizedBox(
                                             width: responsive.width(5),
                                           ),
-          
+
                                           /// new change
-          
+
                                           Expanded(
                                             child: Text(
                                               updatedCity,
@@ -3470,7 +4897,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                                 // fontSize: SizeConfig.blockSizeHorizontal * 3.8,
                                                 fontSize: responsive.fontSize(
                                                     responsive.isMobile ? 12 : 8),
-          
+
                                                 /// new change fontSize
                                                 fontWeight: FontWeight.w400,
                                               ),
@@ -3482,14 +4909,14 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                       ),
                                     ),
                                   ),
-          
+
                                   // SizedBox(width: 30),
                                   SizedBox(
                                     width: responsive.width(30),
                                   ),
-          
+
                                   /// new change
-          
+
                                   AddPostButton(SizeConfig.screenHeight,
                                       SizeConfig.screenWidth),
                                 ],
@@ -3503,8 +4930,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                     /// HomeSearch
                     //     HomeSearchBar(
                     //         SizeConfig.screenHeight, SizeConfig.screenWidth),
-          
-          
+
+
                         /// body add
                        Column(
                           children: [
@@ -3648,15 +5075,15 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                           ],
                         ),
 
-          
+
                         SizedBox(
                           height: responsive.height(20),
                         ),
-          
+
                         HomeSearchBar(
                             SizeConfig.screenHeight, SizeConfig.screenWidth),
-          
-          
+
+
                         Container(
                           margin: EdgeInsets.only(left: 10),
                           child: Row(
@@ -3685,7 +5112,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                             ],
                           ),
                         ),
-          
+
                       ],
                     ),
                   ],
@@ -3693,32 +5120,33 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
 
            */
            /// end orange screen
-          
-          
+
+
                 //  SizedBox(height: 13),
                 SizedBox(
-                  height: responsive.height(13),
+                  height: responsive.height(5),
                 ),
-          
-          
-          
-          
-          
+
+
+
+
+
                 /// new changes
-          
+
                 // sliderData(                               /// SliderData
                 //   images,
                 //   SizeConfig.screenHeight,
                 //   SizeConfig.screenWidth,
                 // ),
-          
+
                 //PopularCategories(SizeConfig.screenHeight, SizeConfig.screenWidth),
                 Padding(
-                  padding: EdgeInsets.only(
-                      bottom: SizeConfig.screenHeight * 0.03, top: 0),
+                  padding: const EdgeInsets.only(
+                    //  bottom: SizeConfig.screenHeight * 0.03, top: 0),
+                      bottom: 0.03, top: 0),
                   child: Popular(SizeConfig.screenHeight, SizeConfig.screenWidth),
                 ),
-          
+
                 // Padding(
                 //   /// new add RatingLayout
                 //   padding: EdgeInsets.only(
@@ -3726,67 +5154,73 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                 //   child: RatingLayout(
                 //       SizeConfig.screenHeight, SizeConfig.screenWidth),
                 // ),
-          
+
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15, top: 0),
+                  child:
+                  ListDouble(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                ),
+
                 Padding(
                   /// new add RatingLayout
-                  padding: const EdgeInsets.only(bottom: 20, top: 0),
+                  padding: const EdgeInsets.only(bottom: 0, top: 0),
                   child: RatingLayout(
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
                 ),
-          
+
                 // Padding(
                 //   padding: EdgeInsets.only(
                 //       bottom: SizeConfig.screenHeight * 0.03, top: 0),
                 //   child:
                 //   FilterBox(SizeConfig.screenHeight, SizeConfig.screenWidth),
                 // ),
-          
+
                 Padding(
                   /// new add PostLayout
                   padding: EdgeInsets.only(
-                      bottom: SizeConfig.screenHeight * 0.03, top: 0),
+                      bottom: 10, top: 0),
                   child:
                       PostLayout(SizeConfig.screenHeight, SizeConfig.screenWidth),
                 ),
-          
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 0),
-                  child:
-                      ListDouble(SizeConfig.screenHeight, SizeConfig.screenWidth),
-                ),
-          
+
+                // Padding(
+                //   padding: const EdgeInsets.only(bottom: 15, top: 0),
+                //   child:
+                //       ListDouble(SizeConfig.screenHeight, SizeConfig.screenWidth),
+                // ),
+
                 AdsLayout(
                   images,
                   SizeConfig.screenHeight,
                   SizeConfig.screenWidth,
                 ),
-          
+
                 Padding(
                   padding: EdgeInsets.only(
                       bottom: SizeConfig.screenHeight * 0.03, top: 10),
                   child: GraphLayout(
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
                 ),
-          
+
                 Padding(
                   padding: EdgeInsets.only(
                       bottom: SizeConfig.screenHeight * 0.03, top: 10),
                   child: ShareLayout(
                       SizeConfig.screenHeight, SizeConfig.screenWidth),
                 ),
-          
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 0, top: 0),
-                  child: VisitLayout(
-                      SizeConfig.screenHeight, SizeConfig.screenWidth),
-                ),
-          
+
+                // Padding(
+                //   padding: const EdgeInsets.only(bottom: 0, top: 0),
+                //   child: VisitLayout(
+                //       SizeConfig.screenHeight, SizeConfig.screenWidth),
+                // ),
+
                 GoogleAdsLayout(
                   images,
                   SizeConfig.screenHeight,
                   SizeConfig.screenWidth,
                 ),
-          
+
                 // Padding(
                 //   padding: const EdgeInsets.only(bottom: 0, top: 20),
                 //   child: demoHomePage(
@@ -3798,6 +5232,53 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
         )
     );
   }
+
+
+  Widget _customStyledTab({
+    required Key key,
+    required String text,
+    required bool isSelected,
+    required double fontSize,
+  }) {
+    const selectedColor = Color(0xFF2A3240);
+    const unselectedColor = Color(0xFF1F2430);
+    const blue = Color(0xFF246BFD);
+
+    return Container(
+      key: key,
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+      decoration: BoxDecoration(
+        color: isSelected ? selectedColor : unselectedColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isSelected
+            ? [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            offset: const Offset(2, 2),
+            blurRadius: 6,
+          ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.03),
+            offset: const Offset(-2, -2),
+            blurRadius: 4,
+          ),
+        ]
+            : [],
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: isSelected ? blue : Colors.white70,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          fontSize: fontSize,
+          letterSpacing: 0.2,
+        ),
+      ),
+    );
+  }
+
+
+
 
   Widget HomeSearchBar(double parentHeight, double parentWidth) {
     final responsive = ResponsiveHelper(context);
@@ -3958,7 +5439,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         const Icon(Icons.search_rounded, color: Colors.white70, size: 20,),
 
                         Text(
-                          " Search Product/Service",
+                          " Search Product",
                           style: TextStyle(
                             fontFamily: "Roboto_Regular",
                             //fontSize: SizeConfig.blockSizeHorizontal * 3.5,
@@ -4071,7 +5552,111 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
   Widget AddPostButton(double parentHeight, double parentWidth) {
     final responsive = ResponsiveHelper(context);
 
-    return GestureDetector(
+    return  GestureDetector(
+      onTap: () {
+        setState(() {
+          isTapped = true;
+        });
+
+        // Reset back to original after delay (e.g., 500ms)
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            setState(() {
+              isTapped = false;
+            });
+          }
+        });
+
+        // Navigate after a little longer delay
+        Future.delayed(const Duration(milliseconds: 700), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ImageRotator()),
+          );
+        });
+      },
+
+      child: Container(
+
+        //color: Colors.pink,
+        padding: responsive.getPadding(all: 0).copyWith(left: 5, right: 5, top: 5),
+       // margin: responsive.getMargin(all: 0).copyWith(left: 0, right: 0),
+        height: responsive.height(
+          responsive.isMobile ? 50 : responsive.isTablet ? 60 : 65,
+        ),
+        width: responsive.width(
+          responsive.isMobile ? 120 : responsive.isTablet ? 110 : 100,
+        ),
+        child: Stack(
+          children: [
+            // Orange Gradient Pill
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: responsive.getPadding(all: 0).copyWith(left: 0, right: 2),
+                  height: responsive.height(
+                      responsive.isMobile ? 38 : responsive.isTablet ? 42 : 45),
+                  width: responsive.width(
+                      responsive.isMobile ? 100 : responsive.isTablet ? 95 : 100),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFBC02D), Color(0xFFE65100)],
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ],
+            ),
+
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+              top: responsive.height(
+                  isTapped ? (responsive.isMobile ? 0 : 2) : (responsive.isTablet ? 5 : 4)),
+              left: responsive.width(
+                  isTapped ? (responsive.isMobile ? 0 : 0) : (responsive.isTablet ? 5 : 5)),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Stack(
+                  children: [
+                    BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                      child: Container(
+                        color: Colors.blue.withOpacity(0.4),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.white.withOpacity(0.4),
+                      padding: responsive.getPadding(all: 0).copyWith(
+                        top: responsive.isMobile ? 6 :  responsive.isTablet ? 12 : 14,
+                        left: responsive.isMobile ? 9 :  responsive.isTablet ? 10 : 13,
+                        right: responsive.isMobile ? 11 : responsive.isTablet ? 35 : 24,
+                        bottom: responsive.isMobile ? 14 :  responsive.isTablet ? 22 : 25
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Create Post +',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize:
+                            responsive.fontSize(responsive.isMobile ? 13 : 12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+     /* GestureDetector(
       onTap: () {
         Navigator.push(
           context,
@@ -4079,37 +5664,60 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
         );
       },
       child: Container(
+
+       // color :  Color(0xFFFFEBEE),
         height: responsive.height(
-          responsive.isMobile ? 60 : responsive.isTablet ? 80 : 100,
+          responsive.isMobile ? 60 : responsive.isTablet ? 65 : 70,
         ),
+        //width: double.infinity,
         width: responsive.width(
-          responsive.isMobile ? 300 : responsive.isTablet ? 400 : 450,
+          responsive.isMobile ? 300 : responsive.isTablet ? 300 : 310,
         ),
         child: Stack(
           children: [
             /// Background Gradient Pill
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     Container(
+            //      // padding: responsive.getPadding(left: 2, right: 2),
+            //       padding: responsive.getPadding(all: 0).copyWith(
+            //         left: 2,
+            //         right: 2,
+            //
+            //       ),
+            //
+            //       margin: responsive.getMargin(all: 0).copyWith(
+            //         left: 10,
+            //         right: 20,
+            //
+            //       ),
+            //       height: responsive.height(
+            //         responsive.isMobile ? 38 : responsive.isTablet ? 50 : 60,
+            //       ),
+            //       width: responsive.width(
+            //         responsive.isMobile ? 130 : responsive.isTablet ? 160 : 180,
+            //       ),
+            //       decoration: BoxDecoration(
+            //         gradient: const LinearGradient(
+            //           colors: [Color(0xFFFBC02D), Color(0xFFE65100)],
+            //           begin: Alignment.topRight,
+            //           end: Alignment.bottomLeft,
+            //         ),
+            //         borderRadius: BorderRadius.circular(20),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                 // padding: responsive.getPadding(left: 2, right: 2),
-                  padding: responsive.getPadding(all: 0).copyWith(
-                    left: 2,
-                    right: 2,
-
-                  ),
-
-                  margin: responsive.getMargin(all: 0).copyWith(
-                    left: 10,
-                    right: 20,
-
-                  ),
-                  height: responsive.height(
-                    responsive.isMobile ? 38 : responsive.isTablet ? 50 : 60,
-                  ),
-                  width: responsive.width(
-                    responsive.isMobile ? 130 : responsive.isTablet ? 160 : 180,
-                  ),
+                  padding: responsive.getPadding(all: 0).copyWith(left: 2, right: 2),
+                  margin: responsive.getMargin(all: 0).copyWith(left: 10, right: 20),
+                  height: responsive.height(responsive.isMobile ? 38 : responsive.isTablet ? 50 : 55),
+                  width: responsive.width(responsive.isMobile ? 130 : responsive.isTablet ? 116 : 117),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFFBC02D), Color(0xFFE65100)],
@@ -4124,10 +5732,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
 
             /// Positioned Glass Effect and Text
             Positioned(
-              top: responsive.height(responsive.isMobile ? 6 : 4),
+              top: responsive.height(responsive.isMobile ? 6 : responsive.isTablet ? 7 : 8),
               left: responsive.width(responsive.isMobile ? 157 : 180),
-              bottom: responsive.height(responsive.isMobile ? 8 : 6),
-              right: responsive.width(responsive.isMobile ? 7 : 10),
+              bottom: responsive.height(responsive.isMobile ? 12 : 6),
+              right: responsive.width(responsive.isMobile ? 12 : 10),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Stack(
@@ -4151,7 +5759,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: responsive.fontSize(
-                              responsive.isMobile ? 14 : 16,
+                              responsive.isMobile ? 14 : 12,
                             ),
                           ),
                         ),
@@ -4164,7 +5772,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
           ],
         ),
       ),
-    );
+    );*/
   }
 
 
@@ -5022,514 +6630,521 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
 
     return IntrinsicHeight(
       child: Container(
+
         height: SizeConfig.screenHeight * 0.97,
         color: Colors.red,
-        child: Expanded(
-          child: Container(
-            alignment: Alignment.center,
-            child: selectedIndex == 1
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //
-                      // PopularCategories(
-                      //     SizeConfig.screenHeight, SizeConfig.screenWidth),
-                      SizedBox(height: 10),
-
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                alignment: Alignment.center,
+                child: selectedIndex == 1
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Expanded(child: Divider()),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          // Center(
-                          //     child: Text("WHAT'S ON YOUR RENTAL MATERIALS?",
-                          //         style: TextStyle(
-                          //             color: Colors.grey[500]!,
-                          //             fontFamily: "okra_Medium",
-                          //             fontSize:
-                          //                 SizeConfig.blockSizeHorizontal * 3.8,
-                          //             fontWeight: FontWeight.w400,
-                          //             letterSpacing: 0.9),
-                          //         overflow: TextOverflow.ellipsis)),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          const Expanded(child: Divider()),
-                        ],
-                      ),
-                      SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Text(
-                            "  Near by Location",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "Montserrat-Medium",
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              /*Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        PhoneRegistrationPage(
-                                          mobileNumber: '',
-                                          email: '',
-                                          phoneNumber: '', showLoginWidget: false,
-                                        )));*/
+                          //
+                          // PopularCategories(
+                          //     SizeConfig.screenHeight, SizeConfig.screenWidth),
+                          const SizedBox(height: 10),
 
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AllProductList()));
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: parentWidth * 0.38, top: 5),
-                              child: Container(
-                                height: parentHeight * 0.03,
-                                width: parentWidth * 0.22,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Color(0xff3684F0), width: 0.5),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      " View All",
-                                      style: TextStyle(
-                                        fontFamily: "okra_Medium",
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal *
-                                                3.1,
-                                        color: Color(0xff3684F0),
-                                        fontWeight: FontWeight.w200,
-                                      ),
-                                    ),
-                                    const Image(
-                                      image:
-                                          AssetImage('assets/images/arrow.png'),
-                                      height: 20,
-                                      width: 15,
-                                      color: Color(0xff3684F0),
-                                    )
-                                  ],
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(child: Divider()),
+                              SizedBox(
+                                width: 10,
+                              ),
+
+                              // Center(
+                              //     child: Text("WHAT'S ON YOUR RENTAL MATERIALS?",
+                              //         style: TextStyle(
+                              //             color: Colors.grey[500]!,
+                              //             fontFamily: "okra_Medium",
+                              //             fontSize:
+                              //                 SizeConfig.blockSizeHorizontal * 3.8,
+                              //             fontWeight: FontWeight.w400,
+                              //             letterSpacing: 0.9),
+                              //         overflow: TextOverflow.ellipsis)),
+
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(child: Divider()),
+                            ],
+                          ),
+                          SizedBox(height: 15),
+                          Row(
+                            children: [
+                              Text(
+                                "  Near by Location",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Montserrat-Medium",
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                      const Text(
-                        "   Near by place",
-                        style: TextStyle(
-                          color: CommonColor.grayText,
-                          fontFamily: "Montserrat-Medium",
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      GridView.builder(
-                        padding: EdgeInsets.only(top: 15),
-                        physics:
-                            NeverScrollableScrollPhysics(), // Disable GridView's scrolling
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 1.0,
-                          mainAxisSpacing: 0.0,
-                          childAspectRatio: 1.0, // Adjust as needed
-                        ),
-                        itemCount: 4,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.only(
-                                left: 10.0, right: 5.0, top: 0.0, bottom: 30.0),
+                              GestureDetector(
+                                onTap: () {
+                                  /*Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PhoneRegistrationPage(
+                                              mobileNumber: '',
+                                              email: '',
+                                              phoneNumber: '', showLoginWidget: false,
+                                            )));*/
 
-                            decoration: BoxDecoration(
-                                color: CommonColor.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color(0xff000000).withOpacity(0.2),
-                                      blurRadius: 2,
-                                      spreadRadius: 0,
-                                      offset: Offset(0, 1)),
-                                ],
-                                border: Border.all(
-                                    color: Colors.black38, width: 0.9),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(7))),
-
-                            // alignment: Alignment.center,
-
-                            child: Column(
-                              children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      height: SizeConfig.screenHeight * 0.19,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10)),
-                                        child: AnotherCarousel(
-                                          images: const [
-                                            NetworkImage(
-                                                "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
-                                            NetworkImage(
-                                                "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
-                                            NetworkImage(
-                                                "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
-                                            NetworkImage(
-                                                "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
-                                            NetworkImage(
-                                                "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
-                                          ],
-                                          autoplay: false,
-                                          dotSize: 6,
-                                          dotSpacing: 10,
-                                          dotColor: Colors.white70,
-                                          // overlayShadow: false,
-
-                                          dotIncreasedColor: Colors.black45,
-                                          indicatorBgPadding: 3.0,
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => AllProductList()));
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: parentWidth * 0.38, top: 5),
+                                  child: Container(
+                                    height: parentHeight * 0.03,
+                                    width: parentWidth * 0.22,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color(0xff3684F0), width: 0.5),
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(5))),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          " View All",
+                                          style: TextStyle(
+                                            fontFamily: "okra_Medium",
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    3.1,
+                                            color: Color(0xff3684F0),
+                                            fontWeight: FontWeight.w200,
+                                          ),
                                         ),
-                                      ),
+                                        const Image(
+                                          image:
+                                              AssetImage('assets/images/arrow.png'),
+                                          height: 20,
+                                          width: 15,
+                                          color: Color(0xff3684F0),
+                                        )
+                                      ],
                                     ),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            top: parentHeight * 0.125),
-                                        child: Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: parentHeight * 0.055,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  Colors.black.withOpacity(0.3),
-                                              borderRadius:
-                                                  BorderRadius.circular(0),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 8, right: 10, top: 2),
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    'HD Camera (black & white) dfgdf',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontFamily: "okra_Medium",
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.only(top: 2),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.location_on,
-                                                          size: SizeConfig
-                                                                  .screenHeight *
-                                                              0.019,
-                                                          color: Color(
-                                                                  0xffffffff)
-                                                              .withOpacity(0.8),
-                                                        ),
-                                                        Flexible(
-                                                          child: Text(
-                                                            'park Street pune 004120',
-                                                            style: TextStyle(
-                                                              color: Colors
-                                                                  .white
-                                                                  .withOpacity(
-                                                                      0.8),
-                                                              fontFamily:
-                                                                  "Montserrat-Medium",
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        )),
-                                    Padding(
-                                        padding:
-                                            EdgeInsets.only(top: 0, left: 110),
-                                        child: Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            height: 15,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xff632883),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Row(children: [
-                                              Icon(
-                                                Icons.location_on,
-                                                size: SizeConfig.screenHeight *
-                                                    0.019,
-                                                color: Colors.white,
-                                              ),
-                                              Text(
-                                                '1.2 Km   ',
-                                                style: TextStyle(
-                                                  fontFamily:
-                                                      "Montserrat-Regular",
-                                                  fontSize: SizeConfig
-                                                          .blockSizeHorizontal *
-                                                      2.5,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ]),
-                                          ),
-                                        )),
-                                  ],
+                                  ),
                                 ),
-                                SizedBox(height: 4),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "  Recently Added",
-                            style: TextStyle(
-                              fontFamily: "Montserrat-Medium",
-                              fontSize: SizeConfig.blockSizeHorizontal * 4.1,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
+                              )
+                            ],
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => NewService(
-                                            lat: '',
-                                            long: '',
-                                            ProductAddress: '',
-                                            BusinessOfficeAddress: '',
-                                          )));
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: parentWidth * 0.38, top: 3),
-                              child: Container(
-                                height: parentHeight * 0.03,
-                                width: parentWidth * 0.22,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Color(0xff3684F0), width: 0.5),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      " View All",
-                                      style: TextStyle(
-                                        fontFamily: "okra_Medium",
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal *
-                                                3.1,
-                                        color: Color(0xff3684F0),
-                                        fontWeight: FontWeight.w200,
-                                      ),
-                                    ),
-                                    Image(
-                                      image:
-                                          AssetImage('assets/images/arrow.png'),
-                                      height: 20,
-                                      width: 15,
-                                      color: Color(0xff3684F0),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 3, left: 10),
-                        child: Container(
-                          width: 350,
-                          child: Text(
-                            "Display All rental product options in your choose location",
+                          const Text(
+                            "   Near by place",
                             style: TextStyle(
                               color: CommonColor.grayText,
                               fontFamily: "Montserrat-Medium",
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
-                            maxLines: 2, // Limit to 2 lines
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      /* Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: filteredItemss.length,
-                        itemBuilder: (context, index) {
-                          final product = filteredItemss[index];
-                          final productImages = product.images ?? [];
+                          GridView.builder(
+                            padding: EdgeInsets.only(top: 15),
+                            physics:
+                                NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                            shrinkWrap: true,
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 1.0,
+                              mainAxisSpacing: 0.0,
+                              childAspectRatio: 1.0, // Adjust as needed
+                            ),
+                            itemCount: 4,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                margin: const EdgeInsets.only(
+                                    left: 10.0, right: 5.0, top: 0.0, bottom: 30.0),
 
-                          return Container(
-                            height: 300,
-                            color: Colors.red,
-                            width: parentWidth * 0.55,
-                            margin: EdgeInsets.symmetric(horizontal: 10.0),
-                            */
-                      /*decoration: BoxDecoration(
-                             // color: Colors.blue,
-                              borderRadius: BorderRadius.circular(7),
-                              border: Border.all(color: CommonColor.grayText, width: 0.3),
-                            ),*/
-                      /*
-                            child: Column( // Changed Expanded to Column
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(3.0),
-                                  child: Container(
-                                    height: 150, // Fixed height
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(7),
-                                        topRight: Radius.circular(7),
-                                      ),
-                                      child: productImages.isNotEmpty
-                                          ? CarouselSlider.builder(
-                                        key: PageStorageKey('carouselKey'),
-                                        carouselController: _controller,
-                                        itemCount: productImages.length,
-                                        options: CarouselOptions(
-                                          onPageChanged: (index, reason) {
-                                            setState(() {
-                                              currentIndex = index;
-                                            });
-                                          },
-                                          initialPage: 0,
-                                          height: 150,
-                                          viewportFraction: 1.0,
-                                          enableInfiniteScroll: false,
-                                          autoPlay: false,
-                                          enlargeStrategy: CenterPageEnlargeStrategy.height,
-                                        ),
-                                        itemBuilder: (BuildContext context, int itemIndex, int index1) {
-                                          final imgUrl = productImages[index1].url ?? "";
+                                decoration: BoxDecoration(
+                                    color: CommonColor.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: const Color(0xff000000).withOpacity(0.2),
+                                          blurRadius: 2,
+                                          spreadRadius: 0,
+                                          offset: const Offset(0, 1)),
+                                    ],
+                                    border: Border.all(
+                                        color: Colors.black38, width: 0.9),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(7))),
 
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              image: DecorationImage(
-                                                image: NetworkImage(imgUrl),
-                                                fit: BoxFit.cover,
-                                              ),
+                                // alignment: Alignment.center,
+
+                                child: Column(
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        Container(
+                                          height: SizeConfig.screenHeight * 0.19,
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)),
+                                            child: AnotherCarousel(
+                                              images: const [
+                                                NetworkImage(
+                                                    "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg"),
+                                                NetworkImage(
+                                                    "https://pune.accordequips.com/images/products/15ccb1ae241836.png"),
+                                                NetworkImage(
+                                                    "https://5.imimg.com/data5/NK/AW/GLADMIN-33559172/marriage-hall.jpg"),
+                                                NetworkImage(
+                                                    "https://content.jdmagicbox.com/comp/ernakulam/x9/0484px484.x484.230124125915.a8x9/catalogue/zorucci-premium-rentals-edapally-ernakulam-bridal-wear-on-rent-mbd4a48fzz.jpg"),
+                                                NetworkImage(
+                                                    "https://content.jdmagicbox.com/v2/comp/pune/n2/020pxx20.xx20.230311064244.s4n2/catalogue/shree-laxmi-caterers-somwar-peth-pune-caterers-yhxuxzy1t9.jpg")
+                                              ],
+                                              autoplay: false,
+                                              dotSize: 6,
+                                              dotSpacing: 10,
+                                              dotColor: Colors.white70,
+                                              // overlayShadow: false,
+
+                                              dotIncreasedColor: Colors.black45,
+                                              indicatorBgPadding: 3.0,
                                             ),
-                                          );
-                                        },
-                                      )
-                                          : Container(
-                                        color: Colors.grey,
-                                        child: Center(child: Text("No Image")),
-                                      ),
+                                          ),
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(
+                                                top: parentHeight * 0.125),
+                                            child: Align(
+                                              alignment: Alignment.bottomLeft,
+                                              child: Container(
+                                                height: parentHeight * 0.055,
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      Colors.black.withOpacity(0.3),
+                                                  borderRadius:
+                                                      BorderRadius.circular(0),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 8, right: 10, top: 2),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'HD Camera (black & white) dfgdf',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontFamily: "okra_Medium",
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                        overflow:
+                                                            TextOverflow.ellipsis,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(top: 2),
+                                                        child: Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.location_on,
+                                                              size: SizeConfig
+                                                                      .screenHeight *
+                                                                  0.019,
+                                                              color: Color(
+                                                                      0xffffffff)
+                                                                  .withOpacity(0.8),
+                                                            ),
+                                                            Flexible(
+                                                              child: Text(
+                                                                'park Street pune 004120',
+                                                                style: TextStyle(
+                                                                  color: Colors
+                                                                      .white
+                                                                      .withOpacity(
+                                                                          0.8),
+                                                                  fontFamily:
+                                                                      "Montserrat-Medium",
+                                                                  fontSize: 11,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            )),
+                                        Padding(
+                                            padding:
+                                                EdgeInsets.only(top: 0, left: 110),
+                                            child: Align(
+                                              alignment: Alignment.bottomLeft,
+                                              child: Container(
+                                                height: 15,
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xff632883),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                                child: Row(children: [
+                                                  Icon(
+                                                    Icons.location_on,
+                                                    size: SizeConfig.screenHeight *
+                                                        0.019,
+                                                    color: Colors.white,
+                                                  ),
+                                                  Text(
+                                                    '1.2 Km   ',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          "Montserrat-Regular",
+                                                      fontSize: SizeConfig
+                                                              .blockSizeHorizontal *
+                                                          2.5,
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ]),
+                                              ),
+                                            )),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "  Recently Added",
+                                style: TextStyle(
+                                  fontFamily: "Montserrat-Medium",
+                                  fontSize: SizeConfig.blockSizeHorizontal * 4.1,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => NewService(
+                                                lat: '',
+                                                long: '',
+                                                ProductAddress: '',
+                                                BusinessOfficeAddress: '',
+                                              )));
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: parentWidth * 0.38, top: 3),
+                                  child: Container(
+                                    height: parentHeight * 0.03,
+                                    width: parentWidth * 0.22,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color(0xff3684F0), width: 0.5),
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(5))),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          " View All",
+                                          style: TextStyle(
+                                            fontFamily: "okra_Medium",
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    3.1,
+                                            color: Color(0xff3684F0),
+                                            fontWeight: FontWeight.w200,
+                                          ),
+                                        ),
+                                        Image(
+                                          image:
+                                              AssetImage('assets/images/arrow.png'),
+                                          height: 20,
+                                          width: 15,
+                                          color: Color(0xff3684F0),
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: 7),
-                                      Text(
-                                        product.name ?? "No Name",
-                                        style: TextStyle(
-                                          fontFamily: "Montserrat-Regular",
-                                          fontSize: SizeConfig.blockSizeHorizontal * 3.7,
-                                          color: CommonColor.Black,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: 3),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.location_on,
-                                            size: SizeConfig.screenHeight * 0.019,
-                                            color: Color(0xff3684F0),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 3, left: 10),
+                            child: Container(
+                              width: 350,
+                              child: Text(
+                                "Display All rental product options in your choose location",
+                                style: TextStyle(
+                                  color: CommonColor.grayText,
+                                  fontFamily: "Montserrat-Medium",
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 2, // Limit to 2 lines
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          /* Expanded(
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: filteredItemss.length,
+                            itemBuilder: (context, index) {
+                              final product = filteredItemss[index];
+                              final productImages = product.images ?? [];
+
+                              return Container(
+                                height: 300,
+                                color: Colors.red,
+                                width: parentWidth * 0.55,
+                                margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                */
+                          /*decoration: BoxDecoration(
+                                 // color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(7),
+                                  border: Border.all(color: CommonColor.grayText, width: 0.3),
+                                ),*/
+                          /*
+                                child: Column( // Changed Expanded to Column
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(3.0),
+                                      child: Container(
+                                        height: 150, // Fixed height
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(7),
+                                            topRight: Radius.circular(7),
                                           ),
-                                          Flexible(
-                                            child: Text(
-                                              'Park Street, Pune Banner 20023',
-                                              style: TextStyle(
-                                                fontFamily: "Montserrat-Regular",
-                                                fontSize: SizeConfig.blockSizeHorizontal * 3.0,
-                                                color: Color(0xff3684F0),
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
+                                          child: productImages.isNotEmpty
+                                              ? CarouselSlider.builder(
+                                            key: PageStorageKey('carouselKey'),
+                                            carouselController: _controller,
+                                            itemCount: productImages.length,
+                                            options: CarouselOptions(
+                                              onPageChanged: (index, reason) {
+                                                setState(() {
+                                                  currentIndex = index;
+                                                });
+                                              },
+                                              initialPage: 0,
+                                              height: 150,
+                                              viewportFraction: 1.0,
+                                              enableInfiniteScroll: false,
+                                              autoPlay: false,
+                                              enlargeStrategy: CenterPageEnlargeStrategy.height,
                                             ),
+                                            itemBuilder: (BuildContext context, int itemIndex, int index1) {
+                                              final imgUrl = productImages[index1].url ?? "";
+
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(imgUrl),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          )
+                                              : Container(
+                                            color: Colors.grey,
+                                            child: Center(child: Text("No Image")),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 8),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 7),
+                                          Text(
+                                            product.name ?? "No Name",
+                                            style: TextStyle(
+                                              fontFamily: "Montserrat-Regular",
+                                              fontSize: SizeConfig.blockSizeHorizontal * 3.7,
+                                              color: CommonColor.Black,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          SizedBox(height: 3),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.location_on,
+                                                size: SizeConfig.screenHeight * 0.019,
+                                                color: Color(0xff3684F0),
+                                              ),
+                                              Flexible(
+                                                child: Text(
+                                                  'Park Street, Pune Banner 20023',
+                                                  style: TextStyle(
+                                                    fontFamily: "Montserrat-Regular",
+                                                    fontSize: SizeConfig.blockSizeHorizontal * 3.0,
+                                                    color: Color(0xff3684F0),
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
+                              );
+                            },
+                          ),
+                        )*/
+                        ],
+                      )
+                    : const Text(
+                        "Service Content",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    )*/
-                    ],
-                  )
-                : const Text(
-                    "Service Content",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -6308,7 +7923,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         style: GoogleFonts.merriweather(
                           fontSize: responsive
                               .fontSize(responsive.isMobile ? 22 : 19),
-                          color: const Color(0xFF1B5E20),
+                         // color: const Color(0xFF1B5E20),
+                          color: const Color(0xFF3E2723),
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -6320,11 +7936,11 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                               context,
                               MaterialPageRoute(
                                  // builder: (context) => ChangeHome(onCategoryTap: (String label) {  },)));
-                                  builder: (context) => const ChangeHome()));
+                                  builder: (context) => const NearbyViewAll()));
                         },
                         icon: const Icon(
                           Icons.arrow_forward_ios_sharp,
-                          color: Color(0xFF1B5E20),
+                          color: Color(0xFF3E2723),
                           size: 18,
                         )),
 
@@ -6783,16 +8399,39 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   alignment: Alignment.bottomCenter,
                                   children: [
                                     // Main Image
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                          responsive.height(20)),
-                                      child: Image.network(
-                                        imageList[index], // Use dynamic image
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
+                                    // ClipRRect(
+                                    //   borderRadius: BorderRadius.circular(
+                                    //       responsive.height(20)),
+                                    //   child: Image.network(
+                                    //     imageList[index], // Use dynamic image
+                                    //     fit: BoxFit.cover,
+                                    //     width: double.infinity,
+                                    //     height: double.infinity,
+                                    //   ),
+                                    // ),
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => NearbyProductDetail(
+                                              imageUrl: imageList[index],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(responsive.height(20)),
+                                        child: Image.network(
+                                          imageList[index], // Use dynamic image
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
                                       ),
                                     ),
+
 
                                     /// Left Container
                                     Positioned(
@@ -7512,11 +9151,14 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                   ),
                 ),
 
+
+
                 /// Recently Added
                 Container(
                   padding: responsive.getPadding(all: 0).copyWith(
-                      bottom: responsive.isMobile ? 10 : 30,
+                     // bottom: responsive.isMobile ? 10 : 30,
                       top: responsive.isMobile ? 10 : 5),
+                  margin: EdgeInsets.only(top: 20),
 
                   /// new add responsive padding
                   color: const Color(0xFFE0E0E0),
@@ -9745,7 +11387,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
     return Container(
       padding: responsive.getPadding(all: 0).copyWith(
           bottom: responsive.isMobile ? 15 : 30,
-          top: responsive.isMobile ? 15 : 5),
+          top: responsive.isMobile ? 15 : 5
+      ),
 
       /// new add responsive padding
       color: const Color(0xFFC8E6C9),
@@ -12889,7 +14532,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         style: GoogleFonts.merriweather(
                           fontSize:
                               responsive.fontSize(responsive.isMobile ? 22 : 9),
-                          color: const Color(0xFF1B5E20),
+                         // color: const Color(0xFF1B5E20),
+                          color: const Color(0xFF3E2723),
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -12908,7 +14552,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         },
                         icon: const Icon(
                           Icons.arrow_forward_ios_sharp,
-                          color: Color(0xFF1B5E20),
+                          color: Color(0xFF3E2723),
                           size: 18,
                         )),
                   ],
@@ -12960,7 +14604,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                           : 200),
                   margin: responsive.getMargin(all: 5),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(responsive.width(12)),
+                   // borderRadius: BorderRadius.circular(responsive.width(12)),
                   ),
                   child: Row(
                     children: [
@@ -13002,8 +14646,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   children: [
                                     // Main Image
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                          responsive.height(20)),
+                                      borderRadius: BorderRadius.circular(20),
                                       child: Image.network(
                                         imageList[index], // Use dynamic image
                                         fit: BoxFit.cover,
@@ -14157,11 +15800,11 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
 
     return Container(
       padding: responsive.getPadding(all: 0).copyWith(
-          bottom: responsive.isMobile ? 3 : 30,
+          //bottom: responsive.isMobile ? 3 : 30,
           top: responsive.isMobile ? 10 : 5),
 
       /// new add responsive padding
-      color: const Color(0xFFFFF3E0),
+      color: const Color(0xFFFFCC80),
       child: selectedIndex == 1
           ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(
@@ -16091,16 +17734,14 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
   }
 
 
+
+
   /// Explore Categories
   Widget GraphLayout(double parentHeight, double parentWidth) {
     final responsive = ResponsiveHelper(context);
 
+
     final List<Color> colors = [
-      //Colors.blue,
-      // Colors.green,
-      //.orange,
-      // Colors.red,
-      //Colors.purple
       const Color(0xFFEF9A9A),
       const Color(0xFFA5D6A7),
       const Color(0xFF90CAF9),
@@ -16108,6 +17749,102 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
       const Color(0xFFCE93D8),
       const Color(0xFF8D6E63),
     ];
+
+
+
+    final List<Map<String, dynamic>> categoryData = [
+      {
+        "name": "Electronics",
+        "image": "assets/images/Pet_World.png",
+        "color":Color(0xFFEF9A9A),
+      },
+      {
+        "name": "Groceries",
+        "image": "assets/images/Cosmetics_Image.png",
+        "color":  Color(0xFFA5D6A7),
+      },
+      {
+        "name": "Fashion",
+        "image": "assets/images/Sports_Image.png",
+        "color": Color(0xFF90CAF9),
+      },
+      {
+        "name": "Toys",
+        "image": "assets/images/Stationary_Books.png",
+        "color": Color(0xFFFFCC80),
+      },
+      {
+        "name": "Books",
+        "image": "assets/images/Fashion_Image.png",
+        "color": Color(0xFFCE93D8),
+      },
+      {
+        "name": "Fitness",
+        "image": "assets/images/Wedding_Dresses.png",
+        "color":  Color(0xFF8D6E63),
+      },{
+        "name": "Electronics",
+        "image": "assets/images/Event_Material.png",
+        "color": Color(0xFFEF9A9A),
+      },
+      {
+        "name": "Groceries",
+        "image": "assets/images/Pet_World.png",
+        "color": Color(0xFFA5D6A7),
+      },
+      {
+        "name": "Fashion",
+        "image": "assets/images/Pet_World.png",
+        "color": Color(0xFF90CAF9),
+      },
+      {
+        "name": "Toys",
+        "image": "assets/images/Pet_World.png",
+        "color": Color(0xFFFFCC80),
+      },
+      {
+        "name": "Books",
+        "image": "assets/images/Pet_World.png",
+        "color": Color(0xFFCE93D8),
+      },
+      {
+        "name": "Fitness",
+        "image": "assets/images/Pet_World.png",
+        "color": Color(0xFF8D6E63),
+      },{
+        "name": "Fashion",
+        "image": "assets/images/Pet_World.png",
+        "color":Color(0xFFEF9A9A),
+      },
+      {
+        "name": "Toys",
+        "image": "assets/images/Pet_World.png",
+        "color": Color(0xFFA5D6A7),
+      },
+      {
+        "name": "Books",
+        "image": "assets/images/Pet_World.png",
+        "color": Color(0xFF90CAF9),
+      },
+      {
+        "name": "Fitness",
+        "image": "assets/images/Pet_World.png",
+        "color": Color(0xFFFFCC80),
+      },{
+        "name": "Books",
+        "image": "assets/images/Pet_World.png",
+        "color":Color(0xFFCE93D8),
+      },
+      {
+        "name": "Fitness",
+        "image": "assets/images/Pet_World.png",
+        "color":  Color(0xFF8D6E63),
+      },
+
+    ];
+
+
+
 
     return Container(
       padding: responsive.getPadding(all: 0).copyWith(
@@ -16131,21 +17868,11 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         fontSize:
                             responsive.fontSize(responsive.isMobile ? 22 : 9),
                         //color: const Color(0xFF1B5E20),
-                        color: const Color(0xFF1B5E20),
+                      //  color: const Color(0xFF1B5E20),
+                        color: Color(0xFF3E2723),
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-
-                    // Text(
-                    //   "Trending",
-                    //   style: TextStyle(
-                    //     fontFamily: "Montserrat-Medium",
-                    //     // fontSize: responsive.fontSize(15), // Responsive font size
-                    //     fontSize: responsive.fontSize(responsive.isMobile ? 15 : 10),
-                    //     color: Colors.black,
-                    //     fontWeight: FontWeight.w600,
-                    //   ),
-                    // ),
                   ),
 
                 ],
@@ -16163,7 +17890,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: 18,
-                  itemBuilder: (context, index) {
+                  /*itemBuilder:
+                      (context, index) {
                     bool isEven = index % 2 == 0;
                     double height = isEven ? 150 : 200;
                     double marginTop = isEven ? 30 : 0;
@@ -16200,14 +17928,22 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                             ),
                           ),
                           // Inner Content (Text or Icon)
-                          const Positioned(
+                          Positioned(
                             top: 20,
                             child: Column(
                               children: [
+                                // CircleAvatar(
+                                //   backgroundColor: Colors.white,
+                                //   radius: 20,
+                                //   child: Text(''),
+                                // ),
                                 CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 20,
-                                  child: Text(''),
+                                //  backgroundColor: Colors.white,
+                                  backgroundColor: Color(0xFFEF9A9A),
+                                  radius: 35,
+                                  backgroundImage: AssetImage(
+                                    categoryImages[index % categoryImages.length], // handles overflow
+                                  ),
                                 ),
                                 SizedBox(height: 10),
                                 Text(
@@ -16221,7 +17957,78 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         ],
                       ),
                     );
-                  },
+                  },*/
+
+                    //itemCount: categoryData.length,
+                    itemBuilder: (context, index) {
+                      final data = categoryData[index];
+                      bool isEven = index % 2 == 0;
+                      double height = isEven ? 150 : 200;
+                      double marginTop = isEven ? 30 : 0;
+
+                      return Container(
+                        width: responsive.width(responsive.isMobile
+                            ? 85
+                            : responsive.isTablet
+                            ? 90
+                            : 95),
+                        margin: responsive.getMargin(all: 0).copyWith(
+                          left: responsive.isMobile ? 10 : 4,
+                          bottom: responsive.isMobile ? 10 : 4,
+                          top: marginTop,
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Background Card
+                            Container(
+                              height: height,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: colors[index % colors.length],
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 5,
+                                    offset: Offset(2, 2),
+                                  )
+                                ],
+                              ),
+                            ),
+                            // Content
+                            Positioned(
+                              top: 20,
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: data['color'],
+                                    radius: 35,
+                                    child: ClipOval(
+                                      child: Image.asset(
+                                        data['image'],
+                                        fit: BoxFit.cover,
+                                        // width: 40,
+                                        // height: 40,
+                                      ),
+                                    ),
+                                  ),
+                                 // const SizedBox(height: 5),
+                                  Text(
+                                    data['name'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    }
                 ),
               )
             ])
@@ -16234,6 +18041,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
             ),
     );
   }
+
 
 
 
@@ -16512,7 +18320,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
 
 
 
-  Widget VisitLayout(double parentHeight, double parentWidth) {
+  /*Widget VisitLayout(double parentHeight, double parentWidth) {
     final responsive = ResponsiveHelper(context);
 
     return Container(
@@ -16538,7 +18346,8 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         style: GoogleFonts.merriweather(
                           fontSize:
                               responsive.fontSize(responsive.isMobile ? 22 : 9),
-                          color: const Color(0xFF1B5E20),
+                         // color: const Color(0xFF1B5E20),
+                          color: Color(0xFF3E2723),
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -16550,7 +18359,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                 ),
 
              /// semi-circle
-                /* Column(
+                *//* Column(
             children: [
               Container(
                 height: responsive.height(responsive.isMobile ? 80 : responsive.isTablet ? 250 : 200),
@@ -16668,7 +18477,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                 ),
               ),
             ],
-          )*/
+          )*//*
 
                 Column(
                   children: [
@@ -16677,8 +18486,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                       children: [
                         Stack(children: [
                           Container(
-                            height: 70,
-                            width: 70,
+                            height: responsive.height(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                      /// new change
+                            //height: 70,
+                            //width: 70,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
@@ -16710,8 +18521,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ),
                                   Center(
                                     child: Container(
-                                      height: 60,
-                                      width: 60,
+                                      height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                          /// new change
+                                      width: responsive.width(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                      /// new change
+                                      //height: 60,
+                                      ///width: 60,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
@@ -16745,8 +18558,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         ),
                         Stack(children: [
                           Container(
-                            height: 70,
-                            width: 70,
+                            height: responsive.height(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                      /// new change
+                            //height: 70,
+                            //width: 70,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
@@ -16778,8 +18593,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ),
                                   Center(
                                     child: Container(
-                                      height: 60,
-                                      width: 60,
+                                      height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                          /// new change
+                                      width: responsive.width(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                      /// new change
+                                      //height: 60,
+                                      //width: 60,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
@@ -16813,8 +18630,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         ),
                         Stack(children: [
                           Container(
-                            height: 70,
-                            width: 70,
+                            height: responsive.height(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                      /// new change
+                            //height: 70,
+                           //width: 70,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
@@ -16846,8 +18665,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ),
                                   Center(
                                     child: Container(
-                                      height: 60,
-                                      width: 60,
+                                      height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                          /// new change
+                                      width: responsive.width(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                      /// new change
+                                      //height: 60,
+                                      //width: 60,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
@@ -16881,8 +18702,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         ),
                         Stack(children: [
                           Container(
-                            height: 70,
-                            width: 70,
+                            height: responsive.height(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                      /// new change
+                            //height: 70,
+                            //width: 70,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
@@ -16914,8 +18737,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ),
                                   Center(
                                     child: Container(
-                                      height: 60,
-                                      width: 60,
+                                      height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                          /// new change
+                                      width: responsive.width(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                      /// new change
+                                      //height: 60,
+                                      //width: 60,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
@@ -16954,8 +18779,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                       children: [
                         Stack(children: [
                           Container(
-                            height: 70,
-                            width: 70,
+                            height: responsive.height(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                      /// new change
+                            //height: 70,
+                            //width: 70,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
@@ -16987,8 +18814,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ),
                                   Center(
                                     child: Container(
-                                      height: 60,
-                                      width: 60,
+                                      height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                          /// new change
+                                      width: responsive.width(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                      /// new change
+                                      //height: 60,
+                                      //width: 60,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
@@ -17022,8 +18851,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         ),
                         Stack(children: [
                           Container(
-                            height: 70,
-                            width: 70,
+                            height: responsive.height(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                      /// new change
+                            //height: 70,
+                            //width: 70,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                             ),
@@ -17055,8 +18886,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ),
                                   Center(
                                     child: Container(
-                                      height: 60,
-                                      width: 60,
+                                      height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                          /// new change
+                                      width: responsive.width(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                      /// new change
+                                      //height: 60,
+                                      //width: 60,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
@@ -17090,8 +18923,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         ),
                         Stack(children: [
                           Container(
-                            height: 70,
-                            width: 70,
+                            height: responsive.height(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                      /// new change
+                            //height: 70,
+                            //width: 70,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               //  color: Colors.blue
@@ -17129,8 +18964,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ),
                                   Center(
                                     child: Container(
-                                      height: 60,
-                                      width: 60,
+                                      height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                          /// new change
+                                      width: responsive.width(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                      /// new change
+                                      //height: 60,
+                                      //width: 60,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
@@ -17164,8 +19001,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                         ),
                         Stack(children: [
                           Container(
-                            height: 70,
-                            width: 70,
+                            height: responsive.height(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                          /// new change
+                            width: responsive.width(responsive.isMobile ? 70 : responsive.isTablet ? 80 : 85),                      /// new change
+                            //height: 70,
+                            //width: 70,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
@@ -17197,8 +19036,10 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
                                   ),
                                   Center(
                                     child: Container(
-                                      height: 60,
-                                      width: 60,
+                                      height: responsive.height(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                          /// new change
+                                      width: responsive.width(responsive.isMobile ? 60 : responsive.isTablet ? 70 : 75),                      /// new change
+                                      //height: 60,
+                                      //width: 60,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
@@ -17241,11 +19082,16 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
               ),
             ),
     );
-  }
+  }*/
 
 
 
   Widget ShareLayout(double parentHeight, double parentWidth) {
+
+   // const String url = 'https://www.example.com/sample.mp4'; // ya image URL
+   // const String url = '"https://www.vecteezy.com/video/34325879-share-icon-button-for-website-spreading-dot'; // ya image URL
+   // const String url = 'https://cdnl.iconscout.com/lottie/premium/preview-watermark/share-button-animated-icon-download-in-lottie-json-gif-static-svg-file-formats--ui-call-to-action-cta-click-buttons-for-web-pack-seo-icons-8513764.mp4'; // ya image URL
+
     List<String> imageList = [
       /// Recently Viewed
       "https://cdn.bikedekho.com/processedimages/oben/oben-electric-bike/source/oben-electric-bike65f1355fd3e07.jpg",
@@ -17258,218 +19104,255 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
     final responsive = ResponsiveHelper(context);
 
     return Container(
-      color: Color(0xFF3E2723),
-      child: Container(
-
-        height: 140,
-        width: 150,
-        margin: responsive.getMargin(all: 0).copyWith(
-              left: responsive.isMobile ? 5 : 4,
-              right: responsive.isMobile ? 5 : 4,
-            ),
-        padding: responsive.getPadding(all: 0).copyWith(
-            left: responsive.isMobile ? 10 : 30,
-            top: responsive.isMobile ? 7 : 5),
-
-
-          decoration: BoxDecoration(
-            //  borderRadius: BorderRadius.circular(20.0),
-            gradient: LinearGradient(
-              colors: [
-                // Colors.black45.withOpacity(0.2),
-                // Colors.black38.withOpacity(0.1),
-                Colors.white.withOpacity(0.04),
-                Colors.white.withOpacity(0.04),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.2),
-            ),
-          ),
+          color: Color(0xFF3E2723),
+          child: Container(
+            height: responsive.height(responsive.isMobile ? 150 : responsive.isTablet ? 160 : 165),                          /// new change
+            //height: 140,
+            width: double.infinity,
+            // margin: responsive.getMargin(all: 0).copyWith(
+            //       left: responsive.isMobile ? 5 : 4,
+            //       right: responsive.isMobile ? 5 : 4,
+            //     ),
+            padding: responsive.getPadding(all: 0).copyWith(
+                left: responsive.isMobile ? 10 : 30,
+                top: responsive.isMobile ? 7 : 5),
 
 
-        /// new add responsive padding
-        // color: const Color(0xFFFFF9C4),
-       // color: const Color(0xFFFFE0B2),
-        child: selectedIndex == 1
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    /// new added  Related Post
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              decoration: BoxDecoration(
+                //  borderRadius: BorderRadius.circular(20.0),
+                gradient: LinearGradient(
+                  colors: [
+                    // Colors.black45.withOpacity(0.2),
+                    // Colors.black38.withOpacity(0.1),
+                    Colors.white.withOpacity(0.04),
+                    Colors.white.withOpacity(0.04),
+                    //Colors.pink
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                ),
+              ),
+
+
+            /// new add responsive padding
+            // color: const Color(0xFFFFF9C4),
+           // color: const Color(0xFFFFE0B2),
+            child: selectedIndex == 1
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ElevatedButton(
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: Colors.orange,
-                      //     //   padding: responsive.getPadding(all: 12),
-                      //   ),
-                      //   onPressed: () {
-                      //     Share.share(
-                      //         'Check out this amazing app: https://example.com');
-                      //   },
-                      //   child: Row(
-                      //     // mainAxisSize: MainAxisSize.min,
-                      //     children: [
-                      //       Text(
-                      //         "Share App",
-                      //         style: TextStyle(
-                      //           color: Colors.white,
-                      //           fontSize: responsive.fontSize(18),
-                      //           fontWeight: FontWeight.w600,
-                      //         ),
-                      //       ),
-                      //       SizedBox(width: responsive.width(8)),
-                      //       Icon(
-                      //         Icons.share,
-                      //         color: Colors.white,
-                      //         size: responsive.width(22),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      Container(
-                        height: responsive.height(
-                          responsive.isMobile ? 60 : responsive.isTablet ? 80 : 100,
-                        ),
-                        width: responsive.width(
-                          responsive.isMobile ? 300 : responsive.isTablet ? 400 : 450,
-                        ),
-                        child: Stack(
-                          children: [
-                            /// Background Gradient Pill
-                            Row(
-                             // mainAxisAlignment: MainAxisAlignment.end,
+                      Row(
+                        /// new added  Related Post
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // ElevatedButton(
+                          //   style: ElevatedButton.styleFrom(
+                          //     backgroundColor: Colors.orange,
+                          //     //   padding: responsive.getPadding(all: 12),
+                          //   ),
+                          //   onPressed: () {
+                          //     Share.share(
+                          //         'Check out this amazing app: https://example.com');
+                          //   },
+                          //   child: Row(
+                          //     // mainAxisSize: MainAxisSize.min,
+                          //     children: [
+                          //       Text(
+                          //         "Share App",
+                          //         style: TextStyle(
+                          //           color: Colors.white,
+                          //           fontSize: responsive.fontSize(18),
+                          //           fontWeight: FontWeight.w600,
+                          //         ),
+                          //       ),
+                          //       SizedBox(width: responsive.width(8)),
+                          //       Icon(
+                          //         Icons.share,
+                          //         color: Colors.white,
+                          //         size: responsive.width(22),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          Container(
+                            height: responsive.height(
+                              responsive.isMobile ? 60 : responsive.isTablet ? 80 : 100,
+                            ),
+                            width: responsive.width(
+                              responsive.isMobile ? 310 : responsive.isTablet ? 400 : 450,
+                            ),
+                            child: Stack(
                               children: [
-                                Container(
-                                  // padding: responsive.getPadding(left: 2, right: 2),
-                                  padding: responsive.getPadding(all: 0).copyWith(
-                                    left: 2,
-                                    right: 2,
+                                /// Background Gradient Pill
+                                Row(
+                                 // mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      // padding: responsive.getPadding(left: 2, right: 2),
+                                      padding: responsive.getPadding(all: 0).copyWith(
+                                        left: 2,
+                                        right: 2,
 
-                                  ),
+                                      ),
 
-                                  margin: responsive.getMargin(all: 0).copyWith(
-                                    left: 0,
-                                    right: 20,
+                                      margin: responsive.getMargin(all: 0).copyWith(
+                                        left: 0,
+                                        right: 20,
 
-                                  ),
-                                  height: responsive.height(
-                                    responsive.isMobile ? 38 : responsive.isTablet ? 50 : 60,
-                                  ),
-                                  width: responsive.width(
-                                    //responsive.isMobile ? 130 : responsive.isTablet ? 160 : 180,
-                                    responsive.isMobile ? 120 : responsive.isTablet ? 160 : 180,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [Color(0xFFFBC02D), Color(0xFFE65100)],
-                                      begin: Alignment.topRight,
-                                      end: Alignment.bottomLeft,
+                                      ),
+                                      height: responsive.height(
+                                        responsive.isMobile ? 38 : responsive.isTablet ? 50 : 60,
+                                      ),
+                                      width: responsive.width(
+                                        //responsive.isMobile ? 130 : responsive.isTablet ? 160 : 180,
+                                        responsive.isMobile ? 120 : responsive.isTablet ? 160 : 180,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [Color(0xFFFBC02D), Color(0xFFE65100)],
+                                          begin: Alignment.topRight,
+                                          end: Alignment.bottomLeft,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(20),
+
+                                  ],
+                                ),
+
+                                /// Positioned Glass Effect and Text
+                                Positioned(
+                                  top: responsive.height(responsive.isMobile ? 6 : 4),
+                                  left: responsive.width(responsive.isMobile ? 5 : 10),
+                                  bottom: responsive.height(responsive.isMobile ? 8 : 6),
+                                  right: responsive.width(responsive.isMobile ? 7 : 10),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Stack(
+                                      children: [
+                                        BackdropFilter(
+                                          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                                          child: Container(
+                                           color: Colors.white.withOpacity(0.4),
+                                          ),
+                                        ),
+                                        Center(
+                                          child:
+                                          Container(
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.only(bottom: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Share.share(
+                                                                'Check out this amazing app: https://example.com');
+                                                            },
+                                                          child:  Text(
+                                                            textAlign: TextAlign.start,
+                                                            'Share App',
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: responsive.fontSize(
+                                                                responsive.isMobile ? 14 : 16,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ),
+                                                      SizedBox(width: responsive.width(0)),
+                                                      Icon(
+                                                        Icons.share,
+                                                        color: Colors.white,
+                                                        size: responsive.width(22),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+
+                                                SizedBox(width: responsive.width(12)),
+                                                Container(
+                                                  margin: responsive.getMargin(all: 0).copyWith(
+                                                    top: 5,
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: responsive.isMobile ? 0 : 10,
+                                                  ),
+                                                  child: const Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        'Let your near and dear ones ',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w800,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'know about our platform! ',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                            fontWeight: FontWeight.w800),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+
+
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-
-                            /// Positioned Glass Effect and Text
-                            Positioned(
-                              top: responsive.height(responsive.isMobile ? 6 : 4),
-                              left: responsive.width(responsive.isMobile ? 7 : 180),
-                              bottom: responsive.height(responsive.isMobile ? 8 : 6),
-                              right: responsive.width(responsive.isMobile ? 7 : 10),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Stack(
-                                  children: [
-                                    BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                                      child: Container(
-                                        color: Colors.white.withOpacity(0.4),
-                                      ),
-                                    ),
-                                    Center(
-                                      child: Container(
-                                        margin: responsive.getMargin(all: 5),
-                                        padding: responsive.getPadding(all: 0).copyWith(
-                                          left: 8,
-                                          right: 0,
-                                          bottom: responsive.isMobile ? 0 : 10,
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.only(bottom: 10),
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    textAlign: TextAlign.start,
-                                                    'Share App',
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: responsive.fontSize(
-                                                        responsive.isMobile ? 14 : 16,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: responsive.width(4)),
-                                                  Icon(
-                                                    Icons.share,
-                                                    color: Colors.white,
-                                                    size: responsive.width(22),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-
-                                            SizedBox(width: responsive.width(12)),
-                                            const Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Let your near and dear ones ',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'know about our platform! ',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                      fontWeight: FontWeight.w500),
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                          ),
+                        ],
+                      ),
+                      /// Video
+                      Positioned(
+                        top: responsive.height(responsive.isMobile ? 10 : 4),
+                        left: responsive.width(responsive.isMobile ? 7 : 180),
+                        bottom: responsive.height(responsive.isMobile ? 0 : 6),
+                        right: responsive.width(responsive.isMobile ? 7 : 10),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Stack(
+                            children: [
+                              BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                                child: Container(
+                                  color: Colors.white.withOpacity(0.4),
                                 ),
                               ),
-                            ),
-                          ],
+                             // const ImageOrVideoWidget(imgUrl: url),
+                            ],
+                          ),
                         ),
                       ),
                     ],
+                  )
+                : const Text(
+                    "Zepto Super Saver Content",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ],
-              )
-            : const Text(
-                "Zepto Super Saver Content",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-      ),
-    );
+          ),
+        );
+
+
   }
+
 
 
 
@@ -27028,7 +28911,7 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
 */
 
   /// bottom line categories
-  Widget _buildIconItem(String assetPath, String label) {
+  /*Widget _buildIconItem(String assetPath, String label) {
     bool isSelected = label == selectedLabel;
 
     return GestureDetector(
@@ -27074,9 +28957,81 @@ class _ChangeHomeState extends State<ChangeHome> with TickerProviderStateMixin {
         ),
       ),
     );
+  }*/
+
+
+  Widget _buildIconItem(String assetPath, String label) {
+    bool isSelected = label == selectedLabel;
+
+    return GestureDetector(
+      onTap: () {
+        if (label == 'View All') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CatagriesList(onChanged: (String ) {  }, categoryId: '',), // Replace with your actual page
+            ),
+          );
+        } else {
+          setState(() {
+            selectedLabel = label;
+          });
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // ClipRRect(
+            //   borderRadius: BorderRadius.circular(8),
+            //   child: Image.asset(
+            //     assetPath,
+            //     width: label == 'View All' ? 70 : 95, // 👈 Custom size for 'View All'
+            //     height: label == 'View All' ? 70 : 95,
+            //     fit: BoxFit.contain,
+            //   ),
+            // ),
+
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                assetPath,
+                width: 95,
+                height: 95,
+                fit: BoxFit.contain,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Arial',
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 3,
+              width: isSelected ? 60 : 0,
+              color: Colors.orange,
+              curve: Curves.easeInOut,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
+
 }
+
+
+
 
 class SnakeBorderPainter extends CustomPainter {
   final double progress;

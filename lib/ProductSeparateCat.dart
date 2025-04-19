@@ -46,6 +46,7 @@ class _CatagriesListState extends State<CatagriesList> {
     'assets/images/Pet_World.png',
     'assets/images/Agriculture_Image.png',
     'assets/images/Pet_World.png',
+    'assets/images/Pet_World.png',
   ];
 
   List<Data> filteredItems = [];

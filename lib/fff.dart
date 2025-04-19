@@ -1292,6 +1292,8 @@ class _CircularSwapWithArcAnimationState extends State<CircularSwapWithArcAnimat
 
 
 import 'dart:async';
+import 'dart:ui';
+import 'package:anything/Common_File/new_responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -1508,6 +1510,95 @@ class _ImageRotatorState extends State<ImageRotator> {
         ),
       );
 
+  }
+}
+
+
+class YourWidget extends StatefulWidget {
+  @override
+  _YourWidgetState createState() => _YourWidgetState();
+}
+
+class _YourWidgetState extends State<YourWidget> {
+  bool isButtonAttached = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context); // Replace with your instance
+
+    return Stack(
+      children: [
+        // Golden/orange button row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: responsive.getPadding(all: 0).copyWith(left: 2, right: 2),
+              margin: responsive.getMargin(all: 0).copyWith(left: 10, right: 20),
+              height: responsive.height(responsive.isMobile ? 38 : responsive.isTablet ? 50 : 60),
+              width: responsive.width(responsive.isMobile ? 130 : responsive.isTablet ? 160 : 180),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFBC02D), Color(0xFFE65100)],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+          ],
+        ),
+
+        // Animated Create Post button
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          top: isButtonAttached
+              ? responsive.height(responsive.isMobile ? 6 : 4) // Position near the top button
+              : responsive.height(responsive.isMobile ? 100 : 200), // Starting position
+          left: responsive.width(responsive.isMobile ? 157 : 180),
+          bottom: responsive.height(responsive.isMobile ? 12 : 6),
+          right: responsive.width(responsive.isMobile ? 12 : 10),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                isButtonAttached = !isButtonAttached;
+              });
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Stack(
+                children: [
+                  BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                    child: Container(
+                      color: Colors.white.withOpacity(0.4),
+                    ),
+                  ),
+                  Center(
+                    child: Container(
+                      margin: responsive.getMargin(all: 5),
+                      padding: responsive.getPadding(all: 0).copyWith(
+                        left: 8,
+                        right: 20,
+                        bottom: responsive.isMobile ? 12 : 10,
+                      ),
+                      child: Text(
+                        'Create Post +',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: responsive.fontSize(responsive.isMobile ? 14 : 16),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
